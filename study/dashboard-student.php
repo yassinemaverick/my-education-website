@@ -663,10 +663,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       <span id="nav-feed-lbl">Notes de cours</span>
     </div>
-    <div class="nav-item" onclick="navigate('whiteboard',this)" id="nav-wb">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-      <span id="nav-wb-lbl">Tableau blanc</span>
-    </div>
+
     <div class="nav-item" onclick="navigate('quizzes',this)" id="nav-quiz">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
       <span id="nav-quiz-lbl">Challenge</span>
@@ -868,15 +865,6 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
     <div id="feed-list"><p style="color:var(--muted);font-size:.85rem;">Chargement…</p></div>
   </div>
 
-  <!-- WHITEBOARD PAGE -->
-  <div class="page" id="page-whiteboard">
-    <div class="coming-soon">
-      <div class="cs-emoji">🖼️</div>
-      <h3 id="wb-cs-title">Tableau blanc</h3>
-      <p id="wb-cs-sub">Les notes de cours, captures de tableau et récapitulatifs de séance seront publiés ici par votre professeur après chaque cours Zoom.</p>
-    </div>
-  </div>
-
   <!-- HOW-TO PAGE -->
   <div class="page" id="page-howto">
     <div style="margin-bottom:1.75rem;">
@@ -1045,8 +1033,8 @@ let activePage = 'home';
 /* ── TRANSLATIONS ── */
 const T = {
   fr: {
-    topbarTitle: { home:'Tableau de bord', myclass:'Ma classe', assignments:'Devoirs', feed:'Notes de cours', whiteboard:'Tableau blanc', quizzes:'Challenge', progress:'Progression', howto:'How-to', settings:'Paramètres' },
-    navHome:'Dashboard', navMyclass:'Ma classe', navAssign:'Devoirs', navFeed:'Notes de cours', navWb:'Tableau blanc', navQuiz:'Challenge', navHowto:'How-to', navSet:'Paramètres',
+    topbarTitle: { home:'Tableau de bord', myclass:'Ma classe', assignments:'Devoirs', feed:'Notes de cours', quizzes:'Challenge', progress:'Progression', howto:'How-to', settings:'Paramètres' },
+    navHome:'Dashboard', navMyclass:'Ma classe', navAssign:'Devoirs', navFeed:'Notes de cours', navQuiz:'Challenge', navHowto:'How-to', navSet:'Paramètres',
     feedTitle:'Notes de cours', feedSub:'Les résumés publiés par votre professeur après chaque session',
     feedEmptyTitle:'Aucune note publiée pour l\'instant', feedEmptyTxt:'Votre professeur publiera ses résumés et liens ici après chaque cours Zoom.',
     feedOpenLink:'Ouvrir le lien',
@@ -1060,7 +1048,7 @@ const T = {
     myclassTeacher:'Professeur :', myclassSchedule:'Horaire :',
     myclassAttLbl:'Taux de présence', myclassEmptyTxt:'Aucun cours assigné',
     myclassNoMates:'Aucun camarade trouvé.',
-    wbTitle:'Tableau blanc', wbSub:'Les notes de cours, captures de tableau et récapitulatifs de séance seront publiés ici par votre professeur après chaque cours Zoom.',
+
     assignPageTitle:'Devoirs', assignPageSub:'3 en attente · 1 en retard · 2 soumis',
     tabAll:'Tous', tabPending:'En attente', tabDone:'Soumis',
     tabAllQ:'Tous', tabAvailQ:'Disponibles', tabDoneQ:'Complétés',
@@ -1075,7 +1063,7 @@ const T = {
       { icon:'📋', from:'#10b981', to:'#059669', title:'Vos devoirs', desc:'Comment consulter, soumettre et suivre l\'état de vos devoirs.', btn:'Voir la vidéo' },
       { icon:'👥', from:'#f59e0b', to:'#f97316', title:'Ma classe', desc:'Voir votre cours, votre taux de présence et vos camarades.', btn:'Voir la vidéo' },
       { icon:'🏆', from:'#8b5cf6', to:'#6d28d9', title:'Challenge', desc:'Testez vos connaissances avec les quiz chronométrés.', btn:'Voir la vidéo' },
-      { icon:'🖼️', from:'#ec4899', to:'#db2777', title:'Tableau blanc', desc:'Retrouvez ici les notes et captures de cours publiées par votre prof.', btn:'Voir la vidéo' },
+
       { icon:'⚙️', from:'#64748b', to:'#475569', title:'Paramètres', desc:'Changez votre nom, ajoutez une photo de profil et choisissez la langue.', btn:'Voir la vidéo' },
     ],
     settingsTitle:'Paramètres', profileTitle:'Profil', lblChangePhoto:'Changer la photo', settingsRole:'Étudiante · Anglais Général S2', lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l\'Arabe.',
@@ -1086,8 +1074,8 @@ const T = {
     dueLbl:'Échéance :', subjectLbl:'Matière :',
   },
   ar: {
-    topbarTitle: { home:'لوحة التحكم', myclass:'صفي', assignments:'الواجبات', feed:'ملاحظات الدروس', whiteboard:'السبورة', quizzes:'تحدي', progress:'التقدم', howto:'المساعدة', settings:'الإعدادات' },
-    navHome:'الرئيسية', navMyclass:'صفي', navAssign:'الواجبات', navFeed:'ملاحظات الدروس', navWb:'السبورة', navQuiz:'تحدي', navHowto:'المساعدة', navSet:'الإعدادات',
+    topbarTitle: { home:'لوحة التحكم', myclass:'صفي', assignments:'الواجبات', feed:'ملاحظات الدروس', quizzes:'تحدي', progress:'التقدم', howto:'المساعدة', settings:'الإعدادات' },
+    navHome:'الرئيسية', navMyclass:'صفي', navAssign:'الواجبات', navFeed:'ملاحظات الدروس', navQuiz:'تحدي', navHowto:'المساعدة', navSet:'الإعدادات',
     feedTitle:'ملاحظات الدروس', feedSub:'ملخصات أستاذك بعد كل حصة Zoom',
     feedEmptyTitle:'لا توجد ملاحظات منشورة بعد', feedEmptyTxt:'سينشر أستاذك ملخصاته وروابطه هنا بعد كل حصة Zoom.',
     feedOpenLink:'فتح الرابط',
@@ -1101,7 +1089,7 @@ const T = {
     myclassTeacher:'الأستاذ:', myclassSchedule:'الجدول:',
     myclassAttLbl:'نسبة الحضور', myclassEmptyTxt:'لم يتم تعيين دورة بعد',
     myclassNoMates:'لا يوجد زملاء.',
-    wbTitle:'السبورة', wbSub:'ستُنشر هنا ملاحظات الدروس والتلخيصات من قِبَل أستاذك بعد كل حصة Zoom.',
+
     assignPageTitle:'الواجبات', assignPageSub:'3 معلقة · 1 متأخرة · 2 مُسلَّمة',
     tabAll:'الكل', tabPending:'معلقة', tabDone:'مُسلَّمة',
     tabAllQ:'الكل', tabAvailQ:'متاحة', tabDoneQ:'مكتملة',
@@ -1160,7 +1148,6 @@ function applyTranslations() {
   st('nav-myclass-lbl', tr.navMyclass);
   st('nav-assign-lbl', tr.navAssign);
   st('nav-feed-lbl', tr.navFeed);
-  st('nav-wb-lbl', tr.navWb);
   st('nav-quiz-lbl', tr.navQuiz);
   st('nav-howto-lbl', tr.navHowto);
   st('nav-set-lbl', tr.navSet);
@@ -1181,9 +1168,7 @@ function applyTranslations() {
   st('myclass-mates-lbl', tr.myclassMatesLbl);
   st('myclass-att-lbl', tr.myclassAttLbl);
   st('myclass-empty-txt', tr.myclassEmptyTxt);
-  // Whiteboard page
-  st('wb-cs-title', tr.wbTitle);
-  st('wb-cs-sub', tr.wbSub);
+
 
 
 
