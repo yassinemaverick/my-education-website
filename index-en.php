@@ -150,7 +150,7 @@ $t = [
     .nav-lang { display: none !important; }
     .hamburger { display: flex; }
     .nav-links { display: none; flex-direction: column; position: fixed; top: 0; right: 0; height: 100vh; width: 75vw; max-width: 280px; background: var(--navy-mid); border-left: 1px solid var(--border); padding: 5rem 2rem 2rem; gap: 1.5rem; z-index: 180; transform: translateX(100%); transition: transform 0.3s ease; }
-    .nav-links.open { display: flex; transform: translateX(0); }
+    .nav-links.open { display: flex !important; transform: translateX(0); }
     .nav-links a { font-size: 1rem; color: var(--white); }
     .nav-cta { text-align: center; }
     .form-grid { grid-template-columns: 1fr; }
