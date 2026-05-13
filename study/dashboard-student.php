@@ -396,7 +396,8 @@ body.ar .activity-time { text-align:right; }
 
 /* HERO WELCOME */
 .hero-section { text-align:center; padding:2.5rem 1rem 1.75rem; }
-.mascot-wrap { display:inline-flex; align-items:center; justify-content:center; width:110px; height:110px; border-radius:50%; background:linear-gradient(135deg,#bfdbfe,#ddd6fe); margin-bottom:1.25rem; font-size:3.2rem; box-shadow:0 8px 32px rgba(59,130,246,.18); }
+.mascot-wrap { display:inline-flex; align-items:center; justify-content:center; width:110px; height:110px; border-radius:50%; background:linear-gradient(135deg,#bfdbfe,#ddd6fe); margin-bottom:1.25rem; font-size:3.2rem; box-shadow:0 8px 32px rgba(59,130,246,.18); overflow:hidden; position:relative; }
+#mascot-av-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:50%; display:none; }
 .hero-hello { font-family:var(--font); font-size:2.6rem; font-weight:800; letter-spacing:-.04em; margin-bottom:.4rem; background:linear-gradient(135deg,#3b82f6,#7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
 body.ar .hero-hello { font-family:var(--font-ar); letter-spacing:0; font-size:2.2rem; }
 .hero-sub { color:var(--muted); font-size:1rem; }
@@ -667,7 +668,8 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
     <!-- Hero welcome -->
     <div class="hero-section">
       <div class="mascot-wrap" aria-hidden="true">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 120" width="72" height="78">
+        <img id="mascot-av-img" src="" alt="">
+        <svg id="mascot-dino-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 120" width="72" height="78">
           <!-- Red cape -->
           <path d="M32 56 Q8 76 14 100 Q30 88 42 68 Q46 86 42 102 Q60 90 56 70" fill="#dc2626"/>
           <path d="M32 56 Q22 72 30 88 Q38 78 42 68" fill="#ef4444" opacity="0.55"/>
@@ -1514,20 +1516,29 @@ function handleAvatarUpload(input) {
   const reader = new FileReader();
   reader.onload = function(e) {
     const dataUrl = e.target.result;
-    // Show in settings
-    const img = document.getElementById('settings-av-img');
-    const initDiv = document.getElementById('settings-avatar');
-    if (img)     { img.src = dataUrl; img.style.display = ''; }
-    if (initDiv) initDiv.style.display = 'none';
-    // Show in sidebar
-    applyAvatarToSidebar(dataUrl);
-    // Show in topbar
-    applyAvatarToTopbar(dataUrl);
-    // Persist in localStorage (cross-page, same device)
+    applyAvatarEverywhere(dataUrl);
     try { localStorage.setItem('upskill_avatar', dataUrl); } catch(e) {}
     showToast(currentLang === 'ar' ? 'تم تحديث الصورة ✓' : 'Photo mise à jour ✓');
   };
   reader.readAsDataURL(file);
+}
+
+function applyAvatarEverywhere(dataUrl) {
+  applyAvatarToMascot(dataUrl);
+  applyAvatarToSidebar(dataUrl);
+  applyAvatarToTopbar(dataUrl);
+  // Settings page
+  const sImg    = document.getElementById('settings-av-img');
+  const sInitEl = document.getElementById('settings-avatar');
+  if (sImg)    { sImg.src = dataUrl; sImg.style.display = ''; }
+  if (sInitEl) sInitEl.style.display = 'none';
+}
+
+function applyAvatarToMascot(dataUrl) {
+  const img = document.getElementById('mascot-av-img');
+  const svg = document.getElementById('mascot-dino-svg');
+  if (img) { img.src = dataUrl; img.style.display = 'block'; }
+  if (svg) svg.style.display = 'none';
 }
 
 function applyAvatarToSidebar(dataUrl) {
@@ -1568,13 +1579,7 @@ function loadSavedAvatar() {
   try {
     const dataUrl = localStorage.getItem('upskill_avatar');
     if (!dataUrl) return;
-    applyAvatarToSidebar(dataUrl);
-    applyAvatarToTopbar(dataUrl);
-    // settings page
-    const img = document.getElementById('settings-av-img');
-    const initDiv = document.getElementById('settings-avatar');
-    if (img)     { img.src = dataUrl; img.style.display = ''; }
-    if (initDiv) initDiv.style.display = 'none';
+    applyAvatarEverywhere(dataUrl);
   } catch(e) {}
 }
 
