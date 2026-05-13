@@ -271,6 +271,31 @@ $jsStars    = json_encode($starsOfMonth, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNES
 $jsClassAct = json_encode($classActivity, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
 
 $jsData = json_encode($liveData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE);
+
+// Mini dino SVG used as the default avatar (face-crop viewBox)
+$dinoAvatarSvg = '<svg class="av-dino" id="%ID%" xmlns="http://www.w3.org/2000/svg" viewBox="22 14 76 90" aria-hidden="true">'
+  . '<path d="M32 56 Q8 76 14 100 Q30 88 42 68 Q46 86 42 102 Q60 90 56 70" fill="#dc2626"/>'
+  . '<path d="M32 56 Q22 72 30 88 Q38 78 42 68" fill="#ef4444" opacity="0.55"/>'
+  . '<ellipse cx="60" cy="74" rx="22" ry="21" fill="#4ade80"/>'
+  . '<rect x="52" y="50" width="14" height="18" rx="5" fill="#4ade80"/>'
+  . '<ellipse cx="59" cy="40" rx="20" ry="17" fill="#4ade80"/>'
+  . '<ellipse cx="59" cy="51" rx="13" ry="8" fill="#86efac"/>'
+  . '<path d="M48 51 Q59 61 70 51" fill="none" stroke="#16a34a" stroke-width="1.5"/>'
+  . '<rect x="52" y="51" width="4" height="5" rx="1.5" fill="white"/>'
+  . '<rect x="58" y="51" width="4" height="5" rx="1.5" fill="white"/>'
+  . '<rect x="64" y="51" width="4" height="5" rx="1.5" fill="white"/>'
+  . '<circle cx="47" cy="35" r="7" fill="white"/>'
+  . '<circle cx="48.5" cy="35" r="4.5" fill="#1e1b4b"/>'
+  . '<circle cx="50" cy="33.5" r="1.5" fill="white"/>'
+  . '<circle cx="71" cy="35" r="7" fill="white"/>'
+  . '<circle cx="72.5" cy="35" r="4.5" fill="#1e1b4b"/>'
+  . '<circle cx="74" cy="33.5" r="1.5" fill="white"/>'
+  . '<path d="M41 29 Q48 25 54 27" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" fill="none"/>'
+  . '<path d="M64 27 Q70 25 77 29" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" fill="none"/>'
+  . '<polygon points="59,61 51,68 53,82 59,80 65,82 67,68" fill="#dc2626"/>'
+  . '<text x="59" y="76" text-anchor="middle" font-size="12" font-weight="900" fill="#fbbf24" font-family="Georgia,serif">S</text>'
+  . '</svg>'
+  . '<img class="av-photo" id="%IMGID%" src="" alt="">';
 ?>
 <!DOCTYPE html>
 <html lang="fr" dir="ltr">
@@ -318,7 +343,9 @@ body.ar .sidebar-logo span { font-family:var(--font-ar); }
 .lang-pill.active { background:rgba(245,158,11,.2); border-color:rgba(245,158,11,.5); color:#f59e0b; }
 .sidebar-user { padding:1.1rem 1.3rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; }
 body.ar .sidebar-user { flex-direction:row-reverse; }
-.avatar { width:38px; height:38px; border-radius:50%; background:rgba(245,158,11,.18); border:2px solid rgba(245,158,11,.4); display:flex; align-items:center; justify-content:center; font-family:var(--font); font-weight:700; font-size:.85rem; color:#f59e0b; flex-shrink:0; }
+.avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#bfdbfe,#ddd6fe); border:2px solid rgba(245,158,11,.4); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; position:relative; }
+.av-dino { width:100%; height:100%; display:block; }
+.av-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:50%; display:none; }
 .user-info .name { font-family:var(--font); font-size:.84rem; font-weight:600; line-height:1.2; color:#fff; }
 body.ar .user-info .name { font-family:var(--font-ar); }
 .user-info .role-tag { font-size:.7rem; color:#f59e0b; background:rgba(245,158,11,.15); padding:.1rem .5rem; border-radius:100px; margin-top:.2rem; display:inline-block; }
@@ -597,7 +624,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
     <div class="lang-pill" id="pill-ar" onclick="setLang('ar')">🇲🇦 AR</div>
   </div>
   <div class="sidebar-user">
-    <div class="avatar" id="sidebar-avatar"><?php $parts=explode(" ",trim($full_name));echo strtoupper(substr($parts[0],0,1).substr($parts[1]??$parts[0],0,1)); ?></div>
+    <div class="avatar" id="sidebar-avatar"><?= str_replace(['%ID%','%IMGID%'], ['sidebar-dino-svg','sidebar-av-img'], $dinoAvatarSvg) ?></div>
     <div class="user-info">
       <div class="name" id="sidebar-name"><?= $full_name ?></div>
       <div class="role-tag" id="role-label">Étudiante</div>
@@ -659,7 +686,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-badge" id="notif-badge" style="display:none;"></span>
       </div>
-      <div class="avatar" id="topbar-avatar" style="cursor:default;"><?php $parts=explode(" ",trim($full_name));echo strtoupper(substr($parts[0],0,1).substr($parts[1]??$parts[0],0,1)); ?></div>
+      <div class="avatar" id="topbar-avatar" style="cursor:default;"><?= str_replace(['%ID%','%IMGID%'], ['topbar-dino-svg','topbar-av-img'], $dinoAvatarSvg) ?></div>
     </div>
   </div>
 
@@ -891,7 +918,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
         <div style="display:flex;align-items:center;gap:1.2rem;margin-bottom:1.75rem;">
           <div style="position:relative;flex-shrink:0;">
             <div class="settings-av-wrap" id="settings-av-wrap">
-              <div class="avatar" style="width:64px;height:64px;font-size:1.3rem;" id="settings-avatar"><?php $parts=explode(" ",trim($full_name));echo strtoupper(substr($parts[0],0,1).substr($parts[1]??$parts[0],0,1)); ?></div>
+              <div class="avatar" style="width:64px;height:64px;" id="settings-avatar"><?= str_replace(['%ID%','%IMGID%'], ['settings-dino-svg','settings-av-img'], $dinoAvatarSvg) ?></div>
               <img id="settings-av-img" src="" alt="" style="display:none;width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid rgba(245,158,11,.4);">
             </div>
             <label for="avatar-input" class="av-upload-btn" title="Changer la photo">
@@ -1487,12 +1514,6 @@ async function saveProfile() {
 
     // Update all name displays
     const parts = name.trim().split(/\s+/);
-    const init  = ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase() || '?';
-    // Only update initials in places that show initials (not where photo is shown)
-    ['sidebar-avatar','topbar-avatar','settings-avatar'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el && el.tagName !== 'IMG' && el.style.display !== 'none') el.textContent = init;
-    });
     const sn = document.getElementById('sidebar-name'); if (sn) sn.textContent = name;
     const dn = document.getElementById('settings-name'); if (dn) dn.textContent = name;
     st('welcome-name', parts[0]);
@@ -1524,55 +1545,19 @@ function handleAvatarUpload(input) {
 }
 
 function applyAvatarEverywhere(dataUrl) {
-  applyAvatarToMascot(dataUrl);
-  applyAvatarToSidebar(dataUrl);
-  applyAvatarToTopbar(dataUrl);
-  // Settings page
-  const sImg    = document.getElementById('settings-av-img');
-  const sInitEl = document.getElementById('settings-avatar');
-  if (sImg)    { sImg.src = dataUrl; sImg.style.display = ''; }
-  if (sInitEl) sInitEl.style.display = 'none';
-}
-
-function applyAvatarToMascot(dataUrl) {
-  const img = document.getElementById('mascot-av-img');
-  const svg = document.getElementById('mascot-dino-svg');
-  if (img) { img.src = dataUrl; img.style.display = 'block'; }
-  if (svg) svg.style.display = 'none';
-}
-
-function applyAvatarToSidebar(dataUrl) {
-  const wrap = document.getElementById('sidebar-user');
-  if (!wrap) return;
-  let img = document.getElementById('sidebar-av-img');
-  if (!img) {
-    img = document.createElement('img');
-    img.id = 'sidebar-av-img';
-    img.alt = '';
-    img.style.cssText = 'width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(245,158,11,.4);flex-shrink:0;';
-    const av = document.getElementById('sidebar-avatar');
-    if (av) { av.style.display = 'none'; wrap.insertBefore(img, av); }
-    else wrap.prepend(img);
-  }
-  img.src = dataUrl;
-  img.style.display = '';
-}
-
-function applyAvatarToTopbar(dataUrl) {
-  const topbar = document.querySelector('.topbar-actions');
-  if (!topbar) return;
-  let img = document.getElementById('topbar-av-img');
-  if (!img) {
-    img = document.createElement('img');
-    img.id = 'topbar-av-img';
-    img.alt = '';
-    img.style.cssText = 'width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(245,158,11,.4);';
-    const av = document.getElementById('topbar-avatar');
-    if (av) { av.style.display = 'none'; topbar.appendChild(img); }
-    else topbar.appendChild(img);
-  }
-  img.src = dataUrl;
-  img.style.display = '';
+  // Each pair: [photo img id, dino svg id]
+  const pairs = [
+    ['mascot-av-img',   'mascot-dino-svg'],
+    ['sidebar-av-img',  'sidebar-dino-svg'],
+    ['topbar-av-img',   'topbar-dino-svg'],
+    ['settings-av-img', 'settings-dino-svg'],
+  ];
+  pairs.forEach(([imgId, svgId]) => {
+    const img = document.getElementById(imgId);
+    const svg = document.getElementById(svgId);
+    if (img) { img.src = dataUrl; img.style.display = 'block'; }
+    if (svg) svg.style.display = 'none';
+  });
 }
 
 function loadSavedAvatar() {
@@ -1646,10 +1631,6 @@ function hydrateLiveData() {
   const fn = <?= json_encode($_SESSION['full_name'] ?? $_SESSION['username'] ?? '') ?>;
   if (fn) {
     const parts = fn.trim().split(/\s+/);
-    const init  = ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase() || '?';
-    ['sidebar-avatar','topbar-avatar','settings-avatar'].forEach(id => {
-      const el = document.getElementById(id); if (el) el.textContent = init;
-    });
     const sn = document.getElementById('sidebar-name'); if (sn) sn.textContent = fn;
     st('welcome-name', fn.split(' ')[0]);
     st('settings-name', fn);
