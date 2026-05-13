@@ -438,7 +438,7 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
     </div>
     <div class="nav-item" onclick="navigate('posts',this)" id="nav-posts">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      <span id="nav-posts-lbl">Notes de cours</span>
+      <span id="nav-posts-lbl">Classes</span>
     </div>
     <div class="nav-item" onclick="navigate('quizzes',this)" id="nav-quiz">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -784,13 +784,13 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
   <!-- LESSON POSTS PAGE -->
   <div class="page" id="page-posts">
     <div style="margin-bottom:1.5rem;">
-      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="posts-page-title">Notes de cours</h2>
+      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="posts-page-title">Classes</h2>
       <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="posts-page-sub">Publiez vos résumés et liens après chaque session Zoom</p>
     </div>
 
     <!-- Create form -->
     <div class="card" style="margin-bottom:1.5rem;">
-      <div class="card-title" id="posts-form-title">Nouvelle note de cours</div>
+      <div class="card-title" id="posts-form-title">Nouvelle note de classe</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
         <div class="form-group">
           <label id="posts-lbl-course">Classe</label>
@@ -934,11 +934,11 @@ let activePage = 'home';
 /* ── TRANSLATIONS ── */
 const T = {
   fr: {
-    topbarTitle: { home:'Tableau de bord Professeur', students:'Étudiants', courses:'Les cours / الدروس', assignments:'Devoirs', posts:'Notes de cours', quizzes:'Quiz', grades:'Notes & Résultats', settings:'Paramètres', attendance:'Présences' },
+    topbarTitle: { home:'Tableau de bord Professeur', students:'Étudiants', courses:'Les cours / الدروس', assignments:'Devoirs', posts:'Classes', quizzes:'Quiz', grades:'Notes & Résultats', settings:'Paramètres', attendance:'Présences' },
     navMain:'Principal', navAccount:'Compte',
-    navHome:'Tableau de bord', navStudents:'Les cours / الدروس', navAssign:'Devoirs', navPosts:'Notes de cours', navQuiz:'Quiz', navGrades:'Notes & Résultats', navSet:'Paramètres',
-    postsPageTitle:'Notes de cours', postsPageSub:'Publiez vos résumés et liens après chaque session Zoom',
-    postsFormTitle:'Nouvelle note de cours',
+    navHome:'Tableau de bord', navStudents:'Les cours / الدروس', navAssign:'Devoirs', navPosts:'Classes', navQuiz:'Quiz', navGrades:'Notes & Résultats', navSet:'Paramètres',
+    postsPageTitle:'Classes', postsPageSub:'Publiez vos résumés et liens après chaque session Zoom',
+    postsFormTitle:'Nouvelle note de classe',
     postsLblCourse:'Classe', postsLblTitle:'Titre de la séance', postsLblDate:'Date de la séance',
     postsLblLink:'Lien (tableau blanc, slides…)', postsLblNotes:'Notes / Résumé (optionnel)',
     postsSubmitBtn:'Publier la note', postsEmptyTitle:'Aucune note publiée',
@@ -987,11 +987,11 @@ const T = {
     attSavingLbl:'Enregistrement…', toastAttError:'Erreur lors de la sauvegarde. Réessayez.',
   },
   ar: {
-    topbarTitle: { home:'لوحة تحكم الأستاذ', students:'الطلاب', courses:'الدروس / Les cours', assignments:'الواجبات', posts:'ملاحظات الدروس', quizzes:'الاختبارات', grades:'النتائج والدرجات', settings:'الإعدادات', attendance:'الحضور والغياب' },
+    topbarTitle: { home:'لوحة تحكم الأستاذ', students:'الطلاب', courses:'الدروس / Les cours', assignments:'الواجبات', posts:'الحصص', quizzes:'الاختبارات', grades:'النتائج والدرجات', settings:'الإعدادات', attendance:'الحضور والغياب' },
     navMain:'الرئيسية', navAccount:'الحساب',
-    navHome:'لوحة التحكم', navStudents:'الدروس / Les cours', navAssign:'الواجبات', navPosts:'ملاحظات الدروس', navQuiz:'الاختبارات', navGrades:'النتائج', navSet:'الإعدادات',
-    postsPageTitle:'ملاحظات الدروس', postsPageSub:'انشر ملخصاتك وروابطك بعد كل حصة Zoom',
-    postsFormTitle:'ملاحظة درس جديدة',
+    navHome:'لوحة التحكم', navStudents:'الدروس / Les cours', navAssign:'الواجبات', navPosts:'الحصص', navQuiz:'الاختبارات', navGrades:'النتائج', navSet:'الإعدادات',
+    postsPageTitle:'الحصص', postsPageSub:'انشر ملخصاتك وروابطك بعد كل حصة Zoom',
+    postsFormTitle:'ملاحظة حصة جديدة',
     postsLblCourse:'الفصل', postsLblTitle:'عنوان الحصة', postsLblDate:'تاريخ الحصة',
     postsLblLink:'الرابط (سبورة، شرائح…)', postsLblNotes:'الملاحظات / الملخص (اختياري)',
     postsSubmitBtn:'نشر الملاحظة', postsEmptyTitle:'لم تُنشر أي ملاحظة بعد',
