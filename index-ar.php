@@ -210,8 +210,8 @@ $t = [
     </div>
     <div class="photos-grid">
       <div class="photo-item tall">
-        <img src="assets/img/2.png" alt="طلاب في درس أونلاين" loading="lazy">
-        <span class="photo-item-caption">جلسات مباشرة</span>
+        <img src="assets/img/5.png" alt="مجموعات صغيرة" loading="lazy">
+        <span class="photo-item-caption">مجموعات صغيرة</span>
       </div>
       <div class="photo-item">
         <img src="assets/img/3.png" alt="مجموعة طلاب" loading="lazy">
@@ -226,8 +226,8 @@ $t = [
         <span class="photo-item-caption">دراسة مركّزة</span>
       </div>
       <div class="photo-item">
-        <img src="assets/img/5.png" alt="مجموعات صغيرة" loading="lazy">
-        <span class="photo-item-caption">مجموعات صغيرة</span>
+        <img src="assets/img/2.png" alt="طلاب في درس أونلاين" loading="lazy">
+        <span class="photo-item-caption">جلسات مباشرة</span>
       </div>
     </div>
   </div>
