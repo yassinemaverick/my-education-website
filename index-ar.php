@@ -192,14 +192,14 @@ $t = [
     <a href="index-fr.php" class="nav-lang" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇫🇷 FR</a>
     <a href="index-ar.php" class="nav-lang" style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-weight:600;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇲🇦 عربي</a>
   </div>
-  <button class="hamburger" id="hamburger" aria-label="فتح القائمة" onclick="toggleNav()">
+  <button class="hamburger" id="hamburger" aria-label="فتح القائمة">
     <span></span><span></span><span></span>
   </button>
   <div class="nav-links" id="nav-links">
-    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com/index2-ar.php" class="nav-cta" onclick="closeNav()">← بوابة الطلاب</a>
-    <a href="#enroll" onclick="closeNav()">التسجيل</a>
-    <a href="#how" onclick="closeNav()">كيف يعمل</a>
-    <a href="#courses" onclick="closeNav()">الدورات</a>
+    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com/index2-ar.php" class="nav-cta">← بوابة الطلاب</a>
+    <a href="#enroll">التسجيل</a>
+    <a href="#how">كيف يعمل</a>
+    <a href="#courses">الدورات</a>
     <div style="border-top:1px solid var(--border);padding-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end;">
       <a href="index.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇬🇧 EN</a>
       <a href="index-fr.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇫🇷 FR</a>
@@ -571,18 +571,30 @@ async function sendContact() {
   }
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeContact(); closeNav(); } });
-function toggleNav() {
-  const nav = document.getElementById('nav-links');
-  const btn = document.getElementById('hamburger');
-  const bd  = document.getElementById('nav-backdrop');
-  nav.classList.toggle('open');
-  btn.classList.toggle('open');
-  bd.classList.toggle('open');
-}
+document.addEventListener('DOMContentLoaded', function() {
+  var hamburger = document.getElementById('hamburger');
+  var navLinks  = document.getElementById('nav-links');
+  var backdrop  = document.getElementById('nav-backdrop');
+  if (hamburger) {
+    hamburger.addEventListener('click', function() {
+      var isOpen = navLinks.style.display === 'flex';
+      navLinks.style.display   = isOpen ? 'none' : 'flex';
+      navLinks.style.transform = isOpen ? 'translateX(-100%)' : 'translateX(0)';
+      backdrop.style.display   = isOpen ? 'none' : 'block';
+    });
+  }
+  if (backdrop) {
+    backdrop.addEventListener('click', function() { closeNav(); });
+  }
+  document.querySelectorAll('#nav-links a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function() { closeNav(); });
+  });
+});
 function closeNav() {
-  document.getElementById('nav-links').classList.remove('open');
-  document.getElementById('hamburger').classList.remove('open');
-  document.getElementById('nav-backdrop').classList.remove('open');
+  var navLinks  = document.getElementById('nav-links');
+  var backdrop  = document.getElementById('nav-backdrop');
+  if (navLinks) { navLinks.style.display = 'none'; navLinks.style.transform = 'translateX(-100%)'; }
+  if (backdrop) { backdrop.style.display = 'none'; }
 }
 </script>
 
