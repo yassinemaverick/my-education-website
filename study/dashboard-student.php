@@ -580,6 +580,20 @@ body.ar .notif-panel { right:auto; left:1rem; }
 .notif-empty { padding:2rem; text-align:center; color:var(--muted); font-size:.85rem; }
 .notif-badge { position:absolute; top:3px; right:3px; min-width:16px; height:16px; background:var(--red); color:#fff; font-size:.58rem; font-weight:700; border-radius:100px; display:flex; align-items:center; justify-content:center; font-family:var(--font); padding:0 3px; border:2px solid var(--navy); }
 
+/* PROFILE MENU */
+.profile-menu { position:fixed; top:64px; right:1rem; width:210px; background:#fff; border:1px solid var(--border); border-radius:14px; box-shadow:0 8px 32px rgba(30,27,75,.16); z-index:9001; overflow:hidden; display:none; animation:fadeIn .15s ease; }
+body.ar .profile-menu { right:auto; left:1rem; }
+.profile-menu.open { display:block; }
+.profile-menu-item { display:flex; align-items:center; gap:.75rem; padding:.78rem 1.1rem; font-family:var(--font); font-size:.85rem; font-weight:500; color:var(--white); cursor:pointer; transition:background .15s; border:none; background:none; width:100%; text-align:left; }
+body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-family:var(--font-ar); }
+.profile-menu-item:hover { background:rgba(30,27,75,.05); }
+.profile-menu-item svg { flex-shrink:0; color:var(--muted); }
+.profile-menu-item:hover svg { color:var(--white); }
+.profile-menu-sep { border:none; border-top:1px solid var(--border); margin:0; }
+.profile-menu-item.danger { color:var(--red); }
+.profile-menu-item.danger svg { color:var(--red); opacity:.7; }
+.profile-menu-item.danger:hover { background:rgba(239,68,68,.06); }
+
 /* COMING SOON */
 .coming-soon { text-align:center; padding:5rem 2rem; }
 .coming-soon .cs-emoji { font-size:3.5rem; margin-bottom:1rem; }
@@ -686,7 +700,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-badge" id="notif-badge" style="display:none;"></span>
       </div>
-      <div class="avatar" id="topbar-avatar" style="cursor:default;"><?= str_replace(['%ID%','%IMGID%'], ['topbar-dino-svg','topbar-av-img'], $dinoAvatarSvg) ?></div>
+      <div class="avatar" id="topbar-avatar" style="cursor:pointer;" onclick="toggleProfileMenu(event)" title="Mon profil"><?= str_replace(['%ID%','%IMGID%'], ['topbar-dino-svg','topbar-av-img'], $dinoAvatarSvg) ?></div>
     </div>
   </div>
 
@@ -1816,6 +1830,23 @@ async function retractSubmission(aid) {
   </div>
 </div>
 
+<!-- PROFILE MENU DROPDOWN -->
+<div class="profile-menu" id="profile-menu" onclick="event.stopPropagation()">
+  <button class="profile-menu-item" onclick="profileMenuAction('name')">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span id="pm-name-lbl">Changer le prénom</span>
+  </button>
+  <button class="profile-menu-item" onclick="profileMenuAction('avatar')">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    <span id="pm-avatar-lbl">Changer l'avatar</span>
+  </button>
+  <hr class="profile-menu-sep">
+  <button class="profile-menu-item danger" onclick="profileMenuAction('logout')">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    <span id="pm-logout-lbl">Déconnexion</span>
+  </button>
+</div>
+
 <!-- ── EMAIL COLLECTION POPUP ── -->
 <div id="email-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:8000;pointer-events:none;align-items:center;justify-content:center;padding:1rem;">
   <div style="background:#162436;border:1px solid rgba(62,207,120,.25);border-radius:20px;padding:2rem;width:100%;max-width:440px;position:relative;animation:slideUp .3s ease;">
@@ -1985,13 +2016,60 @@ function toggleNotifPanel() {
   panel.classList.toggle('open', notifOpen);
 }
 
-// Close panel when clicking outside
+// Close panels when clicking outside
+let profileMenuOpen = false;
 document.addEventListener('click', function(e) {
   if (notifOpen && !document.getElementById('notif-btn').contains(e.target)) {
     notifOpen = false;
     document.getElementById('notif-panel').classList.remove('open');
   }
+  if (profileMenuOpen && !document.getElementById('topbar-avatar').contains(e.target)) {
+    profileMenuOpen = false;
+    document.getElementById('profile-menu').classList.remove('open');
+  }
 });
+
+function toggleProfileMenu(e) {
+  e.stopPropagation();
+  profileMenuOpen = !profileMenuOpen;
+  document.getElementById('profile-menu').classList.toggle('open', profileMenuOpen);
+  // Close notif panel if open
+  if (profileMenuOpen && notifOpen) {
+    notifOpen = false;
+    document.getElementById('notif-panel').classList.remove('open');
+  }
+  applyProfileMenuTranslations();
+}
+
+function applyProfileMenuTranslations() {
+  const PM = {
+    fr: { name:"Changer le prénom", avatar:"Changer l'avatar", logout:"Déconnexion" },
+    ar: { name:"تغيير الاسم",       avatar:"تغيير الصورة",      logout:"تسجيل الخروج" },
+  };
+  const t = PM[currentLang] || PM.fr;
+  const s = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  s('pm-name-lbl',   t.name);
+  s('pm-avatar-lbl', t.avatar);
+  s('pm-logout-lbl', t.logout);
+}
+
+function profileMenuAction(action) {
+  profileMenuOpen = false;
+  document.getElementById('profile-menu').classList.remove('open');
+  if (action === 'name') {
+    // Go to settings and focus the name field
+    const settingsNav = document.getElementById('nav-set');
+    navigate('settings', settingsNav);
+    setTimeout(() => {
+      const inp = document.getElementById('pref-name');
+      if (inp) { inp.focus(); inp.select(); }
+    }, 120);
+  } else if (action === 'avatar') {
+    document.getElementById('avatar-input').click();
+  } else if (action === 'logout') {
+    logout();
+  }
+}
 
 function timeAgo(ageMin) {
   const t = NOTIF_T[currentLang] || NOTIF_T.fr;
