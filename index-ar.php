@@ -138,7 +138,23 @@ $t = [
   .text-center .section-sub { margin: 0 auto; }
   #toast { position: fixed; bottom: 2rem; left: 2rem; z-index: 999; background: #1a2f21; border: 1px solid var(--green); color: var(--white); font-family: var(--font); font-size: 0.85rem; padding: 0.8rem 1.2rem; border-radius: 12px; transform: translateY(100px); opacity: 0; transition: all 0.35s; max-width: 300px; direction: rtl; }
   #toast.show { transform: translateY(0); opacity: 1; }
-  @media (max-width: 600px) { nav { padding: 1rem 1.2rem; } .nav-links { display: none; } .form-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
+  .hamburger { display: none; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: 36px; height: 36px; border-radius: 9px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); cursor: pointer; z-index: 200; flex-shrink: 0; }
+  .hamburger span { display: block; width: 18px; height: 2px; background: var(--white); border-radius: 2px; transition: all 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .nav-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; }
+  .nav-backdrop.open { display: block; }
+  @media (max-width: 600px) {
+    nav { padding: 1rem 1.2rem; }
+    .hamburger { display: flex; }
+    .nav-links { display: none; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; width: 75vw; max-width: 280px; background: var(--navy-mid); border-right: 1px solid var(--border); padding: 5rem 2rem 2rem; gap: 1.5rem; z-index: 180; transform: translateX(-100%); transition: transform 0.3s ease; }
+    .nav-links.open { display: flex; transform: translateX(0); }
+    .nav-links a { font-size: 1rem; color: var(--white); text-align: right; }
+    .nav-cta { text-align: center; }
+    .form-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; }
+  }
   .hero { background-image: url('assets/img/2.png'); background-size: cover; background-position: center 30%; background-repeat: no-repeat; }
   .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(15,29,46,0.72) 0%, rgba(15,29,46,0.60) 50%, rgba(15,29,46,0.88) 100%); pointer-events: none; z-index: 0; }
   .hero > * { position: relative; z-index: 1; }
@@ -175,13 +191,17 @@ $t = [
     <a href="index-fr.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇫🇷 FR</a>
     <a href="index-ar.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-weight:600;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇲🇦 عربي</a>
   </div>
-  <div class="nav-links">
-    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com/index2-ar.php" class="nav-cta">← بوابة الطلاب</a>
-    <a href="#enroll">التسجيل</a>
-    <a href="#how">كيف يعمل</a>
-    <a href="#courses">الدورات</a>
+  <button class="hamburger" id="hamburger" aria-label="فتح القائمة" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="nav-links">
+    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com/index2-ar.php" class="nav-cta" onclick="closeNav()">← بوابة الطلاب</a>
+    <a href="#enroll" onclick="closeNav()">التسجيل</a>
+    <a href="#how" onclick="closeNav()">كيف يعمل</a>
+    <a href="#courses" onclick="closeNav()">الدورات</a>
   </div>
 </nav>
+<div class="nav-backdrop" id="nav-backdrop" onclick="closeNav()"></div>
 
 
 
@@ -544,7 +564,20 @@ async function sendContact() {
     btn.disabled = false; btn.textContent = 'إرسال الرسالة ←';
   }
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeContact(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeContact(); closeNav(); } });
+function toggleNav() {
+  const nav = document.getElementById('nav-links');
+  const btn = document.getElementById('hamburger');
+  const bd  = document.getElementById('nav-backdrop');
+  nav.classList.toggle('open');
+  btn.classList.toggle('open');
+  bd.classList.toggle('open');
+}
+function closeNav() {
+  document.getElementById('nav-links').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+  document.getElementById('nav-backdrop').classList.remove('open');
+}
 </script>
 
 </body>
