@@ -1449,9 +1449,6 @@ function submitNewQuiz() {
 function saveProfile() {
   const name = document.getElementById('pref-name').value.trim();
   if(!name) return;
-  const parts = name.split(' ');
-  const init = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
-  ['sidebar-avatar','topbar-avatar','settings-avatar'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = init; });
   document.getElementById('sidebar-name').textContent = name;
   document.getElementById('settings-name').textContent = name;
   applyTranslations();
@@ -1673,11 +1670,6 @@ async function loadLiveStudents() {
 function hydrateTeacherInfo() {
   const fn = <?= json_encode($_SESSION['full_name'] ?? $_SESSION['username'] ?? '') ?>;
   if (!fn) return;
-  const parts = fn.trim().split(/\s+/);
-  const init = ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase() || '?';
-  ['sidebar-avatar','topbar-avatar','settings-avatar'].forEach(id => {
-    const el = document.getElementById(id); if (el) el.textContent = init;
-  });
   const sn = document.getElementById('sidebar-name'); if (sn) sn.textContent = fn;
   const nm = document.getElementById('settings-name'); if (nm) nm.textContent = fn;
   const pi = document.getElementById('pref-name'); if (pi) pi.value = fn;
