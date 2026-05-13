@@ -147,6 +147,7 @@ $t = [
   .nav-backdrop.open { display: block; }
   @media (max-width: 600px) {
     nav { padding: 1rem 1.2rem; }
+    .nav-lang { display: none !important; }
     .hamburger { display: flex; }
     .nav-links { display: none; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; width: 75vw; max-width: 280px; background: var(--navy-mid); border-right: 1px solid var(--border); padding: 5rem 2rem 2rem; gap: 1.5rem; z-index: 180; transform: translateX(-100%); transition: transform 0.3s ease; }
     .nav-links.open { display: flex; transform: translateX(0); }
@@ -187,9 +188,9 @@ $t = [
       </svg>
       <span><em>Up</em>skill Education</span>
     </a>
-    <a href="index.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇬🇧 EN</a>
-    <a href="index-fr.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇫🇷 FR</a>
-    <a href="index-ar.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-weight:600;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇲🇦 عربي</a>
+    <a href="index.php" class="nav-lang" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇬🇧 EN</a>
+    <a href="index-fr.php" class="nav-lang" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇫🇷 FR</a>
+    <a href="index-ar.php" class="nav-lang" style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-weight:600;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇲🇦 عربي</a>
   </div>
   <button class="hamburger" id="hamburger" aria-label="فتح القائمة" onclick="toggleNav()">
     <span></span><span></span><span></span>
@@ -199,6 +200,11 @@ $t = [
     <a href="#enroll" onclick="closeNav()">التسجيل</a>
     <a href="#how" onclick="closeNav()">كيف يعمل</a>
     <a href="#courses" onclick="closeNav()">الدورات</a>
+    <div style="border-top:1px solid var(--border);padding-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap;justify-content:flex-end;">
+      <a href="index.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇬🇧 EN</a>
+      <a href="index-fr.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇫🇷 FR</a>
+      <a href="index-ar.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇲🇦 عربي</a>
+    </div>
   </div>
 </nav>
 <div class="nav-backdrop" id="nav-backdrop" onclick="closeNav()"></div>
