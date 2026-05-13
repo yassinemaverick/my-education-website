@@ -143,8 +143,8 @@ $t = [
   .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
   .hamburger.open span:nth-child(2) { opacity: 0; }
   .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-  .nav-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; }
-  .nav-backdrop.open { display: block; }
+  .nav-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; pointer-events: none; }
+  .nav-backdrop.open { display: block; pointer-events: auto; }
   @media (max-width: 600px) {
     nav { padding: 1rem 1.2rem; }
     .nav-lang { display: none !important; }
@@ -210,7 +210,7 @@ $t = [
     </div>
   </div>
 </nav>
-<div class="nav-backdrop" id="nav-backdrop" onclick="closeNav()"></div>
+<div class="nav-backdrop" id="nav-backdrop"></div>
 
 
 
