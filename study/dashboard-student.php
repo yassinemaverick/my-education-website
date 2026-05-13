@@ -571,12 +571,19 @@ body.ar .notif-panel { right:auto; left:1rem; }
     <div class="grid-2">
       <div>
         <!-- Current Course -->
-        <div class="card" style="margin-bottom:1.5rem;background:linear-gradient(135deg,rgba(62,207,120,.12),rgba(62,207,120,.04));border-color:rgba(62,207,120,.3);">
+        <div class="card" id="course-card" style="margin-bottom:1.5rem;background:linear-gradient(135deg,rgba(62,207,120,.12),rgba(62,207,120,.04));border-color:rgba(62,207,120,.3);">
+          <div id="course-assigned-content">
           <div style="display:inline-block;background:rgba(62,207,120,.15);color:var(--green);font-family:var(--font);font-size:.72rem;font-weight:600;padding:.25rem .7rem;border-radius:100px;margin-bottom:.8rem;" id="course-tag">Cours actuel</div>
           <div style="font-family:var(--font);font-size:1.2rem;font-weight:700;margin-bottom:.4rem;" id="course-name">Anglais Général – Session 2</div>
           <div style="color:var(--muted);font-size:.83rem;margin-bottom:1.2rem;display:flex;gap:1rem;">
             <span>👨‍🏫 <span id="teacher-name-label">Prof. Hassan</span></span>
             <span>📅 <span id="schedule-label">Lun–Mer–Ven</span></span>
+          </div>
+          </div>
+          <div id="course-empty-state" style="display:none;text-align:center;padding:1.5rem 0;">
+            <div style="font-size:2rem;margin-bottom:.75rem;">📚</div>
+            <div style="font-family:var(--font);font-weight:600;margin-bottom:.4rem;" id="course-empty-title">Aucun cours assigné</div>
+            <div style="color:var(--muted);font-size:.83rem;" id="course-empty-sub">Votre classe n'a pas encore été configurée. L'administrateur vous assignera un cours bientôt.</div>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted);margin-bottom:.4rem;">
             <span id="progress-lbl">Progression</span><strong style="font-family:var(--font);color:var(--green);">68%</strong>
@@ -1253,7 +1260,12 @@ function hydrateLiveData() {
   }
 
   // ── 5. Course name & teacher on progress page ────────────────────────────
+  const courseAssigned = document.getElementById('course-assigned-content');
+  const courseEmpty    = document.getElementById('course-empty-state');
   if (c) {
+    if (courseAssigned) courseAssigned.style.display = '';
+    if (courseEmpty)    courseEmpty.style.display    = 'none';
+
     const courseName = lang === 'ar'
       ? (c.group_name_ar || c.group_name_fr)
       : (c.group_name_fr || c.group_name_ar);
@@ -1281,6 +1293,17 @@ function hydrateLiveData() {
 
     const sr = document.getElementById('settings-role');
     if (sr) sr.textContent = (lang === 'ar' ? 'طالب · ' : 'Étudiant · ') + courseName;
+  } else {
+    if (courseAssigned) courseAssigned.style.display = 'none';
+    if (courseEmpty)    courseEmpty.style.display    = '';
+    const emptyTitle = document.getElementById('course-empty-title');
+    const emptySub   = document.getElementById('course-empty-sub');
+    if (emptyTitle) emptyTitle.textContent = lang === 'ar'
+      ? 'لم يتم تعيين دورة بعد'
+      : 'Aucun cours assigné';
+    if (emptySub) emptySub.textContent = lang === 'ar'
+      ? 'لم يتم إعداد فصلك بعد. سيقوم المشرف بتعيين دورة لك قريباً.'
+      : 'Votre classe n\'a pas encore été configurée. L\'administrateur vous assignera un cours bientôt.';
   }
 
   // ── 6. Assignment page subtitle ──────────────────────────────────────────
