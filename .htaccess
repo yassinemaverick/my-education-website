@@ -1,0 +1,56 @@
+# ── Block sensitive files from being served publicly ────────────────────────
+<FilesMatch "^(\.env|\.env\.example|\.gitignore)$">
+    Require all denied
+</FilesMatch>
+
+# ── Security headers ──────────────────────────────────────────────────────────
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
+    # Cache static assets 1 year, PHP pages never
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|ico|woff2?)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# ── Force HTTPS ───────────────────────────────────────────────────────────────
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# ── Prevent directory listing ─────────────────────────────────────────────────
+Options -Indexes
+DirectoryIndex index.php
+
+# ── Canonical clean URLs for language pages ───────────────────────────────────
+RewriteCond %{THE_REQUEST} \ /index-en\.php [NC]
+RewriteRule ^ /en [R=301,L]
+
+RewriteCond %{THE_REQUEST} \ /index-fr\.php [NC]
+RewriteRule ^ /fr [R=301,L]
+
+RewriteCond %{THE_REQUEST} \ /index-ar\.php [NC]
+RewriteRule ^ /ar [R=301,L]
+
+# ── Redirect other .php URLs to clean versions ────────────────────────────────
+RewriteCond %{THE_REQUEST} \ /([^/]+)\.php [NC]
+RewriteCond %1 !^index(-en|-fr|-ar)?$ [NC]
+RewriteCond %1 !^enroll$ [NC]
+RewriteCond %1 !^contact$ [NC]
+RewriteRule ^ /%1 [NC,R=301,L]
+
+# ── Serve .php files for clean URLs ──────────────────────────────────────────
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+
+# ── Clean language URL routing ────────────────────────────────────────────────
+RewriteRule ^en$ /index-en.php [L]
+RewriteRule ^fr$ /index-fr.php [L]
+RewriteRule ^ar$ /index-ar.php [L]
