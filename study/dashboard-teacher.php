@@ -436,6 +436,10 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
       <span id="nav-assign-lbl">Devoirs</span>
       <span class="nav-badge" aria-hidden="true">8</span>
     </div>
+    <div class="nav-item" onclick="navigate('posts',this)" id="nav-posts">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span id="nav-posts-lbl">Notes de cours</span>
+    </div>
     <div class="nav-item" onclick="navigate('quizzes',this)" id="nav-quiz">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       <span id="nav-quiz-lbl">Quiz</span>
@@ -777,6 +781,50 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
   </div>
 </div>
 
+  <!-- LESSON POSTS PAGE -->
+  <div class="page" id="page-posts">
+    <div style="margin-bottom:1.5rem;">
+      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="posts-page-title">Notes de cours</h2>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="posts-page-sub">Publiez vos résumés et liens après chaque session Zoom</p>
+    </div>
+
+    <!-- Create form -->
+    <div class="card" style="margin-bottom:1.5rem;">
+      <div class="card-title" id="posts-form-title">Nouvelle note de cours</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div class="form-group">
+          <label id="posts-lbl-course">Classe</label>
+          <select id="post-course-select" style="width:100%;padding:.75rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;cursor:pointer;">
+            <option value="">— Choisir la classe —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label id="posts-lbl-date">Date de la séance</label>
+          <input type="date" id="post-date" style="width:100%;padding:.75rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;">
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label id="posts-lbl-title">Titre de la séance</label>
+        <input type="text" id="post-title" placeholder="ex: Session 12 – Passé composé" style="width:100%;padding:.75rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;">
+      </div>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label id="posts-lbl-link">Lien (tableau blanc, slides…)</label>
+        <input type="url" id="post-link" placeholder="https://..." style="width:100%;padding:.75rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;">
+      </div>
+      <div class="form-group" style="margin-bottom:1.25rem;">
+        <label id="posts-lbl-notes">Notes / Résumé (optionnel)</label>
+        <textarea id="post-notes" rows="4" placeholder="Points clés de la séance, rappels, vocabulaire…" style="width:100%;padding:.75rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;resize:vertical;"></textarea>
+      </div>
+      <div id="post-form-error" style="display:none;color:var(--red);font-size:.82rem;margin-bottom:.75rem;"></div>
+      <button class="btn-primary" onclick="submitPost()" id="post-submit-btn">
+        <span id="post-submit-lbl">Publier la note</span>
+      </button>
+    </div>
+
+    <!-- Posts list -->
+    <div id="posts-list"></div>
+  </div>
+
   <!-- ATTENDANCE PAGE -->
   <div class="page" id="page-attendance">
     <div class="att-toolbar">
@@ -886,9 +934,16 @@ let activePage = 'home';
 /* ── TRANSLATIONS ── */
 const T = {
   fr: {
-    topbarTitle: { home:'Tableau de bord Professeur', students:'Étudiants', courses:'Les cours / الدروس', assignments:'Devoirs', quizzes:'Quiz', grades:'Notes & Résultats', settings:'Paramètres', attendance:'Présences' },
+    topbarTitle: { home:'Tableau de bord Professeur', students:'Étudiants', courses:'Les cours / الدروس', assignments:'Devoirs', posts:'Notes de cours', quizzes:'Quiz', grades:'Notes & Résultats', settings:'Paramètres', attendance:'Présences' },
     navMain:'Principal', navAccount:'Compte',
-    navHome:'Tableau de bord', navStudents:'Les cours / الدروس', navAssign:'Devoirs', navQuiz:'Quiz', navGrades:'Notes & Résultats', navSet:'Paramètres',
+    navHome:'Tableau de bord', navStudents:'Les cours / الدروس', navAssign:'Devoirs', navPosts:'Notes de cours', navQuiz:'Quiz', navGrades:'Notes & Résultats', navSet:'Paramètres',
+    postsPageTitle:'Notes de cours', postsPageSub:'Publiez vos résumés et liens après chaque session Zoom',
+    postsFormTitle:'Nouvelle note de cours',
+    postsLblCourse:'Classe', postsLblTitle:'Titre de la séance', postsLblDate:'Date de la séance',
+    postsLblLink:'Lien (tableau blanc, slides…)', postsLblNotes:'Notes / Résumé (optionnel)',
+    postsSubmitBtn:'Publier la note', postsEmptyTitle:'Aucune note publiée',
+    postsEmptyTxt:'Publiez votre premier résumé de cours ci-dessus.',
+    postsDeleteConfirm:'Supprimer cette note ?', toastPostPublished:'Note publiée !', toastPostDeleted:'Note supprimée.',
     teacherChip:'Prof', roleLabel:'Professeur', logout:'Déconnexion',
     welcomeMsg:'Bonjour, ', welcomeSub:"8 devoirs à corriger · 3 étudiants en difficulté · Moyenne de classe : 74%",
     stat1:'Étudiants actifs', stat2:'Devoirs à corriger', stat3:'Moyenne de la classe', stat4:'Quiz actifs',
@@ -932,9 +987,16 @@ const T = {
     attSavingLbl:'Enregistrement…', toastAttError:'Erreur lors de la sauvegarde. Réessayez.',
   },
   ar: {
-    topbarTitle: { home:'لوحة تحكم الأستاذ', students:'الطلاب', courses:'الدروس / Les cours', assignments:'الواجبات', quizzes:'الاختبارات', grades:'النتائج والدرجات', settings:'الإعدادات', attendance:'الحضور والغياب' },
+    topbarTitle: { home:'لوحة تحكم الأستاذ', students:'الطلاب', courses:'الدروس / Les cours', assignments:'الواجبات', posts:'ملاحظات الدروس', quizzes:'الاختبارات', grades:'النتائج والدرجات', settings:'الإعدادات', attendance:'الحضور والغياب' },
     navMain:'الرئيسية', navAccount:'الحساب',
-    navHome:'لوحة التحكم', navStudents:'الدروس / Les cours', navAssign:'الواجبات', navQuiz:'الاختبارات', navGrades:'النتائج', navSet:'الإعدادات',
+    navHome:'لوحة التحكم', navStudents:'الدروس / Les cours', navAssign:'الواجبات', navPosts:'ملاحظات الدروس', navQuiz:'الاختبارات', navGrades:'النتائج', navSet:'الإعدادات',
+    postsPageTitle:'ملاحظات الدروس', postsPageSub:'انشر ملخصاتك وروابطك بعد كل حصة Zoom',
+    postsFormTitle:'ملاحظة درس جديدة',
+    postsLblCourse:'الفصل', postsLblTitle:'عنوان الحصة', postsLblDate:'تاريخ الحصة',
+    postsLblLink:'الرابط (سبورة، شرائح…)', postsLblNotes:'الملاحظات / الملخص (اختياري)',
+    postsSubmitBtn:'نشر الملاحظة', postsEmptyTitle:'لم تُنشر أي ملاحظة بعد',
+    postsEmptyTxt:'انشر أول ملخص لدرسك أعلاه.',
+    postsDeleteConfirm:'حذف هذه الملاحظة؟', toastPostPublished:'تم نشر الملاحظة!', toastPostDeleted:'تم حذف الملاحظة.',
     teacherChip:'أستاذ', roleLabel:'أستاذ', logout:'تسجيل الخروج',
     welcomeMsg:'مرحباً، ', welcomeSub:'8 واجبات للتصحيح · 3 طلاب يحتاجون دعماً · معدل الفصل: 74%',
     stat1:'الطلاب النشطون', stat2:'واجبات للتصحيح', stat3:'معدل الفصل', stat4:'اختبارات نشطة',
@@ -1004,7 +1066,7 @@ function applyTranslations() {
   set('teacher-chip-lbl', tr.teacherChip);
   set('nav-main-label', tr.navMain); set('nav-account-label', tr.navAccount);
   set('nav-home-lbl', tr.navHome); set('nav-students-lbl', tr.navStudents);
-  set('nav-assign-lbl', tr.navAssign); set('nav-quiz-lbl', tr.navQuiz);
+  set('nav-assign-lbl', tr.navAssign); set('nav-posts-lbl', tr.navPosts); set('nav-quiz-lbl', tr.navQuiz);
   set('nav-grades-lbl', tr.navGrades); set('nav-set-lbl', tr.navSet);
   set('role-label', tr.roleLabel); set('logout-lbl', tr.logout);
   set('btn-new-assign', tr.btnNewAssign); set('btn-new-assign2', '');
@@ -1038,6 +1100,13 @@ function applyTranslations() {
   set('modal-cancel', tr.modalCancel); set('modal-submit', tr.modalSubmit);
   set('modal-quiz-title', tr.modalQuizTitle); set('qmlbl-title', tr.qmlblTitle); set('qmlbl-qs', tr.qmlblQs); set('qmlbl-time', tr.qmlblTime);
   set('quiz-modal-cancel', tr.quizCancel); set('quiz-modal-submit', tr.quizSubmit);
+  // Posts page
+  set('posts-page-title', tr.postsPageTitle); set('posts-page-sub', tr.postsPageSub);
+  set('posts-form-title', tr.postsFormTitle);
+  set('posts-lbl-course', tr.postsLblCourse); set('posts-lbl-title', tr.postsLblTitle);
+  set('posts-lbl-date', tr.postsLblDate); set('posts-lbl-link', tr.postsLblLink);
+  set('posts-lbl-notes', tr.postsLblNotes); set('post-submit-lbl', tr.postsSubmitBtn);
+  populatePostCourseSelect();
   // Attendance
   set('nav-attendance-lbl', tr.navAttendance);
   set('att-page-title', tr.attPageTitle); set('att-page-sub', tr.attPageSub);
@@ -1059,6 +1128,7 @@ function navigate(page, el) {
   activePage = page;
   document.getElementById('topbar-title').textContent = T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home;
   if (page === 'courses') renderCourses();
+  if (page === 'posts')   loadPosts();
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-backdrop').classList.remove('open');
@@ -1640,6 +1710,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const savedLang = sessionStorage.getItem('upskill_lang') || 'fr';
   // Load everything in parallel
   await Promise.all([initAttData(), loadLiveStudents(), loadTeacherCourses(), loadAssignments()]);
+  const postDateEl = document.getElementById('post-date');
+  if (postDateEl) postDateEl.value = new Date().toISOString().slice(0, 10);
   setLang(savedLang);
   renderAttention(); renderAssignments(); renderQuizzes(); renderGrades();
   renderAttendance(); renderCourses();
@@ -1887,6 +1959,128 @@ function loadSavedAvatar() {
     if (!dataUrl) return;
     applyAvatarEverywhere(dataUrl);
   } catch(e) {}
+}
+
+/* ── LESSON POSTS ── */
+async function loadPosts() {
+  if (TEACHER_COURSES.length === 0) await loadTeacherCourses();
+  populatePostCourseSelect();
+  const list = document.getElementById('posts-list');
+  list.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">Chargement…</p>';
+  try {
+    const res  = await fetch('api_lesson_posts.php?action=list');
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    renderPostsList(data.posts);
+  } catch(e) {
+    list.innerHTML = '<p style="color:var(--red);font-size:.85rem;">Erreur : ' + e.message + '</p>';
+  }
+}
+
+function populatePostCourseSelect() {
+  const sel = document.getElementById('post-course-select');
+  if (!sel) return;
+  const lang = currentLang;
+  sel.innerHTML = TEACHER_COURSES.length === 0
+    ? `<option value="">${lang === 'ar' ? '— لا توجد فصول —' : '— Aucune classe assignée —'}</option>`
+    : `<option value="">${lang === 'ar' ? '— اختر الفصل —' : '— Choisir la classe —'}</option>`
+      + TEACHER_COURSES.map(c => {
+          const name = lang === 'ar' ? (c.group_name_ar || c.group_name_fr) : (c.group_name_fr || c.group_name_ar);
+          return `<option value="${c.id}">${name}</option>`;
+        }).join('');
+}
+
+function renderPostsList(posts) {
+  const list = document.getElementById('posts-list');
+  if (!posts || posts.length === 0) {
+    const t = T[currentLang];
+    list.innerHTML = `<div class="card" style="text-align:center;padding:3rem;">
+      <div style="font-size:2.5rem;margin-bottom:.75rem;">📝</div>
+      <div style="font-family:var(--font);font-weight:600;margin-bottom:.4rem;" id="posts-empty-title">${t.postsEmptyTitle}</div>
+      <p style="color:var(--muted);font-size:.85rem;" id="posts-empty-txt">${t.postsEmptyTxt}</p>
+    </div>`;
+    return;
+  }
+  list.innerHTML = posts.map(p => {
+    const lang = currentLang;
+    const courseName = lang === 'ar' ? (p.group_name_ar || p.group_name_fr) : (p.group_name_fr || p.group_name_ar);
+    const dateStr = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'ar' ? 'ar-MA' : 'fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
+    const linkBtn = p.link ? `<a href="${escHtml(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--blue);text-decoration:none;font-weight:500;margin-top:.5rem;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Ouvrir le lien</a>` : '';
+    const notesHtml = p.notes ? `<p style="color:var(--muted);font-size:.85rem;margin-top:.6rem;white-space:pre-wrap;line-height:1.6;">${escHtml(p.notes)}</p>` : '';
+    return `<div class="card" style="margin-bottom:1rem;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.5rem;">
+            <span style="font-size:.72rem;font-weight:700;background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3);padding:.15rem .55rem;border-radius:100px;font-family:var(--font);">${escHtml(courseName)}</span>
+            <span style="font-size:.78rem;color:var(--muted);">📅 ${dateStr}</span>
+          </div>
+          <div style="font-family:var(--font);font-weight:600;font-size:.95rem;">${escHtml(p.title)}</div>
+          ${linkBtn}${notesHtml}
+        </div>
+        <button onclick="deletePost(${p.id})" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function submitPost() {
+  const courseId = document.getElementById('post-course-select').value;
+  const title    = document.getElementById('post-title').value.trim();
+  const date     = document.getElementById('post-date').value;
+  const link     = document.getElementById('post-link').value.trim();
+  const notes    = document.getElementById('post-notes').value.trim();
+  const errEl    = document.getElementById('post-form-error');
+  const btnLbl   = document.getElementById('post-submit-lbl');
+  errEl.style.display = 'none';
+
+  if (!courseId || !title || !date) {
+    errEl.textContent = currentLang === 'ar' ? 'يرجى ملء الحقول المطلوبة' : 'Veuillez remplir les champs requis.';
+    errEl.style.display = '';
+    return;
+  }
+  btnLbl.textContent = '…';
+  document.getElementById('post-submit-btn').disabled = true;
+  try {
+    const res  = await fetch('api_lesson_posts.php', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
+      body:    JSON.stringify({ action: 'create', course_id: parseInt(courseId), title, session_date: date, link: link || null, notes: notes || null })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    document.getElementById('post-title').value = '';
+    document.getElementById('post-link').value  = '';
+    document.getElementById('post-notes').value = '';
+    showToast(T[currentLang].toastPostPublished);
+    loadPosts();
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.style.display = '';
+  } finally {
+    btnLbl.textContent = T[currentLang].postsSubmitBtn;
+    document.getElementById('post-submit-btn').disabled = false;
+  }
+}
+
+async function deletePost(id) {
+  if (!confirm(T[currentLang].postsDeleteConfirm)) return;
+  try {
+    const res  = await fetch('api_lesson_posts.php', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
+      body:    JSON.stringify({ action: 'delete', id })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    showToast(T[currentLang].toastPostDeleted);
+    loadPosts();
+  } catch(e) { showToast('Erreur : ' + e.message); }
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 /* ── PROFILE DROPDOWN ── */

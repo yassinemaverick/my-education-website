@@ -659,6 +659,10 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
       <span id="nav-assign-lbl">Devoirs</span>
       <span class="nav-badge" id="assign-nav-badge" style="display:none;"></span>
     </div>
+    <div class="nav-item" onclick="navigate('feed',this)" id="nav-feed">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      <span id="nav-feed-lbl">Notes de cours</span>
+    </div>
     <div class="nav-item" onclick="navigate('whiteboard',this)" id="nav-wb">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
       <span id="nav-wb-lbl">Tableau blanc</span>
@@ -855,6 +859,15 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
     <div id="quiz-list" class="grid-3"></div>
   </div>
 
+  <!-- LESSON FEED PAGE -->
+  <div class="page" id="page-feed">
+    <div style="margin-bottom:1.5rem;">
+      <h2 style="font-family:var(--font);font-size:1.6rem;font-weight:800;letter-spacing:-.03em;" id="feed-title">Notes de cours</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin-top:.3rem;" id="feed-sub">Les résumés publiés par votre professeur après chaque session</p>
+    </div>
+    <div id="feed-list"><p style="color:var(--muted);font-size:.85rem;">Chargement…</p></div>
+  </div>
+
   <!-- WHITEBOARD PAGE -->
   <div class="page" id="page-whiteboard">
     <div class="coming-soon">
@@ -1032,8 +1045,11 @@ let activePage = 'home';
 /* ── TRANSLATIONS ── */
 const T = {
   fr: {
-    topbarTitle: { home:'Tableau de bord', myclass:'Ma classe', assignments:'Devoirs', whiteboard:'Tableau blanc', quizzes:'Challenge', progress:'Progression', howto:'How-to', settings:'Paramètres' },
-    navHome:'Dashboard', navMyclass:'Ma classe', navAssign:'Devoirs', navWb:'Tableau blanc', navQuiz:'Challenge', navHowto:'How-to', navSet:'Paramètres',
+    topbarTitle: { home:'Tableau de bord', myclass:'Ma classe', assignments:'Devoirs', feed:'Notes de cours', whiteboard:'Tableau blanc', quizzes:'Challenge', progress:'Progression', howto:'How-to', settings:'Paramètres' },
+    navHome:'Dashboard', navMyclass:'Ma classe', navAssign:'Devoirs', navFeed:'Notes de cours', navWb:'Tableau blanc', navQuiz:'Challenge', navHowto:'How-to', navSet:'Paramètres',
+    feedTitle:'Notes de cours', feedSub:'Les résumés publiés par votre professeur après chaque session',
+    feedEmptyTitle:'Aucune note publiée pour l\'instant', feedEmptyTxt:'Votre professeur publiera ses résumés et liens ici après chaque cours Zoom.',
+    feedOpenLink:'Ouvrir le lien',
     roleLabel:'Étudiant(e)', logout:'Déconnexion',
     welcomeSub:'Votre tableau de bord d\'apprentissage',
     starsTitle:'Étudiants du mois', starsMonth:'Ce mois-ci', starsEmpty:'Pas encore de classement ce mois-ci.',
@@ -1070,8 +1086,11 @@ const T = {
     dueLbl:'Échéance :', subjectLbl:'Matière :',
   },
   ar: {
-    topbarTitle: { home:'لوحة التحكم', myclass:'صفي', assignments:'الواجبات', whiteboard:'السبورة', quizzes:'تحدي', progress:'التقدم', howto:'المساعدة', settings:'الإعدادات' },
-    navHome:'الرئيسية', navMyclass:'صفي', navAssign:'الواجبات', navWb:'السبورة', navQuiz:'تحدي', navHowto:'المساعدة', navSet:'الإعدادات',
+    topbarTitle: { home:'لوحة التحكم', myclass:'صفي', assignments:'الواجبات', feed:'ملاحظات الدروس', whiteboard:'السبورة', quizzes:'تحدي', progress:'التقدم', howto:'المساعدة', settings:'الإعدادات' },
+    navHome:'الرئيسية', navMyclass:'صفي', navAssign:'الواجبات', navFeed:'ملاحظات الدروس', navWb:'السبورة', navQuiz:'تحدي', navHowto:'المساعدة', navSet:'الإعدادات',
+    feedTitle:'ملاحظات الدروس', feedSub:'ملخصات أستاذك بعد كل حصة Zoom',
+    feedEmptyTitle:'لا توجد ملاحظات منشورة بعد', feedEmptyTxt:'سينشر أستاذك ملخصاته وروابطه هنا بعد كل حصة Zoom.',
+    feedOpenLink:'فتح الرابط',
     roleLabel:'طالب/ة', logout:'تسجيل الخروج',
     welcomeSub:'لوحة تحكم التعلم الخاصة بك',
     starsTitle:'طلاب الشهر', starsMonth:'هذا الشهر', starsEmpty:'لا يوجد تصنيف هذا الشهر بعد.',
@@ -1140,12 +1159,15 @@ function applyTranslations() {
   st('nav-home-lbl', tr.navHome);
   st('nav-myclass-lbl', tr.navMyclass);
   st('nav-assign-lbl', tr.navAssign);
+  st('nav-feed-lbl', tr.navFeed);
   st('nav-wb-lbl', tr.navWb);
   st('nav-quiz-lbl', tr.navQuiz);
   st('nav-howto-lbl', tr.navHowto);
   st('nav-set-lbl', tr.navSet);
   st('role-label', tr.roleLabel);
   st('logout-lbl', tr.logout);
+  // Feed page
+  st('feed-title', tr.feedTitle); st('feed-sub', tr.feedSub);
   // Home page
   st('welcome-sub', tr.welcomeSub);
   st('stars-title', tr.starsTitle);
@@ -1229,6 +1251,7 @@ function navigate(page, el) {
   if (page === 'assignments') renderAssignments();
   if (page === 'quizzes')     renderQuizzes();
   if (page === 'myclass')     renderMyClass();
+  if (page === 'feed')        loadFeed();
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-backdrop').classList.remove('open');
@@ -1539,6 +1562,52 @@ async function saveProfile() {
     btnText.textContent = T[currentLang].saveBtn;
     document.getElementById('save-btn').disabled = false;
   }
+}
+
+/* ── LESSON FEED ── */
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadFeed() {
+  const list = document.getElementById('feed-list');
+  list.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">Chargement…</p>';
+  try {
+    const res  = await fetch('api_lesson_posts.php?action=feed');
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    renderFeed(data.posts);
+  } catch(e) {
+    list.innerHTML = '<p style="color:var(--red);font-size:.85rem;">Erreur : ' + e.message + '</p>';
+  }
+}
+
+function renderFeed(posts) {
+  const list = document.getElementById('feed-list');
+  const tr   = T[currentLang];
+  if (!posts || posts.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:3rem 1rem;">
+      <div style="font-size:2.5rem;margin-bottom:.75rem;">📖</div>
+      <div style="font-family:var(--font);font-weight:700;font-size:1.05rem;margin-bottom:.4rem;">${tr.feedEmptyTitle}</div>
+      <p style="color:var(--muted);font-size:.88rem;max-width:340px;margin:0 auto;">${tr.feedEmptyTxt}</p>
+    </div>`;
+    return;
+  }
+  list.innerHTML = posts.map(p => {
+    const lang       = currentLang;
+    const courseName = lang === 'ar' ? (p.group_name_ar || p.group_name_fr) : (p.group_name_fr || p.group_name_ar);
+    const dateStr    = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'ar' ? 'ar-MA' : 'fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
+    const linkBtn    = p.link ? `<a href="${escHtml(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.45rem;margin-top:.75rem;padding:.5rem 1rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:8px;font-size:.82rem;font-weight:600;color:var(--blue);text-decoration:none;font-family:var(--font);transition:background .2s;" onmouseover="this.style.background='rgba(59,130,246,.18)'" onmouseout="this.style.background='rgba(59,130,246,.1)'"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${escHtml(tr.feedOpenLink)}</a>` : '';
+    const notesHtml  = p.notes ? `<div style="margin-top:.75rem;padding:.85rem 1rem;background:rgba(30,27,75,.04);border-radius:10px;border-left:3px solid rgba(59,130,246,.4);"><p style="color:var(--muted);font-size:.87rem;white-space:pre-wrap;line-height:1.7;margin:0;">${escHtml(p.notes)}</p></div>` : '';
+    return `<div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(30,27,75,.05);">
+      <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem;">
+        <span style="font-size:.72rem;font-weight:700;background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.3);padding:.15rem .6rem;border-radius:100px;font-family:var(--font);">${escHtml(courseName)}</span>
+        <span style="font-size:.78rem;color:var(--muted);">📅 ${dateStr}</span>
+      </div>
+      <div style="font-family:var(--font);font-weight:700;font-size:1rem;color:var(--white);">${escHtml(p.title)}</div>
+      ${linkBtn}${notesHtml}
+    </div>`;
+  }).join('');
 }
 
 function handleAvatarUpload(input) {
