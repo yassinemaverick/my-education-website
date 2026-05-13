@@ -558,6 +558,28 @@ body.ar .notif-panel { right:auto; left:1rem; }
 .coming-soon h3 { font-family:var(--font); font-size:1.3rem; font-weight:700; color:var(--white); margin-bottom:.5rem; }
 .coming-soon p { color:var(--muted); font-size:.9rem; max-width:400px; margin:0 auto; line-height:1.6; }
 
+/* HOW-TO GRID */
+.howto-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1.25rem; }
+.howto-card { background:var(--navy-card); border:1px solid var(--border); border-radius:18px; overflow:hidden; transition:all .2s; box-shadow:0 2px 10px rgba(30,27,75,.07); }
+.howto-card:hover { border-color:rgba(59,130,246,.3); transform:translateY(-3px); box-shadow:0 10px 28px rgba(30,27,75,.12); }
+.howto-thumb { position:relative; background:linear-gradient(135deg,var(--from),var(--to)); aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+.howto-play { width:52px; height:52px; background:rgba(255,255,255,.25); backdrop-filter:blur(4px); border-radius:50%; display:flex; align-items:center; justify-content:center; transition:transform .2s,background .2s; }
+.howto-card:hover .howto-play { background:rgba(255,255,255,.38); transform:scale(1.1); }
+.howto-play svg { margin-left:4px; }
+.howto-thumb-icon { position:absolute; top:10px; right:12px; font-size:1.6rem; opacity:.6; }
+.howto-body { padding:1.1rem 1.2rem 1.3rem; }
+.howto-card-title { font-family:var(--font); font-size:.97rem; font-weight:700; color:var(--white); margin-bottom:.35rem; }
+body.ar .howto-card-title { font-family:var(--font-ar); text-align:right; }
+.howto-card-desc { font-size:.82rem; color:var(--muted); line-height:1.55; margin-bottom:1rem; }
+body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
+.howto-card-btn { display:inline-flex; align-items:center; gap:.4rem; font-size:.8rem; font-family:var(--font); font-weight:600; color:var(--blue); background:rgba(59,130,246,.08); border:1px solid rgba(59,130,246,.2); padding:.38rem .9rem; border-radius:8px; cursor:pointer; transition:all .2s; }
+.howto-card-btn:hover { background:rgba(59,130,246,.16); }
+
+/* AVATAR UPLOAD */
+.settings-av-wrap { position:relative; }
+.av-upload-btn { position:absolute; bottom:-3px; right:-3px; width:24px; height:24px; background:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#fff; border:2px solid var(--navy); transition:background .2s; }
+.av-upload-btn:hover { background:#2563eb; }
+
 </style>
 </head>
 <body id="body">
@@ -603,9 +625,13 @@ body.ar .notif-panel { right:auto; left:1rem; }
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
       <span id="nav-quiz-lbl">Challenge</span>
     </div>
-    <div class="nav-item" onclick="navigate('settings',this)" id="nav-set">
+    <div class="nav-item" onclick="navigate('howto',this)" id="nav-howto">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      <span id="nav-set-lbl">How-to</span>
+      <span id="nav-howto-lbl">How-to</span>
+    </div>
+    <div class="nav-item" onclick="navigate('settings',this)" id="nav-set">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span id="nav-set-lbl">Paramètres</span>
     </div>
   </nav>
   <div class="sidebar-bottom">
@@ -640,7 +666,63 @@ body.ar .notif-panel { right:auto; left:1rem; }
   <div class="page active" id="page-home">
     <!-- Hero welcome -->
     <div class="hero-section">
-      <div class="mascot-wrap" aria-hidden="true">🦕</div>
+      <div class="mascot-wrap" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 120" width="72" height="78">
+          <!-- Red cape -->
+          <path d="M32 56 Q8 76 14 100 Q30 88 42 68 Q46 86 42 102 Q60 90 56 70" fill="#dc2626"/>
+          <path d="M32 56 Q22 72 30 88 Q38 78 42 68" fill="#ef4444" opacity="0.55"/>
+          <!-- Cape yellow trim -->
+          <path d="M32 56 Q26 68 30 76" stroke="#fbbf24" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- Body -->
+          <ellipse cx="60" cy="74" rx="22" ry="21" fill="#4ade80"/>
+          <!-- Neck -->
+          <rect x="52" y="50" width="14" height="18" rx="5" fill="#4ade80"/>
+          <!-- Head -->
+          <ellipse cx="59" cy="40" rx="20" ry="17" fill="#4ade80"/>
+          <!-- Snout -->
+          <ellipse cx="59" cy="51" rx="13" ry="8" fill="#86efac"/>
+          <!-- Mouth line -->
+          <path d="M48 51 Q59 61 70 51" fill="none" stroke="#16a34a" stroke-width="1.5"/>
+          <!-- Teeth -->
+          <rect x="52" y="51" width="4" height="5" rx="1.5" fill="white"/>
+          <rect x="58" y="51" width="4" height="5" rx="1.5" fill="white"/>
+          <rect x="64" y="51" width="4" height="5" rx="1.5" fill="white"/>
+          <!-- Left eye -->
+          <circle cx="47" cy="35" r="7" fill="white"/>
+          <circle cx="48.5" cy="35" r="4.5" fill="#1e1b4b"/>
+          <circle cx="50" cy="33.5" r="1.5" fill="white"/>
+          <!-- Right eye -->
+          <circle cx="71" cy="35" r="7" fill="white"/>
+          <circle cx="72.5" cy="35" r="4.5" fill="#1e1b4b"/>
+          <circle cx="74" cy="33.5" r="1.5" fill="white"/>
+          <!-- Heroic eyebrows -->
+          <path d="M41 29 Q48 25 54 27" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M64 27 Q70 25 77 29" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <!-- Tiny arm -->
+          <path d="M39 72 Q27 68 29 76 Q32 82 40 79" fill="#4ade80"/>
+          <!-- Arm claws -->
+          <line x1="28" y1="77" x2="25" y2="82" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="31" y1="80" x2="29" y2="85" stroke="#22c55e" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Tail -->
+          <path d="M40 88 Q22 94 18 106 Q14 114 20 116" stroke="#4ade80" stroke-width="8" stroke-linecap="round" fill="none"/>
+          <!-- Legs -->
+          <rect x="47" y="93" width="11" height="16" rx="4" fill="#4ade80"/>
+          <rect x="62" y="93" width="11" height="16" rx="4" fill="#4ade80"/>
+          <!-- Feet -->
+          <ellipse cx="52" cy="109" rx="10" ry="4" fill="#22c55e"/>
+          <ellipse cx="67" cy="109" rx="10" ry="4" fill="#22c55e"/>
+          <!-- Toe claws -->
+          <line x1="45" y1="111" x2="42" y2="116" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="51" y1="113" x2="50" y2="117" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="57" y1="111" x2="59" y2="115" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="60" y1="111" x2="57" y2="116" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="66" y1="113" x2="65" y2="117" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="72" y1="111" x2="74" y2="115" stroke="#16a34a" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Superman chest shield -->
+          <polygon points="59,61 51,68 53,82 59,80 65,82 67,68" fill="#dc2626"/>
+          <text x="59" y="76" text-anchor="middle" font-size="12" font-weight="900" fill="#fbbf24" font-family="Georgia,serif">S</text>
+        </svg>
+      </div>
       <h1 class="hero-hello"><span id="welcome-name"><?= htmlspecialchars(explode(' ', $full_name)[0]) ?></span> !</h1>
       <p class="hero-sub" id="welcome-sub">Votre tableau de bord d'apprentissage</p>
     </div>
@@ -739,6 +821,17 @@ body.ar .notif-panel { right:auto; left:1rem; }
     </div>
   </div>
 
+  <!-- HOW-TO PAGE -->
+  <div class="page" id="page-howto">
+    <div style="margin-bottom:1.75rem;">
+      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;color:var(--white);" id="howto-title">Comment utiliser la plateforme ?</h2>
+      <p style="color:var(--muted);font-size:.88rem;margin-top:.3rem;" id="howto-sub">Regardez ces courtes vidéos pour découvrir chaque fonctionnalité.</p>
+    </div>
+    <div class="howto-grid" id="howto-grid">
+      <!-- Cards injected by renderHowTo() -->
+    </div>
+  </div>
+
   <!-- PROGRESS PAGE -->
   <div class="page" id="page-progress">
     <div style="margin-bottom:1.5rem;">
@@ -791,18 +884,36 @@ body.ar .notif-panel { right:auto; left:1rem; }
     <div class="grid-2">
       <div class="card">
         <div class="card-title" id="profile-title">Profil</div>
-        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-          <div class="avatar" style="width:56px;height:56px;font-size:1.2rem;" id="settings-avatar"><?php $parts=explode(" ",trim($full_name));echo strtoupper(substr($parts[0],0,1).substr($parts[1]??$parts[0],0,1)); ?></div>
+
+        <!-- Avatar upload row -->
+        <div style="display:flex;align-items:center;gap:1.2rem;margin-bottom:1.75rem;">
+          <div style="position:relative;flex-shrink:0;">
+            <div class="settings-av-wrap" id="settings-av-wrap">
+              <div class="avatar" style="width:64px;height:64px;font-size:1.3rem;" id="settings-avatar"><?php $parts=explode(" ",trim($full_name));echo strtoupper(substr($parts[0],0,1).substr($parts[1]??$parts[0],0,1)); ?></div>
+              <img id="settings-av-img" src="" alt="" style="display:none;width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid rgba(245,158,11,.4);">
+            </div>
+            <label for="avatar-input" class="av-upload-btn" title="Changer la photo">
+              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </label>
+            <input type="file" id="avatar-input" accept="image/*" style="display:none;" onchange="handleAvatarUpload(this)">
+          </div>
           <div>
-            <div style="font-family:var(--font);font-weight:600;" id="settings-name"><?= $full_name ?></div>
-            <div style="color:var(--muted);font-size:.83rem;" id="settings-role">Étudiante · Anglais Général S2</div>
+            <div style="font-family:var(--font);font-weight:600;font-size:.95rem;color:var(--white);" id="settings-name"><?= $full_name ?></div>
+            <div style="color:var(--muted);font-size:.82rem;margin-top:.2rem;" id="settings-role">Étudiante · Anglais Général S2</div>
+            <label for="avatar-input" style="display:inline-block;margin-top:.5rem;font-size:.75rem;color:var(--blue);cursor:pointer;font-family:var(--font);font-weight:500;" id="lbl-change-photo">Changer la photo</label>
           </div>
         </div>
-        <div class="form-group" style="margin-bottom:1rem;">
+
+        <div class="form-group" style="margin-bottom:1.1rem;">
           <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-fullname">Nom complet</label>
-          <input type="text" id="pref-name" style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;" value="<?= htmlspecialchars($full_name) ?>">
+          <input type="text" id="pref-name" style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"
+            value="<?= htmlspecialchars($full_name) ?>">
         </div>
-        <button class="btn-primary" onclick="saveProfile()" id="save-btn">Enregistrer</button>
+        <div id="save-profile-error" style="display:none;color:var(--red);font-size:.82rem;margin-bottom:.6rem;"></div>
+        <button class="btn-primary" onclick="saveProfile()" id="save-btn">
+          <span id="save-btn-text">Enregistrer</span>
+        </button>
       </div>
       <div class="card">
         <div class="card-title" id="pref-title">Préférences</div>
@@ -878,8 +989,8 @@ let activePage = 'home';
 /* ── TRANSLATIONS ── */
 const T = {
   fr: {
-    topbarTitle: { home:'Tableau de bord', myclass:'Ma classe', assignments:'Devoirs', whiteboard:'Tableau blanc', quizzes:'Challenge', progress:'Progression', settings:'How-to' },
-    navHome:'Dashboard', navMyclass:'Ma classe', navAssign:'Devoirs', navWb:'Tableau blanc', navQuiz:'Challenge', navSet:'How-to',
+    topbarTitle: { home:'Tableau de bord', myclass:'Ma classe', assignments:'Devoirs', whiteboard:'Tableau blanc', quizzes:'Challenge', progress:'Progression', howto:'How-to', settings:'Paramètres' },
+    navHome:'Dashboard', navMyclass:'Ma classe', navAssign:'Devoirs', navWb:'Tableau blanc', navQuiz:'Challenge', navHowto:'How-to', navSet:'Paramètres',
     roleLabel:'Étudiant(e)', logout:'Déconnexion',
     welcomeSub:'Votre tableau de bord d\'apprentissage',
     starsTitle:'Étudiants du mois', starsMonth:'Ce mois-ci', starsEmpty:'Pas encore de classement ce mois-ci.',
@@ -899,7 +1010,16 @@ const T = {
     overallTitle:'Progression globale', doneLbl:'fait', hrsOf:'/ 29 hrs', courseSession:'Anglais Général · Session 2', onTrack:'En bonne voie 🎯',
     scoresTitle:'Scores des quiz', qGram:'Grammaire de base', qVoc:'Vocabulaire Unité 2', qList:'Compréhension orale',
     modulesTitle:'Progression par module', m1:'Module 1 – Introduction', m2:'Module 2 – Grammaire', m3:'Module 3 – Vocabulaire', m4:'Module 4 – Expression orale', m5:'Module 5 – Compréhension',
-    settingsTitle:'Paramètres', profileTitle:'Profil', settingsRole:'Étudiante · Anglais Général S2', lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l\'Arabe.',
+    howtoTitle:'Comment utiliser la plateforme ?', howtoSub:'Regardez ces courtes vidéos pour découvrir chaque fonctionnalité.',
+    howtoCards:[
+      { icon:'🏠', from:'#3b82f6', to:'#7c3aed', title:'Tableau de bord', desc:'Découvrez le leaderboard, les étudiants du mois et la vue d\'accueil.', btn:'Voir la vidéo' },
+      { icon:'📋', from:'#10b981', to:'#059669', title:'Vos devoirs', desc:'Comment consulter, soumettre et suivre l\'état de vos devoirs.', btn:'Voir la vidéo' },
+      { icon:'👥', from:'#f59e0b', to:'#f97316', title:'Ma classe', desc:'Voir votre cours, votre taux de présence et vos camarades.', btn:'Voir la vidéo' },
+      { icon:'🏆', from:'#8b5cf6', to:'#6d28d9', title:'Challenge', desc:'Testez vos connaissances avec les quiz chronométrés.', btn:'Voir la vidéo' },
+      { icon:'🖼️', from:'#ec4899', to:'#db2777', title:'Tableau blanc', desc:'Retrouvez ici les notes et captures de cours publiées par votre prof.', btn:'Voir la vidéo' },
+      { icon:'⚙️', from:'#64748b', to:'#475569', title:'Paramètres', desc:'Changez votre nom, ajoutez une photo de profil et choisissez la langue.', btn:'Voir la vidéo' },
+    ],
+    settingsTitle:'Paramètres', profileTitle:'Profil', lblChangePhoto:'Changer la photo', settingsRole:'Étudiante · Anglais Général S2', lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l\'Arabe.',
     badgePending:'En attente', badgeSubmitted:'Soumis', badgeOverdue:'En retard',
     startQuiz:'Commencer le quiz', retakeQuiz:'Refaire', doneLabel:'Complété',
     toastSaved:'Profil mis à jour !',
@@ -907,8 +1027,8 @@ const T = {
     dueLbl:'Échéance :', subjectLbl:'Matière :',
   },
   ar: {
-    topbarTitle: { home:'لوحة التحكم', myclass:'صفي', assignments:'الواجبات', whiteboard:'السبورة', quizzes:'تحدي', progress:'التقدم', settings:'المساعدة' },
-    navHome:'الرئيسية', navMyclass:'صفي', navAssign:'الواجبات', navWb:'السبورة', navQuiz:'تحدي', navSet:'المساعدة',
+    topbarTitle: { home:'لوحة التحكم', myclass:'صفي', assignments:'الواجبات', whiteboard:'السبورة', quizzes:'تحدي', progress:'التقدم', howto:'المساعدة', settings:'الإعدادات' },
+    navHome:'الرئيسية', navMyclass:'صفي', navAssign:'الواجبات', navWb:'السبورة', navQuiz:'تحدي', navHowto:'المساعدة', navSet:'الإعدادات',
     roleLabel:'طالب/ة', logout:'تسجيل الخروج',
     welcomeSub:'لوحة تحكم التعلم الخاصة بك',
     starsTitle:'طلاب الشهر', starsMonth:'هذا الشهر', starsEmpty:'لا يوجد تصنيف هذا الشهر بعد.',
@@ -928,7 +1048,16 @@ const T = {
     overallTitle:'التقدم الإجمالي', doneLbl:'منجز', hrsOf:'/ 29 ساعة', courseSession:'الإنجليزية العامة · جلسة 2', onTrack:'على المسار الصحيح 🎯',
     scoresTitle:'نتائج الاختبارات', qGram:'القواعد الأساسية', qVoc:'المفردات الوحدة 2', qList:'الفهم الشفهي',
     modulesTitle:'التقدم حسب الوحدة', m1:'الوحدة 1 – مقدمة', m2:'الوحدة 2 – القواعد', m3:'الوحدة 3 – المفردات', m4:'الوحدة 4 – التعبير الشفهي', m5:'الوحدة 5 – الفهم',
-    settingsTitle:'الإعدادات', profileTitle:'الملف الشخصي', settingsRole:'طالبة · الإنجليزية العامة ج2', lblFullname:'الاسم الكامل', saveBtn:'حفظ', prefTitle:'التفضيلات', prefTxt:'استخدم محدد اللغة في الشريط الجانبي للتبديل بين الفرنسية والعربية.',
+    howtoTitle:'كيف تستخدم المنصة؟', howtoSub:'شاهد هذه الفيديوهات القصيرة لاكتشاف كل ميزة.',
+    howtoCards:[
+      { icon:'🏠', from:'#3b82f6', to:'#7c3aed', title:'لوحة التحكم', desc:'اكتشف لوحة المتصدرين ونجوم الشهر وصفحة الرئيسية.', btn:'شاهد الفيديو' },
+      { icon:'📋', from:'#10b981', to:'#059669', title:'الواجبات', desc:'كيف تطلع على الواجبات وتُسلّمها وتتابع حالتها.', btn:'شاهد الفيديو' },
+      { icon:'👥', from:'#f59e0b', to:'#f97316', title:'صفي', desc:'اطلع على دورتك ونسبة حضورك وزملائك.', btn:'شاهد الفيديو' },
+      { icon:'🏆', from:'#8b5cf6', to:'#6d28d9', title:'التحدي', desc:'اختبر معلوماتك باختبارات موقوتة.', btn:'شاهد الفيديو' },
+      { icon:'🖼️', from:'#ec4899', to:'#db2777', title:'السبورة', desc:'هنا تجد ملاحظات وصور الدروس التي ينشرها أستاذك.', btn:'شاهد الفيديو' },
+      { icon:'⚙️', from:'#64748b', to:'#475569', title:'الإعدادات', desc:'غيّر اسمك وأضف صورة شخصية واختر اللغة.', btn:'شاهد الفيديو' },
+    ],
+    settingsTitle:'الإعدادات', profileTitle:'الملف الشخصي', lblChangePhoto:'تغيير الصورة', settingsRole:'طالبة · الإنجليزية العامة ج2', lblFullname:'الاسم الكامل', saveBtn:'حفظ', prefTitle:'التفضيلات', prefTxt:'استخدم محدد اللغة في الشريط الجانبي للتبديل بين الفرنسية والعربية.',
     badgePending:'معلق', badgeSubmitted:'مُسلَّم', badgeOverdue:'متأخر',
     startQuiz:'ابدأ الاختبار', retakeQuiz:'أعد المحاولة', doneLabel:'مكتمل',
     toastSaved:'تم تحديث الملف الشخصي!',
@@ -970,6 +1099,7 @@ function applyTranslations() {
   st('nav-assign-lbl', tr.navAssign);
   st('nav-wb-lbl', tr.navWb);
   st('nav-quiz-lbl', tr.navQuiz);
+  st('nav-howto-lbl', tr.navHowto);
   st('nav-set-lbl', tr.navSet);
   st('role-label', tr.roleLabel);
   st('logout-lbl', tr.logout);
@@ -1026,13 +1156,19 @@ function applyTranslations() {
   document.getElementById('m3').textContent = tr.m3;
   document.getElementById('m4').textContent = tr.m4;
   document.getElementById('m5').textContent = tr.m5;
-  document.getElementById('settings-title').textContent = tr.settingsTitle;
-  document.getElementById('profile-title').textContent = tr.profileTitle;
-  document.getElementById('settings-role').textContent = tr.settingsRole;
-  document.getElementById('lbl-fullname').textContent = tr.lblFullname;
-  document.getElementById('save-btn').textContent = tr.saveBtn;
-  document.getElementById('pref-title').textContent = tr.prefTitle;
-  document.getElementById('pref-txt').textContent = tr.prefTxt;
+  // How-to page
+  st('howto-title', tr.howtoTitle);
+  st('howto-sub', tr.howtoSub);
+  renderHowTo();
+  // Settings page
+  st('settings-title', tr.settingsTitle);
+  st('profile-title', tr.profileTitle);
+  st('settings-role', tr.settingsRole);
+  st('lbl-fullname', tr.lblFullname);
+  st('save-btn-text', tr.saveBtn);
+  st('pref-title', tr.prefTitle);
+  st('pref-txt', tr.prefTxt);
+  st('lbl-change-photo', tr.lblChangePhoto);
   renderAssignments();
   renderQuizzes();
   renderStars();
@@ -1329,16 +1465,146 @@ function renderQuizzes() {
   `).join('');
 }
 
-function saveProfile() {
-  const name = document.getElementById('pref-name').value.trim();
+async function saveProfile() {
+  const name    = document.getElementById('pref-name').value.trim();
+  const errEl   = document.getElementById('save-profile-error');
+  const btnText = document.getElementById('save-btn-text');
   if (!name) return;
-  const parts = name.split(' ');
-  const init = (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
-  ['sidebar-avatar','topbar-avatar','settings-avatar'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = init; });
-  document.getElementById('sidebar-name').textContent = name;
-  document.getElementById('settings-name').textContent = name;
-  applyTranslations();
-  showToast(T[currentLang].toastSaved);
+  errEl.style.display = 'none';
+  btnText.textContent = '…';
+  document.getElementById('save-btn').disabled = true;
+
+  try {
+    const res = await fetch('api_update_profile.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrf },
+      body: JSON.stringify({ action: 'update_name', name })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Erreur serveur');
+
+    // Update all name displays
+    const parts = name.trim().split(/\s+/);
+    const init  = ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase() || '?';
+    // Only update initials in places that show initials (not where photo is shown)
+    ['sidebar-avatar','topbar-avatar','settings-avatar'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.tagName !== 'IMG' && el.style.display !== 'none') el.textContent = init;
+    });
+    const sn = document.getElementById('sidebar-name'); if (sn) sn.textContent = name;
+    const dn = document.getElementById('settings-name'); if (dn) dn.textContent = name;
+    st('welcome-name', parts[0]);
+    showToast(T[currentLang].toastSaved);
+  } catch(err) {
+    errEl.textContent = err.message;
+    errEl.style.display = '';
+  } finally {
+    btnText.textContent = T[currentLang].saveBtn;
+    document.getElementById('save-btn').disabled = false;
+  }
+}
+
+function handleAvatarUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) {
+    showToast(currentLang === 'ar' ? 'الصورة أكبر من 2 ميغا' : 'Image trop grande (max 2 Mo)');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    // Show in settings
+    const img = document.getElementById('settings-av-img');
+    const initDiv = document.getElementById('settings-avatar');
+    if (img)     { img.src = dataUrl; img.style.display = ''; }
+    if (initDiv) initDiv.style.display = 'none';
+    // Show in sidebar
+    applyAvatarToSidebar(dataUrl);
+    // Show in topbar
+    applyAvatarToTopbar(dataUrl);
+    // Persist in localStorage (cross-page, same device)
+    try { localStorage.setItem('upskill_avatar', dataUrl); } catch(e) {}
+    showToast(currentLang === 'ar' ? 'تم تحديث الصورة ✓' : 'Photo mise à jour ✓');
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyAvatarToSidebar(dataUrl) {
+  const wrap = document.getElementById('sidebar-user');
+  if (!wrap) return;
+  let img = document.getElementById('sidebar-av-img');
+  if (!img) {
+    img = document.createElement('img');
+    img.id = 'sidebar-av-img';
+    img.alt = '';
+    img.style.cssText = 'width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(245,158,11,.4);flex-shrink:0;';
+    const av = document.getElementById('sidebar-avatar');
+    if (av) { av.style.display = 'none'; wrap.insertBefore(img, av); }
+    else wrap.prepend(img);
+  }
+  img.src = dataUrl;
+  img.style.display = '';
+}
+
+function applyAvatarToTopbar(dataUrl) {
+  const topbar = document.querySelector('.topbar-actions');
+  if (!topbar) return;
+  let img = document.getElementById('topbar-av-img');
+  if (!img) {
+    img = document.createElement('img');
+    img.id = 'topbar-av-img';
+    img.alt = '';
+    img.style.cssText = 'width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid rgba(245,158,11,.4);';
+    const av = document.getElementById('topbar-avatar');
+    if (av) { av.style.display = 'none'; topbar.appendChild(img); }
+    else topbar.appendChild(img);
+  }
+  img.src = dataUrl;
+  img.style.display = '';
+}
+
+function loadSavedAvatar() {
+  try {
+    const dataUrl = localStorage.getItem('upskill_avatar');
+    if (!dataUrl) return;
+    applyAvatarToSidebar(dataUrl);
+    applyAvatarToTopbar(dataUrl);
+    // settings page
+    const img = document.getElementById('settings-av-img');
+    const initDiv = document.getElementById('settings-avatar');
+    if (img)     { img.src = dataUrl; img.style.display = ''; }
+    if (initDiv) initDiv.style.display = 'none';
+  } catch(e) {}
+}
+
+/* ── HOW-TO CARDS ── */
+function renderHowTo() {
+  const grid = document.getElementById('howto-grid');
+  if (!grid) return;
+  const cards = T[currentLang].howtoCards || [];
+  grid.innerHTML = cards.map((c, i) => `
+    <div class="howto-card">
+      <div class="howto-thumb" style="--from:${e(c.from)};--to:${e(c.to)};">
+        <div class="howto-play" onclick="playHowTo(${i})">
+          <svg width="22" height="22" fill="white" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div class="howto-thumb-icon">${c.icon}</div>
+      </div>
+      <div class="howto-body">
+        <div class="howto-card-title">${e(c.title)}</div>
+        <div class="howto-card-desc">${e(c.desc)}</div>
+        <button class="howto-card-btn" onclick="playHowTo(${i})">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          ${e(c.btn)}
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function playHowTo(idx) {
+  showToast(currentLang === 'ar' ? 'قريباً — ستُضاف الفيديوهات قريباً!' : 'Bientôt disponible — vidéos en cours de préparation !');
 }
 
 function showToast(msg) {
@@ -1362,6 +1628,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderLeaderboard();
   renderAssignments();
   renderQuizzes();
+  renderHowTo();
+  loadSavedAvatar();
 });
 
 /* ── LIVE DATA HYDRATION ── */
