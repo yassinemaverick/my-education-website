@@ -138,24 +138,7 @@ $t = [
   .text-center .section-sub { margin: 0 auto; }
   #toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 999; background: #1a2f21; border: 1px solid var(--green); color: var(--white); font-family: var(--font); font-size: 0.85rem; padding: 0.8rem 1.2rem; border-radius: 12px; transform: translateY(100px); opacity: 0; transition: all 0.35s; max-width: 300px; }
   #toast.show { transform: translateY(0); opacity: 1; }
-  .hamburger { display: none; flex-direction: column; justify-content: center; align-items: center; gap: 5px; width: 36px; height: 36px; border-radius: 9px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); cursor: pointer; z-index: 200; flex-shrink: 0; }
-  .hamburger span { display: block; width: 18px; height: 2px; background: var(--white); border-radius: 2px; transition: all 0.3s; }
-  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-  .hamburger.open span:nth-child(2) { opacity: 0; }
-  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-  .nav-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 150; pointer-events: none; }
-  .nav-backdrop.open { display: block; pointer-events: auto; }
-  @media (max-width: 600px) {
-    nav { padding: 1rem 1.2rem; }
-    .nav-lang { display: none !important; }
-    .hamburger { display: flex; }
-    .nav-links { display: none; flex-direction: column; position: fixed; top: 0; right: 0; height: 100vh; width: 75vw; max-width: 280px; background: var(--navy-mid); border-left: 1px solid var(--border); padding: 5rem 2rem 2rem; gap: 1.5rem; z-index: 180; transform: translateX(100%); transition: transform 0.3s ease; }
-    .nav-links.open { display: flex !important; transform: translateX(0); }
-    .nav-links a { font-size: 1rem; color: var(--white); }
-    .nav-cta { text-align: center; }
-    .form-grid { grid-template-columns: 1fr; }
-    footer { flex-direction: column; }
-  }
+  @media (max-width: 600px) { nav { padding: 1rem 1.2rem; } .nav-links { display: none; } .form-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
   .hero {
     background-image: url('assets/img/2.png');
     background-size: cover; background-position: center 30%; background-repeat: no-repeat;
@@ -182,7 +165,7 @@ $t = [
 
 <nav>
   <div style="display:flex;align-items:center;gap:0.75rem;">
-    <a href="index-en.php" class="nav-logo">
+    <a href="index.php" class="nav-logo">
       <svg viewBox="0 0 160 50" fill="none" xmlns="http://www.w3.org/2000/svg">
         <text x="36" y="36" font-family="Sora, sans-serif" font-size="28" font-weight="700" fill="white">pskill</text>
         <path d="M14 12 Q14 28 26 28 Q38 28 38 12" stroke="#3ecf78" stroke-width="3.5" fill="none" stroke-linecap="round"/>
@@ -191,26 +174,17 @@ $t = [
       </svg>
       <span><em>Up</em>skill Education</span>
     </a>
-    <a href="index-en.php" class="nav-lang" style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-weight:600;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">&#127468;&#127463; EN</a>
-    <a href="index-fr.php" class="nav-lang" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">&#127467;&#127479; FR</a>
-    <a href="index-ar.php" class="nav-lang" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">&#127474;&#127462; &#1593;&#1585;&#1576;&#1610;</a>
+    <a href="index-en.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-weight:600;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">&#127468;&#127463; EN</a>
+    <a href="index-fr.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">&#127467;&#127479; FR</a>
+    <a href="index-ar.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">&#127474;&#127462; &#1593;&#1585;&#1576;&#1610;</a>
   </div>
-  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="nav-links" id="nav-links">
+  <div class="nav-links">
     <a href="#courses">Courses</a>
     <a href="#how">How it works</a>
     <a href="#enroll">Enroll</a>
     <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com" class="nav-cta">Student Login &rarr;</a>
-    <div style="border-top:1px solid var(--border);padding-top:1rem;display:flex;gap:.5rem;flex-wrap:wrap;">
-      <a href="index-en.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇬🇧 EN</a>
-      <a href="index-fr.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇫🇷 FR</a>
-      <a href="index-ar.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇲🇦 عربي</a>
-    </div>
   </div>
 </nav>
-<div class="nav-backdrop" id="nav-backdrop"></div>
 
 <div class="hero" id="home">
   <div class="hero-badge"><span></span> Enrolling Now — 2026</div>
@@ -569,32 +543,7 @@ async function sendContact() {
     btn.disabled = false; btn.textContent = 'Send message →';
   }
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeContact(); closeNav(); } });
-document.addEventListener('DOMContentLoaded', function() {
-  var hamburger = document.getElementById('hamburger');
-  var navLinks  = document.getElementById('nav-links');
-  var backdrop  = document.getElementById('nav-backdrop');
-  if (hamburger) {
-    hamburger.addEventListener('click', function() {
-      var isOpen = navLinks.style.display === 'flex';
-      navLinks.style.display   = isOpen ? 'none' : 'flex';
-      navLinks.style.transform = isOpen ? 'translateX(100%)' : 'translateX(0)';
-      backdrop.style.display   = isOpen ? 'none' : 'block';
-    });
-  }
-  if (backdrop) {
-    backdrop.addEventListener('click', function() { closeNav(); });
-  }
-  document.querySelectorAll('#nav-links a[href^="#"]').forEach(function(a) {
-    a.addEventListener('click', function() { closeNav(); });
-  });
-});
-function closeNav() {
-  var navLinks  = document.getElementById('nav-links');
-  var backdrop  = document.getElementById('nav-backdrop');
-  if (navLinks) { navLinks.style.display = 'none'; navLinks.style.transform = 'translateX(100%)'; }
-  if (backdrop) { backdrop.style.display = 'none'; }
-}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeContact(); });
 </script>
 
 </body>
