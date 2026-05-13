@@ -43,8 +43,8 @@ $t = [
     --border: rgba(255,255,255,0.1); --card-bg: rgba(255,255,255,0.04);
     --font: 'Cairo', sans-serif; --font-body: 'Cairo', sans-serif;
   }
-  html { scroll-behavior: smooth; scroll-padding-top: 80px; }
-  body { background: var(--navy); color: var(--white); font-family: var(--font-body); min-height: 100vh; overflow-x: hidden; direction: rtl; }
+  html { scroll-behavior: smooth; scroll-padding-top: 80px; overflow-x: hidden; }
+  body { background: var(--navy); color: var(--white); font-family: var(--font-body); min-height: 100vh; direction: rtl; }
   nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1rem 3rem; background: rgba(15,29,46,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
   .nav-logo { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
   .nav-logo svg { height: 36px; }
@@ -546,18 +546,7 @@ async function sendContact() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeContact(); });
 
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', function(e) {
-      const id = this.getAttribute('href').slice(1);
-      if (!id) return;
-      const target = document.getElementById(id);
-      if (target) {
-        e.preventDefault();
-        const top = target.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: 'smooth' });
-      }
-    });
-  });
+
 </script>
 
 </body>
