@@ -160,6 +160,8 @@ try {
             foreach (['phone VARCHAR(50) DEFAULT NULL','course VARCHAR(200) DEFAULT NULL','message TEXT DEFAULT NULL'] as $col) {
                 try { $pdo->exec("ALTER TABLE enrollments ADD COLUMN $col"); } catch(Throwable $e){}
             }
+            // Migrate ENUM → VARCHAR if table was previously created by enroll.php
+            try { $pdo->exec("ALTER TABLE enrollments MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'new'"); } catch(Throwable $e){}
 
             $status = trim($_GET['status'] ?? 'all');
             $search = trim($_GET['search'] ?? '');

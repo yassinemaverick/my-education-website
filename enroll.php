@@ -126,7 +126,7 @@ try {
             phone      VARCHAR(30)   NOT NULL,
             course     VARCHAR(120)  NOT NULL,
             lang       VARCHAR(5)    NOT NULL DEFAULT 'en',
-            status     ENUM('new','contacted','enrolled','cancelled') NOT NULL DEFAULT 'new',
+            status     VARCHAR(20) NOT NULL DEFAULT 'new',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             INDEX idx_email (email),
             INDEX idx_status (status)

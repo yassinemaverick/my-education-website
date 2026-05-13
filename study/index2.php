@@ -303,7 +303,7 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
         <div class="checkbox-box"></div>
         <span>Remember me</span>
       </label>
-      <a href="mailto:Admin@upskill-edu.com?subject=Password Reset Request" class="forgot">Forgot password?</a>
+      <a href="forgot-password.php" class="forgot">Forgot password?</a>
     </div>
 
     <button class="btn-login" id="login-btn" type="submit">

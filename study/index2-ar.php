@@ -12,7 +12,7 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=VxMW5vBMbxZjLonxr9EwKe_f-WdkJ0QXf1J-jkp4VERdhXqC5JgBEdHQclv5_2sb8jg6d_a_LIeWY5aWnHN_gI70lOqf7yhg0tXQAUQ7KOjANZ73PWUwUPe7gOMf9HOI0DvrROxkTKv0DmqhrlsATg" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9zcnYxNzg3LWZpbGVzLmhzdGdyLmlvLzQzNDU0ZWI5MDgxMjZhNzMvYXBpL3Jhdy9wdWJsaWNfaHRtbC9zdHVkeS9pbmRleC5odG1sPw"/><style>
+<style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
     --navy: #0f1d2e;
@@ -305,7 +305,7 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
         <div class="checkbox-box"></div>
         <span>تذكّرني</span>
       </label>
-      <a href="mailto:Admin@upskill-edu.com?subject=طلب إعادة تعيين كلمة المرور" class="forgot">نسيت كلمة المرور؟</a>
+      <a href="forgot-password.php" class="forgot">نسيت كلمة المرور؟</a>
     </div>
 
     <button class="btn-login" id="login-btn" type="submit">
