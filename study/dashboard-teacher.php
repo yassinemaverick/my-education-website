@@ -1446,13 +1446,27 @@ function submitNewQuiz() {
   showToast(T[currentLang].toastQuizCreated);
 }
 
-function saveProfile() {
+async function saveProfile() {
   const name = document.getElementById('pref-name').value.trim();
-  if(!name) return;
-  document.getElementById('sidebar-name').textContent = name;
-  document.getElementById('settings-name').textContent = name;
-  applyTranslations();
-  showToast(T[currentLang].toastSaved);
+  const btn  = document.getElementById('save-btn');
+  if (!name) return;
+  if (btn) btn.disabled = true;
+  try {
+    const res  = await fetch('api_update_profile.php', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
+      body:    JSON.stringify({ action: 'update_name', name })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Erreur serveur');
+    document.getElementById('sidebar-name').textContent = name;
+    document.getElementById('settings-name').textContent = name;
+    showToast(T[currentLang].toastSaved);
+  } catch(e) {
+    showToast('Erreur : ' + e.message);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
 }
 
 function showToast(msg) {

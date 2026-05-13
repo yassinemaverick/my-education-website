@@ -4,7 +4,7 @@ session_start();
 
 header('Content-Type: application/json');
 
-if (empty($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+if (empty($_SESSION['user_id']) || !in_array($_SESSION['role'], ['student','teacher'])) {
     echo json_encode(['ok'=>false,'error'=>'Non autorisé']);
     exit;
 }
@@ -36,7 +36,7 @@ try {
             echo json_encode(['ok'=>false,'error'=>'Nom invalide']);
             exit;
         }
-        $pdo->prepare("UPDATE users SET full_name = ? WHERE id = ? AND role = 'student'")
+        $pdo->prepare("UPDATE users SET full_name = ? WHERE id = ?")
             ->execute([$name, $studentId]);
         // Keep session in sync
         $_SESSION['full_name'] = $name;
