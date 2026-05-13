@@ -213,8 +213,8 @@ $t = [
     </div>
     <div class="photos-grid">
       <div class="photo-item tall">
-        <img src="assets/img/2.png" alt="Étudiants en cours en ligne" loading="lazy">
-        <span class="photo-item-caption">Séances en direct</span>
+        <img src="assets/img/5.png" alt="Petit groupe en ligne" loading="lazy">
+        <span class="photo-item-caption">Petits groupes</span>
       </div>
       <div class="photo-item">
         <img src="assets/img/3.png" alt="Groupe d'étudiants" loading="lazy">
@@ -229,8 +229,8 @@ $t = [
         <span class="photo-item-caption">Étude ciblée</span>
       </div>
       <div class="photo-item">
-        <img src="assets/img/5.png" alt="Petit groupe en ligne" loading="lazy">
-        <span class="photo-item-caption">Petits groupes</span>
+        <img src="assets/img/2.png" alt="Étudiants en cours en ligne" loading="lazy">
+        <span class="photo-item-caption">Séances en direct</span>
       </div>
     </div>
   </div>
