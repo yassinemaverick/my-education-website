@@ -144,7 +144,7 @@ if ($action === 'list_groups') {
 // create_group
 if ($action === 'create_group') {
   if ($role !== 'admin') err('Accès refusé', 403);
-  $data   = json_decode(file_get_contents('php://input'), true) ?? [];
+  $data   = $body;
   $typeKey = trim($data['type_key'] ?? '');
   $level   = isset($data['level']) && $data['level'] !== '' && $data['level'] !== null ? (int)$data['level'] : null;
   $letter  = strtoupper(trim($data['group_letter'] ?? ''));
@@ -168,7 +168,7 @@ if ($action === 'create_group') {
 // delete_group
 if ($action === 'delete_group') {
   if ($role !== 'admin') err('Accès refusé', 403);
-  $data    = json_decode(file_get_contents('php://input'), true) ?? [];
+  $data    = $body;
   $groupId = (int)($data['group_id'] ?? 0);
   if (!$groupId) err('group_id manquant');
   $pdo->prepare("DELETE FROM class_groups WHERE id=?")->execute([$groupId]);
@@ -194,7 +194,7 @@ if ($action === 'list_members') {
 // add_member
 if ($action === 'add_member') {
   if ($role !== 'admin') err('Accès refusé', 403);
-  $data    = json_decode(file_get_contents('php://input'), true) ?? [];
+  $data    = $body;
   $groupId = (int)($data['group_id'] ?? 0);
   $uid     = (int)($data['user_id']  ?? 0);
   if (!$groupId || !$uid) err('Données manquantes');
@@ -211,7 +211,7 @@ if ($action === 'add_member') {
 // remove_member
 if ($action === 'remove_member') {
   if ($role !== 'admin') err('Accès refusé', 403);
-  $data    = json_decode(file_get_contents('php://input'), true) ?? [];
+  $data    = $body;
   $groupId = (int)($data['group_id'] ?? 0);
   $uid     = (int)($data['user_id']  ?? 0);
   if (!$groupId || !$uid) err('Données manquantes');
