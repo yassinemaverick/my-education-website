@@ -175,8 +175,9 @@ if ($action === 'delete_group') {
   jsonOut(['ok'=>true]);
 }
 
-// list_members: students and teachers in a group
+// list_members: students and teachers in a group (admin only)
 if ($action === 'list_members') {
+  if ($role !== 'admin') err('Accès refusé', 403);
   $groupId = (int)($_GET['group_id'] ?? 0);
   if (!$groupId) err('group_id manquant');
 
@@ -307,10 +308,17 @@ if ($action === 'my_group') {
   jsonOut(['ok'=>true, 'groups'=>$result]);
 }
 
-// group_classmates: all members of a specific group (for student dashboard)
+// group_classmates: all members of a specific group (for student dashboard — caller must belong to the group)
 if ($action === 'group_classmates') {
   $groupId = (int)($_GET['group_id'] ?? 0);
   if (!$groupId) err('group_id manquant');
+
+  // Students and teachers may only view groups they belong to
+  if ($role !== 'admin') {
+    $membership = $pdo->prepare("SELECT 1 FROM class_group_members WHERE group_id = ? AND user_id = ?");
+    $membership->execute([$groupId, $userId]);
+    if (!$membership->fetch()) err('Accès refusé', 403);
+  }
 
   $stmt = $pdo->prepare(
     "SELECT u.id, u.full_name AS name, u.username, u.role
@@ -355,11 +363,18 @@ if ($action === 'teacher_groups') {
   jsonOut(['ok'=>true, 'groups'=>$groups]);
 }
 
-// group_students: all students in a specific group (for teacher attendance)
+// group_students: all students in a specific group (for teacher attendance — teacher must be assigned to the group)
 if ($action === 'group_students') {
   $groupId = (int)($_GET['group_id'] ?? 0);
   if (!$groupId) err('group_id manquant');
   if ($role === 'student') err('Accès refusé', 403);
+
+  // Teachers may only query groups they are assigned to
+  if ($role === 'teacher') {
+    $membership = $pdo->prepare("SELECT 1 FROM class_group_members WHERE group_id = ? AND user_id = ?");
+    $membership->execute([$groupId, $userId]);
+    if (!$membership->fetch()) err('Accès refusé', 403);
+  }
 
   $stmt = $pdo->prepare(
     "SELECT u.id, u.full_name AS name, u.username

@@ -38,12 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$identifier, $identifier]);
         $user = $stmt->fetch();
 
-        if ($user) {
-            // Save/update the email they provided
-            if (empty($user['email'])) {
-                $pdo->prepare("UPDATE users SET email=? WHERE id=?")->execute([$email_in, $user['id']]);
-            }
-            $sendTo = $user['email'] ?: $email_in;
+        if ($user && !empty($user['email']) && strtolower($user['email']) === strtolower($email_in)) {
+            // Only proceed if the submitted email matches the one already on file
+            $sendTo = $user['email'];
 
             // Invalidate old tokens
             $pdo->prepare("UPDATE password_resets SET used=1 WHERE user_id=? AND used=0")->execute([$user['id']]);

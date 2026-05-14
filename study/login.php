@@ -26,7 +26,7 @@ if ($username === '' || $password === '') { $redirect('empty'); }
 if (mb_strlen($username) > 80 || mb_strlen($password) > 200) { $redirect('invalid'); }
 
 // Rate-limiting: 5 attempts per IP per 15 minutes
-$ip = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')[0]);
+$ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 try {
     $pdo->exec("CREATE TABLE IF NOT EXISTS login_attempts (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -54,6 +54,7 @@ if ($user['role'] !== $role) { $redirect('role'); }
 
 try { $pdo->prepare("DELETE FROM login_attempts WHERE ip=?")->execute([$ip]); } catch (PDOException $e) {}
 
+session_regenerate_id(true);
 $_SESSION['user_id']   = $user['id'];
 $_SESSION['username']  = $user['username'];
 $_SESSION['full_name'] = $user['full_name'];

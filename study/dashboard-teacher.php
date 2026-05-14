@@ -1195,9 +1195,9 @@ function renderAttention() {
   const atRisk = STUDENTS.filter(s => s.status !== 'good');
   list.innerHTML = atRisk.map(s => `
     <div style="display:flex;align-items:center;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border2);">
-      <div class="student-avatar-sm">${s.init}</div>
+      <div class="student-avatar-sm">${escHtml(s.init)}</div>
       <div style="flex:1">
-        <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${s.name}</div>
+        <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${escHtml(s.name)}</div>
         <div style="font-size:.75rem;color:var(--muted2);">${tr.thProgress}: ${s.progress}% · ${tr.thAvg}: ${s.avg}%</div>
       </div>
       <span class="badge ${s.status === 'low' ? 'low' : 'warn'}">${s.status === 'low' ? tr.statusLow : tr.statusWarn}</span>
@@ -1211,7 +1211,7 @@ function renderStudents() {
   const tr = T[currentLang];
   tbody.innerHTML = STUDENTS.map(s => `
     <tr>
-      <td><div style="display:flex;align-items:center;gap:.75rem;"><div class="student-avatar-sm">${s.init}</div><span>${s.name}</span></div></td>
+      <td><div style="display:flex;align-items:center;gap:.75rem;"><div class="student-avatar-sm">${escHtml(s.init)}</div><span>${escHtml(s.name)}</span></div></td>
       <td>
         <div style="display:flex;align-items:center;gap:.75rem;">
           <div class="progress-bar" style="flex:1;min-width:80px;"><div class="progress-fill" style="width:${s.progress}%;background:${s.progress>=75?'var(--green)':s.progress>=55?'var(--yellow)':'var(--red)'}"></div></div>
@@ -1414,7 +1414,7 @@ function renderGrades() {
   tbody.innerHTML = STUDENTS.map((s,i) => {
     const sc = scores[i]; const avg = Math.round(sc.reduce((a,b)=>a+b,0)/sc.length);
     return `<tr>
-      <td><div style="display:flex;align-items:center;gap:.75rem;"><div class="student-avatar-sm">${s.init}</div><span>${s.name}</span></div></td>
+      <td><div style="display:flex;align-items:center;gap:.75rem;"><div class="student-avatar-sm">${escHtml(s.init)}</div><span>${escHtml(s.name)}</span></div></td>
       ${sc.map(v => `<td style="font-family:var(--font);font-weight:600;color:${v>=75?'var(--green)':v>=55?'var(--yellow)':'var(--red)'}">${v}%</td>`).join('')}
       <td style="font-family:var(--font);font-weight:700;color:${avg>=75?'var(--green)':avg>=55?'var(--yellow)':'var(--red)'}">${avg}%</td>
     </tr>`;
@@ -1443,8 +1443,8 @@ function renderGrades() {
     top.innerHTML = sorted.map((s,i) => `
       <div style="display:flex;align-items:center;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border2);">
         <div style="font-size:1.4rem;">${medals[i]}</div>
-        <div class="student-avatar-sm">${s.init}</div>
-        <div style="flex:1;font-family:var(--font);font-size:.88rem;font-weight:600;">${s.name}</div>
+        <div class="student-avatar-sm">${escHtml(s.init)}</div>
+        <div style="flex:1;font-family:var(--font);font-size:.88rem;font-weight:600;">${escHtml(s.name)}</div>
         <div style="font-family:var(--font);font-size:1rem;font-weight:700;color:var(--green);">${s.avg}%</div>
       </div>
     `).join('');
@@ -1656,8 +1656,8 @@ function renderAttendance() {
     return `<tr>
       <td class="att-td-name">
         <div class="att-student">
-          <div class="att-avatar">${s.init}</div>
-          <span class="att-name">${s.name}</span>
+          <div class="att-avatar">${escHtml(s.init)}</div>
+          <span class="att-name">${escHtml(s.name)}</span>
         </div>
       </td>
       ${boxes}
@@ -2111,12 +2111,12 @@ async function openGroupDetail(groupId) {
       return;
     }
     listEl.innerHTML = students.map((s, i) => {
-      const init = (s.name || s.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      const init = escHtml((s.name || s.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase());
       return `<div class="cd-student-row" style="${i > 0 ? 'border-top:1px solid var(--border2);' : ''}padding:.65rem 0;">
         <div class="student-avatar-sm">${init}</div>
         <div style="flex:1;">
-          <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${s.name || s.username}</div>
-          <div style="font-size:.75rem;color:var(--muted);">@${s.username}</div>
+          <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${escHtml(s.name || s.username)}</div>
+          <div style="font-size:.75rem;color:var(--muted);">@${escHtml(s.username)}</div>
         </div>
       </div>`;
     }).join('');
