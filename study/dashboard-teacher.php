@@ -567,7 +567,6 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
       <div id="teacher-assigned-groups" style="margin-bottom:1.5rem;">
         <div class="loading-overlay"><div class="spinner"></div></div>
       </div>
-      <div class="grid-3" id="courses-grid"></div>
     </div>
     <div id="courses-detail-view" style="display:none;">
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
@@ -1777,57 +1776,7 @@ function hydrateTeacherInfo() {
 }
 
 /* COURSES DATA & LOGIC */
-const COURSES = [
-  { id:1, icon:'📖', iconClass:'c1',
-    group_fr:'Groupe A – Débutant', group_ar:'المجموعة أ – مبتدئ',
-    level_fr:'A1–A2', level_ar:'ر0–ر0ر2',
-    subject_fr:'Anglais Général', subject_ar:'الإنجليزية العامة',
-    students:14, avg:72, assigns:3, att:85,
-    schedule:[
-      {day_fr:'Lundi',    day_ar:'الاثنين',  time:'09:00–11:00', room:'Salle 12'},
-      {day_fr:'Mercredi', day_ar:'الأربعاء', time:'09:00–11:00', room:'Salle 12'}
-    ],
-    studentList:[
-      {name:'Amina Karimi',    init:'AK', avg:85, att:90, status:'good'},
-      {name:'Karim Benali',    init:'KB', avg:70, att:78, status:'warn'},
-      {name:'Fatima Zahra',    init:'FZ', avg:92, att:95, status:'good'},
-      {name:'Youssef Idrissi', init:'YI', avg:55, att:60, status:'low'},
-      {name:'Salma Ouali',     init:'SO', avg:78, att:88, status:'good'},
-      {name:'Omar Khalil',     init:'OK', avg:45, att:55, status:'low'}
-    ]
-  },
-  { id:2, icon:'✍️', iconClass:'c2',
-    group_fr:'Groupe B – Intermédiaire', group_ar:'المجموعة ب – متوسط',
-    level_fr:'B1', level_ar:'بر1',
-    subject_fr:'Rédaction & Communication', subject_ar:'الكتابة والتواصل',
-    students:18, avg:78, assigns:4, att:91,
-    schedule:[
-      {day_fr:'Mardi', day_ar:'الثلاثاء', time:'14:00–16:00', room:'Labo 3'},
-      {day_fr:'Jeudi', day_ar:'الخميس',   time:'14:00–16:00', room:'Labo 3'}
-    ],
-    studentList:[
-      {name:'Nadia Berrada',   init:'NB', avg:89, att:96, status:'good'},
-      {name:'Hassan Tazi',     init:'HT', avg:74, att:83, status:'good'},
-      {name:'Leila Mansouri',  init:'LM', avg:81, att:90, status:'good'},
-      {name:'Rachid Ouazzani', init:'RO', avg:65, att:72, status:'warn'},
-      {name:'Imane Alaoui',    init:'IA', avg:88, att:94, status:'good'},
-      {name:'Mehdi Chraibi',   init:'MC', avg:59, att:65, status:'warn'}
-    ]
-  },
-  { id:3, icon:'🎙️', iconClass:'c3',
-    group_fr:'Groupe C – Avancé', group_ar:'المجموعة ج – متقدم',
-    level_fr:'B2–C1', level_ar:'بر2–جر1',
-    subject_fr:'Expression Orale & Présentation', subject_ar:'التعبير الشفهي والعرض',
-    students:10, avg:84, assigns:2, att:88,
-    schedule:[{day_fr:'Vendredi', day_ar:'الجمعة', time:'10:00–12:00', room:'Amphi B'}],
-    studentList:[
-      {name:'Sara Elhajji',    init:'SE', avg:91, att:92, status:'good'},
-      {name:'Amine Benkiran',  init:'AB', avg:83, att:85, status:'good'},
-      {name:'Zineb Qacemi',    init:'ZQ', avg:77, att:90, status:'good'},
-      {name:'Tariq Fassi',     init:'TF', avg:86, att:88, status:'good'}
-    ]
-  }
-];
+const COURSES = [];
 let activeCourse = null;
 const CT = {
   fr:{ coursesPageTitle:'Classes',
@@ -1865,6 +1814,7 @@ async function loadTeacherGroups() {
   } catch(e) { teacherGroups = []; }
 
   renderTeacherGroups();
+  renderCourses();
   populateAttGroupSelect();
 }
 
@@ -1935,32 +1885,11 @@ async function attSelectGroup(groupId) {
 }
 
 function renderCourses(){
-  const grid=document.getElementById('courses-grid'); if(!grid)return;
   const tr=CT[currentLang];
-  const sub=document.getElementById('courses-page-sub'); if(sub)sub.textContent=tr.coursesPageSub(COURSES.length);
+  const n=teacherGroups.length;
+  const sub=document.getElementById('courses-page-sub'); if(sub)sub.textContent=tr.coursesPageSub(n);
   const ttl=document.getElementById('courses-page-title'); if(ttl)ttl.textContent=tr.coursesPageTitle;
-  const badge=document.getElementById('nav-courses-badge'); if(badge)badge.textContent=COURSES.length;
-  grid.innerHTML=COURSES.map(c=>{
-    const gname=currentLang==='ar'?c.group_ar:c.group_fr;
-    const level=currentLang==='ar'?c.level_ar:c.level_fr;
-    const subject=currentLang==='ar'?c.subject_ar:c.subject_fr;
-    const chips=c.schedule.map(s=>'<span class="schedule-chip">'+(currentLang==='ar'?s.day_ar:s.day_fr)+' '+s.time+'</span>').join('');
-    const ac=c.avg>=75?'var(--green)':c.avg>=55?'var(--yellow)':'var(--red)';
-    return '<div class="course-card" onclick="openCourseDetail('+c.id+')">'
-      +'<div class="course-card-header">'
-        +'<div class="course-icon '+c.iconClass+'">'+c.icon+'</div>'
-        +'<div><div class="course-group-name">'+gname+'</div><span class="course-level-tag">'+level+'</span></div>'
-      +'</div>'
-      +'<div style="font-size:.82rem;color:var(--muted);">📚 '+subject+'</div>'
-      +'<div class="course-meta-row">'
-        +'<span>👥 '+c.students+' '+tr.studentsLabel+'</span>'
-        +'<span style="color:'+ac+'">📊 '+c.avg+'%</span>'
-        +'<span>📝 '+c.assigns+'</span>'
-        +'<span style="color:var(--green)">✅ '+c.att+'%</span>'
-      +'</div>'
-      +'<div class="course-schedule-chips">'+chips+'</div>'
-    +'</div>';
-  }).join('');
+  const badge=document.getElementById('nav-courses-badge'); if(badge){ badge.textContent=n; badge.style.display=n>0?'':'none'; }
 }
 function openCourseDetail(id){
   activeCourse=COURSES.find(c=>c.id===id); if(!activeCourse)return;
