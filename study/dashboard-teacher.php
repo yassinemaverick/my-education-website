@@ -1716,34 +1716,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 /* ── LIVE STUDENT FETCH ── */
 async function loadLiveStudents() {
   try {
-    const res = await fetch('api_students.php?action=list');
+    const res = await fetch('api_classes.php?action=teacher_all_students');
     if (!res.ok) return;
     const data = await res.json();
-    if (data.ok && Array.isArray(data.students) && data.students.length > 0) {
+    if (data.ok && Array.isArray(data.students)) {
       STUDENTS = data.students.map(s => ({
-        id:       s.id,
-        name:     s.name,
-        init:     s.init,
-        progress: s.progress ?? 0,
-        assigns:  s.assigns  ?? 0,
-        avg:      s.avg      ?? s.progress ?? 0,
-        status:   s.status   ?? 'good',
-        sessions: s.sessions ?? 0,
-        present:  s.present  ?? 0,
+        id:   s.id,
+        name: s.name || s.username,
+        init: (s.name || s.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase(),
+        progress: 0, assigns: 0, avg: 0, status: 'good', sessions: 0, present: 0,
       }));
-      // Update stat card: active students count
       const sv = document.getElementById('stat1-val');
       if (sv) sv.textContent = STUDENTS.length;
-      // Class average attendance
-      const avg = Math.round(STUDENTS.reduce((sum, s) => sum + s.avg, 0) / STUDENTS.length);
-      const sa = document.getElementById('stat3-val');
-      if (sa) sa.textContent = avg + '%';
-      // At-risk students count
-      const atRisk = STUDENTS.filter(s => s.status !== 'good').length;
-      const sr = document.getElementById('stat4-val');
-      if (sr) sr.textContent = atRisk;
     }
-  } catch(e) { /* keep mock-empty fallback */ }
+  } catch(e) { /* silently keep STUDENTS as [] */ }
 }
 
 /* ── TEACHER INFO HYDRATION ── */

@@ -364,4 +364,22 @@ if ($action === 'group_students') {
   jsonOut(['ok'=>true, 'students'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }
 
+// teacher_all_students: distinct students across all groups assigned to the teacher
+if ($action === 'teacher_all_students') {
+  if ($role === 'student') err('Accès refusé', 403);
+  $tid = $role === 'admin' ? (int)($_GET['teacher_id'] ?? $userId) : $userId;
+
+  $stmt = $pdo->prepare(
+    "SELECT DISTINCT u.id, u.full_name AS name, u.username
+     FROM class_group_members tm
+     JOIN class_groups g      ON g.id  = tm.group_id
+     JOIN class_group_members sm ON sm.group_id = g.id
+     JOIN users u             ON u.id  = sm.user_id
+     WHERE tm.user_id = ? AND u.role = 'student'
+     ORDER BY u.full_name"
+  );
+  $stmt->execute([$tid]);
+  jsonOut(['ok'=>true, 'students'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
+}
+
 err('Action inconnue: ' . htmlspecialchars($action), 400);
