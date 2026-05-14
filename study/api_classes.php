@@ -1,14 +1,22 @@
 <?php
+// Suppress any stray PHP notices/warnings so they don't corrupt JSON output
+ini_set('display_errors', 0);
+error_reporting(0);
+ob_start();
+
 session_set_cookie_params(['lifetime'=>0,'path'=>'/','secure'=>isset($_SERVER['HTTPS']),'httponly'=>true,'samesite'=>'Lax']);
 session_start();
 require_once __DIR__ . '/db.php';
 
-header('Content-Type: application/json; charset=utf-8');
-
-function jsonOut(array $data): void { echo json_encode($data); exit; }
+function jsonOut(array $data): void {
+  ob_end_clean(); // discard any accidental output before JSON
+  header('Content-Type: application/json; charset=utf-8');
+  echo json_encode($data, JSON_UNESCAPED_UNICODE);
+  exit;
+}
 function err(string $msg, int $code=400): void { http_response_code($code); jsonOut(['ok'=>false,'error'=>$msg]); }
 
-// Auth: admin only for write actions, admin/teacher/student for read
+// Auth
 $role   = $_SESSION['role']  ?? '';
 $userId = (int)($_SESSION['user_id'] ?? 0);
 if (!$userId) err('Non authentifié', 401);
@@ -21,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $pdo = getDB();
 
-// ── Auto-create tables ─────────────────────────────────────────────────────
+// ── Auto-create tables (no FOREIGN KEY to avoid privilege issues on shared hosting) ──
 $pdo->exec("CREATE TABLE IF NOT EXISTS class_groups (
   id           INT AUTO_INCREMENT PRIMARY KEY,
   type_key     VARCHAR(50)  NOT NULL,
@@ -36,8 +44,7 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS class_group_members (
   group_id    INT NOT NULL,
   user_id     INT NOT NULL,
   assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE KEY uq_member (group_id, user_id),
-  FOREIGN KEY (group_id) REFERENCES class_groups(id) ON DELETE CASCADE
+  UNIQUE KEY uq_member (group_id, user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
 // ── Fixed class type definitions ───────────────────────────────────────────
