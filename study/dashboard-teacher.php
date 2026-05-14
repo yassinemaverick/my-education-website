@@ -500,10 +500,10 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
     </div>
 
     <div class="grid-4" style="margin-bottom:1.5rem;">
-      <div class="card"><div class="stat-icon purple"><span aria-hidden="true">👥</span></div><div class="stat-value" id="stat1-val">24</div><div class="stat-label" id="stat1-lbl">Étudiants actifs</div></div>
-      <div class="card"><div class="stat-icon yellow"><span aria-hidden="true">📝</span></div><div class="stat-value" id="stat2-val">8</div><div class="stat-label" id="stat2-lbl">Devoirs à corriger</div></div>
-      <div class="card"><div class="stat-icon green"><span aria-hidden="true">📊</span></div><div class="stat-value" id="stat3-val">74%</div><div class="stat-label" id="stat3-lbl">Moyenne de la classe</div></div>
-      <div class="card"><div class="stat-icon blue"><span aria-hidden="true">🧠</span></div><div class="stat-value" id="stat4-val">5</div><div class="stat-label" id="stat4-lbl">Quiz actifs</div></div>
+      <div class="card"><div class="stat-icon purple"><span aria-hidden="true">👥</span></div><div class="stat-value" id="stat1-val">—</div><div class="stat-label" id="stat1-lbl">Étudiants actifs</div></div>
+      <div class="card"><div class="stat-icon yellow"><span aria-hidden="true">📝</span></div><div class="stat-value" id="stat2-val">—</div><div class="stat-label" id="stat2-lbl">Devoirs à corriger</div></div>
+      <div class="card"><div class="stat-icon green"><span aria-hidden="true">📊</span></div><div class="stat-value" id="stat3-val">—</div><div class="stat-label" id="stat3-lbl">Moyenne de la classe</div></div>
+      <div class="card"><div class="stat-icon blue"><span aria-hidden="true">📋</span></div><div class="stat-value" id="stat4-val">—</div><div class="stat-label" id="stat4-lbl">Devoirs publiés</div></div>
     </div>
 
     <div class="grid-2">
@@ -942,7 +942,7 @@ const T = {
     postsDeleteConfirm:'Supprimer cette note ?', toastPostPublished:'Note publiée !', toastPostDeleted:'Note supprimée.',
     teacherChip:'Prof', roleLabel:'Professeur', logout:'Déconnexion',
     welcomeMsg:'Bonjour, ', welcomeSub:"8 devoirs à corriger · 3 étudiants en difficulté · Moyenne de classe : 74%",
-    stat1:'Étudiants actifs', stat2:'Devoirs à corriger', stat3:'Moyenne de la classe', stat4:'Quiz actifs',
+    stat1:'Étudiants actifs', stat2:'Devoirs à corriger', stat3:'Moyenne de la classe', stat4:'Devoirs publiés',
     btnNewAssign:'+ Nouveau devoir', btnNewQuiz:'+ Créer un quiz',
     classProgTitle:'Progression de la classe', cp1:'Progression générale', cp2:'Taux de soumission devoirs', cp3:'Moyenne quiz',
     attentionTitle:'Étudiants à surveiller ⚠️',
@@ -1020,7 +1020,7 @@ const T = {
     postsDeleteConfirm:'Delete this note?', toastPostPublished:'Note published!', toastPostDeleted:'Note deleted.',
     teacherChip:'Teacher', roleLabel:'Teacher', logout:'Log out',
     welcomeMsg:'Hello, ', welcomeSub:'8 assignments to grade · 3 students struggling · Class average: 74%',
-    stat1:'Active students', stat2:'Assignments to grade', stat3:'Class average', stat4:'Active quizzes',
+    stat1:'Active students', stat2:'Assignments to grade', stat3:'Class average', stat4:'Assignments posted',
     btnNewAssign:'+ New assignment', btnNewQuiz:'+ Create quiz',
     classProgTitle:'Class progress', cp1:'Overall progress', cp2:'Assignment submission rate', cp3:'Quiz average',
     attentionTitle:'Students to watch ⚠️',
@@ -1096,6 +1096,7 @@ function setLang(lang) {
   document.getElementById('pill-fr').className = 'lang-pill' + (lang === 'fr' ? ' active' : '');
   document.getElementById('pill-en').className = 'lang-pill' + (lang === 'en' ? ' active' : '');
   applyTranslations();
+  updateHomeStats();
 }
 
 function toggleSidebar() {
@@ -1240,6 +1241,40 @@ async function loadAssignments() {
     if (data.ok && Array.isArray(data.assignments)) ASSIGNMENTS_LIVE = data.assignments;
   } catch(e) { console.warn('Could not load assignments:', e); }
   renderAssignments();
+}
+
+/* ── Update home-page stat cards with live data ── */
+function updateHomeStats() {
+  const tr = T[currentLang];
+
+  // Stat 1: total students
+  const el1 = document.getElementById('stat1-val');
+  if (el1) el1.textContent = STUDENTS.length > 0 ? STUDENTS.length : '0';
+
+  // Stat 2: submissions pending review (submitted but not yet graded)
+  const pendingReview = ASSIGNMENTS_LIVE.reduce((acc, a) => {
+    return acc + Math.max(0, parseInt(a.submitted_count || 0) - parseInt(a.graded_count || 0));
+  }, 0);
+  const el2 = document.getElementById('stat2-val');
+  if (el2) el2.textContent = pendingReview;
+
+  // Stat 3: placeholder — no grade data yet
+  const el3 = document.getElementById('stat3-val');
+  if (el3) el3.textContent = '—';
+
+  // Stat 4: total active assignments
+  const el4 = document.getElementById('stat4-val');
+  if (el4) el4.textContent = ASSIGNMENTS_LIVE.length;
+
+  // Update welcome subtitle with live numbers
+  const subEl = document.getElementById('welcome-sub');
+  if (subEl) {
+    const pending = pendingReview;
+    const students = STUDENTS.length;
+    if (tr.stat2 && tr.stat1) {
+      subEl.textContent = `${pending} ${tr.stat2.toLowerCase()} · ${students} ${tr.stat1.toLowerCase()}`;
+    }
+  }
 }
 
 function renderAssignments() {
@@ -1769,6 +1804,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const postDateEl = document.getElementById('post-date');
   if (postDateEl) postDateEl.value = new Date().toISOString().slice(0, 10);
   setLang(savedLang);
+  updateHomeStats();
   renderAttention(); renderAssignments(); renderQuizzes(); renderGrades();
   renderAttendance(); renderCourses();
   hydrateTeacherInfo();

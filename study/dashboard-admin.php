@@ -292,7 +292,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   </div>
   <div class="lang-toggle">
     <div class="lang-pill active" id="pill-fr" onclick="setLang('fr')">🇫🇷 FR</div>
-    <div class="lang-pill"        id="pill-ar" onclick="setLang('ar')">🇲🇦 AR</div>
+    <div class="lang-pill"        id="pill-en" onclick="setLang('en')">🇬🇧 EN</div>
   </div>
   <div class="sidebar-user">
     <div class="avatar" id="sidebar-avatar">AD</div>
@@ -808,21 +808,64 @@ const T = {
     toastStatusUpdated:'تم تحديث الحالة.',
     toastEnrollDeleted:'تم حذف الطلب.',
     confirmDeleteEnroll:'حذف هذا الطلب نهائياً؟',
+  },
+  en: {
+    adminChip:'Admin', roleLabel:'Administrator',
+    logout:'Log out',
+    navMain:'Main', navAccount:'Account',
+    navHome:'Dashboard', navSettings:'Settings',
+    navUsers:'Users', navInscriptions:'Enrollments',
+    navClasses:'Classes', navAssigningClasses:'Class assignments',
+    classesPageTitle:'Classes', classesPageSub:'Select a class type',
+    assigningPageTitle:'Class assignments', assigningPageSub:'Overview of groups assigned to students and teachers',
+    assigningStudentsTitle:'Students', assigningTeachersTitle:'Teachers',
+    ath_student:'Student', ath_group:'Group(s)', ath_teacher:'Teacher', ath_teacher_group:'Group(s)',
+    classesGroupsOf:'Groups of', noGroups:'No groups. Click + to create one.',
+    btnAddGroup:'Add group', modalAddGroupTitle:'New group', lblGroupLetter:'Group letter',
+    membersCurrentLbl:'Current members', membersAddLbl:'Add a member',
+    noMembers:'No members in this group.',
+    toastGroupCreated:'Group created!', toastGroupDeleted:'Group deleted.', toastMemberAdded:'Member added!', toastMemberRemoved:'Member removed.',
+    errGroupLetter:'Please enter a group letter.', errGroupExists:'This group already exists.',
+    selectUser:'— Select a user —',
+    confirmDeleteGroup:'Delete this group and all its members?',
+    noAssignments:'No groups assigned.',
+    topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments' },
+    welcomeSub:'Manage classes and groups from this dashboard.',
+    statTeachersLbl:'Teachers',
+    recentActivityTitle:'Recent activity',
+    settingsTitle:'Settings', profileTitle:'Admin profile',
+    settingsRole:'Administrator · Upskill',
+    lblFullname:'Full name', saveBtn:'Save',
+    prefTitle:'Preferences', prefTxt:'Use the language selector to switch between French and English.',
+    cancelBtn:'Cancel', saveEnregistrer:'Save', deleteBtn:'Delete',
+    errNetwork:'Network error. Check your connection.',
+    toastProfileSaved:'Profile updated!',
+    inscriptionsTitle:'Enrollments', inscriptionsSub:'Requests received from the enrollment form',
+    exportCSV:'Export CSV',
+    etabAll:'All', etabNew:'New requests', etabAccepted:'Accepted', etabRefused:'Refused',
+    ethName:'Name', ethEmail:'Email', ethPhone:'Phone', ethDate:'Date', ethStatus:'Status',
+    statusNew:'New request', statusAccepted:'Accepted', statusRefused:'Refused',
+    enrollSearchPlaceholder:'Search by name, email, phone…',
+    toastStatusUpdated:'Status updated.',
+    toastEnrollDeleted:'Request deleted.',
+    confirmDeleteEnroll:'Permanently delete this request?',
   }
 };
-const tr = () => T[currentLang];
+const tr = () => T[currentLang] || T.fr;
 
 /* ══════════════════════════════════════════════════════
    LANG & NAVIGATION
 ══════════════════════════════════════════════════════ */
 function setLang(lang) {
+  // Admin panel supports fr and en; fall back to fr if unknown lang passed
+  if (lang !== 'fr' && lang !== 'en') lang = 'fr';
   currentLang = lang;
   sessionStorage.setItem('upskill_admin_lang', lang);
-  document.getElementById('body').className = lang === 'ar' ? 'ar' : '';
+  document.getElementById('body').className = '';
   document.documentElement.setAttribute('lang', lang);
-  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+  document.documentElement.setAttribute('dir', 'ltr');
   document.getElementById('pill-fr').className = 'lang-pill' + (lang==='fr'?' active':'');
-  document.getElementById('pill-ar').className = 'lang-pill' + (lang==='ar'?' active':'');
+  document.getElementById('pill-en').className = 'lang-pill' + (lang==='en'?' active':'');
   applyTranslations();
 }
 
@@ -1674,7 +1717,8 @@ function logout() {
    INIT
 ══════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', async () => {
-  const lang = sessionStorage.getItem('upskill_admin_lang') || 'fr';
+  const _sl = sessionStorage.getItem('upskill_admin_lang');
+  const lang = (_sl === 'fr' || _sl === 'en') ? _sl : 'fr';
 
   // Init avatar initials from PHP name
   const name = document.getElementById('sidebar-name')?.textContent.trim() || 'AD';

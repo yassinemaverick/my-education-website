@@ -139,17 +139,8 @@ try {
                 $due = new DateTime($row['due_date']);
                 if ($due < $now) $row['status'] = 'overdue';
             }
-            // Format due date nicely
+            // due_fmt is computed client-side (see fmtDue() in JS) so it is language-aware
             $row['due_fmt'] = '';
-            if ($row['due_date']) {
-                $due = new DateTime($row['due_date']);
-                $diff = (int)$now->diff($due)->days;
-                $past = $due < $now;
-                if (!$past && $diff === 0) $row['due_fmt'] = 'Aujourd\'hui';
-                elseif (!$past && $diff === 1) $row['due_fmt'] = 'Demain';
-                elseif (!$past) $row['due_fmt'] = $due->format('d M');
-                else $row['due_fmt'] = $due->format('d M') . ' (en retard)';
-            }
         }
         unset($row);
 
@@ -1018,6 +1009,21 @@ const HAS_EMAIL = <?= json_encode(!empty($studentEmail)) ?>;
 /* ── HTML escape helper ── */
 function e(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
 
+/* ── Client-side due-date formatter (language-aware, replaces server-rendered French strings) ── */
+function fmtDue(dateStr, lang) {
+  if (!dateStr) return '';
+  const due  = new Date(dateStr + 'T00:00:00');
+  const now  = new Date(); now.setHours(0, 0, 0, 0);
+  const diff = Math.round((due - now) / 86400000);
+  const past = due < now;
+  const locale = lang === 'fr' ? 'fr-FR' : 'en-GB';
+  const short  = due.toLocaleDateString(locale, { day: '2-digit', month: 'short' });
+  if (!past && diff === 0) return lang === 'fr' ? 'Aujourd\'hui' : 'Today';
+  if (!past && diff === 1) return lang === 'fr' ? 'Demain' : 'Tomorrow';
+  if (!past) return short;
+  return short + ' ' + (lang === 'fr' ? '(en retard)' : '(overdue)');
+}
+
 /* ── Null-safe text setter ── */
 function st(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 
@@ -1498,7 +1504,7 @@ function renderAssignments() {
         const title   = e(a.title_fr || a.title_ar);
         const desc    = e(a.description_fr || a.description_ar || '');
         const subject = e(a.subject_fr || a.subject_ar);
-        const due     = e(a.due_fmt || (a.due_date ? a.due_date : '—'));
+        const due     = e(fmtDue(a.due_date, currentLang) || (a.due_date ? a.due_date : '—'));
 
         // Action button based on status
         let actionBtn = '';
@@ -1560,7 +1566,7 @@ function renderActivityFeed() {
           ? tr2.badgeSubmitted
           : tr2.pendingStatus;
       const title = e(a.title_fr || a.title_ar);
-      const due   = a.due_fmt ? `${tr2.dueLblPre}${e(a.due_fmt)}` : '';
+      const due   = a.due_date ? `${tr2.dueLblPre}${e(fmtDue(a.due_date, currentLang))}` : '';
       return `<div class="activity-item">
         <div class="activity-dot ${color}"></div>
         <div><div class="activity-text"><strong>${label}</strong> — <span>${title}</span></div>

@@ -217,7 +217,7 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
   </div>
 
   <div class="left-bottom">
-    <a href="https://upskill-edu.com/index-fr.php">← Back to main site</a> &nbsp;·&nbsp; © 2026 Upskill Education
+    <a href="https://upskill-edu.com/index-en.php">← Back to main site</a> &nbsp;·&nbsp; © 2026 Upskill Education
   </div>
 </div>
 
@@ -229,7 +229,6 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
     <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-bottom:1.2rem;">
       <a href="index2.php"    style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-family:var(--font);font-size:0.73rem;font-weight:600;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇬🇧 EN</a>
       <a href="index2-fr.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;font-weight:500;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;transition:all 0.2s;">🇫🇷 FR</a>
-      <a href="index2-ar.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;font-weight:500;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;transition:all 0.2s;">🇲🇦 عربي</a>
     </div>
 
     <div class="login-title">Welcome back</div>
@@ -289,7 +288,7 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
     </form>
 
     <div class="back-link">
-      <a href="https://upskill-edu.com/index-fr.php">← Back to <span>upskill-edu.com</span></a>
+      <a href="https://upskill-edu.com/index-en.php">← Back to <span>upskill-edu.com</span></a>
     </div>
 
   </div>
