@@ -182,6 +182,15 @@ $t = [
   .photo-item-caption { position: absolute; bottom: 0.75rem; left: 0.9rem; font-family: var(--font); font-size: 0.7rem; font-weight: 500; color: rgba(255,255,255,0.75); letter-spacing: 0.04em; text-transform: uppercase; z-index: 2; }
   @media (max-width: 768px) { .photos-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; } .photo-item.tall { grid-row: span 1; height: 180px; } .photo-item { height: 180px; } }
   @media (max-width: 500px) { .photos-grid { grid-template-columns: 1fr; } .photo-item, .photo-item.tall { height: 200px; } }
+  .testimonials { padding: 6rem 2rem; background: var(--navy-mid); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .testimonials-inner { max-width: 1100px; margin: 0 auto; }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .testimonial-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .testimonial-quote { font-size: 2.5rem; color: var(--green); font-family: Georgia, serif; line-height: 1; margin-bottom: -0.5rem; }
+  .testimonial-text { color: rgba(255,255,255,0.82); font-size: 0.92rem; line-height: 1.7; font-style: italic; flex: 1; }
+  .testimonial-author { display: flex; flex-direction: column; gap: 0.25rem; }
+  .testimonial-name { font-family: var(--font); font-size: 0.88rem; font-weight: 600; color: var(--white); }
+  .testimonial-badge { font-size: 0.72rem; font-family: var(--font); padding: 0.2rem 0.65rem; border-radius: 100px; background: var(--green-glow); border: 1px solid rgba(62,207,120,0.3); color: var(--green); display: inline-block; width: fit-content; }
 </style>
 </head>
 <body>
@@ -267,7 +276,7 @@ $t = [
   </div>
   <div class="courses-grid">
 
-    <div class="course-card" data-course="Business English" onclick="selectCourse(this)">
+    <div class="course-card" data-course="Business English" onclick="selectCourse(this)" tabindex="0" role="button" onkeydown="if(event.key==='Enter'||event.key===' '){selectCourse(this);event.preventDefault();}">
       <div class="course-header">
         <div class="course-icon">💼</div>
         <div class="course-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 4" stroke="#0f1d2e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -290,7 +299,7 @@ $t = [
       <div class="course-tags"><span class="tag">Corporate Communication</span><span class="tag">Presentations</span><span class="tag">Writing</span><span class="tag">Negotiation</span></div>
     </div>
 
-    <div class="course-card" data-course="General English" onclick="selectCourse(this)">
+    <div class="course-card" data-course="General English" onclick="selectCourse(this)" tabindex="0" role="button" onkeydown="if(event.key==='Enter'||event.key===' '){selectCourse(this);event.preventDefault();}">
       <div class="course-header">
         <div class="course-icon">🌍</div>
         <div class="course-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 4" stroke="#0f1d2e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -313,7 +322,7 @@ $t = [
       <div class="course-tags"><span class="tag">All Levels</span><span class="tag">Speaking</span><span class="tag">Grammar</span><span class="tag">Vocabulary</span></div>
     </div>
 
-    <div class="course-card" data-course="English for Baccalaureate" onclick="selectCourse(this)">
+    <div class="course-card" data-course="English for Baccalaureate" onclick="selectCourse(this)" tabindex="0" role="button" onkeydown="if(event.key==='Enter'||event.key===' '){selectCourse(this);event.preventDefault();}">
       <div class="course-header">
         <div class="course-icon">🎓</div>
         <div class="course-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 4" stroke="#0f1d2e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
@@ -352,6 +361,40 @@ $t = [
     </div>
   </div>
 </section>
+
+<!-- TESTIMONIALS -->
+<div class="testimonials">
+  <div class="testimonials-inner">
+    <div class="section-label text-center" style="text-align:center;">What Our Students Say</div>
+    <div class="section-title text-center" style="text-align:center;">Real results, real people.</div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">My Bac English grade went from 8/20 to 16/20 after just one session with Upskill. The small group format made all the difference.</p>
+        <div class="testimonial-author">
+          <span class="testimonial-name">Yasmine B.</span>
+          <span class="testimonial-badge">Baccalaureate student</span>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">I finally feel confident in meetings. The Business English course gave me real vocabulary I use every day at work.</p>
+        <div class="testimonial-author">
+          <span class="testimonial-name">Karim M.</span>
+          <span class="testimonial-badge">Business English student</span>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">My daughter's pronunciation improved dramatically. The teachers are patient and the platform makes it easy to track her progress.</p>
+        <div class="testimonial-author">
+          <span class="testimonial-name">Parent of a General English student</span>
+          <span class="testimonial-badge">General English</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="enroll-section" id="enroll">
   <div class="enroll-inner">
