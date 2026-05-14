@@ -1584,7 +1584,8 @@ function renderAttendance() {
 
   // Student rows
   tbody.innerHTML = STUDENTS.map(s => {
-    const data = attData[s.id] || {};
+    if (!attData[s.id]) attData[s.id] = {};
+    const data = attData[s.id];
     let boxes = '';
     for (let i = 1; i <= ATT_SESSIONS; i++) {
       const checked = data[i] ? 'checked' : '';
@@ -1622,6 +1623,7 @@ function attPct(sid) {
 function attToggle(el) {
   const sid = parseInt(el.dataset.sid);
   const sess = parseInt(el.dataset.sess);
+  if (!attData[sid]) attData[sid] = {};
   attData[sid][sess] = el.checked;
   // Update that student's percentage live
   const { pct, cls } = attPct(sid);
@@ -1700,7 +1702,8 @@ async function attSave() {
 document.addEventListener('DOMContentLoaded', async () => {
   const savedLang = sessionStorage.getItem('upskill_lang') || 'fr';
   // Load everything in parallel
-  await Promise.all([initAttData(), loadLiveStudents(), loadTeacherCourses(), loadAssignments()]);
+  await loadLiveStudents();
+  await Promise.all([initAttData(), loadTeacherCourses(), loadAssignments()]);
   const postDateEl = document.getElementById('post-date');
   if (postDateEl) postDateEl.value = new Date().toISOString().slice(0, 10);
   setLang(savedLang);
