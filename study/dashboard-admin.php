@@ -2071,7 +2071,7 @@ let classesTypeMeta  = null;
 let classesLevel     = null;
 let classesGroupId   = null;
 let allClassTypes    = [];
-let allUsers         = [];
+let classesAllUsers  = []; // separate from allUsers (Users page)
 
 // Fixed type definitions (mirrors PHP CLASS_TYPES)
 const CLASS_TYPE_DEFS = [
@@ -2308,13 +2308,13 @@ async function loadMembersList() {
 }
 
 async function loadUsersForSelect() {
-  if (allUsers.length === 0) {
-    try { const d = await api('api_classes.php?action=list_all_users'); allUsers = d.users || []; }
+  if (classesAllUsers.length === 0) {
+    try { const d = await api('api_classes.php?action=list_all_users'); classesAllUsers = d.users || []; }
     catch(e) { return; }
   }
   const sel = document.getElementById('member-user-select');
   sel.innerHTML = `<option value="">${tr().selectUser}</option>`
-    + allUsers.map(u => {
+    + classesAllUsers.map(u => {
         const role = u.role==='teacher' ? '👨‍🏫' : '🎓';
         return `<option value="${u.id}">${role} ${u.name||u.username} (${u.username})</option>`;
       }).join('');
