@@ -219,11 +219,19 @@ if ($action === 'remove_member') {
   jsonOut(['ok'=>true]);
 }
 
-// list_all_users: all students and teachers for the add-member dropdown
+// list_all_users: teachers + unassigned students only (students in any group are excluded)
 if ($action === 'list_all_users') {
   if ($role !== 'admin') err('Accès refusé', 403);
   $stmt = $pdo->query(
-    "SELECT id, full_name AS name, username, role FROM users WHERE role IN ('student','teacher') ORDER BY role DESC, full_name"
+    "SELECT u.id, u.full_name AS name, u.username, u.role
+     FROM users u
+     WHERE u.role IN ('student','teacher')
+       AND (u.role = 'teacher'
+            OR u.id NOT IN (
+              SELECT m.user_id FROM class_group_members m
+              JOIN users u2 ON u2.id = m.user_id WHERE u2.role = 'student'
+            ))
+     ORDER BY u.role DESC, u.full_name"
   );
   jsonOut(['ok'=>true, 'users'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
 }

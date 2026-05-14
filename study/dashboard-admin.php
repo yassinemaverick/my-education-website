@@ -1596,8 +1596,10 @@ async function submitAddMember() {
   const btn = document.getElementById('btn-add-member'); btn.disabled = true;
   try {
     await api('api_classes.php', 'POST', {action:'add_member', group_id:classesGroupId, user_id:uid});
+    classesAllUsers = [];
     showToast(tr().toastMemberAdded, 'success');
     await loadMembersList();
+    await loadUsersForSelect();
     await loadGroupChips();
   } catch(e) { errEl.textContent = e.message; errEl.style.display = ''; }
   finally { btn.disabled = false; }
@@ -1606,8 +1608,10 @@ async function submitAddMember() {
 async function removeMember(userId) {
   try {
     await api('api_classes.php', 'POST', {action:'remove_member', group_id:classesGroupId, user_id:userId});
+    classesAllUsers = [];
     showToast(tr().toastMemberRemoved);
     await loadMembersList();
+    await loadUsersForSelect();
     await loadGroupChips();
   } catch(e) { showToast(e.message, 'error'); }
 }
