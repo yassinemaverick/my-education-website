@@ -366,14 +366,11 @@ body.ar .course-group-name { font-family:var(--font-ar); }
 body.ar .course-meta-row { flex-direction:row-reverse; }
 .course-schedule-chips { display:flex; flex-wrap:wrap; gap:.4rem; }
 .schedule-chip { font-size:.72rem; background:rgba(62,207,120,.08); border:1px solid rgba(62,207,120,.2); color:var(--green); padding:.2rem .6rem; border-radius:100px; font-family:var(--font); }
-.course-card.type-card { cursor:default; }
-.course-card.type-card:hover { border-color:var(--border); transform:none; }
-.group-items { display:flex; flex-direction:column; gap:.4rem; margin-top:.25rem; }
-.group-item { display:flex; align-items:center; justify-content:space-between; padding:.55rem .8rem; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:10px; cursor:pointer; transition:background .15s, border-color .15s; }
-.group-item:hover { background:rgba(62,207,120,.07); border-color:rgba(62,207,120,.3); }
-.group-item-name { font-size:.85rem; font-weight:500; }
-.group-item-count { font-size:.75rem; color:var(--muted); }
-body.ar .group-item { flex-direction:row-reverse; }
+.tc-breadcrumb { display:flex; align-items:center; gap:.35rem; margin-bottom:1.1rem; flex-wrap:wrap; }
+.tc-crumb { font-size:.82rem; color:var(--green); cursor:pointer; font-family:var(--font); font-weight:600; }
+.tc-crumb:hover { text-decoration:underline; }
+.tc-sep { color:var(--muted); font-size:.72rem; }
+.tc-crumb-cur { font-size:.82rem; color:var(--muted); font-family:var(--font); }
 .cd-student-row { display:flex; align-items:center; gap:.75rem; padding:.7rem 0; border-bottom:1px solid var(--border2); }
 body.ar .cd-student-row { flex-direction:row-reverse; }
 .cd-student-row:last-child { border-bottom:none; }
@@ -1125,7 +1122,7 @@ function navigate(page, el) {
   if(el) el.classList.add('active');
   activePage = page;
   document.getElementById('topbar-title').textContent = T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home;
-  if (page === 'courses') { renderCourses(); loadTeacherGroups(); }
+  if (page === 'courses') { teacherClassView='types'; teacherSelType=null; teacherSelLevel=null; renderCourses(); loadTeacherGroups(); }
   if (page === 'attendance') { if (teacherGroups.length === 0) loadTeacherGroups(); }
   if (page === 'posts')   loadPosts();
   if (window.innerWidth <= 768) {
@@ -1774,7 +1771,10 @@ const CT = {
        thAvg:'معدل', thAtt:'الحضور',
        progGeneral:'المعدل العام', progAtt:'نسبة الحضور', progAssigns:'نسبة التسليم' }
 };
-let teacherGroups = [];
+let teacherGroups    = [];
+let teacherClassView = 'types'; // 'types' | 'levels' | 'groups'
+let teacherSelType   = null;
+let teacherSelLevel  = null;
 
 async function loadTeacherGroups() {
   teacherGroups = [];
@@ -1814,51 +1814,162 @@ const TYPE_ICON_CLASS = {
 };
 
 function renderTeacherGroups() {
+  if (teacherClassView === 'types')  _tcRenderTypes();
+  else if (teacherClassView === 'levels') _tcRenderLevels();
+  else _tcRenderGroups();
+}
+
+function _tcBreadcrumb(crumbs, current) {
+  const parts = crumbs.map(c => `<span class="tc-crumb" onclick="${c.fn}">${c.label}</span><span class="tc-sep">›</span>`).join('');
+  return `<div class="tc-breadcrumb">${parts}<span class="tc-crumb-cur">${current}</span></div>`;
+}
+
+function _tcRenderTypes() {
   const lang = currentLang;
   const el   = document.getElementById('teacher-assigned-groups');
   if (!el) return;
   if (teacherGroups.length === 0) { el.innerHTML = ''; return; }
 
-  const studentLbl = lang === 'ar' ? 'طالب' : 'étudiant(s)';
-  const levelLbl   = lang === 'ar' ? 'مستوى' : 'Niv.';
-  const groupLbl   = lang === 'ar' ? 'مجموعة' : 'Groupe';
-
   const byType = {};
-  const typeOrder = [];
+  const order  = [];
   teacherGroups.forEach(g => {
-    if (!byType[g.type_key]) { byType[g.type_key] = []; typeOrder.push(g.type_key); }
+    if (!byType[g.type_key]) { byType[g.type_key] = []; order.push(g.type_key); }
     byType[g.type_key].push(g);
   });
 
-  const typeCards = typeOrder.map(typeKey => {
+  const studentLbl = lang === 'ar' ? 'طالب' : 'étudiant(s)';
+
+  const cards = order.map(typeKey => {
     const groups   = byType[typeKey];
     const icon     = TYPE_ICONS[typeKey]      || '🏫';
     const iconCls  = TYPE_ICON_CLASS[typeKey] || 'c1';
     const labels   = TYPE_LABELS[typeKey]     || {fr: typeKey, ar: typeKey};
     const typeName = lang === 'ar' ? labels.ar : labels.fr;
-    const countLbl = groups.length + (lang === 'ar' ? ' مجموعة' : (' groupe' + (groups.length > 1 ? 's' : '')));
-
-    const items = groups.map(g => {
-      const lvl = g.level_number ? `${levelLbl} ${g.level_number} · ` : '';
-      return `<div class="group-item" onclick="openGroupDetail(${g.group_id})">
-        <span class="group-item-name">${lvl}${groupLbl} ${g.group_letter}</span>
-        <span class="group-item-count">👥 ${g.student_count || 0} ${studentLbl}</span>
-      </div>`;
-    }).join('');
-
-    return `<div class="course-card type-card">
+    const levels   = [...new Set(groups.map(g => g.level_number).filter(l => l !== null))];
+    const hasLvl   = levels.length > 0;
+    const subLbl   = hasLvl
+      ? levels.length + (lang === 'ar' ? ' مستوى' : (' niveau' + (levels.length > 1 ? 'x' : '')))
+      : groups.length + (lang === 'ar' ? ' مجموعة' : (' groupe' + (groups.length > 1 ? 's' : '')));
+    const total    = groups.reduce((s, g) => s + (g.student_count || 0), 0);
+    return `<div class="course-card" onclick="tcSelectType('${typeKey}')">
       <div class="course-card-header">
         <div class="course-icon ${iconCls}">${icon}</div>
         <div>
           <div class="course-group-name">${typeName}</div>
-          <div style="font-size:.75rem;color:var(--muted);margin-top:.15rem;">${countLbl}</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.15rem;">${subLbl}</div>
         </div>
       </div>
-      <div class="group-items">${items}</div>
+      <div class="course-meta-row"><span>👥 ${total} ${studentLbl}</span></div>
     </div>`;
   }).join('');
 
-  el.innerHTML = `<div class="grid-3">${typeCards}</div>`;
+  el.innerHTML = `<div class="grid-3">${cards}</div>`;
+}
+
+function tcSelectType(typeKey) {
+  teacherSelType  = typeKey;
+  const groups    = teacherGroups.filter(g => g.type_key === typeKey);
+  const hasLevels = groups.some(g => g.level_number !== null);
+  teacherClassView = hasLevels ? 'levels' : 'groups';
+  teacherSelLevel  = null;
+  renderTeacherGroups();
+}
+
+function _tcRenderLevels() {
+  const lang    = currentLang;
+  const el      = document.getElementById('teacher-assigned-groups');
+  if (!el) return;
+  const groups  = teacherGroups.filter(g => g.type_key === teacherSelType);
+  const labels  = TYPE_LABELS[teacherSelType] || {fr: teacherSelType, ar: teacherSelType};
+  const typeName = lang === 'ar' ? labels.ar : labels.fr;
+  const icon    = TYPE_ICONS[teacherSelType]      || '🏫';
+  const iconCls = TYPE_ICON_CLASS[teacherSelType] || 'c1';
+
+  const levelMap = {};
+  groups.forEach(g => {
+    const l = g.level_number;
+    if (!levelMap[l]) levelMap[l] = [];
+    levelMap[l].push(g);
+  });
+  const levels = Object.keys(levelMap).map(Number).sort((a, b) => a - b);
+
+  const studentLbl = lang === 'ar' ? 'طالب' : 'étudiant(s)';
+  const levelWord  = lang === 'ar' ? 'المستوى' : 'Niveau';
+  const groupWord  = lang === 'ar' ? 'مجموعة' : 'groupe';
+
+  const cards = levels.map(lvl => {
+    const gs    = levelMap[lvl];
+    const total = gs.reduce((s, g) => s + (g.student_count || 0), 0);
+    const gc    = gs.length;
+    const gcLbl = gc + ' ' + groupWord + (gc > 1 && lang !== 'ar' ? 's' : '');
+    return `<div class="course-card" onclick="tcSelectLevel(${lvl})">
+      <div class="course-card-header">
+        <div class="course-icon ${iconCls}">${icon}</div>
+        <div>
+          <div class="course-group-name">${levelWord} ${lvl}</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.15rem;">${gcLbl}</div>
+        </div>
+      </div>
+      <div class="course-meta-row"><span>👥 ${total} ${studentLbl}</span></div>
+    </div>`;
+  }).join('');
+
+  const crumbHome = lang === 'ar' ? 'الكل' : 'Classes';
+  el.innerHTML = _tcBreadcrumb(
+    [{label: crumbHome, fn: 'tcGoTypes()'}],
+    typeName
+  ) + `<div class="grid-3">${cards}</div>`;
+}
+
+function tcSelectLevel(level) {
+  teacherSelLevel  = level;
+  teacherClassView = 'groups';
+  renderTeacherGroups();
+}
+
+function _tcRenderGroups() {
+  const lang   = currentLang;
+  const el     = document.getElementById('teacher-assigned-groups');
+  if (!el) return;
+  const groups = teacherGroups.filter(g =>
+    g.type_key === teacherSelType &&
+    (teacherSelLevel === null || g.level_number === teacherSelLevel)
+  );
+  const labels   = TYPE_LABELS[teacherSelType] || {fr: teacherSelType, ar: teacherSelType};
+  const typeName = lang === 'ar' ? labels.ar : labels.fr;
+  const icon     = TYPE_ICONS[teacherSelType]      || '🏫';
+  const iconCls  = TYPE_ICON_CLASS[teacherSelType] || 'c1';
+  const studentLbl = lang === 'ar' ? 'طالب' : 'étudiant(s)';
+  const groupWord  = lang === 'ar' ? 'مجموعة' : 'Groupe';
+  const levelWord  = lang === 'ar' ? 'المستوى' : 'Niveau';
+
+  const cards = groups.map(g =>
+    `<div class="course-card" onclick="openGroupDetail(${g.group_id})">
+      <div class="course-card-header">
+        <div class="course-icon ${iconCls}">${icon}</div>
+        <div>
+          <div class="course-group-name">${groupWord} ${g.group_letter}</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.15rem;">👥 ${g.student_count || 0} ${studentLbl}</div>
+        </div>
+      </div>
+    </div>`
+  ).join('');
+
+  const crumbs = [{label: lang === 'ar' ? 'الكل' : 'Classes', fn: 'tcGoTypes()'}];
+  if (teacherSelLevel !== null)
+    crumbs.push({label: typeName, fn: 'tcGoLevels()'});
+  const current = teacherSelLevel !== null ? `${levelWord} ${teacherSelLevel}` : typeName;
+
+  el.innerHTML = _tcBreadcrumb(crumbs, current) + `<div class="grid-3">${cards}</div>`;
+}
+
+function tcGoTypes() {
+  teacherClassView = 'types'; teacherSelType = null; teacherSelLevel = null;
+  renderTeacherGroups();
+}
+function tcGoLevels() {
+  teacherClassView = 'levels'; teacherSelLevel = null;
+  renderTeacherGroups();
 }
 
 function populateAttGroupSelect() {
