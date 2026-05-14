@@ -249,6 +249,40 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 .toast-dot.success { background:var(--green); }
 .toast-dot.error   { background:var(--red); }
 
+/* TABS */
+.tabs { display:flex; gap:.4rem; flex-wrap:wrap; }
+.tab { padding:.5rem 1.1rem; border-radius:100px; font-family:var(--font); font-size:.82rem; font-weight:600; color:var(--muted); border:1px solid var(--border); cursor:pointer; transition:all .2s; }
+.tab:hover { color:var(--white); border-color:rgba(255,255,255,.2); }
+.tab.active { background:rgba(251,146,60,.12); color:var(--orange); border-color:rgba(251,146,60,.35); }
+
+/* CLASS CARDS */
+.class-type-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+.class-type-card { background:var(--navy-card); border:1px solid var(--border); border-radius:16px; padding:1.25rem 1.4rem; cursor:pointer; transition:border-color .2s,transform .15s; }
+.class-type-card:hover { border-color:rgba(251,146,60,.4); transform:translateY(-2px); }
+.class-type-card .ct-name { font-family:var(--font); font-size:1rem; font-weight:700; margin-bottom:.3rem; }
+.class-type-card .ct-sub  { font-size:.78rem; color:var(--muted); }
+.level-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+.level-card { background:var(--navy-card); border:1px solid var(--border); border-radius:14px; padding:1.1rem 1.25rem; cursor:pointer; transition:border-color .2s,transform .15s; }
+.level-card:hover { border-color:rgba(91,156,246,.4); transform:translateY(-2px); }
+.level-card .lc-title { font-family:var(--font); font-size:.95rem; font-weight:700; margin-bottom:.25rem; }
+.level-card .lc-sub   { font-size:.78rem; color:var(--muted); }
+.group-chips { display:flex; flex-wrap:wrap; gap:.5rem; }
+.group-chip { display:inline-flex; align-items:center; gap:.5rem; padding:.5rem .9rem; background:rgba(62,207,120,.07); border:1px solid rgba(62,207,120,.25); border-radius:100px; font-family:var(--font); font-size:.82rem; font-weight:600; color:var(--green); cursor:default; }
+.group-chip .chip-del { cursor:pointer; color:var(--muted); font-size:.85rem; padding:.05rem; line-height:1; transition:color .15s; }
+.group-chip .chip-del:hover { color:var(--red); }
+.breadcrumb { display:flex; align-items:center; gap:.5rem; font-size:.82rem; color:var(--muted); margin-bottom:1.5rem; flex-wrap:wrap; }
+.breadcrumb span.bc-link { cursor:pointer; transition:color .15s; }
+.breadcrumb span.bc-link:hover { color:var(--orange); }
+.breadcrumb span.bc-sep { color:var(--border); }
+.breadcrumb span.bc-cur { color:var(--white); font-weight:600; }
+
+/* MEMBER LIST in modal */
+.member-row { display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.7rem 0; border-bottom:1px solid var(--border2); }
+.member-row:last-child { border-bottom:none; }
+.member-info { display:flex; align-items:center; gap:.6rem; }
+.member-init { width:32px; height:32px; border-radius:50%; background:rgba(91,156,246,.15); border:1px solid rgba(91,156,246,.3); display:flex; align-items:center; justify-content:center; font-family:var(--font); font-weight:700; font-size:.72rem; color:var(--blue); flex-shrink:0; }
+.member-init.teacher { background:rgba(62,207,120,.12); border-color:rgba(62,207,120,.3); color:var(--green); }
+
 /* HAMBURGER */
 .hamburger { display:none; width:36px; height:36px; border-radius:9px; background:rgba(255,255,255,.05); border:1px solid var(--border); align-items:center; justify-content:center; cursor:pointer; color:var(--muted); flex-shrink:0; }
 .sidebar-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:199; }
@@ -316,6 +350,14 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       <span id="nav-inscriptions-lbl">Inscriptions</span>
       <span class="nav-badge" id="nav-inscriptions-badge" style="display:none"></span>
+    </div>
+    <div class="nav-item" onclick="navigate('classes',this)" id="nav-classes">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><rect x="9" y="13" width="6" height="9"/></svg>
+      <span id="nav-classes-lbl">Classes</span>
+    </div>
+    <div class="nav-item" onclick="navigate('assigning-classes',this)" id="nav-assigning-classes">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="23" y2="8"/><line x1="21" y1="6" x2="21" y2="10"/></svg>
+      <span id="nav-assigning-classes-lbl">Assignation des classes</span>
     </div>
     <div class="nav-section-label" id="nav-account-label">Compte</div>
     <div class="nav-item" onclick="navigate('settings',this)" id="nav-settings">
@@ -543,6 +585,91 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     </div>
   </div>
 
+  <!-- ── CLASSES PAGE ── -->
+  <div class="page" id="page-classes">
+    <!-- Breadcrumb (hidden at root level) -->
+    <div id="classes-breadcrumb" class="breadcrumb" style="display:none;"></div>
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="classes-page-title">Classes</h2>
+        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="classes-page-sub">Sélectionnez un type de classe</p>
+      </div>
+      <button class="btn-primary" id="btn-add-group" style="display:none;" onclick="openAddGroupModal()">
+        + <span id="btn-add-group-lbl">Ajouter un groupe</span>
+      </button>
+    </div>
+
+    <!-- View: type grid -->
+    <div id="classes-view-types" class="class-type-grid"></div>
+
+    <!-- View: level cards (for types with levels) -->
+    <div id="classes-view-levels" style="display:none;" class="level-cards"></div>
+
+    <!-- View: groups within a level/type -->
+    <div id="classes-view-groups" style="display:none;">
+      <div class="card" style="margin-bottom:1.25rem;">
+        <div class="card-title" id="classes-groups-title">Groupes</div>
+        <div id="classes-group-chips" class="group-chips">
+          <div class="loading-overlay"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ASSIGNING CLASSES PAGE ── -->
+  <div class="page" id="page-assigning-classes">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="assigning-page-title">Assignation des classes</h2>
+        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="assigning-page-sub">Aperçu des groupes assignés aux étudiants et professeurs</p>
+      </div>
+    </div>
+    <div class="grid-2" style="gap:1.5rem;">
+      <!-- Students -->
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:1.25rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem;">
+          <span style="font-size:1.1rem;">🎓</span>
+          <span class="card-title" style="margin-bottom:0;" id="assigning-students-title">Étudiants</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;" id="assigning-students-table">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);">
+                <th style="padding:.75rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="ath-student">Étudiant</th>
+                <th style="padding:.75rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="ath-group">Groupe(s)</th>
+              </tr>
+            </thead>
+            <tbody id="assigning-students-tbody">
+              <tr><td colspan="2" style="padding:2rem;text-align:center;color:var(--muted);"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Teachers -->
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="padding:1.25rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem;">
+          <span style="font-size:1.1rem;">👨‍🏫</span>
+          <span class="card-title" style="margin-bottom:0;" id="assigning-teachers-title">Professeurs</span>
+        </div>
+        <div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;" id="assigning-teachers-table">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border);">
+                <th style="padding:.75rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="ath-teacher">Professeur</th>
+                <th style="padding:.75rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="ath-teacher-group">Groupe(s)</th>
+              </tr>
+            </thead>
+            <tbody id="assigning-teachers-tbody">
+              <tr><td colspan="2" style="padding:2rem;text-align:center;color:var(--muted);"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── SETTINGS PAGE ── -->
   <div class="page" id="page-settings">
     <div style="margin-bottom:1.5rem;">
@@ -753,6 +880,54 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   </div>
 </div>
 
+<!-- ── MODAL: ADD GROUP ── -->
+<div class="modal-overlay" id="modal-add-group">
+  <div class="modal sm">
+    <div class="modal-header">
+      <h3 id="modal-add-group-title">Nouveau groupe</h3>
+      <button class="btn-close" onclick="closeModal('add-group')" aria-label="Fermer">✕</button>
+    </div>
+    <div class="form-group">
+      <label id="lbl-group-letter">Lettre du groupe</label>
+      <input type="text" id="group-letter-input" maxlength="3" placeholder="A, B, C…" style="text-transform:uppercase;" oninput="this.value=this.value.toUpperCase()">
+    </div>
+    <div id="add-group-error" style="display:none;color:var(--red);font-size:.82rem;margin-bottom:.5rem;"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('add-group')" id="add-group-cancel">Annuler</button>
+      <button class="btn-primary" onclick="submitAddGroup()" id="add-group-submit">Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: MANAGE GROUP MEMBERS ── -->
+<div class="modal-overlay" id="modal-group-members">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header">
+      <h3 id="modal-members-title">Membres du groupe</h3>
+      <button class="btn-close" onclick="closeModal('group-members')" aria-label="Fermer">✕</button>
+    </div>
+
+    <!-- Current members list -->
+    <div class="card-title" style="margin-bottom:.5rem;" id="members-current-lbl">Membres actuels</div>
+    <div id="members-list" style="margin-bottom:1.25rem;max-height:220px;overflow-y:auto;">
+      <div class="loading-overlay"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Add member -->
+    <div class="card-title" style="margin-bottom:.5rem;" id="members-add-lbl">Ajouter un membre</div>
+    <div style="display:flex;gap:.6rem;align-items:center;">
+      <select id="member-user-select" style="flex:1;padding:.7rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;">
+        <option value="">— Sélectionner un utilisateur —</option>
+      </select>
+      <button class="btn-primary btn-sm" onclick="submitAddMember()" id="btn-add-member">Ajouter</button>
+    </div>
+    <div id="member-add-error" style="display:none;color:var(--red);font-size:.82rem;margin-top:.4rem;"></div>
+    <div class="modal-footer" style="margin-top:1.25rem;">
+      <button class="btn-secondary" onclick="closeModal('group-members')" id="members-close-btn">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <!-- SIDEBAR BACKDROP -->
 <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
 <!-- TOAST -->
@@ -781,7 +956,21 @@ const T = {
     navMain:'Principal', navAccount:'Compte',
     navHome:'Tableau de bord', navCourses:'Cours', navAssign:'Assignation', navSettings:'Paramètres',
     navUsers:'Utilisateurs', navInscriptions:'Inscriptions',
-    topbar:{ home:'Tableau de bord Admin', courses:'Gestion des cours', assign:'Assignation des cours', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres' },
+    navClasses:'Classes', navAssigningClasses:'Assignation des classes',
+    classesPageTitle:'Classes', classesPageSub:'Sélectionnez un type de classe',
+    assigningPageTitle:'Assignation des classes', assigningPageSub:'Aperçu des groupes assignés aux étudiants et professeurs',
+    assigningStudentsTitle:'Étudiants', assigningTeachersTitle:'Professeurs',
+    ath_student:'Étudiant', ath_group:'Groupe(s)', ath_teacher:'Professeur', ath_teacher_group:'Groupe(s)',
+    classesGroupsOf:'Groupes de', noGroups:'Aucun groupe. Cliquez sur + pour en créer un.',
+    btnAddGroup:'Ajouter un groupe', modalAddGroupTitle:'Nouveau groupe', lblGroupLetter:'Lettre du groupe',
+    membersCurrentLbl:'Membres actuels', membersAddLbl:'Ajouter un membre',
+    noMembers:'Aucun membre dans ce groupe.',
+    toastGroupCreated:'Groupe créé !', toastGroupDeleted:'Groupe supprimé.', toastMemberAdded:'Membre ajouté !', toastMemberRemoved:'Membre retiré.',
+    errGroupLetter:'Veuillez entrer une lettre de groupe.', errGroupExists:'Ce groupe existe déjà.',
+    selectUser:'— Sélectionner un utilisateur —',
+    confirmDeleteGroup:'Supprimer ce groupe et tous ses membres ?',
+    noAssignments:'Aucun groupe assigné.',
+    topbar:{ home:'Tableau de bord Admin', courses:'Gestion des cours', assign:'Assignation des cours', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes' },
     welcomeSub:'Gérez les cours et assignez-les aux professeurs depuis ce tableau de bord.',
     statCoursesLbl:'Cours au total', statAssignedLbl:'Cours assignés',
     statTeachersLbl:'Professeurs', statUnassignedLbl:'Non assignés',
@@ -832,7 +1021,21 @@ const T = {
     navMain:'الرئيسية', navAccount:'الحساب',
     navHome:'لوحة التحكم', navCourses:'الدروس', navAssign:'التعيينات', navSettings:'الإعدادات',
     navUsers:'المستخدمون', navInscriptions:'التسجيلات',
-    topbar:{ home:'لوحة تحكم المسؤول', courses:'إدارة الدروس', assign:'تعيين الدروس', users:'المستخدمون', inscriptions:'التسجيلات', settings:'الإعدادات' },
+    navClasses:'الفصول', navAssigningClasses:'تعيين الفصول',
+    classesPageTitle:'الفصول', classesPageSub:'اختر نوع الفصل',
+    assigningPageTitle:'تعيين الفصول', assigningPageSub:'نظرة عامة على المجموعات المعينة للطلاب والأساتذة',
+    assigningStudentsTitle:'الطلاب', assigningTeachersTitle:'الأساتذة',
+    ath_student:'الطالب', ath_group:'المجموعة(ات)', ath_teacher:'الأستاذ', ath_teacher_group:'المجموعة(ات)',
+    classesGroupsOf:'مجموعات', noGroups:'لا توجد مجموعات. انقر على + لإنشاء واحدة.',
+    btnAddGroup:'إضافة مجموعة', modalAddGroupTitle:'مجموعة جديدة', lblGroupLetter:'حرف المجموعة',
+    membersCurrentLbl:'الأعضاء الحاليون', membersAddLbl:'إضافة عضو',
+    noMembers:'لا يوجد أعضاء في هذه المجموعة.',
+    toastGroupCreated:'تم إنشاء المجموعة!', toastGroupDeleted:'تم حذف المجموعة.', toastMemberAdded:'تمت إضافة العضو!', toastMemberRemoved:'تم إزالة العضو.',
+    errGroupLetter:'يرجى إدخال حرف المجموعة.', errGroupExists:'هذه المجموعة موجودة بالفعل.',
+    selectUser:'— اختر مستخدماً —',
+    confirmDeleteGroup:'حذف هذه المجموعة وجميع أعضائها؟',
+    noAssignments:'لا توجد مجموعات معينة.',
+    topbar:{ home:'لوحة تحكم المسؤول', courses:'إدارة الدروس', assign:'تعيين الدروس', users:'المستخدمون', inscriptions:'التسجيلات', settings:'الإعدادات', classes:'الفصول', 'assigning-classes':'تعيين الفصول' },
     welcomeSub:'أدر الدروس وعيّنها للأساتذة من لوحة التحكم هذه.',
     statCoursesLbl:'إجمالي الدروس', statAssignedLbl:'الدروس المعيّنة',
     statTeachersLbl:'الأساتذة', statUnassignedLbl:'غير معيّن',
@@ -904,6 +1107,15 @@ function applyTranslations() {
   set('nav-home-lbl', t.navHome); set('nav-courses-lbl', t.navCourses);
   set('nav-assign-lbl', t.navAssign); set('nav-settings-lbl', t.navSettings);
   set('nav-users-lbl', t.navUsers); set('nav-inscriptions-lbl', t.navInscriptions);
+  set('nav-classes-lbl', t.navClasses); set('nav-assigning-classes-lbl', t.navAssigningClasses);
+  set('classes-page-title', t.classesPageTitle);
+  set('assigning-page-title', t.assigningPageTitle); set('assigning-page-sub', t.assigningPageSub);
+  set('assigning-students-title', t.assigningStudentsTitle); set('assigning-teachers-title', t.assigningTeachersTitle);
+  set('ath-student', t.ath_student); set('ath-group', t.ath_group);
+  set('ath-teacher', t.ath_teacher); set('ath-teacher-group', t.ath_teacher_group);
+  set('btn-add-group-lbl', t.btnAddGroup);
+  set('modal-add-group-title', t.modalAddGroupTitle); set('lbl-group-letter', t.lblGroupLetter);
+  set('members-current-lbl', t.membersCurrentLbl); set('members-add-lbl', t.membersAddLbl);
   set('inscriptions-title', t.inscriptionsTitle); set('inscriptions-sub', t.inscriptionsSub);
   set('export-csv-lbl', t.exportCSV);
   set('etab-all-lbl', t.etabAll); set('etab-new-lbl', t.etabNew);
@@ -947,6 +1159,8 @@ function navigate(page, el) {
   if (page === 'users') loadUsers();
   if (page === 'inscriptions') loadEnrollments();
   if (page === 'assign') { renderAssignPage(); if (assignTab === 'students') renderStudentList(); }
+  if (page === 'classes') { classesView = 'types'; classesTypeKey = null; classesLevel = null; classesGroupId = null; renderClassesPage(); }
+  if (page === 'assigning-classes') loadAssigningClasses();
   if (window.innerWidth <= 768) toggleSidebar();
 }
 
@@ -1847,6 +2061,326 @@ function exportEnrollmentsCSV() {
 }
 
 function escE(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+/* ══════════════════════════════════════════════════════
+   CLASSES PAGE
+══════════════════════════════════════════════════════ */
+let classesView      = 'types'; // 'types' | 'levels' | 'groups'
+let classesTypeKey   = null;
+let classesTypeMeta  = null;
+let classesLevel     = null;
+let classesGroupId   = null;
+let allClassTypes    = [];
+let allUsers         = [];
+
+// Fixed type definitions (mirrors PHP CLASS_TYPES)
+const CLASS_TYPE_DEFS = [
+  {key:'beginners',          label_fr:'Débutants',           label_ar:'مبتدئون',         levels:3, icon:'🌱'},
+  {key:'pre_intermediate',   label_fr:'Pré-intermédiaire',   label_ar:'ما قبل المتوسط',  levels:3, icon:'📗'},
+  {key:'intermediate',       label_fr:'Intermédiaire',       label_ar:'متوسط',            levels:3, icon:'📘'},
+  {key:'upper_intermediate', label_fr:'Upper-intermédiaire', label_ar:'فوق المتوسط',     levels:3, icon:'📙'},
+  {key:'advanced',           label_fr:'Avancé',              label_ar:'متقدم',            levels:3, icon:'🔥'},
+  {key:'baccalaureate',      label_fr:'Baccalauréat',        label_ar:'البكالوريا',       levels:0, icon:'🎓'},
+  {key:'business',           label_fr:'Business',            label_ar:'الأعمال',          levels:0, icon:'💼'},
+  {key:'kids',               label_fr:'Kids',                label_ar:'أطفال',            levels:0, icon:'🧒'},
+];
+
+async function renderClassesPage() {
+  const btnAdd = document.getElementById('btn-add-group');
+  const bc     = document.getElementById('classes-breadcrumb');
+
+  document.getElementById('classes-view-types' ).style.display = 'none';
+  document.getElementById('classes-view-levels').style.display = 'none';
+  document.getElementById('classes-view-groups').style.display = 'none';
+  bc.style.display = 'none';
+  if (btnAdd) btnAdd.style.display = 'none';
+
+  if (classesView === 'types') {
+    document.getElementById('classes-page-sub').textContent = tr().classesPageSub;
+    document.getElementById('classes-view-types').style.display = '';
+    await renderTypesGrid();
+
+  } else if (classesView === 'levels') {
+    document.getElementById('classes-page-sub').textContent = currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+    bc.style.display = '';
+    bc.innerHTML = `<span class="bc-link" onclick="classesGoTypes()">Classes</span>`
+      + `<span class="bc-sep">›</span>`
+      + `<span class="bc-cur">${currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr}</span>`;
+    document.getElementById('classes-view-levels').style.display = '';
+    renderLevelCards();
+
+  } else if (classesView === 'groups') {
+    const label = buildGroupLabel();
+    document.getElementById('classes-page-sub').textContent = label;
+    bc.style.display = '';
+    let bcHtml = `<span class="bc-link" onclick="classesGoTypes()">Classes</span><span class="bc-sep">›</span>`;
+    if (classesTypeMeta.levels > 0) {
+      bcHtml += `<span class="bc-link" onclick="classesGoLevels()">${currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr}</span><span class="bc-sep">›</span>`;
+    }
+    bcHtml += `<span class="bc-cur">${label}</span>`;
+    bc.innerHTML = bcHtml;
+    document.getElementById('classes-view-groups').style.display = '';
+    if (btnAdd) btnAdd.style.display = '';
+    document.getElementById('classes-groups-title').textContent = tr().classesGroupsOf + ' ' + label;
+    await loadGroupChips();
+  }
+}
+
+function buildGroupLabel() {
+  const name = currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+  return classesLevel ? name + ' ' + classesLevel : name;
+}
+
+async function renderTypesGrid() {
+  let data;
+  try { data = await api('api_classes.php?action=list_types'); }
+  catch(e) { return; }
+  allClassTypes = data.types || [];
+
+  const grid = document.getElementById('classes-view-types');
+  grid.innerHTML = allClassTypes.map(t => {
+    const def  = CLASS_TYPE_DEFS.find(d => d.key === t.key) || {};
+    const name = currentLang==='ar' ? t.label_ar : t.label_fr;
+    let groupTally = 0;
+    if (t.levels > 0) {
+      groupTally = (t.level_groups || []).reduce((s, lg) => s + lg.group_count, 0);
+    } else {
+      groupTally = t.group_count || 0;
+    }
+    const sub = t.levels > 0 ? t.levels + ' niveaux · ' + groupTally + ' groupe(s)' : groupTally + ' groupe(s)';
+    return `<div class="class-type-card" onclick="classesSelectType(${JSON.stringify(t.key)})">
+      <div style="font-size:1.8rem;margin-bottom:.6rem;">${def.icon||'📚'}</div>
+      <div class="ct-name">${name}</div>
+      <div class="ct-sub">${sub}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderLevelCards() {
+  const type = allClassTypes.find(t => t.key === classesTypeKey);
+  if (!type) return;
+  const container = document.getElementById('classes-view-levels');
+  container.innerHTML = (type.level_groups || []).map(lg => {
+    const name = (currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr) + ' ' + lg.level;
+    return `<div class="level-card" onclick="classesSelectLevel(${lg.level})">
+      <div class="lc-title">${name}</div>
+      <div class="lc-sub">${lg.group_count} groupe(s)</div>
+    </div>`;
+  }).join('');
+}
+
+async function loadGroupChips() {
+  const chips = document.getElementById('classes-group-chips');
+  chips.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+
+  let url = `api_classes.php?action=list_groups&type_key=${classesTypeKey}`;
+  if (classesLevel) url += `&level=${classesLevel}`;
+  let data;
+  try { data = await api(url); } catch(e) { chips.innerHTML = '<p style="color:var(--red);font-size:.85rem;">Erreur de chargement</p>'; return; }
+
+  const groups = data.groups || [];
+  if (groups.length === 0) {
+    chips.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${tr().noGroups}</p>`;
+    return;
+  }
+  chips.innerHTML = groups.map(g =>
+    `<div class="group-chip" onclick="openManageGroupModal(${g.id}, ${JSON.stringify(g.group_letter)})">
+      Groupe ${g.group_letter}
+      <span style="color:var(--muted);font-size:.75rem;">(${g.member_count})</span>
+      <span class="chip-del" title="Supprimer" onclick="event.stopPropagation();deleteGroup(${g.id})">✕</span>
+    </div>`
+  ).join('');
+}
+
+function classesSelectType(key) {
+  classesTypeKey  = key;
+  classesTypeMeta = CLASS_TYPE_DEFS.find(d => d.key === key) || {};
+  if (classesTypeMeta.levels > 0) {
+    classesView  = 'levels';
+    classesLevel = null;
+  } else {
+    classesView  = 'groups';
+    classesLevel = null;
+  }
+  renderClassesPage();
+}
+
+function classesSelectLevel(level) {
+  classesLevel = level;
+  classesView  = 'groups';
+  renderClassesPage();
+}
+
+function classesGoTypes() {
+  classesView     = 'types';
+  classesTypeKey  = null;
+  classesTypeMeta = null;
+  classesLevel    = null;
+  classesGroupId  = null;
+  renderClassesPage();
+}
+
+function classesGoLevels() {
+  classesView    = 'levels';
+  classesLevel   = null;
+  classesGroupId = null;
+  renderClassesPage();
+}
+
+// Add group modal
+function openAddGroupModal() {
+  document.getElementById('group-letter-input').value = '';
+  const err = document.getElementById('add-group-error');
+  if (err) { err.style.display='none'; err.textContent=''; }
+  document.getElementById('modal-add-group').classList.add('open');
+}
+
+async function submitAddGroup() {
+  const letter = document.getElementById('group-letter-input').value.trim().toUpperCase();
+  const errEl  = document.getElementById('add-group-error');
+  errEl.style.display='none';
+  if (!letter) { errEl.textContent = tr().errGroupLetter; errEl.style.display=''; return; }
+  const btn = document.getElementById('add-group-submit');
+  btn.disabled = true;
+  try {
+    await api('api_classes.php', 'POST', {
+      action: 'create_group',
+      type_key: classesTypeKey,
+      level: classesLevel,
+      group_letter: letter,
+    });
+    closeModal('add-group');
+    showToast(tr().toastGroupCreated, 'success');
+    await loadGroupChips();
+    // Refresh type list counts
+    const data = await api('api_classes.php?action=list_types');
+    allClassTypes = data.types || [];
+  } catch(e) {
+    errEl.textContent = e.message.includes('existe') ? tr().errGroupExists : e.message;
+    errEl.style.display = '';
+  } finally { btn.disabled = false; }
+}
+
+async function deleteGroup(groupId) {
+  if (!confirm(tr().confirmDeleteGroup)) return;
+  try {
+    await api('api_classes.php', 'POST', {action:'delete_group', group_id:groupId});
+    showToast(tr().toastGroupDeleted);
+    await loadGroupChips();
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+// Manage members modal
+async function openManageGroupModal(groupId, groupLetter) {
+  classesGroupId = groupId;
+  document.getElementById('modal-members-title').textContent = 'Groupe ' + groupLetter + ' – Membres';
+  document.getElementById('member-add-error').style.display = 'none';
+  document.getElementById('modal-group-members').classList.add('open');
+  await Promise.all([loadMembersList(), loadUsersForSelect()]);
+}
+
+async function loadMembersList() {
+  const list = document.getElementById('members-list');
+  list.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+  try {
+    const data = await api(`api_classes.php?action=list_members&group_id=${classesGroupId}`);
+    const members = data.members || [];
+    if (members.length === 0) { list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${tr().noMembers}</p>`; return; }
+    list.innerHTML = members.map(m => {
+      const init = (m.name||m.username||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+      const isTeacher = m.role === 'teacher';
+      const roleBadge = isTeacher
+        ? '<span style="font-size:.7rem;background:rgba(62,207,120,.12);color:var(--green);border:1px solid rgba(62,207,120,.3);padding:.1rem .45rem;border-radius:100px;font-family:var(--font);font-weight:700;">Prof</span>'
+        : '<span style="font-size:.7rem;background:rgba(91,156,246,.12);color:var(--blue);border:1px solid rgba(91,156,246,.3);padding:.1rem .45rem;border-radius:100px;font-family:var(--font);font-weight:700;">Étudiant</span>';
+      return `<div class="member-row">
+        <div class="member-info">
+          <div class="member-init${isTeacher?' teacher':''}">${init}</div>
+          <div>
+            <div style="font-family:var(--font);font-size:.87rem;font-weight:600;">${m.name||m.username}</div>
+            <div style="font-size:.75rem;color:var(--muted);">${m.username}</div>
+          </div>
+          ${roleBadge}
+        </div>
+        <button class="btn-secondary btn-sm" onclick="removeMember(${m.id})">Retirer</button>
+      </div>`;
+    }).join('');
+  } catch(e) { list.innerHTML = '<p style="color:var(--red);font-size:.85rem;">Erreur</p>'; }
+}
+
+async function loadUsersForSelect() {
+  if (allUsers.length === 0) {
+    try { const d = await api('api_classes.php?action=list_all_users'); allUsers = d.users || []; }
+    catch(e) { return; }
+  }
+  const sel = document.getElementById('member-user-select');
+  sel.innerHTML = `<option value="">${tr().selectUser}</option>`
+    + allUsers.map(u => {
+        const role = u.role==='teacher' ? '👨‍🏫' : '🎓';
+        return `<option value="${u.id}">${role} ${u.name||u.username} (${u.username})</option>`;
+      }).join('');
+}
+
+async function submitAddMember() {
+  const uid   = parseInt(document.getElementById('member-user-select').value);
+  const errEl = document.getElementById('member-add-error');
+  errEl.style.display = 'none';
+  if (!uid) return;
+  const btn = document.getElementById('btn-add-member'); btn.disabled = true;
+  try {
+    await api('api_classes.php', 'POST', {action:'add_member', group_id:classesGroupId, user_id:uid});
+    showToast(tr().toastMemberAdded, 'success');
+    await loadMembersList();
+    await loadGroupChips();
+  } catch(e) { errEl.textContent = e.message; errEl.style.display = ''; }
+  finally { btn.disabled = false; }
+}
+
+async function removeMember(userId) {
+  try {
+    await api('api_classes.php', 'POST', {action:'remove_member', group_id:classesGroupId, user_id:userId});
+    showToast(tr().toastMemberRemoved);
+    await loadMembersList();
+    await loadGroupChips();
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════
+   ASSIGNING CLASSES PAGE
+══════════════════════════════════════════════════════ */
+async function loadAssigningClasses() {
+  const sTbody = document.getElementById('assigning-students-tbody');
+  const tTbody = document.getElementById('assigning-teachers-tbody');
+  sTbody.innerHTML = '<tr><td colspan="2" style="padding:2rem;text-align:center;"><div class="spinner" style="margin:0 auto;"></div></td></tr>';
+  tTbody.innerHTML = sTbody.innerHTML;
+
+  let data;
+  try { data = await api('api_classes.php?action=list_assignments'); }
+  catch(e) { sTbody.innerHTML = `<tr><td colspan="2" style="padding:1.5rem;color:var(--red);text-align:center;">${e.message}</td></tr>`; tTbody.innerHTML = sTbody.innerHTML; return; }
+
+  const noRow = `<tr><td colspan="2" style="padding:1.5rem;text-align:center;color:var(--muted);">${tr().noAssignments}</td></tr>`;
+
+  const renderRows = (users, role) => users.length === 0 ? noRow : users.map(u => {
+    const init = (u.name||u.username||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const groupTags = u.groups.map(g =>
+      `<span style="display:inline-block;margin:.15rem .2rem;padding:.15rem .55rem;background:rgba(62,207,120,.08);border:1px solid rgba(62,207,120,.2);border-radius:100px;font-size:.72rem;color:var(--green);font-family:var(--font);font-weight:600;">${currentLang==='ar'?g.label_ar:g.label_fr}</span>`
+    ).join('');
+    return `<tr>
+      <td style="padding:.85rem 1.2rem;">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <div style="width:30px;height:30px;border-radius:50%;background:rgba(91,156,246,.15);border:1px solid rgba(91,156,246,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.7rem;color:var(--blue);flex-shrink:0;">${init}</div>
+          <div>
+            <div style="font-family:var(--font);font-size:.87rem;font-weight:600;">${u.name||u.username}</div>
+            <div style="font-size:.75rem;color:var(--muted);">${u.username}</div>
+          </div>
+        </div>
+      </td>
+      <td style="padding:.85rem 1.2rem;">${groupTags}</td>
+    </tr>`;
+  }).join('');
+
+  sTbody.innerHTML = renderRows(data.students||[], 'student');
+  tTbody.innerHTML = renderRows(data.teachers||[], 'teacher');
+}
 
 function saveProfile() {
   const name = document.getElementById('pref-name').value.trim(); if (!name) return;

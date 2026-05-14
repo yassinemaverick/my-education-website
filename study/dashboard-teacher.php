@@ -563,6 +563,10 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
           <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="courses-page-sub">3 groupes · 2024-2025</p>
         </div>
       </div>
+      <!-- Assigned groups from admin (api_classes.php) -->
+      <div id="teacher-assigned-groups" style="margin-bottom:1.5rem;">
+        <div class="loading-overlay"><div class="spinner"></div></div>
+      </div>
       <div class="grid-3" id="courses-grid"></div>
     </div>
     <div id="courses-detail-view" style="display:none;">
@@ -865,6 +869,16 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
       <button class="btn-primary btn-sm" onclick="attSave()"><span id="att-save-now-lbl">Enregistrer maintenant</span></button>
     </div>
 
+    <!-- Group selector (populated from api_classes.php) -->
+    <div id="att-group-selector-wrap" style="margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+      <label style="font-family:var(--font);font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="att-group-lbl">Groupe</label>
+      <select id="att-group-select" onchange="attSelectGroup(this.value)"
+        style="padding:.55rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;min-width:200px;">
+        <option value="">— Tous les étudiants —</option>
+      </select>
+      <span id="att-group-loading" style="display:none;font-size:.8rem;color:var(--muted);">Chargement…</span>
+    </div>
+
     <!-- Grid -->
     <div class="att-card">
       <div class="att-table-wrap">
@@ -1127,7 +1141,8 @@ function navigate(page, el) {
   if(el) el.classList.add('active');
   activePage = page;
   document.getElementById('topbar-title').textContent = T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home;
-  if (page === 'courses') renderCourses();
+  if (page === 'courses') { renderCourses(); loadTeacherGroups(); }
+  if (page === 'attendance') { if (teacherGroups.length === 0) loadTeacherGroups(); }
   if (page === 'posts')   loadPosts();
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
@@ -1836,6 +1851,89 @@ const CT = {
        thAvg:'معدل', thAtt:'الحضور',
        progGeneral:'المعدل العام', progAtt:'نسبة الحضور', progAssigns:'نسبة التسليم' }
 };
+let teacherGroups = [];
+
+async function loadTeacherGroups() {
+  teacherGroups = [];
+  // Load for courses page
+  const agEl = document.getElementById('teacher-assigned-groups');
+  if (agEl) agEl.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+
+  try {
+    const data = await fetch('api_classes.php?action=teacher_groups').then(r=>r.json());
+    teacherGroups = (data.ok && data.groups) ? data.groups : [];
+  } catch(e) { teacherGroups = []; }
+
+  renderTeacherGroups();
+  populateAttGroupSelect();
+}
+
+function renderTeacherGroups() {
+  const lang = currentLang;
+  const el   = document.getElementById('teacher-assigned-groups');
+  if (!el) return;
+
+  if (teacherGroups.length === 0) { el.innerHTML = ''; return; }
+
+  const cards = teacherGroups.map(g => {
+    const label = lang==='ar' ? g.label_ar : g.label_fr;
+    return `<div style="background:rgba(62,207,120,.06);border:1px solid rgba(62,207,120,.2);border-radius:14px;padding:1rem 1.25rem;cursor:pointer;transition:border-color .2s;" onclick="attSelectGroup(${g.group_id}); navigate('attendance', document.getElementById('nav-attendance'))">
+      <div style="font-size:1.5rem;margin-bottom:.4rem;">🏫</div>
+      <div style="font-family:var(--font);font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.25rem;">${label}</div>
+      <div style="font-size:.78rem;color:var(--muted);">👥 ${g.student_count} étudiant(s)</div>
+      <div style="margin-top:.6rem;font-size:.72rem;color:var(--green);">Voir les présences →</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `<div style="margin-bottom:.6rem;">
+    <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;">${lang==='ar'?'مجموعاتك المعينة':'Vos groupes assignés'}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;">${cards}</div>
+  </div>`;
+}
+
+function populateAttGroupSelect() {
+  const sel = document.getElementById('att-group-select');
+  if (!sel) return;
+  const lang = currentLang;
+  const noGroup = lang==='ar' ? '— جميع الطلاب —' : '— Tous les étudiants —';
+  sel.innerHTML = `<option value="">${noGroup}</option>`
+    + teacherGroups.map(g => {
+        const label = lang==='ar' ? g.label_ar : g.label_fr;
+        return `<option value="${g.group_id}">${label}</option>`;
+      }).join('');
+}
+
+async function attSelectGroup(groupId) {
+  const sel = document.getElementById('att-group-select');
+  if (sel) sel.value = groupId || '';
+  const loadingEl = document.getElementById('att-group-loading');
+  if (loadingEl) loadingEl.style.display = '';
+
+  if (!groupId) {
+    // Restore all students
+    await loadLiveStudents();
+    renderAttendance();
+    if (loadingEl) loadingEl.style.display = 'none';
+    return;
+  }
+
+  try {
+    const data = await fetch(`api_classes.php?action=group_students&group_id=${groupId}`).then(r=>r.json());
+    const apiStudents = (data.ok && data.students) ? data.students : [];
+    STUDENTS = apiStudents.map(s => ({
+      id:       s.id,
+      name:     s.name || s.username,
+      init:     (s.name||s.username||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
+      progress: 0, assigns: 0, avg: 0, status: 'good', sessions: 0, present: 0,
+    }));
+    renderAttendance();
+  } catch(e) {
+    console.error(e);
+  } finally {
+    if (loadingEl) loadingEl.style.display = 'none';
+  }
+}
+
 function renderCourses(){
   const grid=document.getElementById('courses-grid'); if(!grid)return;
   const tr=CT[currentLang];

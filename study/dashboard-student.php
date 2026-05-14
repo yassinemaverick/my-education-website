@@ -801,8 +801,14 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
   <div class="page" id="page-myclass">
     <div style="margin-bottom:1.5rem;">
       <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;color:var(--white);" id="myclass-title">Ma classe</h2>
-      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="myclass-sub">Votre cours et vos camarades</p>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="myclass-sub">Votre classe, groupe et camarades</p>
     </div>
+
+    <!-- Group info banner (loaded from api_classes.php) -->
+    <div id="myclass-group-section" style="margin-bottom:1.25rem;">
+      <div class="loading-overlay"><div class="spinner"></div><span style="margin-left:.5rem;font-size:.88rem;color:var(--muted);">Chargement du groupe…</span></div>
+    </div>
+
     <div class="grid-2">
       <div class="card" style="background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(124,58,237,.05));border-color:rgba(59,130,246,.2);">
         <div class="card-title" id="myclass-course-label">Cours actuel</div>
@@ -820,7 +826,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
         </div>
       </div>
       <div class="card">
-        <div class="card-title" id="myclass-mates-lbl">Camarades</div>
+        <div class="card-title" id="myclass-mates-lbl">Camarades de groupe</div>
         <div id="myclass-mates"><div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;">Chargement…</div></div>
       </div>
     </div>
@@ -1235,7 +1241,7 @@ function navigate(page, el) {
   st('topbar-title', T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home);
   if (page === 'assignments') renderAssignments();
   if (page === 'quizzes')     renderQuizzes();
-  if (page === 'myclass')     renderMyClass();
+  if (page === 'myclass')     { renderMyClass(); loadMyGroup(); }
   if (page === 'feed')        loadFeed();
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
@@ -1302,6 +1308,84 @@ function renderLeaderboard() {
 }
 
 /* ── MY CLASS ── */
+async function loadMyGroup() {
+  const section = document.getElementById('myclass-group-section');
+  if (!section) return;
+  section.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+
+  let groupData, membersData = null;
+  try {
+    groupData = await fetch('api_classes.php?action=my_group').then(r => r.json());
+  } catch(e) { section.innerHTML = ''; return; }
+
+  const lang   = currentLang;
+  const groups = (groupData.ok && groupData.groups) ? groupData.groups : [];
+
+  if (groups.length === 0) {
+    section.innerHTML = '';
+    return;
+  }
+
+  // Show group badge(s)
+  const badges = groups.map(g => {
+    const label = lang==='ar' ? g.label_ar : g.label_fr;
+    return `<span style="display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;background:rgba(62,207,120,.1);border:1px solid rgba(62,207,120,.3);border-radius:100px;font-family:var(--font);font-size:.85rem;font-weight:700;color:var(--green);">
+      🏫 ${label}
+    </span>`;
+  }).join('');
+
+  section.innerHTML = `<div class="card" style="padding:1rem 1.25rem;background:linear-gradient(135deg,rgba(62,207,120,.05),rgba(91,156,246,.03));border-color:rgba(62,207,120,.2);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+    <div>
+      <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">${lang==='ar'?'مجموعتك':'Votre groupe'}</div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;">${badges}</div>
+    </div>
+  </div>`;
+
+  // Load classmates from first group (or all groups)
+  const matesEl = document.getElementById('myclass-mates');
+  if (!matesEl) return;
+
+  // Use first group for classmates
+  const primaryGroupId = groups[0].group_id;
+  matesEl.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem;">Chargement…</div>';
+
+  try {
+    const mdata = await fetch(`api_classes.php?action=group_classmates&group_id=${primaryGroupId}`).then(r => r.json());
+    const members = (mdata.ok && mdata.members) ? mdata.members : [];
+    const students = members.filter(m => m.role === 'student');
+
+    if (students.length === 0) {
+      matesEl.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;">${lang==='ar'?'لا يوجد زملاء في هذه المجموعة بعد.':'Aucun camarade dans ce groupe pour l\'instant.'}</div>`;
+      return;
+    }
+    matesEl.innerHTML = students.map(s => {
+      const parts = (s.name||s.username||'').trim().split(/\s+/);
+      const init  = ((parts[0]?.[0]??'') + (parts[1]?.[0]??'')).toUpperCase() || '?';
+      return `<div style="display:flex;align-items:center;gap:.7rem;padding:.65rem 0;border-bottom:1px solid var(--border2);">
+        <div style="width:34px;height:34px;border-radius:50%;background:rgba(91,156,246,.15);border:1px solid rgba(91,156,246,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.75rem;color:var(--blue);flex-shrink:0;">${init}</div>
+        <div style="font-size:.88rem;">${s.name||s.username}</div>
+      </div>`;
+    }).join('').replace(/border-bottom[^;]+;(?=[^<]*<\/div>\s*$)/,'');
+
+    // Also show teacher(s)
+    const teachers = members.filter(m => m.role === 'teacher');
+    if (teachers.length > 0) {
+      const teacherHtml = teachers.map(t => {
+        const parts = (t.name||t.username||'').trim().split(/\s+/);
+        const init  = ((parts[0]?.[0]??'') + (parts[1]?.[0]??'')).toUpperCase() || '?';
+        return `<div style="display:flex;align-items:center;gap:.7rem;padding:.65rem 0;border-bottom:1px solid var(--border2);">
+          <div style="width:34px;height:34px;border-radius:50%;background:rgba(62,207,120,.12);border:1px solid rgba(62,207,120,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.75rem;color:var(--green);flex-shrink:0;">${init}</div>
+          <div>
+            <div style="font-size:.88rem;">${t.name||t.username}</div>
+            <div style="font-size:.72rem;color:var(--green);">${lang==='ar'?'أستاذ':'Professeur'}</div>
+          </div>
+        </div>`;
+      }).join('');
+      matesEl.innerHTML = `<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;">${lang==='ar'?'الأستاذ':'Professeur'}</div>${teacherHtml}<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:.75rem 0 .5rem;">${lang==='ar'?'الزملاء':'Camarades'}</div>` + matesEl.innerHTML;
+    }
+  } catch(e) {}
+}
+
 function renderMyClass() {
   const tr   = T[currentLang];
   const lang = currentLang;
