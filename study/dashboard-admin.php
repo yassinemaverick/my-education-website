@@ -1366,39 +1366,61 @@ function buildGroupLabel() {
 }
 
 async function renderTypesGrid() {
-  let data;
-  try { data = await api('api_classes.php?action=list_types'); }
-  catch(e) { return; }
-  allClassTypes = data.types || [];
-
   const grid = document.getElementById('classes-view-types');
-  grid.innerHTML = allClassTypes.map(t => {
-    const def  = CLASS_TYPE_DEFS.find(d => d.key === t.key) || {};
-    const name = currentLang==='ar' ? t.label_ar : t.label_fr;
-    let groupTally = 0;
-    if (t.levels > 0) {
-      groupTally = (t.level_groups || []).reduce((s, lg) => s + lg.group_count, 0);
-    } else {
-      groupTally = t.group_count || 0;
-    }
-    const sub = t.levels > 0 ? t.levels + ' niveaux · ' + groupTally + ' groupe(s)' : groupTally + ' groupe(s)';
-    return `<div class="class-type-card" onclick="classesSelectType(${JSON.stringify(t.key)})">
-      <div style="font-size:1.8rem;margin-bottom:.6rem;">${def.icon||'📚'}</div>
-      <div class="ct-name">${name}</div>
-      <div class="ct-sub">${sub}</div>
-    </div>`;
-  }).join('');
+
+  // Render immediately from local definitions so cards are always clickable
+  const render = (counts) => {
+    grid.innerHTML = CLASS_TYPE_DEFS.map(def => {
+      const name = currentLang === 'ar' ? def.label_ar : def.label_fr;
+      let sub = def.levels > 0 ? def.levels + ' niveaux' : '';
+      if (counts) {
+        const t = counts.find(c => c.key === def.key);
+        let tally = 0;
+        if (t) {
+          tally = def.levels > 0
+            ? (t.level_groups || []).reduce((s, lg) => s + lg.group_count, 0)
+            : (t.group_count || 0);
+        }
+        sub = def.levels > 0
+          ? def.levels + ' niveaux · ' + tally + ' groupe(s)'
+          : tally + ' groupe(s)';
+      }
+      return `<div class="class-type-card" onclick="classesSelectType(${JSON.stringify(def.key)})">
+        <div style="font-size:1.8rem;margin-bottom:.6rem;">${def.icon}</div>
+        <div class="ct-name">${name}</div>
+        <div class="ct-sub">${sub}</div>
+      </div>`;
+    }).join('');
+  };
+
+  render(null); // show cards immediately
+
+  try {
+    const data = await api('api_classes.php?action=list_types');
+    allClassTypes = data.types || [];
+    render(allClassTypes); // re-render with group counts
+  } catch(e) {
+    // cards stay visible without counts — API error doesn't block the UI
+  }
 }
 
 function renderLevelCards() {
-  const type = allClassTypes.find(t => t.key === classesTypeKey);
-  if (!type) return;
   const container = document.getElementById('classes-view-levels');
-  container.innerHTML = (type.level_groups || []).map(lg => {
-    const name = (currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr) + ' ' + lg.level;
+  const baseName  = currentLang === 'ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+  const levels    = classesTypeMeta.levels || 0;
+  // Build level list: use API data if available, otherwise fall back to count from def
+  const apiType   = allClassTypes.find(t => t.key === classesTypeKey);
+  const rows      = Array.from({length: levels}, (_, i) => {
+    const lvl  = i + 1;
+    const gc   = apiType ? ((apiType.level_groups || []).find(lg => lg.level === lvl)?.group_count ?? 0) : null;
+    return { level: lvl, group_count: gc };
+  });
+  container.innerHTML = rows.map(lg => {
+    const name = baseName + ' ' + lg.level;
+    const sub  = lg.group_count !== null ? lg.group_count + ' groupe(s)' : '';
     return `<div class="level-card" onclick="classesSelectLevel(${lg.level})">
       <div class="lc-title">${name}</div>
-      <div class="lc-sub">${lg.group_count} groupe(s)</div>
+      <div class="lc-sub">${sub}</div>
     </div>`;
   }).join('');
 }
