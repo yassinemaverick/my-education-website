@@ -191,10 +191,7 @@ $t = [
   .testimonial-card { background: #ffffff; border: none; border-radius: 20px; padding: 1.75rem 2rem; display: flex; flex-direction: column; gap: 0.9rem; box-shadow: 0 4px 28px rgba(15,29,46,0.09); transition: transform .2s, box-shadow .2s; }
   .testimonial-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(15,29,46,0.15); }
   .testimonial-header { display: flex; align-items: center; gap: 0.85rem; }
-  .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font); font-size: 1.05rem; font-weight: 700; flex-shrink: 0; color: #fff; }
-  .testimonial-avatar.av1 { background: linear-gradient(135deg, #3ecf78, #059669); }
-  .testimonial-avatar.av2 { background: linear-gradient(135deg, #3b82f6, #7c3aed); }
-  .testimonial-avatar.av3 { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+  .testimonial-avatar { width: 54px; height: 54px; border-radius: 50%; flex-shrink: 0; object-fit: cover; border: 2px solid #e2eaf4; }
   .testimonial-author { display: flex; flex-direction: column; gap: 0.22rem; }
   .testimonial-name { font-family: var(--font); font-size: 0.9rem; font-weight: 700; color: #0f1d2e; }
   .testimonial-badge { font-size: 0.7rem; font-family: var(--font); padding: 0.18rem 0.6rem; border-radius: 100px; background: rgba(62,207,120,0.12); border: 1px solid rgba(62,207,120,0.35); color: #1a9a52; display: inline-block; width: fit-content; }
@@ -382,7 +379,7 @@ $t = [
     <div class="testimonials-grid">
       <div class="testimonial-card">
         <div class="testimonial-header">
-          <div class="testimonial-avatar av1">YB</div>
+          <img class="testimonial-avatar" src="/assets/img/testimonial-yasmine.png" alt="Yasmine B.">
           <div class="testimonial-author">
             <span class="testimonial-name">Yasmine B.</span>
             <span class="testimonial-badge">Étudiante Baccalauréat</span>
@@ -394,7 +391,7 @@ $t = [
       </div>
       <div class="testimonial-card">
         <div class="testimonial-header">
-          <div class="testimonial-avatar av2">KM</div>
+          <img class="testimonial-avatar" src="/assets/img/testimonial-karim.jpg" alt="Karim M.">
           <div class="testimonial-author">
             <span class="testimonial-name">Karim M.</span>
             <span class="testimonial-badge">Étudiant Anglais des affaires</span>
@@ -406,7 +403,7 @@ $t = [
       </div>
       <div class="testimonial-card">
         <div class="testimonial-header">
-          <div class="testimonial-avatar av3">NF</div>
+          <img class="testimonial-avatar" src="/assets/img/testimonial-nadia.png" alt="Nadia F.">
           <div class="testimonial-author">
             <span class="testimonial-name">Nadia F.</span>
             <span class="testimonial-badge">Parent · Anglais général</span>
