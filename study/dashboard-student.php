@@ -47,43 +47,46 @@ $liveData  = [
 try {
     $pdo = db();
 
-    // ── Ensure assignments tables exist ─────────────────────────────────────
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS assignments (
-            id             INT AUTO_INCREMENT PRIMARY KEY,
-            course_id      INT NOT NULL,
-            title_fr       VARCHAR(200) NOT NULL DEFAULT '',
-            title_ar       VARCHAR(200) NOT NULL DEFAULT '',
-            description_fr TEXT,
-            description_ar TEXT,
-            subject_fr     VARCHAR(100) NOT NULL DEFAULT '',
-            subject_ar     VARCHAR(100) NOT NULL DEFAULT '',
-            due_date       DATE,
-            created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_course (course_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    ");
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS assignment_submissions (
-            id            INT AUTO_INCREMENT PRIMARY KEY,
-            assignment_id INT NOT NULL,
-            student_id    INT NOT NULL,
-            status        ENUM('pending','submitted','overdue') NOT NULL DEFAULT 'pending',
-            submitted_at  TIMESTAMP NULL,
-            UNIQUE KEY uq_sub (assignment_id, student_id),
-            INDEX idx_student (student_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    ");
-    $pdo->exec("
-        CREATE TABLE IF NOT EXISTS student_courses (
-            id         INT AUTO_INCREMENT PRIMARY KEY,
-            student_id INT NOT NULL,
-            course_id  INT NOT NULL,
-            enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE KEY uq_sc (student_id, course_id),
-            INDEX idx_student (student_id)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    ");
+    // ── Ensure assignments tables exist (once per session) ──────────────────
+    if (empty($_SESSION['student_schema_ok'])) {
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS assignments (
+                id             INT AUTO_INCREMENT PRIMARY KEY,
+                course_id      INT NOT NULL,
+                title_fr       VARCHAR(200) NOT NULL DEFAULT '',
+                title_ar       VARCHAR(200) NOT NULL DEFAULT '',
+                description_fr TEXT,
+                description_ar TEXT,
+                subject_fr     VARCHAR(100) NOT NULL DEFAULT '',
+                subject_ar     VARCHAR(100) NOT NULL DEFAULT '',
+                due_date       DATE,
+                created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX idx_course (course_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        ");
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS assignment_submissions (
+                id            INT AUTO_INCREMENT PRIMARY KEY,
+                assignment_id INT NOT NULL,
+                student_id    INT NOT NULL,
+                status        ENUM('pending','submitted','overdue') NOT NULL DEFAULT 'pending',
+                submitted_at  TIMESTAMP NULL,
+                UNIQUE KEY uq_sub (assignment_id, student_id),
+                INDEX idx_student (student_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        ");
+        $pdo->exec("
+            CREATE TABLE IF NOT EXISTS student_courses (
+                id         INT AUTO_INCREMENT PRIMARY KEY,
+                student_id INT NOT NULL,
+                course_id  INT NOT NULL,
+                enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE KEY uq_sc (student_id, course_id),
+                INDEX idx_student (student_id)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        ");
+        $_SESSION['student_schema_ok'] = true;
+    }
 
     // ── Course info ──────────────────────────────────────────────────────────
     try {

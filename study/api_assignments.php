@@ -74,6 +74,19 @@ function migrateSchema(PDO $pdo): void {
             INDEX idx_user(user_id), INDEX idx_created(created_at)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
     } catch(Throwable $e) {}
+
+    // notifications
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS notifications (
+            id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            user_id INT UNSIGNED NOT NULL,
+            type VARCHAR(60) NOT NULL,
+            message TEXT NOT NULL,
+            is_read TINYINT(1) DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_user(user_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    } catch(Throwable $e) {}
 }
 
 function logActivity(PDO $pdo, int $userId, string $type, string $desc): void {
@@ -92,7 +105,10 @@ function assignTitle(array $row, string $lang = 'fr'): string {
 
 try {
     $pdo = db();
-    migrateSchema($pdo);
+    if (empty($_SESSION['assignments_schema_ok'])) {
+        migrateSchema($pdo);
+        $_SESSION['assignments_schema_ok'] = true;
+    }
 
     /* ══════════════════════════════════════
        GET my_courses — teacher's classes
@@ -349,6 +365,75 @@ try {
         } catch(Throwable $e) {}
 
         echo json_encode(['ok'=>true], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    /* ══════════════════════════════════════
+       GET activity — teacher's recent actions
+    ══════════════════════════════════════ */
+    if ($action === 'activity' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+        if (!$isTeacher) { http_response_code(403); echo json_encode(['ok'=>false,'error'=>'Forbidden']); exit; }
+        $stmt = $pdo->prepare("
+            SELECT id, type, description, created_at
+            FROM   activity_log
+            WHERE  user_id = ?
+            ORDER  BY created_at DESC
+            LIMIT  8
+        ");
+        $stmt->execute([$uid]);
+        echo json_encode(['ok'=>true,'activity'=>$stmt->fetchAll()], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    /* ══════════════════════════════════════
+       GET notifications
+    ══════════════════════════════════════ */
+    if ($action === 'notifications' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+        $stmt = $pdo->prepare("
+            SELECT id, type, message, is_read, created_at
+            FROM   notifications
+            WHERE  user_id = ?
+            ORDER  BY created_at DESC
+            LIMIT  20
+        ");
+        $stmt->execute([$uid]);
+        $notifs = $stmt->fetchAll();
+        $unread = (int) array_sum(array_map(fn($n) => $n['is_read'] ? 0 : 1, $notifs));
+        echo json_encode(['ok'=>true,'notifications'=>$notifs,'unread_count'=>$unread], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    /* ══════════════════════════════════════
+       POST mark_notifications_read
+    ══════════════════════════════════════ */
+    if ($action === 'mark_notifications_read') {
+        try {
+            $pdo->prepare("UPDATE notifications SET is_read=1 WHERE user_id=?")->execute([$uid]);
+        } catch(Throwable $e) {}
+        echo json_encode(['ok'=>true], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    /* ══════════════════════════════════════
+       GET grades_overview — graded submissions for this teacher
+    ══════════════════════════════════════ */
+    if ($action === 'grades_overview' && $_SERVER['REQUEST_METHOD'] === 'GET') {
+        if (!$isTeacher && !$isAdmin) { http_response_code(403); echo json_encode(['ok'=>false,'error'=>'Forbidden']); exit; }
+        $stmt = $pdo->prepare("
+            SELECT s.id, s.score, s.graded_at,
+                   u.full_name AS student_name, u.username,
+                   a.title_fr, a.title_ar, a.course_id,
+                   c.group_name_fr, c.group_name_ar
+            FROM   assignment_submissions s
+            JOIN   assignments a ON a.id = s.assignment_id
+            JOIN   users u ON u.id = s.student_id
+            LEFT JOIN courses c ON c.id = a.course_id
+            WHERE  a.teacher_id = ? AND s.score IS NOT NULL
+            ORDER  BY s.graded_at DESC
+            LIMIT  100
+        ");
+        $stmt->execute([$uid]);
+        echo json_encode(['ok'=>true,'grades'=>$stmt->fetchAll()], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
