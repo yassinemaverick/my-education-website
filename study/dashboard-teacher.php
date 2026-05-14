@@ -366,6 +366,14 @@ body.ar .course-group-name { font-family:var(--font-ar); }
 body.ar .course-meta-row { flex-direction:row-reverse; }
 .course-schedule-chips { display:flex; flex-wrap:wrap; gap:.4rem; }
 .schedule-chip { font-size:.72rem; background:rgba(62,207,120,.08); border:1px solid rgba(62,207,120,.2); color:var(--green); padding:.2rem .6rem; border-radius:100px; font-family:var(--font); }
+.course-card.type-card { cursor:default; }
+.course-card.type-card:hover { border-color:var(--border); transform:none; }
+.group-items { display:flex; flex-direction:column; gap:.4rem; margin-top:.25rem; }
+.group-item { display:flex; align-items:center; justify-content:space-between; padding:.55rem .8rem; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:10px; cursor:pointer; transition:background .15s, border-color .15s; }
+.group-item:hover { background:rgba(62,207,120,.07); border-color:rgba(62,207,120,.3); }
+.group-item-name { font-size:.85rem; font-weight:500; }
+.group-item-count { font-size:.75rem; color:var(--muted); }
+body.ar .group-item { flex-direction:row-reverse; }
 .cd-student-row { display:flex; align-items:center; gap:.75rem; padding:.7rem 0; border-bottom:1px solid var(--border2); }
 body.ar .cd-student-row { flex-direction:row-reverse; }
 .cd-student-row:last-child { border-bottom:none; }
@@ -1789,6 +1797,16 @@ const TYPE_ICONS = {
   upper_intermediate:'📙', advanced:'🚀', baccalaureate:'🎓',
   business:'💼', kids:'🧒'
 };
+const TYPE_LABELS = {
+  beginners:          {fr:'Débutants',          ar:'مبتدئون'},
+  pre_intermediate:   {fr:'Pré-intermédiaire',  ar:'ما قبل المتوسط'},
+  intermediate:       {fr:'Intermédiaire',      ar:'متوسط'},
+  upper_intermediate: {fr:'Upper-intermédiaire',ar:'فوق المتوسط'},
+  advanced:           {fr:'Avancé',             ar:'متقدم'},
+  baccalaureate:      {fr:'Baccalauréat',       ar:'البكالوريا'},
+  business:           {fr:'Business',           ar:'الأعمال'},
+  kids:               {fr:'Kids',               ar:'أطفال'},
+};
 const TYPE_ICON_CLASS = {
   beginners:'c2', pre_intermediate:'c1', intermediate:'c2',
   upper_intermediate:'c3', advanced:'c4', baccalaureate:'c1',
@@ -1799,34 +1817,48 @@ function renderTeacherGroups() {
   const lang = currentLang;
   const el   = document.getElementById('teacher-assigned-groups');
   if (!el) return;
-
   if (teacherGroups.length === 0) { el.innerHTML = ''; return; }
 
-  const sectionLabel = lang==='ar' ? 'مجموعاتك المعينة' : 'Vos groupes assignés';
-  const attendanceLbl = lang==='ar' ? 'عرض الحضور ←' : 'Voir les présences →';
-  const studentLbl   = lang==='ar' ? 'طالب' : 'étudiant(s)';
+  const studentLbl = lang === 'ar' ? 'طالب' : 'étudiant(s)';
+  const levelLbl   = lang === 'ar' ? 'مستوى' : 'Niv.';
+  const groupLbl   = lang === 'ar' ? 'مجموعة' : 'Groupe';
 
-  const cards = teacherGroups.map(g => {
-    const label    = lang==='ar' ? g.label_ar : g.label_fr;
-    const icon     = TYPE_ICONS[g.type_key]      || '🏫';
-    const iconCls  = TYPE_ICON_CLASS[g.type_key] || 'c1';
-    const students = g.student_count || 0;
-    return `<div class="course-card" onclick="openGroupDetail(${g.group_id})">
+  const byType = {};
+  const typeOrder = [];
+  teacherGroups.forEach(g => {
+    if (!byType[g.type_key]) { byType[g.type_key] = []; typeOrder.push(g.type_key); }
+    byType[g.type_key].push(g);
+  });
+
+  const typeCards = typeOrder.map(typeKey => {
+    const groups   = byType[typeKey];
+    const icon     = TYPE_ICONS[typeKey]      || '🏫';
+    const iconCls  = TYPE_ICON_CLASS[typeKey] || 'c1';
+    const labels   = TYPE_LABELS[typeKey]     || {fr: typeKey, ar: typeKey};
+    const typeName = lang === 'ar' ? labels.ar : labels.fr;
+    const countLbl = groups.length + (lang === 'ar' ? ' مجموعة' : (' groupe' + (groups.length > 1 ? 's' : '')));
+
+    const items = groups.map(g => {
+      const lvl = g.level_number ? `${levelLbl} ${g.level_number} · ` : '';
+      return `<div class="group-item" onclick="openGroupDetail(${g.group_id})">
+        <span class="group-item-name">${lvl}${groupLbl} ${g.group_letter}</span>
+        <span class="group-item-count">👥 ${g.student_count || 0} ${studentLbl}</span>
+      </div>`;
+    }).join('');
+
+    return `<div class="course-card type-card">
       <div class="course-card-header">
         <div class="course-icon ${iconCls}">${icon}</div>
         <div>
-          <div class="course-group-name">${label}</div>
+          <div class="course-group-name">${typeName}</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:.15rem;">${countLbl}</div>
         </div>
       </div>
-      <div class="course-meta-row">
-        <span>👥 ${students} ${studentLbl}</span>
-      </div>
+      <div class="group-items">${items}</div>
     </div>`;
   }).join('');
 
-  el.innerHTML = `
-    <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;">${sectionLabel}</div>
-    <div class="grid-3">${cards}</div>`;
+  el.innerHTML = `<div class="grid-3">${typeCards}</div>`;
 }
 
 function populateAttGroupSelect() {
