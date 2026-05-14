@@ -53,7 +53,7 @@ $username  = htmlspecialchars($_SESSION['username'] ?? '');
 <title>Upskill – Tableau de bord Professeur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 :root {
@@ -415,7 +415,7 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
   </div>
   <div class="lang-toggle">
     <div class="lang-pill active" id="pill-fr" onclick="setLang('fr')">🇫🇷 FR</div>
-    <div class="lang-pill" id="pill-ar" onclick="setLang('ar')">🇲🇦 AR</div>
+    <div class="lang-pill" id="pill-en" onclick="setLang('en')">🇬🇧 EN</div>
   </div>
   <div class="sidebar-user">
     <div class="avatar" id="sidebar-avatar"><?= str_replace(['%ID%','%IMGID%'], ['sidebar-dino-svg','sidebar-av-img'], $dinoAvatarSvg) ?></div>
@@ -964,7 +964,7 @@ const T = {
     quizScoresTitle:'Résultats des quiz par étudiant',
     gthName:'Étudiant', gthQ1:'Quiz Grammaire', gthQ2:'Vocabulaire U3', gthQ3:'Compréhension', gthAvg:'Moyenne',
     settingsTitle:'Paramètres', profileTitle:'Profil professeur', settingsRole:'Professeur · Anglais Général',
-    lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:"Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Arabe.",
+    lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:"Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Anglais.",
     modalAssignTitle:'Nouveau devoir', mlblTitle:'Titre du devoir', mlblDesc:'Description', mlblDue:'Date limite', mlblSubject:'Matière', modalCancel:'Annuler', modalSubmit:'Publier',
     modalQuizTitle:'Créer un quiz', qmlblTitle:'Titre du quiz', qmlblQs:'Nombre de questions', qmlblTime:'Durée (min)', quizCancel:'Annuler', quizSubmit:'Créer',
     toastAssignPublished:'Devoir publié avec succès !', toastQuizCreated:'Quiz créé avec succès !', toastSaved:'Profil mis à jour !',
@@ -982,58 +982,58 @@ const T = {
     attThStudent:'Étudiant', attThSessions:'Sessions (1–20)', attThTotal:'Présence',
     attSavingLbl:'Enregistrement…', toastAttError:'Erreur lors de la sauvegarde. Réessayez.',
   },
-  ar: {
-    topbarTitle: { home:'لوحة تحكم الأستاذ', students:'الطلاب', courses:'Classes', assignments:'الواجبات', posts:'ملاحظات الدروس', quizzes:'الاختبارات', grades:'النتائج والدرجات', settings:'الإعدادات', attendance:'الحضور والغياب' },
-    navMain:'الرئيسية', navAccount:'الحساب',
-    navHome:'لوحة التحكم', navStudents:'Classes', navAssign:'الواجبات', navPosts:'ملاحظات الدروس', navQuiz:'الاختبارات', navGrades:'النتائج', navSet:'الإعدادات',
-    postsPageTitle:'ملاحظات الدروس', postsPageSub:'انشر ملخصاتك وروابطك بعد كل حصة Zoom',
-    postsFormTitle:'ملاحظة درس جديدة',
-    postsLblCourse:'الفصل', postsLblTitle:'عنوان الحصة', postsLblDate:'تاريخ الحصة',
-    postsLblLink:'الرابط (سبورة، شرائح…)', postsLblNotes:'الملاحظات / الملخص (اختياري)',
-    postsSubmitBtn:'نشر الملاحظة', postsEmptyTitle:'لم تُنشر أي ملاحظة بعد',
-    postsEmptyTxt:'انشر أول ملخص لدرسك أعلاه.',
-    postsDeleteConfirm:'حذف هذه الملاحظة؟', toastPostPublished:'تم نشر الملاحظة!', toastPostDeleted:'تم حذف الملاحظة.',
-    teacherChip:'أستاذ', roleLabel:'أستاذ', logout:'تسجيل الخروج',
-    welcomeMsg:'مرحباً، ', welcomeSub:'8 واجبات للتصحيح · 3 طلاب يحتاجون دعماً · معدل الفصل: 74%',
-    stat1:'الطلاب النشطون', stat2:'واجبات للتصحيح', stat3:'معدل الفصل', stat4:'اختبارات نشطة',
-    btnNewAssign:'+ واجب جديد', btnNewQuiz:'+ إنشاء اختبار',
-    classProgTitle:'تقدم الفصل', cp1:'التقدم العام', cp2:'نسبة تسليم الواجبات', cp3:'معدل الاختبارات',
-    attentionTitle:'طلاب يحتاجون متابعة ⚠️',
-    activityTitle:'النشاط الأخير',
-    act1s:'واجب مُسلَّم', act1t:'أمينة ك. سلّمت واجبها', act1time:'اليوم، 11:15',
-    act2s:'واجب متأخر', act2t:'كريم ب. – تمرين الاستماع #2', act2time:'كان موعده 3 مايو',
-    act3s:'اختبار مكتمل', act3t:'15 طالباً أجروا اختبار القواعد', act3time:'أمس، 14:30',
-    act4s:'واجب جديد نُشر', act4t:'عرض شفهي – موضوع حر', act4time:'منذ يومين',
-    act5s:'درجة نُشرت', act5t:'البريد الإلكتروني – 22 طالباً تم تصحيحهم', act5time:'منذ 3 أيام',
-    studentsPageTitle:'الطلاب', studentsPageSub:'24 طالباً مسجلاً · الجلسة 2',
-    thName:'الطالب', thProgress:'التقدم', thAssigns:'الواجبات', thAvg:'المعدل', thStatus:'الحالة',
-    statusGood:'مستوى جيد', statusWarn:'تحت المراقبة', statusLow:'في صعوبة',
-    assignPageTitle:'الواجبات', assignPageSub:'5 واجبات نشطة · 8 تسليمات تنتظر التصحيح',
-    newAssignLbl:'واجب جديد',
-    quizPageTitle:'الاختبارات', quizPageSub:'أدر وأنشئ اختبارات لطلابك',
-    newQuizLbl:'إنشاء اختبار',
-    gradesPageTitle:'النتائج والدرجات', gradesPageSub:'نظرة عامة على أداء الفصل',
-    distTitle:'توزيع الدرجات', topTitle:'أفضل الطلاب',
-    quizScoresTitle:'نتائج الاختبارات حسب الطالب',
-    gthName:'الطالب', gthQ1:'اختبار القواعد', gthQ2:'المفردات و3', gthQ3:'الفهم', gthAvg:'المعدل',
-    settingsTitle:'الإعدادات', profileTitle:'الملف المهني', settingsRole:'أستاذ · الإنجليزية العامة',
-    lblFullname:'الاسم الكامل', saveBtn:'حفظ', prefTitle:'التفضيلات', prefTxt:'استخدم محدد اللغة في الشريط الجانبي للتبديل بين الفرنسية والعربية.',
-    modalAssignTitle:'واجب جديد', mlblTitle:'عنوان الواجب', mlblDesc:'الوصف', mlblDue:'تاريخ الاستحقاق', mlblSubject:'المادة', modalCancel:'إلغاء', modalSubmit:'نشر',
-    modalQuizTitle:'إنشاء اختبار', qmlblTitle:'عنوان الاختبار', qmlblQs:'عدد الأسئلة', qmlblTime:'المدة (دقيقة)', quizCancel:'إلغاء', quizSubmit:'إنشاء',
-    toastAssignPublished:'تم نشر الواجب بنجاح!', toastQuizCreated:'تم إنشاء الاختبار بنجاح!', toastSaved:'تم تحديث الملف الشخصي!',
-    toastAttSaved:'تم حفظ الحضور بنجاح!',
-    submittedLbl:'مُسلَّم من', viewGradeBtn:'تصحيح', attemptsLbl:'محاولة', avgLbl:'مع.',
-    subjectLbl:'المادة:', dueLbl:'الموعد:',
+  en: {
+    topbarTitle: { home:'Teacher Dashboard', students:'Students', courses:'Classes', assignments:'Assignments', posts:'Lesson Notes', quizzes:'Quizzes', grades:'Grades & Results', settings:'Settings', attendance:'Attendance' },
+    navMain:'Main', navAccount:'Account',
+    navHome:'Dashboard', navStudents:'Classes', navAssign:'Assignments', navPosts:'Lesson Notes', navQuiz:'Quizzes', navGrades:'Grades & Results', navSet:'Settings',
+    postsPageTitle:'Lesson Notes', postsPageSub:'Post your summaries and links after each Zoom session',
+    postsFormTitle:'New lesson note',
+    postsLblCourse:'Class', postsLblTitle:'Session title', postsLblDate:'Session date',
+    postsLblLink:'Link (whiteboard, slides…)', postsLblNotes:'Notes / Summary (optional)',
+    postsSubmitBtn:'Publish note', postsEmptyTitle:'No notes published yet',
+    postsEmptyTxt:'Publish your first lesson summary above.',
+    postsDeleteConfirm:'Delete this note?', toastPostPublished:'Note published!', toastPostDeleted:'Note deleted.',
+    teacherChip:'Teacher', roleLabel:'Teacher', logout:'Log out',
+    welcomeMsg:'Hello, ', welcomeSub:'8 assignments to grade · 3 students struggling · Class average: 74%',
+    stat1:'Active students', stat2:'Assignments to grade', stat3:'Class average', stat4:'Active quizzes',
+    btnNewAssign:'+ New assignment', btnNewQuiz:'+ Create quiz',
+    classProgTitle:'Class progress', cp1:'Overall progress', cp2:'Assignment submission rate', cp3:'Quiz average',
+    attentionTitle:'Students to watch ⚠️',
+    activityTitle:'Recent activity',
+    act1s:'Assignment submitted', act1t:'Amina K. submitted her assignment', act1time:'Today, 11:15',
+    act2s:'Late assignment', act2t:'Karim B. – Listening exercise #2', act2time:'Was due May 3',
+    act3s:'Quiz completed', act3t:'15 students took Grammar Quiz', act3time:'Yesterday, 14:30',
+    act4s:'New assignment posted', act4t:'Oral presentation – Free topic', act4time:'2 days ago',
+    act5s:'Grade posted', act5t:'Email writing – 22 students graded', act5time:'3 days ago',
+    studentsPageTitle:'Students', studentsPageSub:'24 enrolled students · Session 2',
+    thName:'Student', thProgress:'Progress', thAssigns:'Assignments', thAvg:'Average', thStatus:'Status',
+    statusGood:'On track', statusWarn:'Needs attention', statusLow:'Struggling',
+    assignPageTitle:'Assignments', assignPageSub:'5 active assignments · 8 submissions pending review',
+    newAssignLbl:'New assignment',
+    quizPageTitle:'Quizzes', quizPageSub:'Manage and create quizzes for your students',
+    newQuizLbl:'Create quiz',
+    gradesPageTitle:'Grades & Results', gradesPageSub:'Overview of class performance',
+    distTitle:'Grade distribution', topTitle:'Top students',
+    quizScoresTitle:'Quiz results by student',
+    gthName:'Student', gthQ1:'Grammar Quiz', gthQ2:'Vocabulary U3', gthQ3:'Comprehension', gthAvg:'Average',
+    settingsTitle:'Settings', profileTitle:'Teacher profile', settingsRole:'Teacher · General English',
+    lblFullname:'Full name', saveBtn:'Save', prefTitle:'Preferences', prefTxt:'Use the language selector in the sidebar to switch between French and English.',
+    modalAssignTitle:'New assignment', mlblTitle:'Assignment title', mlblDesc:'Description', mlblDue:'Due date', mlblSubject:'Subject', modalCancel:'Cancel', modalSubmit:'Publish',
+    modalQuizTitle:'Create quiz', qmlblTitle:'Quiz title', qmlblQs:'Number of questions', qmlblTime:'Duration (min)', quizCancel:'Cancel', quizSubmit:'Create',
+    toastAssignPublished:'Assignment published!', toastQuizCreated:'Quiz created!', toastSaved:'Profile updated!',
+    toastAttSaved:'Attendance saved successfully!',
+    submittedLbl:'submitted out of', viewGradeBtn:'Grade', attemptsLbl:'attempts', avgLbl:'avg.',
+    subjectLbl:'Subject:', dueLbl:'Due:',
     gradeRanges: ['90-100%', '75-89%', '60-74%', '<60%'],
-    navAttendance:'الحضور',
-    topbarAttendance:'الحضور والغياب',
-    attPageTitle:'الحضور والغياب', attPageSub:'ضع علامة في المربعات لتسجيل حضور الطلاب في كل جلسة',
-    attMarkAllLbl:'تحضير الكل', attClearAllLbl:'مسح الكل', attSaveLbl:'حفظ',
-    attStatPresentLbl:'إجمالي الحضور', attStatAbsentLbl:'إجمالي الغياب',
-    attStatRateLbl:'نسبة الحضور', attStatAtRiskLbl:'طلاب في خطر (<70%)',
-    attUnsavedTxt:'⚡ تغييرات غير محفوظة', attSaveNowLbl:'حفظ الآن',
-    attThStudent:'الطالب', attThSessions:'الجلسات (1–20)', attThTotal:'الحضور',
-    attSavingLbl:'جارِ الحفظ…', toastAttError:'خطأ في الحفظ. حاول مجدداً.',
+    navAttendance:'Attendance',
+    topbarAttendance:'Attendance',
+    attPageTitle:'Attendance', attPageSub:'Check boxes to mark attendance for each session',
+    attMarkAllLbl:'Mark all present', attClearAllLbl:'Clear all', attSaveLbl:'Save',
+    attStatPresentLbl:'Total present', attStatAbsentLbl:'Total absent',
+    attStatRateLbl:'Attendance rate', attStatAtRiskLbl:'At-risk students (<70%)',
+    attUnsavedTxt:'⚡ Unsaved changes', attSaveNowLbl:'Save now',
+    attThStudent:'Student', attThSessions:'Sessions (1–20)', attThTotal:'Attendance',
+    attSavingLbl:'Saving…', toastAttError:'Error saving. Please try again.',
   }
 };
 
@@ -1042,11 +1042,9 @@ function t(key) { return T[currentLang][key] || key; }
 function setLang(lang) {
   currentLang = lang;
   sessionStorage.setItem('upskill_lang', lang);
-  document.getElementById('body').className = lang === 'ar' ? 'ar' : '';
   document.documentElement.setAttribute('lang', lang);
-  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
   document.getElementById('pill-fr').className = 'lang-pill' + (lang === 'fr' ? ' active' : '');
-  document.getElementById('pill-ar').className = 'lang-pill' + (lang === 'ar' ? ' active' : '');
+  document.getElementById('pill-en').className = 'lang-pill' + (lang === 'en' ? ' active' : '');
   applyTranslations();
 }
 
@@ -1705,7 +1703,8 @@ async function attSave() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const savedLang = sessionStorage.getItem('upskill_lang') || 'fr';
+  const _sl = sessionStorage.getItem('upskill_lang');
+  const savedLang = (_sl === 'fr' || _sl === 'en') ? _sl : 'fr';
   // Load everything in parallel
   await loadLiveStudents();
   await Promise.all([initAttData(), loadTeacherCourses(), loadAssignments()]);
@@ -1760,16 +1759,16 @@ const CT = {
        statusGood:'Bon niveau', statusWarn:'À surveiller', statusLow:'En difficulté',
        thAvg:'Moy.', thAtt:'Présence',
        progGeneral:'Moyenne générale', progAtt:'Taux de présence', progAssigns:'Taux de soumission' },
-  ar:{ coursesPageTitle:'Classes',
-       coursesPageSub:(n)=>'تم تعيين '+n+' مجموعات · السنة 2024-2025',
-       studentsLabel:'طالب', backCourses:'→ العودة إلى الدروس',
-       cdStudentsTitle:'طلاب المجموعة', cdScheduleTitle:'الجدول / Emploi du temps',
-       cdProgTitle:'تقدم المجموعة',
-       cdStatStudentsLbl:'الطلاب', cdStatAvgLbl:'المعدل',
-       cdStatAssignsLbl:'الواجبات النشطة', cdStatAttLbl:'نسبة الحضور',
-       statusGood:'مستوى جيد', statusWarn:'تحت المراقبة', statusLow:'في صعوبة',
-       thAvg:'معدل', thAtt:'الحضور',
-       progGeneral:'المعدل العام', progAtt:'نسبة الحضور', progAssigns:'نسبة التسليم' }
+  en:{ coursesPageTitle:'Classes',
+       coursesPageSub:(n)=>n+' groups assigned · Year 2024-2025',
+       studentsLabel:'students', backCourses:'← Back to courses',
+       cdStudentsTitle:'Group students', cdScheduleTitle:'Schedule',
+       cdProgTitle:'Group progress',
+       cdStatStudentsLbl:'Students', cdStatAvgLbl:'Average',
+       cdStatAssignsLbl:'Active assignments', cdStatAttLbl:'Attendance rate',
+       statusGood:'On track', statusWarn:'Needs attention', statusLow:'Struggling',
+       thAvg:'Avg.', thAtt:'Attendance',
+       progGeneral:'Overall average', progAtt:'Attendance rate', progAssigns:'Submission rate' }
 };
 let teacherGroups    = [];
 let teacherClassView = 'types'; // 'types' | 'levels' | 'groups'

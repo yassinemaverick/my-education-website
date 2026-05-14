@@ -306,7 +306,7 @@ $dinoAvatarSvg = '<svg class="av-dino" id="%ID%" xmlns="http://www.w3.org/2000/s
 <title>Upskill – Tableau de bord Étudiant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -635,7 +635,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
   </div>
   <div class="lang-toggle">
     <div class="lang-pill active" id="pill-fr" onclick="setLang('fr')">🇫🇷 FR</div>
-    <div class="lang-pill" id="pill-ar" onclick="setLang('ar')">🇲🇦 AR</div>
+    <div class="lang-pill" id="pill-en" onclick="setLang('en')">🇬🇧 EN</div>
   </div>
   <div class="sidebar-user">
     <div class="avatar" id="sidebar-avatar"><?= str_replace(['%ID%','%IMGID%'], ['sidebar-dino-svg','sidebar-av-img'], $dinoAvatarSvg) ?></div>
@@ -1072,53 +1072,52 @@ const T = {
 
       { icon:'⚙️', from:'#64748b', to:'#475569', title:'Paramètres', desc:'Changez votre nom, ajoutez une photo de profil et choisissez la langue.', btn:'Voir la vidéo' },
     ],
-    settingsTitle:'Paramètres', profileTitle:'Profil', lblChangePhoto:'Changer la photo', settingsRole:'Étudiante · Anglais Général S2', lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l\'Arabe.',
+    settingsTitle:'Paramètres', profileTitle:'Profil', lblChangePhoto:'Changer la photo', settingsRole:'Étudiante · Anglais Général S2', lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l\'Anglais.',
     badgePending:'En attente', badgeSubmitted:'Soumis', badgeOverdue:'En retard',
     startQuiz:'Commencer le quiz', retakeQuiz:'Refaire', doneLabel:'Complété',
     toastSaved:'Profil mis à jour !',
     qsLabel:'questions', minLabel:'min',
     dueLbl:'Échéance :', subjectLbl:'Matière :',
   },
-  ar: {
-    topbarTitle: { home:'لوحة التحكم', myclass:'صفي', assignments:'الواجبات', feed:'ملاحظات الدروس', quizzes:'تحدي', progress:'التقدم', howto:'المساعدة', settings:'الإعدادات' },
-    navHome:'الرئيسية', navMyclass:'صفي', navAssign:'الواجبات', navFeed:'ملاحظات الدروس', navQuiz:'تحدي', navHowto:'المساعدة', navSet:'الإعدادات',
-    feedTitle:'ملاحظات الدروس', feedSub:'ملخصات أستاذك بعد كل حصة Zoom',
-    feedEmptyTitle:'لا توجد ملاحظات منشورة بعد', feedEmptyTxt:'سينشر أستاذك ملخصاته وروابطه هنا بعد كل حصة Zoom.',
-    feedOpenLink:'فتح الرابط',
-    roleLabel:'طالب/ة', logout:'تسجيل الخروج',
-    welcomeSub:'لوحة تحكم التعلم الخاصة بك',
-    starsTitle:'طلاب الشهر', starsMonth:'هذا الشهر', starsEmpty:'لا يوجد تصنيف هذا الشهر بعد.',
-    lbTitle:'نشاط الصف', lbSub:'النشاط الأخير', lbEmpty:'لا يوجد نشاط حديث في الصف.',
-    lbSubmitted:'سلّم واجباً',
-    myclassTitle:'صفي', myclassSub:'دورتك وزملاؤك',
-    myclassCourseLbl:'الدورة الحالية', myclassMatesLbl:'الزملاء',
-    myclassTeacher:'الأستاذ:', myclassSchedule:'الجدول:',
-    myclassAttLbl:'نسبة الحضور', myclassEmptyTxt:'لم يتم تعيين دورة بعد',
-    myclassNoMates:'لا يوجد زملاء.',
+  en: {
+    topbarTitle: { home:'Dashboard', myclass:'My Class', assignments:'Assignments', feed:'Lesson Notes', quizzes:'Challenge', progress:'Progress', howto:'How-to', settings:'Settings' },
+    navHome:'Dashboard', navMyclass:'My Class', navAssign:'Assignments', navFeed:'Lesson Notes', navQuiz:'Challenge', navHowto:'How-to', navSet:'Settings',
+    feedTitle:'Lesson Notes', feedSub:'Summaries posted by your teacher after each Zoom session',
+    feedEmptyTitle:'No notes published yet', feedEmptyTxt:'Your teacher will post summaries and links here after each Zoom session.',
+    feedOpenLink:'Open link',
+    roleLabel:'Student', logout:'Log out',
+    welcomeSub:'Your learning dashboard',
+    starsTitle:'Students of the month', starsMonth:'This month', starsEmpty:'No ranking this month yet.',
+    lbTitle:'Class activity', lbSub:'Recent activity', lbEmpty:'No recent activity in the class.',
+    lbSubmitted:'submitted an assignment',
+    myclassTitle:'My Class', myclassSub:'Your course and classmates',
+    myclassCourseLbl:'Current course', myclassMatesLbl:'Classmates',
+    myclassTeacher:'Teacher:', myclassSchedule:'Schedule:',
+    myclassAttLbl:'Attendance rate', myclassEmptyTxt:'No course assigned yet',
+    myclassNoMates:'No classmates found.',
 
-    assignPageTitle:'الواجبات', assignPageSub:'3 معلقة · 1 متأخرة · 2 مُسلَّمة',
-    tabAll:'الكل', tabPending:'معلقة', tabDone:'مُسلَّمة',
-    tabAllQ:'الكل', tabAvailQ:'متاحة', tabDoneQ:'مكتملة',
-    quizPageTitle:'الاختبارات', quizPageSub:'اختبر معلوماتك باختبارات موقوتة',
-    progPageTitle:'التقدم', progPageSub:'تابع مسيرتك التعلمية وحدة بوحدة',
-    overallTitle:'التقدم الإجمالي', doneLbl:'منجز', hrsOf:'/ 29 ساعة', courseSession:'الإنجليزية العامة · جلسة 2', onTrack:'على المسار الصحيح 🎯',
-    scoresTitle:'نتائج الاختبارات', qGram:'القواعد الأساسية', qVoc:'المفردات الوحدة 2', qList:'الفهم الشفهي',
-    modulesTitle:'التقدم حسب الوحدة', m1:'الوحدة 1 – مقدمة', m2:'الوحدة 2 – القواعد', m3:'الوحدة 3 – المفردات', m4:'الوحدة 4 – التعبير الشفهي', m5:'الوحدة 5 – الفهم',
-    howtoTitle:'كيف تستخدم المنصة؟', howtoSub:'شاهد هذه الفيديوهات القصيرة لاكتشاف كل ميزة.',
+    assignPageTitle:'Assignments', assignPageSub:'3 pending · 1 overdue · 2 submitted',
+    tabAll:'All', tabPending:'Pending', tabDone:'Submitted',
+    tabAllQ:'All', tabAvailQ:'Available', tabDoneQ:'Completed',
+    quizPageTitle:'Quizzes', quizPageSub:'Test your knowledge with timed quizzes',
+    progPageTitle:'Progress', progPageSub:'Track your learning journey module by module',
+    overallTitle:'Overall progress', doneLbl:'done', hrsOf:'/ 29 hrs', courseSession:'General English · Session 2', onTrack:'On track 🎯',
+    scoresTitle:'Quiz scores', qGram:'Basic Grammar', qVoc:'Vocabulary Unit 2', qList:'Listening comprehension',
+    modulesTitle:'Progress by module', m1:'Module 1 – Introduction', m2:'Module 2 – Grammar', m3:'Module 3 – Vocabulary', m4:'Module 4 – Speaking', m5:'Module 5 – Comprehension',
+    howtoTitle:'How to use the platform?', howtoSub:'Watch these short videos to discover each feature.',
     howtoCards:[
-      { icon:'🏠', from:'#3b82f6', to:'#7c3aed', title:'لوحة التحكم', desc:'اكتشف لوحة المتصدرين ونجوم الشهر وصفحة الرئيسية.', btn:'شاهد الفيديو' },
-      { icon:'📋', from:'#10b981', to:'#059669', title:'الواجبات', desc:'كيف تطلع على الواجبات وتُسلّمها وتتابع حالتها.', btn:'شاهد الفيديو' },
-      { icon:'👥', from:'#f59e0b', to:'#f97316', title:'صفي', desc:'اطلع على دورتك ونسبة حضورك وزملائك.', btn:'شاهد الفيديو' },
-      { icon:'🏆', from:'#8b5cf6', to:'#6d28d9', title:'التحدي', desc:'اختبر معلوماتك باختبارات موقوتة.', btn:'شاهد الفيديو' },
-      { icon:'🖼️', from:'#ec4899', to:'#db2777', title:'السبورة', desc:'هنا تجد ملاحظات وصور الدروس التي ينشرها أستاذك.', btn:'شاهد الفيديو' },
-      { icon:'⚙️', from:'#64748b', to:'#475569', title:'الإعدادات', desc:'غيّر اسمك وأضف صورة شخصية واختر اللغة.', btn:'شاهد الفيديو' },
+      { icon:'🏠', from:'#3b82f6', to:'#7c3aed', title:'Dashboard', desc:'Discover the leaderboard, students of the month and the home view.', btn:'Watch video' },
+      { icon:'📋', from:'#10b981', to:'#059669', title:'Assignments', desc:'How to view, submit and track the status of your assignments.', btn:'Watch video' },
+      { icon:'👥', from:'#f59e0b', to:'#f97316', title:'My Class', desc:'View your course, attendance rate and classmates.', btn:'Watch video' },
+      { icon:'🏆', from:'#8b5cf6', to:'#6d28d9', title:'Challenge', desc:'Test your knowledge with timed quizzes.', btn:'Watch video' },
+      { icon:'⚙️', from:'#64748b', to:'#475569', title:'Settings', desc:'Change your name, add a profile photo and choose your language.', btn:'Watch video' },
     ],
-    settingsTitle:'الإعدادات', profileTitle:'الملف الشخصي', lblChangePhoto:'تغيير الصورة', settingsRole:'طالبة · الإنجليزية العامة ج2', lblFullname:'الاسم الكامل', saveBtn:'حفظ', prefTitle:'التفضيلات', prefTxt:'استخدم محدد اللغة في الشريط الجانبي للتبديل بين الفرنسية والعربية.',
-    badgePending:'معلق', badgeSubmitted:'مُسلَّم', badgeOverdue:'متأخر',
-    startQuiz:'ابدأ الاختبار', retakeQuiz:'أعد المحاولة', doneLabel:'مكتمل',
-    toastSaved:'تم تحديث الملف الشخصي!',
-    qsLabel:'سؤال', minLabel:'دقيقة',
-    dueLbl:'الموعد:', subjectLbl:'المادة:',
+    settingsTitle:'Settings', profileTitle:'Profile', lblChangePhoto:'Change photo', settingsRole:'Student · General English S2', lblFullname:'Full name', saveBtn:'Save', prefTitle:'Preferences', prefTxt:'Use the language selector in the sidebar to switch between French and English.',
+    badgePending:'Pending', badgeSubmitted:'Submitted', badgeOverdue:'Overdue',
+    startQuiz:'Start quiz', retakeQuiz:'Retake', doneLabel:'Completed',
+    toastSaved:'Profile updated!',
+    qsLabel:'questions', minLabel:'min',
+    dueLbl:'Due:', subjectLbl:'Subject:',
   }
 };
 
@@ -1127,11 +1126,9 @@ function t(key) { return T[currentLang][key] || key; }
 function setLang(lang) {
   currentLang = lang;
   sessionStorage.setItem('upskill_lang', lang);
-  document.getElementById('body').className = lang === 'ar' ? 'ar' : '';
   document.documentElement.setAttribute('lang', lang);
-  document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
   document.getElementById('pill-fr').className = 'lang-pill' + (lang === 'fr' ? ' active' : '');
-  document.getElementById('pill-ar').className = 'lang-pill' + (lang === 'ar' ? ' active' : '');
+  document.getElementById('pill-en').className = 'lang-pill' + (lang === 'en' ? ' active' : '');
   applyTranslations();
   updateEmailPopupLang();
   renderStars();
@@ -1763,7 +1760,8 @@ function logout() {
 
 /* INIT */
 document.addEventListener('DOMContentLoaded', () => {
-  const savedLang = sessionStorage.getItem('upskill_lang') || 'fr';
+  const _sl = sessionStorage.getItem('upskill_lang');
+  const savedLang = (_sl === 'fr' || _sl === 'en') ? _sl : 'fr';
   setLang(savedLang);
   hydrateLiveData();
   renderStars();
