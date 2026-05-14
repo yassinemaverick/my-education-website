@@ -1385,7 +1385,7 @@ async function renderTypesGrid() {
           ? def.levels + ' niveaux · ' + tally + ' groupe(s)'
           : tally + ' groupe(s)';
       }
-      return `<div class="class-type-card" onclick="classesSelectType(${JSON.stringify(def.key)})">
+      return `<div class="class-type-card" onclick="classesSelectType('${def.key}')">
         <div style="font-size:1.8rem;margin-bottom:.6rem;">${def.icon}</div>
         <div class="ct-name">${name}</div>
         <div class="ct-sub">${sub}</div>
@@ -1442,7 +1442,7 @@ async function loadGroupChips() {
   container.innerHTML = groups.map(g => {
     const students = parseInt(g.member_count) || 0;
     const sub = students === 0 ? 'Aucun membre' : students + ' membre' + (students > 1 ? 's' : '');
-    return `<div class="group-card" onclick="openManageGroupModal(${g.id}, ${JSON.stringify(g.group_letter)})">
+    return `<div class="group-card" onclick="openManageGroupModal(${g.id}, '${g.group_letter}')">
       <button class="gc-del" title="Supprimer" onclick="event.stopPropagation();deleteGroup(${g.id})">✕</button>
       <div class="gc-letter">Groupe ${g.group_letter}</div>
       <div class="gc-sub">${sub}</div>
