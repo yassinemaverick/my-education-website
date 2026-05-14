@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) err('Token CSRF invalide', 403);
 }
 
-$pdo = getDB();
+$pdo = db();
 
 // ── Auto-create tables (no FOREIGN KEY to avoid privilege issues on shared hosting) ──
 $pdo->exec("CREATE TABLE IF NOT EXISTS class_groups (
