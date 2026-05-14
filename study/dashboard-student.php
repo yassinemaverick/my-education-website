@@ -1252,7 +1252,11 @@ function navigate(page, el) {
   const pg = document.getElementById('page-' + page);
   if (pg) pg.classList.add('active');
   if (el) el.classList.add('active');
-  else { const navEl = document.getElementById('nav-' + page); if (navEl) navEl.classList.add('active'); }
+  else {
+    const navIdMap = {assignments:'nav-assign',quizzes:'nav-quiz',settings:'nav-set',myclass:'nav-myclass',feed:'nav-feed',home:'nav-home',howto:'nav-howto'};
+    const navEl = document.getElementById(navIdMap[page] || 'nav-' + page);
+    if (navEl) navEl.classList.add('active');
+  }
   activePage = page;
   sessionStorage.setItem('upskill_page_s', page);
   st('topbar-title', T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home);

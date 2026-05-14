@@ -1171,7 +1171,11 @@ function navigate(page, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   if(el) el.classList.add('active');
-  else { const navEl = document.getElementById('nav-' + page); if (navEl) navEl.classList.add('active'); }
+  else {
+    const navIdMap = {courses:'nav-students',assignments:'nav-assign',quizzes:'nav-quiz',settings:'nav-set',posts:'nav-posts',grades:'nav-grades',attendance:'nav-attendance',home:'nav-home'};
+    const navEl = document.getElementById(navIdMap[page] || 'nav-' + page);
+    if (navEl) navEl.classList.add('active');
+  }
   activePage = page;
   sessionStorage.setItem('upskill_page_t', page);
   document.getElementById('topbar-title').textContent = T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home;
