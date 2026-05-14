@@ -1,14 +1,13 @@
 <?php
 require_once __DIR__ . '/session.php';
 $_error = htmlspecialchars($_GET['error'] ?? '', ENT_QUOTES);
-$_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Upskill Platform – Sign In</title>
+<title>Upskill Platform – Espace Enseignant</title>
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -87,6 +86,14 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
     width: 100%; max-width: 420px;
   }
 
+  .teacher-badge {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    background: var(--green-glow); border: 1px solid rgba(62,207,120,0.3);
+    border-radius: 100px; padding: 0.35rem 0.9rem;
+    font-family: var(--font); font-size: 0.78rem; font-weight: 600;
+    color: var(--green); margin-bottom: 1.5rem;
+  }
+
   .login-title { font-family: var(--font); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; letter-spacing: -0.02em; }
   .login-subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
   .login-subtitle span { color: var(--green); }
@@ -155,7 +162,6 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
   }
   .btn-login.loading .btn-text { display: none; }
   .btn-login.loading .spinner { display: block; }
-
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .error-msg {
@@ -165,16 +171,11 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
     margin-bottom: 1rem; display: none;
   }
 
-  .divider { display: flex; align-items: center; gap: 0.75rem; margin: 1.5rem 0; }
-  .divider hr { flex: 1; border: none; border-top: 1px solid var(--border); }
-  .divider span { color: var(--muted); font-size: 0.78rem; }
-
   .back-link { text-align: center; margin-top: 1.5rem; }
   .back-link a { color: var(--muted); font-size: 0.83rem; text-decoration: none; transition: color 0.2s; }
   .back-link a:hover { color: var(--white); }
   .back-link a span { color: var(--green); }
 
-  /* Decorative grid */
   .grid-bg {
     position: fixed; inset: 0; pointer-events: none; opacity: 0.04;
     background-image: linear-gradient(var(--white) 1px, transparent 1px), linear-gradient(90deg, var(--white) 1px, transparent 1px);
@@ -205,19 +206,19 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
   </div>
 
   <div class="left-content">
-    <h1>Your learning<br>journey<br><span>starts here.</span></h1>
-    <p>Access your personalised dashboard, assignments, whiteboards and progress tracking — all in one place.</p>
+    <h1>L'espace dédié<br>à vos<br><span>cours.</span></h1>
+    <p>Gérez vos groupes, suivez la progression de vos étudiants, publiez vos notes de cours et prenez les présences — tout depuis un seul endroit.</p>
     <div class="feature-list">
-      <div class="feature-item"><div class="feature-dot"></div><span>Course resources &amp; materials</span></div>
-      <div class="feature-item"><div class="feature-dot"></div><span>Interactive whiteboard access</span></div>
-      <div class="feature-item"><div class="feature-dot"></div><span>Assignments &amp; quizzes</span></div>
-      <div class="feature-item"><div class="feature-dot"></div><span>Live progress tracking</span></div>
-      <div class="feature-item"><div class="feature-dot"></div><span>Teacher-managed content</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span>Gestion des groupes et des classes</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span>Prise des présences en ligne</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span>Publication des notes de cours</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span>Suivi des étudiants assignés</span></div>
+      <div class="feature-item"><div class="feature-dot"></div><span>Gestion des devoirs et quiz</span></div>
     </div>
   </div>
 
   <div class="left-bottom">
-    <a href="https://upskill-edu.com/index-fr.php">← Back to main site</a> &nbsp;·&nbsp; © 2026 Upskill Education
+    <a href="https://upskill-edu.com/index-fr.php">← Retour au site principal</a> &nbsp;·&nbsp; © 2026 Upskill Education
   </div>
 </div>
 
@@ -225,41 +226,36 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
 <div class="right" role="main" id="login-section">
   <div class="login-box">
 
-    <!-- Language switcher -->
-    <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-bottom:1.2rem;">
-      <a href="index2.php"    style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-family:var(--font);font-size:0.73rem;font-weight:600;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇬🇧 EN</a>
-      <a href="index2-fr.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;font-weight:500;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;transition:all 0.2s;">🇫🇷 FR</a>
-      <a href="index2-ar.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;font-weight:500;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;transition:all 0.2s;">🇲🇦 عربي</a>
-    </div>
+    <div class="teacher-badge">👨‍🏫 &nbsp;Espace Professeur</div>
 
-    <div class="login-title">Welcome back</div>
-    <div class="login-subtitle">Sign in to your <span>student</span> account</div>
+    <div class="login-title">Bon retour</div>
+    <div class="login-subtitle">Connectez-vous à votre compte <span>professeur</span></div>
 
     <div class="error-msg" id="error-msg" role="alert" aria-live="polite" style="display:none;">
       <span id="error-icon">⚠</span> <span id="error-text"></span>
     </div>
 
     <form id="login-form" action="login.php" method="POST" onsubmit="return handleSubmit(event)">
-    <input type="hidden" name="role" id="role-input" value="student">
+    <input type="hidden" name="role" value="teacher">
     <input type="text" name="website" style="display:none" tabindex="-1" autocomplete="off">
-    <input type="hidden" name="lang" value="en">
+    <input type="hidden" name="lang" value="teacher">
     <div class="form-group">
-      <label>Username</label>
+      <label>Identifiant</label>
       <div class="input-wrap">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
         </svg>
-        <input type="text" id="username" aria-required="true" name="username" placeholder="Your username" autocomplete="username">
+        <input type="text" id="username" aria-required="true" name="username" placeholder="Votre identifiant" autocomplete="username">
       </div>
     </div>
 
     <div class="form-group">
-      <label>Password</label>
+      <label>Mot de passe</label>
       <div class="input-wrap">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
-        <input type="password" id="password" aria-required="true" name="password" placeholder="Your password" autocomplete="current-password">
+        <input type="password" id="password" aria-required="true" name="password" placeholder="Votre mot de passe" autocomplete="current-password">
         <button class="password-toggle" type="button" id="pwd-toggle" onclick="togglePwd()" aria-label="Toggle password visibility">
           <svg class="eye-open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
@@ -277,19 +273,19 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
       <label class="checkbox-label">
         <input type="checkbox" id="remember">
         <div class="checkbox-box"></div>
-        <span>Remember me</span>
+        <span>Se souvenir de moi</span>
       </label>
-      <a href="forgot-password.php" class="forgot">Forgot password?</a>
+      <a href="forgot-password.php" class="forgot">Mot de passe oublié ?</a>
     </div>
 
     <button class="btn-login" id="login-btn" type="submit">
-      <span class="btn-text">Sign in →</span>
+      <span class="btn-text">Se connecter →</span>
       <div class="spinner"></div>
     </button>
     </form>
 
     <div class="back-link">
-      <a href="https://upskill-edu.com/index-fr.php">← Back to <span>upskill-edu.com</span></a>
+      <a href="https://upskill-edu.com/index-fr.php">← Retour à <span>upskill-edu.com</span></a>
     </div>
 
   </div>
@@ -303,13 +299,13 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
     const err = p.get('error');
     if (!err) return;
     const msgs = {
-      empty:   'Please enter your username and password.',
-      invalid: 'Incorrect username or password. Please try again.',
-      locked:  'Too many failed attempts. Please wait 15 minutes before trying again.',
-      csrf:    'Your session expired. The page has been refreshed — please try again.',
-      role:    'This account is not a student account.',
+      empty:   'Veuillez saisir votre identifiant et votre mot de passe.',
+      invalid: 'Identifiant ou mot de passe incorrect. Veuillez réessayer.',
+      locked:  'Trop de tentatives échouées. Veuillez patienter 15 minutes.',
+      csrf:    'Votre session a expiré. La page a été actualisée — veuillez réessayer.',
+      role:    'Ce compte n\'est pas un compte professeur.',
     };
-    showError(msgs[err] || 'Login failed. Please check your details and try again.');
+    showError(msgs[err] || 'Connexion échouée. Vérifiez vos informations.');
     if (err === 'invalid' || err === 'role') {
       document.getElementById('username').classList.add('input-error');
       document.getElementById('password').classList.add('input-error');
@@ -341,9 +337,9 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
     hideError();
     const user = document.getElementById('username').value.trim();
     const pass = document.getElementById('password').value;
-    if (!user && !pass) { showError('Please enter your username and password.'); document.getElementById('username').classList.add('input-error'); document.getElementById('password').classList.add('input-error'); return false; }
-    if (!user) { showError('Please enter your username.'); document.getElementById('username').classList.add('input-error'); return false; }
-    if (!pass) { showError('Please enter your password.'); document.getElementById('password').classList.add('input-error'); return false; }
+    if (!user) { document.getElementById('username').classList.add('input-error'); }
+    if (!pass) { document.getElementById('password').classList.add('input-error'); }
+    if (!user || !pass) { showError('Veuillez saisir votre identifiant et votre mot de passe.'); return false; }
     document.getElementById('login-btn').classList.add('loading');
     document.getElementById('login-form').submit();
     return true;

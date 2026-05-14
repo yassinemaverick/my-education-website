@@ -87,25 +87,6 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
     width: 100%; max-width: 420px;
   }
 
-  .role-tabs {
-    display: grid; grid-template-columns: 1fr 1fr;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border);
-    border-radius: 14px; padding: 4px;
-    margin-bottom: 2rem;
-  }
-  .role-tab {
-    padding: 0.65rem; text-align: center;
-    font-family: var(--font); font-size: 0.85rem; font-weight: 500;
-    color: var(--muted); cursor: pointer; border-radius: 11px;
-    transition: all 0.2s; user-select: none;
-  }
-  .role-tab.active {
-    background: var(--navy-light);
-    color: var(--white);
-    border: 1px solid var(--border);
-  }
-
   .login-title { font-family: var(--font); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; letter-spacing: -0.02em; }
   .login-subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
   .login-subtitle span { color: var(--green); }
@@ -251,14 +232,8 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
       <a href="index2-ar.php" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:var(--font);font-size:0.73rem;font-weight:500;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;transition:all 0.2s;">🇲🇦 عربي</a>
     </div>
 
-    <!-- Role tabs -->
-    <div class="role-tabs" role="tab" role="tablist" aria-label="Sélectionner votre rôle">
-      <div class="role-tab active" role="tab" id="tab-student" onclick="setRole('student', this)">👩‍🎓 &nbsp;Étudiant</div>
-      <div class="role-tab" role="tab" id="tab-teacher" onclick="setRole('teacher', this)">👨‍🏫 &nbsp;Professeur</div>
-    </div>
-
-    <div class="login-title" id="login-title">Bon retour</div>
-    <div class="login-subtitle" id="login-subtitle">Connectez-vous à votre compte <span>étudiant</span></div>
+    <div class="login-title">Bon retour</div>
+    <div class="login-subtitle">Connectez-vous à votre compte <span>étudiant</span></div>
 
     <div class="error-msg" id="error-msg" role="alert" aria-live="polite" style="display:none;">
       <span id="error-icon">⚠</span> <span id="error-text"></span>
@@ -323,22 +298,18 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
 </div>
 
 <script>
-  let currentRole = 'student';
-  let pwdVisible  = false;
+  let pwdVisible = false;
 
-  // ── Read error code set by login.php redirect ──
   (function() {
-    const p    = new URLSearchParams(window.location.search);
-    const err  = p.get('error');
-    const role = p.get('role');
-    if (role === 'teacher') setRole('teacher', document.getElementById('tab-teacher'));
+    const p   = new URLSearchParams(window.location.search);
+    const err = p.get('error');
     if (!err) return;
     const msgs = {
       empty:   'Veuillez saisir votre identifiant et votre mot de passe.',
       invalid: 'Identifiant ou mot de passe incorrect. Veuillez réessayer.',
-      'locked': 'Trop de tentatives échouées. Veuillez patienter 15 minutes.',
+      locked:  'Trop de tentatives échouées. Veuillez patienter 15 minutes.',
       csrf:    'Votre session a expiré. La page a été actualisée — veuillez réessayer.',
-      role:    'Ce compte n\'a pas accès à l\'espace ' + (role === 'teacher' ? 'professeur' : 'étudiant') + '. Sélectionnez le bon rôle.',
+      role:    'Ce compte n\'est pas un compte étudiant.',
     };
     showError(msgs[err] || 'Connexion échouée. Vérifiez vos informations.');
     if (err === 'invalid' || err === 'role') {
@@ -359,17 +330,6 @@ $_role  = htmlspecialchars($_GET['role']  ?? 'student', ENT_QUOTES);
     document.getElementById('error-msg').style.display = 'none';
     document.getElementById('username').classList.remove('input-error');
     document.getElementById('password').classList.remove('input-error');
-  }
-
-  function setRole(role, tab) {
-    currentRole = role;
-    document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('role-input').value = role;
-    document.getElementById('login-subtitle').innerHTML =
-      'Connectez-vous à votre compte <span>' + (role === 'teacher' ? 'professeur' : 'étudiant') + '</span>';
-    hideError();
-    document.getElementById('password').value = '';
   }
 
   function togglePwd() {
