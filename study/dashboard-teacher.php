@@ -1818,6 +1818,17 @@ async function loadTeacherGroups() {
   populateAttGroupSelect();
 }
 
+const TYPE_ICONS = {
+  beginners:'🌱', pre_intermediate:'📘', intermediate:'📗',
+  upper_intermediate:'📙', advanced:'🚀', baccalaureate:'🎓',
+  business:'💼', kids:'🧒'
+};
+const TYPE_ICON_CLASS = {
+  beginners:'c2', pre_intermediate:'c1', intermediate:'c2',
+  upper_intermediate:'c3', advanced:'c4', baccalaureate:'c1',
+  business:'c3', kids:'c4'
+};
+
 function renderTeacherGroups() {
   const lang = currentLang;
   const el   = document.getElementById('teacher-assigned-groups');
@@ -1825,20 +1836,34 @@ function renderTeacherGroups() {
 
   if (teacherGroups.length === 0) { el.innerHTML = ''; return; }
 
+  const sectionLabel = lang==='ar' ? 'مجموعاتك المعينة' : 'Vos groupes assignés';
+  const attendanceLbl = lang==='ar' ? 'عرض الحضور ←' : 'Voir les présences →';
+  const studentLbl   = lang==='ar' ? 'طالب' : 'étudiant(s)';
+
   const cards = teacherGroups.map(g => {
-    const label = lang==='ar' ? g.label_ar : g.label_fr;
-    return `<div style="background:rgba(62,207,120,.06);border:1px solid rgba(62,207,120,.2);border-radius:14px;padding:1rem 1.25rem;cursor:pointer;transition:border-color .2s;" onclick="attSelectGroup(${g.group_id}); navigate('attendance', document.getElementById('nav-attendance'))">
-      <div style="font-size:1.5rem;margin-bottom:.4rem;">🏫</div>
-      <div style="font-family:var(--font);font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:.25rem;">${label}</div>
-      <div style="font-size:.78rem;color:var(--muted);">👥 ${g.student_count} étudiant(s)</div>
-      <div style="margin-top:.6rem;font-size:.72rem;color:var(--green);">Voir les présences →</div>
+    const label    = lang==='ar' ? g.label_ar : g.label_fr;
+    const icon     = TYPE_ICONS[g.type_key]      || '🏫';
+    const iconCls  = TYPE_ICON_CLASS[g.type_key] || 'c1';
+    const students = g.student_count || 0;
+    return `<div class="course-card" onclick="attSelectGroup(${g.group_id}); navigate('attendance', document.getElementById('nav-attendance'))">
+      <div class="course-card-header">
+        <div class="course-icon ${iconCls}">${icon}</div>
+        <div>
+          <div class="course-group-name">${label}</div>
+        </div>
+      </div>
+      <div class="course-meta-row">
+        <span>👥 ${students} ${studentLbl}</span>
+      </div>
+      <div class="course-schedule-chips">
+        <span class="schedule-chip">${attendanceLbl}</span>
+      </div>
     </div>`;
   }).join('');
 
-  el.innerHTML = `<div style="margin-bottom:.6rem;">
-    <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;">${lang==='ar'?'مجموعاتك المعينة':'Vos groupes assignés'}</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;">${cards}</div>
-  </div>`;
+  el.innerHTML = `
+    <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;">${sectionLabel}</div>
+    <div class="grid-3">${cards}</div>`;
 }
 
 function populateAttGroupSelect() {
