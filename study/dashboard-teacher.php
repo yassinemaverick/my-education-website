@@ -1171,7 +1171,9 @@ function navigate(page, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   if(el) el.classList.add('active');
+  else { const navEl = document.getElementById('nav-' + page); if (navEl) navEl.classList.add('active'); }
   activePage = page;
+  sessionStorage.setItem('upskill_page_t', page);
   document.getElementById('topbar-title').textContent = T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home;
   if (page === 'courses') { teacherClassView='types'; teacherSelType=null; teacherSelLevel=null; renderCourses(); loadTeacherGroups(); }
   if (page === 'attendance') { if (teacherGroups.length === 0) loadTeacherGroups(); }
@@ -1767,6 +1769,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderAttendance(); renderCourses();
   hydrateTeacherInfo();
   loadSavedAvatar();
+  const validPages = ['home','students','courses','assignments','posts','quizzes','grades','settings','attendance'];
+  const savedPage = sessionStorage.getItem('upskill_page_t');
+  if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
+    navigate(savedPage);
+  }
 });
 
 /* ── LIVE STUDENT FETCH ── */

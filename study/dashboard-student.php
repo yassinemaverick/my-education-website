@@ -1252,7 +1252,9 @@ function navigate(page, el) {
   const pg = document.getElementById('page-' + page);
   if (pg) pg.classList.add('active');
   if (el) el.classList.add('active');
+  else { const navEl = document.getElementById('nav-' + page); if (navEl) navEl.classList.add('active'); }
   activePage = page;
+  sessionStorage.setItem('upskill_page_s', page);
   st('topbar-title', T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home);
   if (page === 'assignments') renderAssignments();
   if (page === 'quizzes')     renderQuizzes();
@@ -1788,6 +1790,11 @@ document.addEventListener('DOMContentLoaded', () => {
   renderQuizzes();
   renderHowTo();
   loadSavedAvatar();
+  const validPages = ['home','myclass','assignments','feed','quizzes','progress','howto','settings'];
+  const savedPage = sessionStorage.getItem('upskill_page_s');
+  if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
+    navigate(savedPage);
+  }
 });
 
 /* ── LIVE DATA HYDRATION ── */
