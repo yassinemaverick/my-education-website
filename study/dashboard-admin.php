@@ -893,7 +893,7 @@ async function api(url, method='GET', body=null) {
   if (body) opts.body = JSON.stringify(body);
   const res  = await fetch(url, opts);
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error?.[currentLang] || 'Erreur');
+  if (!json.ok) throw new Error(json.error?.[currentLang] || json.error || 'Erreur');
   return json;
 }
 
