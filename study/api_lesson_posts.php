@@ -95,6 +95,9 @@ try {
             if ($link && mb_strlen($link) > 500) {
                 echo json_encode(['ok' => false, 'error' => 'Lien trop long']); exit;
             }
+            if ($link && !preg_match('#^https?://#i', $link)) {
+                echo json_encode(['ok' => false, 'error' => 'Le lien doit commencer par http:// ou https://']); exit;
+            }
 
             $check = $pdo->prepare("SELECT id FROM teacher_courses WHERE teacher_id = ? AND course_id = ?");
             $check->execute([$uid, $courseId]);

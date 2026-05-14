@@ -401,6 +401,21 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
 .av-upload-btn { position:absolute; bottom:-3px; right:-3px; width:24px; height:24px; background:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#fff; border:2px solid var(--navy); transition:background .2s; }
 .av-upload-btn:hover { background:#2563eb; }
 #mascot-av-img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:50%; display:none; }
+
+/* NOTIFICATION PANEL */
+.notif-panel { position:fixed; top:64px; right:1rem; width:340px; max-height:460px; overflow-y:auto; background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:0 8px 32px rgba(30,27,75,.16); z-index:9001; display:none; animation:fadeIn .15s ease; }
+body.ar .notif-panel { right:auto; left:1rem; }
+.notif-panel.open { display:block; }
+.notif-header { display:flex; align-items:center; justify-content:space-between; padding:.9rem 1.25rem .7rem; border-bottom:1px solid var(--border); }
+.notif-header h4 { font-family:var(--font); font-size:.9rem; font-weight:700; }
+.notif-item { display:flex; gap:.8rem; padding:.8rem 1.25rem; border-bottom:1px solid var(--border2); font-size:.83rem; line-height:1.45; }
+.notif-item.unread { background:rgba(59,130,246,.04); }
+.notif-item:last-child { border-bottom:none; }
+.notif-dot { width:8px; height:8px; border-radius:50%; background:var(--blue); flex-shrink:0; margin-top:.35rem; }
+.notif-dot-placeholder { width:8px; flex-shrink:0; }
+.notif-time { font-size:.72rem; color:var(--muted2); margin-top:.2rem; }
+#notif-badge { position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; border-radius:100px; background:var(--red); color:#fff; font-family:var(--font); font-size:.6rem; font-weight:700; display:none; align-items:center; justify-content:center; padding:0 3px; }
+#notif-badge.show { display:flex; }
 </style>
 </head>
 <body id="body">
@@ -482,9 +497,10 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
     </div>
     <div class="topbar-actions">
       <button class="btn-primary btn-sm" onclick="openAssignModal()" id="btn-new-assign">+ Nouveau devoir</button>
-      <div class="btn-icon" title="Notifications">
+      <button class="btn-icon" id="notif-btn" onclick="toggleNotifPanel()" aria-label="Notifications" style="position:relative;">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      </div>
+        <span id="notif-badge" aria-live="polite"></span>
+      </button>
       <div class="avatar" id="topbar-avatar" style="cursor:pointer;" onclick="toggleProfileMenu(event)" title="Mon profil"><?= str_replace(['%ID%','%IMGID%'], ['topbar-dino-svg','topbar-av-img'], $dinoAvatarSvg) ?></div>
     </div>
   </div>
@@ -500,10 +516,10 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
     </div>
 
     <div class="grid-4" style="margin-bottom:1.5rem;">
-      <div class="card"><div class="stat-icon purple"><span aria-hidden="true">👥</span></div><div class="stat-value" id="stat1-val">24</div><div class="stat-label" id="stat1-lbl">Étudiants actifs</div></div>
-      <div class="card"><div class="stat-icon yellow"><span aria-hidden="true">📝</span></div><div class="stat-value" id="stat2-val">8</div><div class="stat-label" id="stat2-lbl">Devoirs à corriger</div></div>
-      <div class="card"><div class="stat-icon green"><span aria-hidden="true">📊</span></div><div class="stat-value" id="stat3-val">74%</div><div class="stat-label" id="stat3-lbl">Moyenne de la classe</div></div>
-      <div class="card"><div class="stat-icon blue"><span aria-hidden="true">🧠</span></div><div class="stat-value" id="stat4-val">5</div><div class="stat-label" id="stat4-lbl">Quiz actifs</div></div>
+      <div class="card"><div class="stat-icon purple"><span aria-hidden="true">👥</span></div><div class="stat-value" id="stat1-val">—</div><div class="stat-label" id="stat1-lbl">Étudiants actifs</div></div>
+      <div class="card"><div class="stat-icon yellow"><span aria-hidden="true">📝</span></div><div class="stat-value" id="stat2-val">—</div><div class="stat-label" id="stat2-lbl">Devoirs à corriger</div></div>
+      <div class="card"><div class="stat-icon green"><span aria-hidden="true">📊</span></div><div class="stat-value" id="stat3-val">—</div><div class="stat-label" id="stat3-lbl">Moyenne de la classe</div></div>
+      <div class="card"><div class="stat-icon blue"><span aria-hidden="true">📋</span></div><div class="stat-value" id="stat4-val">—</div><div class="stat-label" id="stat4-lbl">Devoirs publiés</div></div>
     </div>
 
     <div class="grid-2">
@@ -535,26 +551,7 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
       <!-- Activity -->
       <div class="card">
         <div class="card-title" id="activity-title">Activité récente</div>
-        <div class="activity-item">
-          <div class="activity-dot green"></div>
-          <div><div class="activity-text"><strong id="act1-s">Devoir soumis</strong> — <span id="act1-t">Amina K. a rendu son devoir</span></div><div class="activity-time" id="act1-time">Aujourd'hui, 11:15</div></div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot yellow"></div>
-          <div><div class="activity-text"><strong id="act2-s">Devoir en retard</strong> — <span id="act2-t">Karim B. – Exercice écoute #2</span></div><div class="activity-time" id="act2-time">Était dû le 3 mai</div></div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot purple"></div>
-          <div><div class="activity-text"><strong id="act3-s">Quiz complété</strong> — <span id="act3-t">15 étudiants ont passé Quiz Grammaire</span></div><div class="activity-time" id="act3-time">Hier, 14:30</div></div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot blue"></div>
-          <div><div class="activity-text"><strong id="act4-s">Nouveau devoir publié</strong> — <span id="act4-t">Présentation orale – Sujet libre</span></div><div class="activity-time" id="act4-time">Il y a 2 jours</div></div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot green"></div>
-          <div><div class="activity-text"><strong id="act5-s">Note publiée</strong> — <span id="act5-t">Rédaction Email – 22 étudiants notés</span></div><div class="activity-time" id="act5-time">Il y a 3 jours</div></div>
-        </div>
+        <div id="activity-list"><div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">Chargement…</div></div>
       </div>
     </div>
   </div>
@@ -652,10 +649,10 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
       </div>
     </div>
     <div class="card">
-      <div class="card-title" id="quiz-scores-title">Résultats des quiz par étudiant</div>
+      <div class="card-title" id="quiz-scores-title">Notes par devoir</div>
       <table class="student-table">
-        <thead><tr><th id="gth-name">Étudiant</th><th id="gth-q1">Quiz Grammaire</th><th id="gth-q2">Vocabulaire U3</th><th id="gth-q3">Compréhension</th><th id="gth-avg">Moyenne</th></tr></thead>
-        <tbody id="grades-tbody"></tbody>
+        <thead><tr><th id="gth-student">Étudiant</th><th id="gth-assign">Devoir</th><th id="gth-score">Note</th><th id="gth-date">Date</th></tr></thead>
+        <tbody id="grades-tbody"><tr><td colspan="4" style="color:var(--muted);text-align:center;padding:1rem;">Chargement…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -889,6 +886,15 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
 <!-- TOAST -->
 <div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg"></span></div>
 
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notif-panel" onclick="event.stopPropagation()">
+  <div class="notif-header">
+    <h4 id="notif-panel-title">Notifications</h4>
+    <button class="btn-close" onclick="closeNotifPanel()" aria-label="Fermer">✕</button>
+  </div>
+  <div id="notif-list"><div style="padding:1.5rem;text-align:center;color:var(--muted);font-size:.85rem;">Chargement…</div></div>
+</div>
+
 <!-- PROFILE MENU DROPDOWN -->
 <div class="profile-menu" id="profile-menu" onclick="event.stopPropagation()">
   <button class="profile-menu-item" onclick="profileMenuAction('name')">
@@ -942,16 +948,11 @@ const T = {
     postsDeleteConfirm:'Supprimer cette note ?', toastPostPublished:'Note publiée !', toastPostDeleted:'Note supprimée.',
     teacherChip:'Prof', roleLabel:'Professeur', logout:'Déconnexion',
     welcomeMsg:'Bonjour, ', welcomeSub:"8 devoirs à corriger · 3 étudiants en difficulté · Moyenne de classe : 74%",
-    stat1:'Étudiants actifs', stat2:'Devoirs à corriger', stat3:'Moyenne de la classe', stat4:'Quiz actifs',
+    stat1:'Étudiants actifs', stat2:'Devoirs à corriger', stat3:'Moyenne de la classe', stat4:'Devoirs publiés',
     btnNewAssign:'+ Nouveau devoir', btnNewQuiz:'+ Créer un quiz',
     classProgTitle:'Progression de la classe', cp1:'Progression générale', cp2:'Taux de soumission devoirs', cp3:'Moyenne quiz',
     attentionTitle:'Étudiants à surveiller ⚠️',
-    activityTitle:'Activité récente',
-    act1s:'Devoir soumis', act1t:"Amina K. a rendu son devoir", act1time:"Aujourd'hui, 11:15",
-    act2s:'Devoir en retard', act2t:'Karim B. – Exercice écoute #2', act2time:'Était dû le 3 mai',
-    act3s:'Quiz complété', act3t:'15 étudiants ont passé Quiz Grammaire', act3time:'Hier, 14:30',
-    act4s:'Nouveau devoir publié', act4t:'Présentation orale – Sujet libre', act4time:'Il y a 2 jours',
-    act5s:'Note publiée', act5t:'Rédaction Email – 22 étudiants notés', act5time:'Il y a 3 jours',
+    activityTitle:'Activité récente', activityEmpty:'Aucune activité récente.',
     studentsPageTitle:'Étudiants', studentsPageSub:'24 étudiants inscrits · Session 2',
     thName:'Étudiant', thProgress:'Progression', thAssigns:'Devoirs', thAvg:'Moyenne', thStatus:'Statut',
     statusGood:'Bon niveau', statusWarn:'À surveiller', statusLow:'En difficulté',
@@ -961,8 +962,10 @@ const T = {
     newQuizLbl:'Créer un quiz',
     gradesPageTitle:'Notes & Résultats', gradesPageSub:"Vue d'ensemble des performances de la classe",
     distTitle:'Distribution des notes', topTitle:'Top étudiants',
-    quizScoresTitle:'Résultats des quiz par étudiant',
-    gthName:'Étudiant', gthQ1:'Quiz Grammaire', gthQ2:'Vocabulaire U3', gthQ3:'Compréhension', gthAvg:'Moyenne',
+    quizScoresTitle:'Notes par devoir',
+    gthStudent:'Étudiant', gthAssign:'Devoir', gthScore:'Note', gthDate:'Date',
+    noGradesYet:'Aucune note pour le moment.',
+    notifEmpty:'Aucune notification',
     settingsTitle:'Paramètres', profileTitle:'Profil professeur', settingsRole:'Professeur · Anglais Général',
     lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:"Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Anglais.",
     modalAssignTitle:'Nouveau devoir', mlblTitle:'Titre du devoir', mlblDesc:'Description', mlblDue:'Date limite', mlblSubject:'Matière', modalCancel:'Annuler', modalSubmit:'Publier',
@@ -1020,16 +1023,11 @@ const T = {
     postsDeleteConfirm:'Delete this note?', toastPostPublished:'Note published!', toastPostDeleted:'Note deleted.',
     teacherChip:'Teacher', roleLabel:'Teacher', logout:'Log out',
     welcomeMsg:'Hello, ', welcomeSub:'8 assignments to grade · 3 students struggling · Class average: 74%',
-    stat1:'Active students', stat2:'Assignments to grade', stat3:'Class average', stat4:'Active quizzes',
+    stat1:'Active students', stat2:'Assignments to grade', stat3:'Class average', stat4:'Assignments posted',
     btnNewAssign:'+ New assignment', btnNewQuiz:'+ Create quiz',
     classProgTitle:'Class progress', cp1:'Overall progress', cp2:'Assignment submission rate', cp3:'Quiz average',
     attentionTitle:'Students to watch ⚠️',
-    activityTitle:'Recent activity',
-    act1s:'Assignment submitted', act1t:'Amina K. submitted her assignment', act1time:'Today, 11:15',
-    act2s:'Late assignment', act2t:'Karim B. – Listening exercise #2', act2time:'Was due May 3',
-    act3s:'Quiz completed', act3t:'15 students took Grammar Quiz', act3time:'Yesterday, 14:30',
-    act4s:'New assignment posted', act4t:'Oral presentation – Free topic', act4time:'2 days ago',
-    act5s:'Grade posted', act5t:'Email writing – 22 students graded', act5time:'3 days ago',
+    activityTitle:'Recent activity', activityEmpty:'No recent activity.',
     studentsPageTitle:'Students', studentsPageSub:'24 enrolled students · Session 2',
     thName:'Student', thProgress:'Progress', thAssigns:'Assignments', thAvg:'Average', thStatus:'Status',
     statusGood:'On track', statusWarn:'Needs attention', statusLow:'Struggling',
@@ -1039,8 +1037,10 @@ const T = {
     newQuizLbl:'Create quiz',
     gradesPageTitle:'Grades & Results', gradesPageSub:'Overview of class performance',
     distTitle:'Grade distribution', topTitle:'Top students',
-    quizScoresTitle:'Quiz results by student',
-    gthName:'Student', gthQ1:'Grammar Quiz', gthQ2:'Vocabulary U3', gthQ3:'Comprehension', gthAvg:'Average',
+    quizScoresTitle:'Grades by assignment',
+    gthStudent:'Student', gthAssign:'Assignment', gthScore:'Score', gthDate:'Date',
+    noGradesYet:'No grades yet.',
+    notifEmpty:'No notifications',
     settingsTitle:'Settings', profileTitle:'Teacher profile', settingsRole:'Teacher · General English',
     lblFullname:'Full name', saveBtn:'Save', prefTitle:'Preferences', prefTxt:'Use the language selector in the sidebar to switch between French and English.',
     modalAssignTitle:'New assignment', mlblTitle:'Assignment title', mlblDesc:'Description', mlblDue:'Due date', mlblSubject:'Subject', modalCancel:'Cancel', modalSubmit:'Publish',
@@ -1096,6 +1096,7 @@ function setLang(lang) {
   document.getElementById('pill-fr').className = 'lang-pill' + (lang === 'fr' ? ' active' : '');
   document.getElementById('pill-en').className = 'lang-pill' + (lang === 'en' ? ' active' : '');
   applyTranslations();
+  updateHomeStats();
 }
 
 function toggleSidebar() {
@@ -1123,18 +1124,13 @@ function applyTranslations() {
   set('stat1-lbl', tr.stat1); set('stat2-lbl', tr.stat2); set('stat3-lbl', tr.stat3); set('stat4-lbl', tr.stat4);
   set('class-prog-title', tr.classProgTitle); set('cp-label1', tr.cp1); set('cp-label2', tr.cp2); set('cp-label3', tr.cp3);
   set('attention-title', tr.attentionTitle); set('activity-title', tr.activityTitle);
-  set('act1-s', tr.act1s); set('act1-t', tr.act1t); set('act1-time', tr.act1time);
-  set('act2-s', tr.act2s); set('act2-t', tr.act2t); set('act2-time', tr.act2time);
-  set('act3-s', tr.act3s); set('act3-t', tr.act3t); set('act3-time', tr.act3time);
-  set('act4-s', tr.act4s); set('act4-t', tr.act4t); set('act4-time', tr.act4time);
-  set('act5-s', tr.act5s); set('act5-t', tr.act5t); set('act5-time', tr.act5time);
   set('students-page-title', tr.studentsPageTitle); set('students-page-sub', tr.studentsPageSub);
   set('th-name', tr.thName); set('th-progress', tr.thProgress); set('th-assigns', tr.thAssigns); set('th-avg', tr.thAvg); set('th-status', tr.thStatus);
   set('assign-page-title', tr.assignPageTitle); set('assign-page-sub', tr.assignPageSub);
   set('quiz-page-title', tr.quizPageTitle); set('quiz-page-sub', tr.quizPageSub);
   set('grades-page-title', tr.gradesPageTitle); set('grades-page-sub', tr.gradesPageSub);
   set('dist-title', tr.distTitle); set('top-title', tr.topTitle); set('quiz-scores-title', tr.quizScoresTitle);
-  set('gth-name', tr.gthName); set('gth-q1', tr.gthQ1); set('gth-q2', tr.gthQ2); set('gth-q3', tr.gthQ3); set('gth-avg', tr.gthAvg);
+  set('gth-student', tr.gthStudent); set('gth-assign', tr.gthAssign); set('gth-score', tr.gthScore); set('gth-date', tr.gthDate);
   set('settings-title', tr.settingsTitle); set('profile-title', tr.profileTitle); set('settings-role', tr.settingsRole);
   set('lbl-fullname', tr.lblFullname); set('save-btn', tr.saveBtn); set('pref-title', tr.prefTitle); set('pref-txt', tr.prefTxt);
   set('modal-assign-title', tr.modalAssignTitle); set('mlbl-title', tr.mlblTitle); set('mlbl-desc', tr.mlblDesc); set('mlbl-due', tr.mlblDue); set('mlbl-subject', tr.mlblSubject);
@@ -1164,6 +1160,7 @@ function applyTranslations() {
   set('att-th-student', tr.attThStudent); set('att-th-sessions', tr.attThSessions); set('att-th-total', tr.attThTotal);
   renderAttention(); renderAssignments(); renderQuizzes(); renderGrades();
   renderAttendance(); renderCourses();
+  loadActivityFeed();
 }
 
 function navigate(page, el) {
@@ -1179,9 +1176,11 @@ function navigate(page, el) {
   activePage = page;
   sessionStorage.setItem('upskill_page_t', page);
   document.getElementById('topbar-title').textContent = T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home;
-  if (page === 'courses') { teacherClassView='types'; teacherSelType=null; teacherSelLevel=null; renderCourses(); loadTeacherGroups(); }
+  if (page === 'courses')    { teacherClassView='types'; teacherSelType=null; teacherSelLevel=null; renderCourses(); loadTeacherGroups(); }
   if (page === 'attendance') { if (teacherGroups.length === 0) loadTeacherGroups(); }
-  if (page === 'posts')   loadPosts();
+  if (page === 'posts')      loadPosts();
+  if (page === 'grades')     loadGrades();
+  if (page === 'home')       loadActivityFeed();
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-backdrop').classList.remove('open');
@@ -1195,9 +1194,9 @@ function renderAttention() {
   const atRisk = STUDENTS.filter(s => s.status !== 'good');
   list.innerHTML = atRisk.map(s => `
     <div style="display:flex;align-items:center;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border2);">
-      <div class="student-avatar-sm">${s.init}</div>
+      <div class="student-avatar-sm">${escHtml(s.init)}</div>
       <div style="flex:1">
-        <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${s.name}</div>
+        <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${escHtml(s.name)}</div>
         <div style="font-size:.75rem;color:var(--muted2);">${tr.thProgress}: ${s.progress}% · ${tr.thAvg}: ${s.avg}%</div>
       </div>
       <span class="badge ${s.status === 'low' ? 'low' : 'warn'}">${s.status === 'low' ? tr.statusLow : tr.statusWarn}</span>
@@ -1211,7 +1210,7 @@ function renderStudents() {
   const tr = T[currentLang];
   tbody.innerHTML = STUDENTS.map(s => `
     <tr>
-      <td><div style="display:flex;align-items:center;gap:.75rem;"><div class="student-avatar-sm">${s.init}</div><span>${s.name}</span></div></td>
+      <td><div style="display:flex;align-items:center;gap:.75rem;"><div class="student-avatar-sm">${escHtml(s.init)}</div><span>${escHtml(s.name)}</span></div></td>
       <td>
         <div style="display:flex;align-items:center;gap:.75rem;">
           <div class="progress-bar" style="flex:1;min-width:80px;"><div class="progress-fill" style="width:${s.progress}%;background:${s.progress>=75?'var(--green)':s.progress>=55?'var(--yellow)':'var(--red)'}"></div></div>
@@ -1240,6 +1239,40 @@ async function loadAssignments() {
     if (data.ok && Array.isArray(data.assignments)) ASSIGNMENTS_LIVE = data.assignments;
   } catch(e) { console.warn('Could not load assignments:', e); }
   renderAssignments();
+}
+
+/* ── Update home-page stat cards with live data ── */
+function updateHomeStats() {
+  const tr = T[currentLang];
+
+  // Stat 1: total students
+  const el1 = document.getElementById('stat1-val');
+  if (el1) el1.textContent = STUDENTS.length > 0 ? STUDENTS.length : '0';
+
+  // Stat 2: submissions pending review (submitted but not yet graded)
+  const pendingReview = ASSIGNMENTS_LIVE.reduce((acc, a) => {
+    return acc + Math.max(0, parseInt(a.submitted_count || 0) - parseInt(a.graded_count || 0));
+  }, 0);
+  const el2 = document.getElementById('stat2-val');
+  if (el2) el2.textContent = pendingReview;
+
+  // Stat 3: placeholder — no grade data yet
+  const el3 = document.getElementById('stat3-val');
+  if (el3) el3.textContent = '—';
+
+  // Stat 4: total active assignments
+  const el4 = document.getElementById('stat4-val');
+  if (el4) el4.textContent = ASSIGNMENTS_LIVE.length;
+
+  // Update welcome subtitle with live numbers
+  const subEl = document.getElementById('welcome-sub');
+  if (subEl) {
+    const pending = pendingReview;
+    const students = STUDENTS.length;
+    if (tr.stat2 && tr.stat1) {
+      subEl.textContent = `${pending} ${tr.stat2.toLowerCase()} · ${students} ${tr.stat1.toLowerCase()}`;
+    }
+  }
 }
 
 function renderAssignments() {
@@ -1405,49 +1438,96 @@ function renderQuizzes() {
   `).join('');
 }
 
+let GRADES_LIVE = [];
+
+async function loadGrades() {
+  const tbody = document.getElementById('grades-tbody');
+  if (!tbody) return;
+  const lang = currentLang;
+  tbody.innerHTML = `<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:1rem;">${T[lang].loading}</td></tr>`;
+  try {
+    const res  = await fetch('api_assignments.php?action=grades_overview');
+    const data = await res.json();
+    if (!data.ok) {
+      tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red);text-align:center;">${T[lang].errorLoading}</td></tr>`;
+      return;
+    }
+    GRADES_LIVE = data.grades || [];
+    renderGrades();
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red);text-align:center;">${T[lang].toastNetError}</td></tr>`;
+  }
+}
+
 function renderGrades() {
   const tbody = document.getElementById('grades-tbody');
-  if(!tbody) return;
-  const scores = [
-    [85,78,82], [70,65,72], [92,88,95], [55,48,60], [78,82,75], [45,50,42], [89,91,87], [74,70,78]
-  ];
-  tbody.innerHTML = STUDENTS.map((s,i) => {
-    const sc = scores[i]; const avg = Math.round(sc.reduce((a,b)=>a+b,0)/sc.length);
-    return `<tr>
-      <td><div style="display:flex;align-items:center;gap:.75rem;"><div class="student-avatar-sm">${s.init}</div><span>${s.name}</span></div></td>
-      ${sc.map(v => `<td style="font-family:var(--font);font-weight:600;color:${v>=75?'var(--green)':v>=55?'var(--yellow)':'var(--red)'}">${v}%</td>`).join('')}
-      <td style="font-family:var(--font);font-weight:700;color:${avg>=75?'var(--green)':avg>=55?'var(--yellow)':'var(--red)'}">${avg}%</td>
-    </tr>`;
-  }).join('');
+  if (!tbody) return;
+  const lang = currentLang;
+  const tr2  = T[lang];
 
-  const dist = document.getElementById('grade-dist');
-  if(dist) {
-    const ranges = [[90,100],[75,89],[60,74],[0,59]];
-    const colors = ['var(--green)','var(--blue)','var(--yellow)','var(--red)'];
-    const labels = T[currentLang].gradeRanges;
-    dist.innerHTML = ranges.map((r,i) => {
-      const count = STUDENTS.filter(s=>s.avg>=r[0]&&s.avg<=r[1]).length;
-      const pct = Math.round(count/STUDENTS.length*100);
-      return `<div style="display:flex;align-items:center;gap:1rem;margin-bottom:.8rem;">
-        <div style="font-size:.78rem;color:var(--muted);min-width:55px;font-family:var(--font);">${labels[i]}</div>
-        <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${pct}%;background:${colors[i]}"></div></div>
-        <div style="font-family:var(--font);font-size:.82rem;font-weight:600;min-width:40px;text-align:right;color:${colors[i]}">${count} ét.</div>
-      </div>`;
+  if (!GRADES_LIVE.length) {
+    tbody.innerHTML = `<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:1.5rem;">${tr2.noGradesYet}</td></tr>`;
+  } else {
+    tbody.innerHTML = GRADES_LIVE.map(g => {
+      const name  = g.student_name || g.username || '?';
+      const title = lang === 'ar' ? (g.title_ar || g.title_fr) : (g.title_fr || g.title_ar);
+      const cn    = lang === 'ar' ? (g.group_name_ar || g.group_name_fr || '') : (g.group_name_fr || g.group_name_ar || '');
+      const score = parseInt(g.score);
+      const color = score >= 75 ? 'var(--green)' : score >= 50 ? 'var(--yellow)' : 'var(--red)';
+      const date  = g.graded_at ? new Date(g.graded_at).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {day:'numeric', month:'short'}) : '—';
+      const initials = name.split(' ').map(w => w[0] || '').join('').slice(0, 2).toUpperCase();
+      return `<tr>
+        <td><div style="display:flex;align-items:center;gap:.75rem;"><div class="student-avatar-sm">${escHtml(initials)}</div><span>${escHtml(name)}</span></div></td>
+        <td style="font-size:.82rem;">${escHtml(title)}${cn ? ` <span style="font-size:.7rem;color:var(--muted2);">(${escHtml(cn)})</span>` : ''}</td>
+        <td style="font-family:var(--font);font-weight:700;color:${color};">${score}/100</td>
+        <td style="font-size:.8rem;color:var(--muted);">${date}</td>
+      </tr>`;
     }).join('');
   }
 
+  // Grade distribution using GRADES_LIVE scores
+  const dist = document.getElementById('grade-dist');
+  if (dist && GRADES_LIVE.length) {
+    const scores = GRADES_LIVE.map(g => parseInt(g.score));
+    const ranges = [[90,100],[75,89],[60,74],[0,59]];
+    const colors = ['var(--green)','var(--blue)','var(--yellow)','var(--red)'];
+    const labels = tr2.gradeRanges;
+    dist.innerHTML = ranges.map((r, i) => {
+      const count = scores.filter(v => v >= r[0] && v <= r[1]).length;
+      const pct   = scores.length ? Math.round(count / scores.length * 100) : 0;
+      return `<div style="display:flex;align-items:center;gap:1rem;margin-bottom:.8rem;">
+        <div style="font-size:.78rem;color:var(--muted);min-width:55px;font-family:var(--font);">${labels[i]}</div>
+        <div class="progress-bar" style="flex:1"><div class="progress-fill" style="width:${pct}%;background:${colors[i]}"></div></div>
+        <div style="font-family:var(--font);font-size:.82rem;font-weight:600;min-width:40px;text-align:right;color:${colors[i]}">${count}</div>
+      </div>`;
+    }).join('');
+  } else if (dist) {
+    dist.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${tr2.noGradesYet}</div>`;
+  }
+
+  // Top students by average score
   const top = document.getElementById('top-students');
-  if(top) {
-    const sorted = [...STUDENTS].sort((a,b)=>b.avg-a.avg).slice(0,3);
+  if (top && GRADES_LIVE.length) {
+    const byStudent = {};
+    GRADES_LIVE.forEach(g => {
+      const key = g.student_name || g.username;
+      if (!byStudent[key]) byStudent[key] = [];
+      byStudent[key].push(parseInt(g.score));
+    });
+    const sorted = Object.entries(byStudent)
+      .map(([name, scores]) => ({ name, avg: Math.round(scores.reduce((a,b) => a+b, 0) / scores.length) }))
+      .sort((a, b) => b.avg - a.avg).slice(0, 3);
     const medals = ['🥇','🥈','🥉'];
-    top.innerHTML = sorted.map((s,i) => `
+    top.innerHTML = sorted.map((s, i) => `
       <div style="display:flex;align-items:center;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border2);">
         <div style="font-size:1.4rem;">${medals[i]}</div>
-        <div class="student-avatar-sm">${s.init}</div>
-        <div style="flex:1;font-family:var(--font);font-size:.88rem;font-weight:600;">${s.name}</div>
-        <div style="font-family:var(--font);font-size:1rem;font-weight:700;color:var(--green);">${s.avg}%</div>
+        <div class="student-avatar-sm">${escHtml(s.name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase())}</div>
+        <div style="flex:1;font-family:var(--font);font-size:.88rem;font-weight:600;">${escHtml(s.name)}</div>
+        <div style="font-family:var(--font);font-size:1rem;font-weight:700;color:var(--green);">${s.avg}/100</div>
       </div>
     `).join('');
+  } else if (top) {
+    top.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${tr2.noGradesYet}</div>`;
   }
 }
 
@@ -1656,8 +1736,8 @@ function renderAttendance() {
     return `<tr>
       <td class="att-td-name">
         <div class="att-student">
-          <div class="att-avatar">${s.init}</div>
-          <span class="att-name">${s.name}</span>
+          <div class="att-avatar">${escHtml(s.init)}</div>
+          <span class="att-name">${escHtml(s.name)}</span>
         </div>
       </td>
       ${boxes}
@@ -1769,10 +1849,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   const postDateEl = document.getElementById('post-date');
   if (postDateEl) postDateEl.value = new Date().toISOString().slice(0, 10);
   setLang(savedLang);
-  renderAttention(); renderAssignments(); renderQuizzes(); renderGrades();
+  updateHomeStats();
+  renderAttention(); renderAssignments(); renderQuizzes();
   renderAttendance(); renderCourses();
   hydrateTeacherInfo();
   loadSavedAvatar();
+  loadActivityFeed();
+  loadNotifBadge();
   const validPages = ['home','students','courses','assignments','posts','quizzes','grades','settings','attendance'];
   const savedPage = sessionStorage.getItem('upskill_page_t');
   if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
@@ -2111,12 +2194,12 @@ async function openGroupDetail(groupId) {
       return;
     }
     listEl.innerHTML = students.map((s, i) => {
-      const init = (s.name || s.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      const init = escHtml((s.name || s.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase());
       return `<div class="cd-student-row" style="${i > 0 ? 'border-top:1px solid var(--border2);' : ''}padding:.65rem 0;">
         <div class="student-avatar-sm">${init}</div>
         <div style="flex:1;">
-          <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${s.name || s.username}</div>
-          <div style="font-size:.75rem;color:var(--muted);">@${s.username}</div>
+          <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${escHtml(s.name || s.username)}</div>
+          <div style="font-size:.75rem;color:var(--muted);">@${escHtml(s.username)}</div>
         </div>
       </div>`;
     }).join('');
@@ -2293,6 +2376,100 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+/* ── ACTIVITY FEED ── */
+const ACT_DOT_COLORS = { assignment_created:'blue', submission_graded:'green', assignment_graded:'purple' };
+
+async function loadActivityFeed() {
+  const list = document.getElementById('activity-list');
+  if (!list) return;
+  try {
+    const res  = await fetch('api_assignments.php?action=activity');
+    const data = await res.json();
+    if (!data.ok || !data.activity || !data.activity.length) {
+      list.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${T[currentLang].activityEmpty}</div>`;
+      return;
+    }
+    list.innerHTML = data.activity.map(item => {
+      const dotCol = ACT_DOT_COLORS[item.type] || 'blue';
+      const date   = new Date(item.created_at + 'Z').toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+      return `<div class="activity-item">
+        <div class="activity-dot ${dotCol}"></div>
+        <div>
+          <div class="activity-text">${escHtml(item.description)}</div>
+          <div class="activity-time">${date}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    const list2 = document.getElementById('activity-list');
+    if (list2) list2.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">—</div>`;
+  }
+}
+
+/* ── NOTIFICATIONS ── */
+let notifPanelOpen = false;
+
+function toggleNotifPanel() {
+  notifPanelOpen = !notifPanelOpen;
+  document.getElementById('notif-panel').classList.toggle('open', notifPanelOpen);
+  if (notifPanelOpen) loadNotifications();
+}
+
+function closeNotifPanel() {
+  notifPanelOpen = false;
+  document.getElementById('notif-panel').classList.remove('open');
+}
+
+async function loadNotifBadge() {
+  try {
+    const res  = await fetch('api_assignments.php?action=notifications');
+    const data = await res.json();
+    if (!data.ok) return;
+    const badge = document.getElementById('notif-badge');
+    if (badge) {
+      const n = data.unread_count || 0;
+      badge.textContent = n > 9 ? '9+' : (n > 0 ? n : '');
+      badge.classList.toggle('show', n > 0);
+    }
+  } catch(e) {}
+}
+
+async function loadNotifications() {
+  const list = document.getElementById('notif-list');
+  if (!list) return;
+  list.innerHTML = `<div style="padding:1.5rem;text-align:center;color:var(--muted);font-size:.85rem;">${T[currentLang].loading}</div>`;
+  try {
+    const res  = await fetch('api_assignments.php?action=notifications');
+    const data = await res.json();
+    if (!data.ok) return;
+
+    // Mark all as read
+    if (data.unread_count > 0) {
+      fetch('api_assignments.php', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken}, body:JSON.stringify({action:'mark_notifications_read'}) });
+      const badge = document.getElementById('notif-badge');
+      if (badge) { badge.textContent = ''; badge.classList.remove('show'); }
+    }
+
+    if (!data.notifications || !data.notifications.length) {
+      list.innerHTML = `<div style="padding:1.5rem;text-align:center;color:var(--muted);font-size:.85rem;">${T[currentLang].notifEmpty}</div>`;
+      return;
+    }
+
+    list.innerHTML = data.notifications.map(n => {
+      const date = new Date(n.created_at + 'Z').toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+      return `<div class="notif-item${n.is_read ? '' : ' unread'}">
+        ${!parseInt(n.is_read) ? '<div class="notif-dot"></div>' : '<div class="notif-dot-placeholder"></div>'}
+        <div>
+          <div>${escHtml(n.message)}</div>
+          <div class="notif-time">${date}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    if (list) list.innerHTML = `<div style="padding:1rem;color:var(--red);font-size:.83rem;">${T[currentLang].toastNetError}</div>`;
+  }
+}
+
 /* ── PROFILE DROPDOWN ── */
 let profileMenuOpen = false;
 
@@ -2333,6 +2510,10 @@ document.addEventListener('click', function(e) {
   if (profileMenuOpen && !document.getElementById('topbar-avatar').contains(e.target)) {
     profileMenuOpen = false;
     document.getElementById('profile-menu').classList.remove('open');
+  }
+  if (notifPanelOpen && !document.getElementById('notif-btn').contains(e.target) && !document.getElementById('notif-panel').contains(e.target)) {
+    notifPanelOpen = false;
+    document.getElementById('notif-panel').classList.remove('open');
   }
 });
 </script>
