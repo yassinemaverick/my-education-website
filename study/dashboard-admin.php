@@ -155,35 +155,6 @@ body.ar .data-table td { text-align:right; }
 .badge.unassigned { background:rgba(245,197,66,.12); color:var(--yellow); border:1px solid rgba(245,197,66,.3); }
 .badge.level      { background:rgba(91,156,246,.12); color:var(--blue); border:1px solid rgba(91,156,246,.3); }
 
-/* COURSE CARD (courses grid) */
-.course-card { background:var(--navy-card); border:1px solid var(--border); border-radius:18px; padding:1.4rem; transition:border-color .2s,transform .15s; position:relative; display:flex; flex-direction:column; gap:.7rem; }
-.course-card:hover { border-color:rgba(251,146,60,.3); transform:translateY(-2px); }
-.course-card-header { display:flex; align-items:center; gap:.85rem; }
-body.ar .course-card-header { flex-direction:row-reverse; }
-.course-icon { width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
-.ci1 { background:rgba(251,146,60,.12); }
-.ci2 { background:var(--green-dim); }
-.ci3 { background:rgba(245,197,66,.1); }
-.ci4 { background:rgba(91,156,246,.1); }
-.ci5 { background:rgba(167,139,250,.1); }
-.course-group-name { font-family:var(--font); font-size:.95rem; font-weight:700; line-height:1.25; }
-body.ar .course-group-name { font-family:var(--font-ar); }
-.level-tag { display:inline-block; font-size:.68rem; font-weight:700; padding:.15rem .55rem; border-radius:100px; background:rgba(91,156,246,.12); color:var(--blue); border:1px solid rgba(91,156,246,.25); margin-top:.2rem; }
-.course-meta-row { display:flex; flex-wrap:wrap; gap:.5rem 1rem; font-size:.78rem; color:var(--muted); }
-body.ar .course-meta-row { flex-direction:row-reverse; }
-.schedule-chips { display:flex; flex-wrap:wrap; gap:.4rem; }
-.schedule-chip { font-size:.72rem; background:rgba(62,207,120,.08); border:1px solid rgba(62,207,120,.2); color:var(--green); padding:.2rem .6rem; border-radius:100px; font-family:var(--font); }
-.course-card-actions { display:flex; gap:.4rem; padding-top:.4rem; border-top:1px solid var(--border2); }
-
-/* ASSIGN PANEL */
-.assign-row { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.9rem 0; border-bottom:1px solid var(--border2); }
-body.ar .assign-row { flex-direction:row-reverse; }
-.assign-row:last-child { border-bottom:none; }
-.assign-info { flex:1; min-width:0; }
-.assign-course-name { font-family:var(--font); font-size:.9rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-body.ar .assign-course-name { font-family:var(--font-ar); text-align:right; }
-.assign-meta { font-size:.75rem; color:var(--muted2); margin-top:.15rem; display:flex; gap:.75rem; flex-wrap:wrap; }
-body.ar .assign-meta { flex-direction:row-reverse; }
 
 /* MODAL */
 .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:1000; display:none; align-items:flex-start; justify-content:center; backdrop-filter:blur(4px); padding:2rem 1rem; overflow-y:auto; }
@@ -332,15 +303,6 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span id="nav-home-lbl">Tableau de bord</span>
     </div>
-    <div class="nav-item" onclick="navigate('courses',this)" id="nav-courses">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      <span id="nav-courses-lbl">Cours</span>
-      <span class="nav-badge" aria-hidden="true">—</span>
-    </div>
-    <div class="nav-item" onclick="navigate('assign',this)" id="nav-assign">
-      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span id="nav-assign-lbl">Assignation</span>
-    </div>
     <div class="nav-item" onclick="navigate('users',this)" id="nav-users">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       <span id="nav-users-lbl">Utilisateurs</span>
@@ -392,98 +354,18 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     <div class="welcome-banner">
       <div class="welcome-text">
         <h2>Bonjour, <span id="welcome-name"><?= $full_name ?: 'Admin' ?></span> 👋</h2>
-        <p id="welcome-sub">Gérez les cours et assignez-les aux professeurs depuis ce tableau de bord.</p>
+        <p id="welcome-sub">Gérez les classes et les groupes depuis ce tableau de bord.</p>
       </div>
       <div style="font-size:3rem;">🛠️</div>
     </div>
     <div class="grid-4" style="margin-bottom:1.5rem;">
-      <div class="card"><div class="stat-icon orange"><span aria-hidden="true">📚</span></div><div class="stat-value" id="stat-courses">—</div><div class="stat-label" id="stat-courses-lbl">Cours au total</div></div>
-      <div class="card"><div class="stat-icon green"><span aria-hidden="true">✅</span></div><div class="stat-value" id="stat-assigned">—</div><div class="stat-label" id="stat-assigned-lbl">Cours assignés</div></div>
       <div class="card"><div class="stat-icon blue"><span aria-hidden="true">👨‍🏫</span></div><div class="stat-value" id="stat-teachers">—</div><div class="stat-label" id="stat-teachers-lbl">Professeurs</div></div>
-      <div class="card"><div class="stat-icon purple"><span aria-hidden="true">⚠️</span></div><div class="stat-value" id="stat-unassigned">—</div><div class="stat-label" id="stat-unassigned-lbl">Non assignés</div></div>
     </div>
     <div class="grid-2">
-      <div class="card">
-        <div class="card-title" id="recent-courses-title">Cours récents</div>
-        <div id="recent-courses-list"><div class="loading-overlay"><div class="spinner"></div></div></div>
-      </div>
       <div class="card">
         <div class="card-title" id="recent-activity-title">Activité récente</div>
         <div id="activity-list">
           <div class="activity-item"><div class="activity-dot orange"></div><div><div class="activity-text"><strong id="act1">Tableau de bord chargé</strong></div><div class="activity-time" id="act1-time">À l'instant</div></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── COURSES PAGE ── -->
-  <div class="page" id="page-courses">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-      <div>
-        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="courses-page-title">Gestion des cours</h2>
-        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="courses-page-sub">Chargement…</p>
-      </div>
-      <button class="btn-primary" onclick="openCourseModal()" id="btn-add-course">
-        + <span id="btn-add-course-lbl">Nouveau cours</span>
-      </button>
-    </div>
-    <div class="grid-3" id="courses-grid">
-      <div style="grid-column:1/-1;" class="loading-overlay"><div class="spinner"></div></div>
-    </div>
-  </div>
-
-  <!-- ── ASSIGN PAGE ── -->
-  <div class="page" id="page-assign">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
-      <div>
-        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="assign-page-title">Assignation des cours</h2>
-        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="assign-page-sub">Associez chaque cours à un professeur ou un étudiant</p>
-      </div>
-    </div>
-    <!-- Tabs -->
-    <div class="tabs" style="margin-bottom:1.5rem;">
-      <div class="tab active" id="assign-tab-teachers" onclick="switchAssignTab('teachers',this)">👨‍🏫 Professeurs</div>
-      <div class="tab"        id="assign-tab-students" onclick="switchAssignTab('students',this)">🎓 Étudiants</div>
-    </div>
-
-    <!-- TEACHERS PANEL -->
-    <div id="assign-panel-teachers">
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-title" id="select-teacher-title">Sélectionner un professeur</div>
-          <div id="teacher-list-assign">
-            <div class="loading-overlay"><div class="spinner"></div></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title" id="teacher-courses-title">Cours du professeur sélectionné</div>
-          <div id="teacher-courses-panel">
-            <div class="empty-state"><div class="empty-icon">👈</div><p id="select-teacher-hint">Sélectionnez un professeur pour voir et gérer ses cours.</p></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- STUDENTS PANEL -->
-    <div id="assign-panel-students" style="display:none;">
-      <div class="grid-2">
-        <!-- Student list -->
-        <div class="card">
-          <div class="card-title">Sélectionner un étudiant</div>
-          <div style="margin-bottom:.75rem;">
-            <input type="text" id="student-search-assign" placeholder="Rechercher un étudiant…" oninput="filterStudentList()"
-              style="width:100%;padding:.6rem .9rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.84rem;outline:none;">
-          </div>
-          <div id="student-list-assign">
-            <div class="loading-overlay"><div class="spinner"></div></div>
-          </div>
-        </div>
-        <!-- Courses for selected student -->
-        <div class="card">
-          <div class="card-title" id="student-courses-title">Cours de l'étudiant sélectionné</div>
-          <div id="student-courses-panel">
-            <div class="empty-state"><div class="empty-icon">👈</div><p>Sélectionnez un étudiant pour voir et gérer ses cours.</p></div>
-          </div>
         </div>
       </div>
     </div>
@@ -779,107 +661,6 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     </div>
   </div>
 </div>
-<div class="modal-overlay" id="modal-course">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="modal-course-title">Nouveau cours</h3>
-      <button class="btn-close" onclick="closeModal('course')" aria-label="Fermer">✕</button>
-    </div>
-    <input type="hidden" id="course-edit-id">
-    <div class="grid-2" style="gap:1rem;">
-      <div class="form-group">
-        <label>Nom du groupe (FR)</label>
-        <input type="text" id="c-group-fr" placeholder="Ex: Groupe A – Débutant">
-      </div>
-      <div class="form-group">
-        <label>اسم المجموعة (AR)</label>
-        <input type="text" id="c-group-ar" placeholder="المجموعة أ – مبتدئ" dir="rtl">
-      </div>
-    </div>
-    <div class="grid-2" style="gap:1rem;">
-      <div class="form-group">
-        <label>Matière (FR)</label>
-        <input type="text" id="c-subject-fr" placeholder="Ex: Anglais Général">
-      </div>
-      <div class="form-group">
-        <label>المادة (AR)</label>
-        <input type="text" id="c-subject-ar" placeholder="الإنجليزية العامة" dir="rtl">
-      </div>
-    </div>
-    <div class="grid-3" style="gap:1rem;">
-      <div class="form-group">
-        <label>Niveau</label>
-        <select id="c-level">
-          <option>A1</option><option>A1–A2</option><option>A2</option>
-          <option>B1</option><option>B1–B2</option><option>B2</option>
-          <option>B2–C1</option><option>C1</option><option>C2</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Icône</label>
-        <select id="c-icon">
-          <option value="📖">📖 Lecture</option>
-          <option value="✍️">✍️ Écriture</option>
-          <option value="🎙️">🎙️ Oral</option>
-          <option value="🧠">🧠 Grammaire</option>
-          <option value="💬">💬 Conversation</option>
-          <option value="📚">📚 Général</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Nbre étudiants</label>
-        <input type="number" id="c-students" value="15" min="0" max="200">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Séances / الحصص</label>
-      <div id="schedule-rows"></div>
-      <button class="btn-secondary btn-sm" style="margin-top:.5rem;" onclick="addScheduleRow()" type="button">+ Ajouter une séance</button>
-    </div>
-    <div id="course-modal-error" style="display:none;color:var(--red);font-size:.82rem;margin-top:.5rem;"></div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('course')" id="course-modal-cancel">Annuler</button>
-      <button class="btn-primary" onclick="submitCourseModal()" id="course-modal-submit">Enregistrer</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── MODAL: DELETE CONFIRM ── -->
-<div class="modal-overlay" id="modal-delete">
-  <div class="modal sm">
-    <div class="modal-header">
-      <h3 id="modal-delete-title">Supprimer ce cours ?</h3>
-      <button class="btn-close" onclick="closeModal('delete')" aria-label="Fermer">✕</button>
-    </div>
-    <p style="color:var(--muted);font-size:.88rem;line-height:1.65;" id="modal-delete-body">
-      Cette action est irréversible. Le cours et toutes ses assignations seront supprimés.
-    </p>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('delete')" id="delete-cancel-btn">Annuler</button>
-      <button class="btn-primary danger" onclick="confirmDelete()" id="delete-confirm-btn">Supprimer</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── MODAL: ASSIGN COURSE TO TEACHER ── -->
-<div class="modal-overlay" id="modal-assign-course">
-  <div class="modal sm">
-    <div class="modal-header">
-      <h3 id="modal-assign-title">Assigner ce cours</h3>
-      <button class="btn-close" onclick="closeModal('assign-course')" aria-label="Fermer">✕</button>
-    </div>
-    <div class="form-group">
-      <label id="assign-teacher-label">Professeur</label>
-      <select id="assign-teacher-select"></select>
-    </div>
-    <div id="assign-modal-error" style="display:none;color:var(--red);font-size:.82rem;margin-top:.4rem;"></div>
-    <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal('assign-course')" id="assign-modal-cancel">Annuler</button>
-      <button class="btn-primary" onclick="submitAssignModal()" id="assign-modal-submit">Assigner</button>
-    </div>
-  </div>
-</div>
-
 <!-- ── MODAL: ADD GROUP ── -->
 <div class="modal-overlay" id="modal-add-group">
   <div class="modal sm">
@@ -939,12 +720,6 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 ══════════════════════════════════════════════════════ */
 let currentLang   = 'fr';
 let activePage    = 'home';
-let allCourses    = [];
-let allTeachers   = [];
-let selectedTeacherId = null;
-let pendingDeleteId   = null;
-let pendingAssignCourseId = null;
-let courseModalSaving = false;
 
 /* ══════════════════════════════════════════════════════
    TRANSLATIONS
@@ -954,7 +729,7 @@ const T = {
     adminChip:'Admin', roleLabel:'Administrateur',
     logout:'Déconnexion',
     navMain:'Principal', navAccount:'Compte',
-    navHome:'Tableau de bord', navCourses:'Cours', navAssign:'Assignation', navSettings:'Paramètres',
+    navHome:'Tableau de bord', navSettings:'Paramètres',
     navUsers:'Utilisateurs', navInscriptions:'Inscriptions',
     navClasses:'Classes', navAssigningClasses:'Assignation des classes',
     classesPageTitle:'Classes', classesPageSub:'Sélectionnez un type de classe',
@@ -970,41 +745,17 @@ const T = {
     selectUser:'— Sélectionner un utilisateur —',
     confirmDeleteGroup:'Supprimer ce groupe et tous ses membres ?',
     noAssignments:'Aucun groupe assigné.',
-    topbar:{ home:'Tableau de bord Admin', courses:'Gestion des cours', assign:'Assignation des cours', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes' },
-    welcomeSub:'Gérez les cours et assignez-les aux professeurs depuis ce tableau de bord.',
-    statCoursesLbl:'Cours au total', statAssignedLbl:'Cours assignés',
-    statTeachersLbl:'Professeurs', statUnassignedLbl:'Non assignés',
-    recentCoursesTitle:'Cours récents', recentActivityTitle:'Activité récente',
-    coursesPageTitle:'Gestion des cours',
-    coursesPageSub:(n) => n + ' cours enregistré' + (n>1?'s':''),
-    btnAddCourse:'Nouveau cours',
-    assignPageTitle:'Assignation des cours', assignPageSub:'Associez chaque cours à un professeur',
-    selectTeacherTitle:'Sélectionner un professeur',
-    teacherCoursesTitle:'Cours du professeur sélectionné',
-    selectTeacherHint:'Sélectionnez un professeur pour voir et gérer ses cours.',
+    topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes' },
+    welcomeSub:'Gérez les classes et les groupes depuis ce tableau de bord.',
+    statTeachersLbl:'Professeurs',
+    recentActivityTitle:'Activité récente',
     settingsTitle:'Paramètres', profileTitle:'Profil administrateur',
     settingsRole:'Administrateur · Upskill',
     lblFullname:'Nom complet', saveBtn:'Enregistrer',
     prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue pour basculer entre le Français et l\'Arabe.',
-    modalCourseAdd:'Nouveau cours', modalCourseEdit:'Modifier le cours',
-    modalDeleteTitle:'Supprimer ce cours ?',
-    modalDeleteBody:'Cette action est irréversible. Le cours et toutes ses assignations seront supprimés.',
-    modalAssignTitle:'Assigner le cours',
-    assignTeacherLabel:'Professeur',
-    cancelBtn:'Annuler', saveEnregistrer:'Enregistrer', deleteBtn:'Supprimer', assignBtn:'Assigner', unassignBtn:'Retirer',
-    errFillFields:'Veuillez remplir au moins le nom du groupe (FR ou AR).',
+    cancelBtn:'Annuler', saveEnregistrer:'Enregistrer', deleteBtn:'Supprimer',
     errNetwork:'Erreur réseau. Vérifiez votre connexion.',
-    toastCourseAdded:'Cours créé avec succès !',
-    toastCourseUpdated:'Cours mis à jour !',
-    toastCourseDeleted:'Cours supprimé.',
-    toastAssigned:'Cours assigné avec succès !',
-    toastUnassigned:'Assignation retirée.',
     toastProfileSaved:'Profil mis à jour !',
-    loadingCourses:'Chargement des cours…',
-    noCourses:'Aucun cours enregistré. Créez le premier cours !',
-    noTeacherCourses:'Ce professeur n\'a aucun cours assigné.',
-    studentsLabel:'étudiants', assignedTo:'Assigné à', unassigned:'Non assigné',
-    btnEditCourse:'Modifier', btnDeleteCourse:'Supprimer', btnAssignCourse:'Assigner',
     inscriptionsTitle:'Inscriptions', inscriptionsSub:'Demandes reçues depuis le formulaire d\'inscription',
     exportCSV:'Exporter CSV',
     etabAll:'Toutes', etabNew:'Nouvelles demandes', etabAccepted:'Acceptées', etabRefused:'Refusées',
@@ -1019,7 +770,7 @@ const T = {
     adminChip:'مسؤول', roleLabel:'مسؤول النظام',
     logout:'تسجيل الخروج',
     navMain:'الرئيسية', navAccount:'الحساب',
-    navHome:'لوحة التحكم', navCourses:'الدروس', navAssign:'التعيينات', navSettings:'الإعدادات',
+    navHome:'لوحة التحكم', navSettings:'الإعدادات',
     navUsers:'المستخدمون', navInscriptions:'التسجيلات',
     navClasses:'الفصول', navAssigningClasses:'تعيين الفصول',
     classesPageTitle:'الفصول', classesPageSub:'اختر نوع الفصل',
@@ -1035,41 +786,17 @@ const T = {
     selectUser:'— اختر مستخدماً —',
     confirmDeleteGroup:'حذف هذه المجموعة وجميع أعضائها؟',
     noAssignments:'لا توجد مجموعات معينة.',
-    topbar:{ home:'لوحة تحكم المسؤول', courses:'إدارة الدروس', assign:'تعيين الدروس', users:'المستخدمون', inscriptions:'التسجيلات', settings:'الإعدادات', classes:'الفصول', 'assigning-classes':'تعيين الفصول' },
-    welcomeSub:'أدر الدروس وعيّنها للأساتذة من لوحة التحكم هذه.',
-    statCoursesLbl:'إجمالي الدروس', statAssignedLbl:'الدروس المعيّنة',
-    statTeachersLbl:'الأساتذة', statUnassignedLbl:'غير معيّن',
-    recentCoursesTitle:'الدروس الأخيرة', recentActivityTitle:'النشاط الأخير',
-    coursesPageTitle:'إدارة الدروس',
-    coursesPageSub:(n) => n + ' درس مسجّل',
-    btnAddCourse:'درس جديد',
-    assignPageTitle:'تعيين الدروس', assignPageSub:'ربط كل درس بأستاذ',
-    selectTeacherTitle:'اختيار أستاذ',
-    teacherCoursesTitle:'دروس الأستاذ المختار',
-    selectTeacherHint:'اختر أستاذاً لعرض دروسه وإدارتها.',
+    topbar:{ home:'لوحة تحكم المسؤول', users:'المستخدمون', inscriptions:'التسجيلات', settings:'الإعدادات', classes:'الفصول', 'assigning-classes':'تعيين الفصول' },
+    welcomeSub:'أدر الفصول والمجموعات من لوحة التحكم هذه.',
+    statTeachersLbl:'الأساتذة',
+    recentActivityTitle:'النشاط الأخير',
     settingsTitle:'الإعدادات', profileTitle:'الملف الشخصي',
     settingsRole:'مسؤول النظام · Upskill',
     lblFullname:'الاسم الكامل', saveBtn:'حفظ',
     prefTitle:'التفضيلات', prefTxt:'استخدم محدد اللغة للتبديل بين الفرنسية والعربية.',
-    modalCourseAdd:'درس جديد', modalCourseEdit:'تعديل الدرس',
-    modalDeleteTitle:'حذف هذا الدرس؟',
-    modalDeleteBody:'هذا الإجراء لا يمكن التراجع عنه. سيتم حذف الدرس وجميع تعييناته.',
-    modalAssignTitle:'تعيين الدرس',
-    assignTeacherLabel:'الأستاذ',
-    cancelBtn:'إلغاء', saveEnregistrer:'حفظ', deleteBtn:'حذف', assignBtn:'تعيين', unassignBtn:'إلغاء التعيين',
-    errFillFields:'يرجى ملء اسم المجموعة (فرنسي أو عربي) على الأقل.',
+    cancelBtn:'إلغاء', saveEnregistrer:'حفظ', deleteBtn:'حذف',
     errNetwork:'خطأ في الشبكة. تحقق من اتصالك.',
-    toastCourseAdded:'تمت إضافة الدرس بنجاح!',
-    toastCourseUpdated:'تم تحديث الدرس!',
-    toastCourseDeleted:'تم حذف الدرس.',
-    toastAssigned:'تم تعيين الدرس بنجاح!',
-    toastUnassigned:'تم إلغاء التعيين.',
     toastProfileSaved:'تم تحديث الملف الشخصي!',
-    loadingCourses:'جارِ تحميل الدروس…',
-    noCourses:'لا توجد دروس بعد. أنشئ أول درس!',
-    noTeacherCourses:'لا توجد دروس معيّنة لهذا الأستاذ.',
-    studentsLabel:'طالب', assignedTo:'معيّن لـ', unassigned:'غير معيّن',
-    btnEditCourse:'تعديل', btnDeleteCourse:'حذف', btnAssignCourse:'تعيين',
     inscriptionsTitle:'التسجيلات', inscriptionsSub:'الطلبات المستلمة من نموذج التسجيل',
     exportCSV:'تصدير CSV',
     etabAll:'الكل', etabNew:'طلبات جديدة', etabAccepted:'مقبولة', etabRefused:'مرفوضة',
@@ -1104,8 +831,7 @@ function applyTranslations() {
   set('role-label', t.roleLabel);
   set('logout-lbl', t.logout);
   set('nav-main-label', t.navMain); set('nav-account-label', t.navAccount);
-  set('nav-home-lbl', t.navHome); set('nav-courses-lbl', t.navCourses);
-  set('nav-assign-lbl', t.navAssign); set('nav-settings-lbl', t.navSettings);
+  set('nav-home-lbl', t.navHome); set('nav-settings-lbl', t.navSettings);
   set('nav-users-lbl', t.navUsers); set('nav-inscriptions-lbl', t.navInscriptions);
   set('nav-classes-lbl', t.navClasses); set('nav-assigning-classes-lbl', t.navAssigningClasses);
   set('classes-page-title', t.classesPageTitle);
@@ -1125,28 +851,12 @@ function applyTranslations() {
   const sph = document.getElementById('enroll-search'); if (sph) sph.placeholder = t.enrollSearchPlaceholder;
   set('topbar-title', t.topbar[activePage] || t.topbar.home);
   set('welcome-sub', t.welcomeSub);
-  set('stat-courses-lbl', t.statCoursesLbl); set('stat-assigned-lbl', t.statAssignedLbl);
-  set('stat-teachers-lbl', t.statTeachersLbl); set('stat-unassigned-lbl', t.statUnassignedLbl);
-  set('recent-courses-title', t.recentCoursesTitle); set('recent-activity-title', t.recentActivityTitle);
-  set('courses-page-title', t.coursesPageTitle);
-  set('btn-add-course-lbl', t.btnAddCourse);
-  set('assign-page-title', t.assignPageTitle); set('assign-page-sub', t.assignPageSub);
-  set('select-teacher-title', t.selectTeacherTitle);
-  set('teacher-courses-title', t.teacherCoursesTitle);
-  set('select-teacher-hint', t.selectTeacherHint);
+  set('stat-teachers-lbl', t.statTeachersLbl);
+  set('recent-activity-title', t.recentActivityTitle);
   set('settings-title', t.settingsTitle); set('profile-title', t.profileTitle);
   set('settings-role', t.settingsRole);
   set('lbl-fullname', t.lblFullname); set('save-btn', t.saveBtn);
   set('pref-title', t.prefTitle); set('pref-txt', t.prefTxt);
-  set('modal-course-title', document.getElementById('course-edit-id')?.value ? t.modalCourseEdit : t.modalCourseAdd);
-  set('modal-delete-title', t.modalDeleteTitle); set('modal-delete-body', t.modalDeleteBody);
-  set('modal-assign-title', t.modalAssignTitle);
-  set('assign-teacher-label', t.assignTeacherLabel);
-  set('course-modal-cancel', t.cancelBtn); set('course-modal-submit', t.saveEnregistrer);
-  set('delete-cancel-btn', t.cancelBtn); set('delete-confirm-btn', t.deleteBtn);
-  set('assign-modal-cancel', t.cancelBtn); set('assign-modal-submit', t.assignBtn);
-  renderCoursesGrid();
-  renderAssignPage();
 }
 
 function navigate(page, el) {
@@ -1158,7 +868,6 @@ function navigate(page, el) {
   document.getElementById('topbar-title').textContent = tr().topbar[page] || tr().topbar.home;
   if (page === 'users') loadUsers();
   if (page === 'inscriptions') loadEnrollments();
-  if (page === 'assign') { renderAssignPage(); if (assignTab === 'students') renderStudentList(); }
   if (page === 'classes') { classesView = 'types'; classesTypeKey = null; classesLevel = null; classesGroupId = null; renderClassesPage(); }
   if (page === 'assigning-classes') loadAssigningClasses();
   if (window.innerWidth <= 768) toggleSidebar();
@@ -1184,479 +893,6 @@ async function api(url, method='GET', body=null) {
   const json = await res.json();
   if (!json.ok) throw new Error(json.error?.[currentLang] || 'Erreur');
   return json;
-}
-
-async function loadCourses() {
-  const data = await api('courses_admin.php?action=list');
-  allCourses  = data.courses || [];
-}
-
-async function loadTeachers() {
-  const data  = await api('assign_courses.php?action=list_teachers');
-  allTeachers = data.teachers || [];
-}
-
-/* ══════════════════════════════════════════════════════
-   HOME STATS & RECENT
-══════════════════════════════════════════════════════ */
-function updateHomeStats() {
-  const total      = allCourses.length;
-  const assigned   = allCourses.filter(c => c.teacher_id).length;
-  const unassigned = total - assigned;
-  const teachers   = allTeachers.length;
-  const set = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
-  set('stat-courses', total);
-  set('stat-assigned', assigned);
-  set('stat-unassigned', unassigned);
-  set('stat-teachers', teachers);
-  const badge = document.getElementById('nav-courses-badge');
-  if (badge) badge.textContent = total;
-
-  // Recent courses list (last 4)
-  const list  = document.getElementById('recent-courses-list');
-  const slice = [...allCourses].slice(0, 4);
-  if (!list) return;
-  if (slice.length === 0) {
-    list.innerHTML = '<div class="empty-state"><p>' + tr().noCourses + '</p></div>';
-    return;
-  }
-  list.innerHTML = slice.map(c => {
-    const name = currentLang==='ar' ? c.group_name_ar : c.group_name_fr;
-    const sub  = currentLang==='ar' ? c.subject_ar    : c.subject_fr;
-    const assigned = c.teacher_name
-      ? '<span class="badge assigned">✓ ' + c.teacher_name + '</span>'
-      : '<span class="badge unassigned">— ' + tr().unassigned + '</span>';
-    return '<div class="assign-row">'
-      + '<div class="assign-info">'
-        + '<div class="assign-course-name">' + name + '</div>'
-        + '<div class="assign-meta"><span>' + sub + '</span><span class="badge level">' + c.level + '</span></div>'
-      + '</div>'
-      + assigned
-    + '</div>';
-  }).join('');
-}
-
-/* ══════════════════════════════════════════════════════
-   COURSES GRID RENDER
-══════════════════════════════════════════════════════ */
-const ICON_CLASS_MAP = {'📖':'ci1','✍️':'ci2','🎙️':'ci3','🧠':'ci4','💬':'ci5','📚':'ci1'};
-
-function renderCoursesGrid() {
-  const grid = document.getElementById('courses-grid'); if (!grid) return;
-  const sub  = document.getElementById('courses-page-sub');
-  if (sub) sub.textContent = tr().coursesPageSub(allCourses.length);
-
-  if (allCourses.length === 0) {
-    grid.innerHTML = '<div style="grid-column:1/-1;" class="empty-state"><div class="empty-icon">📭</div><p>' + tr().noCourses + '</p></div>';
-    return;
-  }
-
-  grid.innerHTML = allCourses.map(c => {
-    const name    = currentLang==='ar' ? c.group_name_ar : c.group_name_fr;
-    const subject = currentLang==='ar' ? c.subject_ar    : c.subject_fr;
-    const icon    = c.icon || '📚';
-    const iconCls = ICON_CLASS_MAP[icon] || 'ci1';
-    const chips   = (c.schedule||[]).map(s =>
-      '<span class="schedule-chip">' + (currentLang==='ar'?s.day_ar:s.day_fr) + ' ' + s.time + '</span>'
-    ).join('');
-    const teacherBadge = c.teacher_name
-      ? '<span class="badge assigned" style="font-size:.7rem;">👨‍🏫 ' + c.teacher_name + '</span>'
-      : '<span class="badge unassigned" style="font-size:.7rem;">— ' + tr().unassigned + '</span>';
-
-    return '<div class="course-card">'
-      + '<div class="course-card-header">'
-        + '<div class="course-icon ' + iconCls + '">' + icon + '</div>'
-        + '<div><div class="course-group-name">' + name + '</div>'
-        + '<span class="level-tag">' + c.level + '</span></div>'
-      + '</div>'
-      + '<div style="font-size:.82rem;color:var(--muted);">📚 ' + subject + '</div>'
-      + '<div class="course-meta-row">'
-        + '<span>👥 ' + c.students_count + ' ' + tr().studentsLabel + '</span>'
-      + '</div>'
-      + (chips ? '<div class="schedule-chips">' + chips + '</div>' : '')
-      + '<div style="margin:.2rem 0;">' + teacherBadge + '</div>'
-      + '<div class="course-card-actions">'
-        + '<button class="btn-secondary btn-sm" style="flex:1;" onclick="openCourseModal(' + c.id + ')">✏️ ' + tr().btnEditCourse + '</button>'
-        + '<button class="btn-secondary btn-sm" style="flex:1;color:var(--green);border-color:rgba(62,207,120,.3);" onclick="openAssignModal(' + c.id + ')">🔗 ' + tr().btnAssignCourse + '</button>'
-        + '<button class="btn-secondary btn-sm" style="color:var(--red);border-color:rgba(232,93,117,.3);" onclick="promptDelete(' + c.id + ')">🗑️</button>'
-      + '</div>'
-    + '</div>';
-  }).join('');
-}
-
-/* ══════════════════════════════════════════════════════
-   ASSIGN PAGE
-══════════════════════════════════════════════════════ */
-function renderAssignPage() {
-  renderTeacherList();
-  if (selectedTeacherId) renderTeacherCourses(selectedTeacherId);
-}
-
-function renderTeacherList() {
-  const list = document.getElementById('teacher-list-assign'); if (!list) return;
-  if (allTeachers.length === 0) {
-    list.innerHTML = '<div class="empty-state"><p>Aucun professeur trouvé.</p></div>';
-    return;
-  }
-  list.innerHTML = allTeachers.map(t => {
-    const active   = selectedTeacherId === t.id;
-    const count    = allCourses.filter(c => c.teacher_id === t.id).length;
-    const initials = t.full_name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-    return '<div onclick="selectTeacher(' + t.id + ')" style="display:flex;align-items:center;gap:.85rem;padding:.85rem;border-radius:12px;cursor:pointer;transition:background .15s;background:' + (active?'rgba(251,146,60,.08)':'transparent') + ';border:1px solid ' + (active?'rgba(251,146,60,.3)':'transparent') + ';margin-bottom:.3rem;">'
-      + '<div style="width:38px;height:38px;border-radius:50%;background:rgba(251,146,60,.15);border:2px solid rgba(251,146,60,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.8rem;color:var(--orange);flex-shrink:0;">' + initials + '</div>'
-      + '<div style="flex:1;min-width:0;">'
-        + '<div style="font-family:var(--font);font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + t.full_name + '</div>'
-        + '<div style="font-size:.75rem;color:var(--muted2);">@' + t.username + ' · ' + count + ' cours</div>'
-      + '</div>'
-      + (active ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0;"></div>' : '')
-    + '</div>';
-  }).join('');
-}
-
-function selectTeacher(id) {
-  selectedTeacherId = id;
-  renderTeacherList();
-  renderTeacherCourses(id);
-}
-
-function renderTeacherCourses(tid) {
-  const panel = document.getElementById('teacher-courses-panel'); if (!panel) return;
-  const assigned = allCourses.filter(c => c.teacher_id === tid);
-  const teacher  = allTeachers.find(t => t.id === tid);
-  if (assigned.length === 0) {
-    panel.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>' + tr().noTeacherCourses + '</p></div>';
-    return;
-  }
-  panel.innerHTML = assigned.map(c => {
-    const name = currentLang==='ar' ? c.group_name_ar : c.group_name_fr;
-    const sub  = currentLang==='ar' ? c.subject_ar    : c.subject_fr;
-    return '<div class="assign-row">'
-      + '<div class="assign-info">'
-        + '<div class="assign-course-name">' + name + '</div>'
-        + '<div class="assign-meta"><span>' + sub + '</span><span class="badge level">' + c.level + '</span></div>'
-      + '</div>'
-      + '<button class="btn-secondary btn-sm" style="color:var(--red);border-color:rgba(232,93,117,.3);flex-shrink:0;" onclick="unassignCourse(' + c.id + ',' + tid + ')">' + tr().unassignBtn + '</button>'
-    + '</div>';
-  }).join('');
-}
-
-async function unassignCourse(courseId, teacherId) {
-  try {
-    await api('assign_courses.php?action=unassign', 'POST', { teacher_id:teacherId, course_id:courseId });
-    await refreshData();
-    renderTeacherCourses(teacherId);
-    showToast(tr().toastUnassigned, 'success');
-  } catch(e) {
-    showToast(e.message || tr().errNetwork, 'error');
-  }
-}
-
-/* ══════════════════════════════════════════════════════
-   ASSIGN PAGE — TAB SWITCHER
-══════════════════════════════════════════════════════ */
-let assignTab = 'teachers';
-
-function switchAssignTab(tab, el) {
-  document.querySelectorAll('#page-assign .tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  assignTab = tab;
-  document.getElementById('assign-panel-teachers').style.display = tab === 'teachers' ? '' : 'none';
-  document.getElementById('assign-panel-students').style.display = tab === 'students'  ? '' : 'none';
-  if (tab === 'students') renderStudentList();
-}
-
-/* ══════════════════════════════════════════════════════
-   ASSIGN PAGE — STUDENTS
-══════════════════════════════════════════════════════ */
-let allStudents        = [];
-let selectedStudentId  = null;
-let studentCoursesList = []; // courses currently enrolled for selectedStudent
-
-async function loadStudents() {
-  try {
-    const data = await api('assign_courses.php?action=list_students');
-    allStudents = data.students || [];
-  } catch(e) { allStudents = []; }
-}
-
-function filterStudentList() {
-  renderStudentList();
-}
-
-function renderStudentList() {
-  const list = document.getElementById('student-list-assign'); if (!list) return;
-  const q = (document.getElementById('student-search-assign')?.value || '').toLowerCase();
-  const filtered = q ? allStudents.filter(s =>
-    (s.full_name||'').toLowerCase().includes(q) || (s.username||'').toLowerCase().includes(q)
-  ) : allStudents;
-
-  if (filtered.length === 0) {
-    list.innerHTML = '<div class="empty-state"><p>Aucun étudiant trouvé.</p></div>';
-    return;
-  }
-  list.innerHTML = filtered.map(s => {
-    const active    = selectedStudentId === s.id;
-    const initials  = (s.full_name||s.username).trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase()||'?';
-    return '<div onclick="selectStudent(' + s.id + ')" style="display:flex;align-items:center;gap:.85rem;padding:.85rem;border-radius:12px;cursor:pointer;transition:background .15s;background:' + (active?'rgba(91,156,246,.08)':'transparent') + ';border:1px solid ' + (active?'rgba(91,156,246,.3)':'transparent') + ';margin-bottom:.3rem;">'
-      + '<div style="width:38px;height:38px;border-radius:50%;background:rgba(91,156,246,.15);border:2px solid rgba(91,156,246,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.8rem;color:var(--blue);flex-shrink:0;">' + initials + '</div>'
-      + '<div style="flex:1;min-width:0;">'
-        + '<div style="font-family:var(--font);font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + (s.full_name||s.username) + '</div>'
-        + '<div style="font-size:.75rem;color:var(--muted2);">@' + s.username + '</div>'
-      + '</div>'
-      + (active ? '<div style="width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;"></div>' : '')
-    + '</div>';
-  }).join('');
-}
-
-async function selectStudent(id) {
-  selectedStudentId = id;
-  renderStudentList();
-  await renderStudentCourses(id);
-}
-
-async function renderStudentCourses(sid) {
-  const panel = document.getElementById('student-courses-panel'); if (!panel) return;
-  panel.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
-  try {
-    const data = await api('assign_courses.php?action=student_courses&student_id=' + sid);
-    studentCoursesList = data.courses || [];
-    const enrolledIds  = studentCoursesList.map(c => c.id);
-    const available    = allCourses.filter(c => !enrolledIds.includes(c.id));
-
-    let html = '';
-
-    // Enrolled courses
-    if (studentCoursesList.length === 0) {
-      html += '<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0 1rem;">Aucun cours assigné.</div>';
-    } else {
-      html += studentCoursesList.map(c => {
-        const name = currentLang==='ar' ? c.group_name_ar : c.group_name_fr;
-        const sub  = currentLang==='ar' ? c.subject_ar    : c.subject_fr;
-        return '<div class="assign-row">'
-          + '<div class="assign-info">'
-            + '<div class="assign-course-name">' + name + '</div>'
-            + '<div class="assign-meta"><span>' + sub + '</span><span class="badge level">' + c.level + '</span></div>'
-          + '</div>'
-          + '<button class="btn-secondary btn-sm" style="color:var(--red);border-color:rgba(232,93,117,.3);flex-shrink:0;" onclick="unenrollStudent(' + sid + ',' + c.id + ')">Retirer</button>'
-        + '</div>';
-      }).join('');
-    }
-
-    // Enroll new course
-    if (available.length > 0) {
-      html += '<div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);display:flex;gap:.5rem;align-items:center;">'
-        + '<select id="enroll-course-select-' + sid + '" style="flex:1;padding:.55rem .75rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.84rem;outline:none;">'
-        + available.map(c => '<option value="' + c.id + '">' + (currentLang==='ar'?c.group_name_ar:c.group_name_fr) + ' — ' + (currentLang==='ar'?c.subject_ar:c.subject_fr) + '</option>').join('')
-        + '</select>'
-        + '<button class="btn-primary btn-sm" onclick="enrollStudent(' + sid + ')">+ Inscrire</button>'
-      + '</div>';
-    } else {
-      html += '<div style="margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);font-size:.82rem;color:var(--muted);">Tous les cours sont déjà assignés.</div>';
-    }
-
-    panel.innerHTML = html;
-  } catch(e) {
-    panel.innerHTML = '<div style="color:var(--red);font-size:.85rem;">Erreur: ' + (e.message||'') + '</div>';
-  }
-}
-
-async function enrollStudent(sid) {
-  const sel = document.getElementById('enroll-course-select-' + sid);
-  if (!sel) return;
-  const cid = parseInt(sel.value);
-  if (!cid) return;
-  try {
-    await api('assign_courses.php?action=enroll_student', 'POST', { student_id:sid, course_id:cid });
-    showToast('Étudiant inscrit ✓', 'success');
-    addActivity('Étudiant #' + sid + ' inscrit au cours #' + cid);
-    await renderStudentCourses(sid);
-  } catch(e) {
-    showToast(e.message || tr().errNetwork, 'error');
-  }
-}
-
-async function unenrollStudent(sid, cid) {
-  try {
-    await api('assign_courses.php?action=unenroll_student', 'POST', { student_id:sid, course_id:cid });
-    showToast('Inscription retirée.', 'success');
-    addActivity('Étudiant #' + sid + ' retiré du cours #' + cid);
-    await renderStudentCourses(sid);
-  } catch(e) {
-    showToast(e.message || tr().errNetwork, 'error');
-  }
-}
-
-/* ══════════════════════════════════════════════════════
-   COURSE MODAL (ADD / EDIT)
-══════════════════════════════════════════════════════ */
-function openCourseModal(id) {
-  const c = id ? allCourses.find(x => x.id === id) : null;
-  document.getElementById('course-edit-id').value  = c ? c.id : '';
-  document.getElementById('modal-course-title').textContent = c ? tr().modalCourseEdit : tr().modalCourseAdd;
-  document.getElementById('c-group-fr').value   = c ? c.group_name_fr : '';
-  document.getElementById('c-group-ar').value   = c ? c.group_name_ar : '';
-  document.getElementById('c-subject-fr').value = c ? c.subject_fr    : '';
-  document.getElementById('c-subject-ar').value = c ? c.subject_ar    : '';
-  document.getElementById('c-level').value      = c ? c.level         : 'A1';
-  document.getElementById('c-icon').value       = c ? (c.icon||'📚')  : '📚';
-  document.getElementById('c-students').value   = c ? c.students_count : 15;
-  document.getElementById('course-modal-error').style.display = 'none';
-
-  const schedRows = document.getElementById('schedule-rows');
-  schedRows.innerHTML = '';
-  const schedule = c ? (c.schedule || []) : [];
-  if (schedule.length > 0) schedule.forEach(s => addScheduleRow(s));
-  else addScheduleRow();
-
-  document.getElementById('course-modal-submit').textContent = tr().saveEnregistrer;
-  document.getElementById('course-modal-cancel').textContent = tr().cancelBtn;
-  openModal('course');
-}
-
-function addScheduleRow(data) {
-  const row = document.createElement('div');
-  row.className = 'schedule-row';
-  row.innerHTML =
-    '<input type="text" placeholder="Ex: Lundi"   value="' + (data?.day_fr||'') + '" class="sched-day-fr" style="padding:.5rem .7rem;font-size:.82rem;">'
-  + '<input type="text" placeholder="الاثنين"     value="' + (data?.day_ar||'') + '" class="sched-day-ar" style="padding:.5rem .7rem;font-size:.82rem;" dir="rtl">'
-  + '<input type="text" placeholder="09:00–11:00" value="' + (data?.time||'')   + '" class="sched-time-v" style="padding:.5rem .7rem;font-size:.82rem;">'
-  + '<input type="text" placeholder="Salle 12"    value="' + (data?.room||'')   + '" class="sched-room-v" style="padding:.5rem .7rem;font-size:.82rem;">'
-  + '<button type="button" onclick="this.parentElement.remove()" style="background:rgba(232,93,117,.12);border:1px solid rgba(232,93,117,.3);color:var(--red);border-radius:8px;padding:.45rem .6rem;cursor:pointer;font-size:.85rem;white-space:nowrap;">✕</button>';
-  document.getElementById('schedule-rows').appendChild(row);
-}
-
-function getScheduleFromForm() {
-  return Array.from(document.querySelectorAll('#schedule-rows .schedule-row')).map(row => ({
-    day_fr: row.querySelector('.sched-day-fr').value.trim(),
-    day_ar: row.querySelector('.sched-day-ar').value.trim(),
-    time:   row.querySelector('.sched-time-v').value.trim(),
-    room:   row.querySelector('.sched-room-v').value.trim()
-  })).filter(s => s.day_fr || s.day_ar || s.time);
-}
-
-async function submitCourseModal() {
-  if (courseModalSaving) return;
-  const errEl  = document.getElementById('course-modal-error');
-  const grFr   = document.getElementById('c-group-fr').value.trim();
-  const grAr   = document.getElementById('c-group-ar').value.trim();
-  if (!grFr && !grAr) {
-    errEl.textContent = tr().errFillFields;
-    errEl.style.display = 'block'; return;
-  }
-  errEl.style.display = 'none';
-
-  const editId = document.getElementById('course-edit-id').value;
-  const payload = {
-    group_name_fr:  grFr,
-    group_name_ar:  grAr,
-    subject_fr:     document.getElementById('c-subject-fr').value.trim(),
-    subject_ar:     document.getElementById('c-subject-ar').value.trim(),
-    level:          document.getElementById('c-level').value,
-    icon:           document.getElementById('c-icon').value,
-    students_count: parseInt(document.getElementById('c-students').value) || 0,
-    schedule:       getScheduleFromForm()
-  };
-  if (editId) payload.id = parseInt(editId);
-
-  const btn = document.getElementById('course-modal-submit');
-  btn.innerHTML = '<span class="spinner"></span>';
-  courseModalSaving = true;
-
-  try {
-    const action = editId ? 'update' : 'create';
-    await api('courses_admin.php?action=' + action, 'POST', payload);
-    await refreshData();
-    closeModal('course');
-    renderCoursesGrid();
-    updateHomeStats();
-    showToast(editId ? tr().toastCourseUpdated : tr().toastCourseAdded, 'success');
-    addActivity(editId ? tr().toastCourseUpdated : tr().toastCourseAdded);
-  } catch(e) {
-    errEl.textContent = e.message || tr().errNetwork;
-    errEl.style.display = 'block';
-  } finally {
-    courseModalSaving = false;
-    btn.textContent = tr().saveEnregistrer;
-  }
-}
-
-/* ══════════════════════════════════════════════════════
-   DELETE
-══════════════════════════════════════════════════════ */
-function promptDelete(id) {
-  pendingDeleteId = id;
-  document.getElementById('modal-delete-title').textContent = tr().modalDeleteTitle;
-  document.getElementById('modal-delete-body').textContent  = tr().modalDeleteBody;
-  document.getElementById('delete-confirm-btn').textContent = tr().deleteBtn;
-  document.getElementById('delete-cancel-btn').textContent  = tr().cancelBtn;
-  openModal('delete');
-}
-
-async function confirmDelete() {
-  if (!pendingDeleteId) return;
-  const btn = document.getElementById('delete-confirm-btn');
-  btn.innerHTML = '<span class="spinner"></span>';
-  try {
-    await api('courses_admin.php?action=delete', 'POST', { id: pendingDeleteId });
-    pendingDeleteId = null;
-    await refreshData();
-    closeModal('delete');
-    renderCoursesGrid();
-    updateHomeStats();
-    showToast(tr().toastCourseDeleted, 'success');
-    addActivity(tr().toastCourseDeleted);
-  } catch(e) {
-    showToast(e.message || tr().errNetwork, 'error');
-    closeModal('delete');
-  } finally {
-    btn.textContent = tr().deleteBtn;
-  }
-}
-
-/* ══════════════════════════════════════════════════════
-   ASSIGN MODAL
-══════════════════════════════════════════════════════ */
-function openAssignModal(courseId) {
-  pendingAssignCourseId = courseId;
-  const course  = allCourses.find(c => c.id === courseId);
-  const titleEl = document.getElementById('modal-assign-title');
-  if (titleEl && course) {
-    const name = currentLang==='ar' ? course.group_name_ar : course.group_name_fr;
-    titleEl.textContent = tr().modalAssignTitle + ' — ' + name;
-  }
-  const sel = document.getElementById('assign-teacher-select');
-  sel.innerHTML = allTeachers.map(t =>
-    '<option value="' + t.id + '"' + (course?.teacher_id===t.id?' selected':'') + '>' + t.full_name + ' (@' + t.username + ')</option>'
-  ).join('');
-  document.getElementById('assign-modal-error').style.display = 'none';
-  document.getElementById('assign-modal-cancel').textContent  = tr().cancelBtn;
-  document.getElementById('assign-modal-submit').textContent  = tr().assignBtn;
-  document.getElementById('assign-teacher-label').textContent = tr().assignTeacherLabel;
-  openModal('assign-course');
-}
-
-async function submitAssignModal() {
-  const teacherId = parseInt(document.getElementById('assign-teacher-select').value);
-  const errEl = document.getElementById('assign-modal-error');
-  if (!teacherId || !pendingAssignCourseId) return;
-  const btn = document.getElementById('assign-modal-submit');
-  btn.innerHTML = '<span class="spinner"></span>';
-  try {
-    await api('assign_courses.php?action=assign', 'POST', { teacher_id:teacherId, course_id:pendingAssignCourseId });
-    pendingAssignCourseId = null;
-    await refreshData();
-    closeModal('assign-course');
-    renderCoursesGrid();
-    updateHomeStats();
-    if (selectedTeacherId === teacherId) renderTeacherCourses(teacherId);
-    showToast(tr().toastAssigned, 'success');
-    addActivity(tr().toastAssigned);
-  } catch(e) {
-    errEl.textContent = e.message || tr().errNetwork;
-    errEl.style.display = 'block';
-  } finally {
-    btn.textContent = tr().assignBtn;
-  }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -1863,7 +1099,6 @@ function openModal(id)  { document.getElementById('modal-' + id).classList.add('
 function closeModal(id) { document.getElementById('modal-' + id).classList.remove('open'); }
 
 async function refreshData() {
-  await Promise.all([loadCourses(), loadTeachers(), loadStudents()]);
 }
 
 function showToast(msg, type='default') {
@@ -2411,11 +1646,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const el = document.getElementById(id); if (el) el.textContent = init;
   });
 
-  try {
-    await refreshData();
-  } catch(e) {
-    showToast(tr().errNetwork, 'error');
-  }
   // Preload enrollment counts for sidebar badge
   try {
     const [enrollData, studentsData] = await Promise.all([
@@ -2430,7 +1660,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch(e) {}
 
   setLang(lang);
-  updateHomeStats();
   addActivity(currentLang==='ar' ? 'تم تحميل لوحة التحكم' : 'Tableau de bord chargé');
 });
 </script>
