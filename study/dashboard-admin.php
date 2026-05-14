@@ -237,10 +237,13 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 .level-card:hover { border-color:rgba(91,156,246,.4); transform:translateY(-2px); }
 .level-card .lc-title { font-family:var(--font); font-size:.95rem; font-weight:700; margin-bottom:.25rem; }
 .level-card .lc-sub   { font-size:.78rem; color:var(--muted); }
-.group-chips { display:flex; flex-wrap:wrap; gap:.5rem; }
-.group-chip { display:inline-flex; align-items:center; gap:.5rem; padding:.5rem .9rem; background:rgba(62,207,120,.07); border:1px solid rgba(62,207,120,.25); border-radius:100px; font-family:var(--font); font-size:.82rem; font-weight:600; color:var(--green); cursor:default; }
-.group-chip .chip-del { cursor:pointer; color:var(--muted); font-size:.85rem; padding:.05rem; line-height:1; transition:color .15s; }
-.group-chip .chip-del:hover { color:var(--red); }
+.group-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:1rem; }
+.group-card { background:var(--navy-card); border:1px solid var(--border); border-radius:14px; padding:1.1rem 1.25rem; cursor:pointer; transition:border-color .2s,transform .15s; position:relative; }
+.group-card:hover { border-color:rgba(62,207,120,.45); transform:translateY(-2px); }
+.group-card .gc-letter { font-family:var(--font); font-size:1.5rem; font-weight:800; color:var(--green); margin-bottom:.35rem; }
+.group-card .gc-sub { font-size:.78rem; color:var(--muted); }
+.group-card .gc-del { position:absolute; top:.55rem; right:.6rem; background:none; border:none; color:var(--muted); cursor:pointer; font-size:.85rem; line-height:1; padding:.2rem; border-radius:6px; transition:color .15s,background .15s; }
+.group-card .gc-del:hover { color:var(--red); background:rgba(232,93,117,.1); }
 .breadcrumb { display:flex; align-items:center; gap:.5rem; font-size:.82rem; color:var(--muted); margin-bottom:1.5rem; flex-wrap:wrap; }
 .breadcrumb span.bc-link { cursor:pointer; transition:color .15s; }
 .breadcrumb span.bc-link:hover { color:var(--orange); }
@@ -491,11 +494,8 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 
     <!-- View: groups within a level/type -->
     <div id="classes-view-groups" style="display:none;">
-      <div class="card" style="margin-bottom:1.25rem;">
-        <div class="card-title" id="classes-groups-title">Groupes</div>
-        <div id="classes-group-chips" class="group-chips">
-          <div class="loading-overlay"><div class="spinner"></div></div>
-        </div>
+      <div id="classes-group-cards" class="group-cards">
+        <div class="loading-overlay"><div class="spinner"></div></div>
       </div>
     </div>
   </div>
@@ -1356,7 +1356,6 @@ async function renderClassesPage() {
     bc.innerHTML = bcHtml;
     document.getElementById('classes-view-groups').style.display = '';
     if (btnAdd) btnAdd.style.display = '';
-    document.getElementById('classes-groups-title').textContent = tr().classesGroupsOf + ' ' + label;
     await loadGroupChips();
   }
 }
@@ -1405,26 +1404,28 @@ function renderLevelCards() {
 }
 
 async function loadGroupChips() {
-  const chips = document.getElementById('classes-group-chips');
-  chips.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
+  const container = document.getElementById('classes-group-cards');
+  container.innerHTML = '<div class="loading-overlay" style="grid-column:1/-1;"><div class="spinner"></div></div>';
 
   let url = `api_classes.php?action=list_groups&type_key=${classesTypeKey}`;
   if (classesLevel) url += `&level=${classesLevel}`;
   let data;
-  try { data = await api(url); } catch(e) { chips.innerHTML = '<p style="color:var(--red);font-size:.85rem;">Erreur de chargement</p>'; return; }
+  try { data = await api(url); } catch(e) { container.innerHTML = '<p style="color:var(--red);font-size:.85rem;grid-column:1/-1;">Erreur de chargement</p>'; return; }
 
   const groups = data.groups || [];
   if (groups.length === 0) {
-    chips.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${tr().noGroups}</p>`;
+    container.innerHTML = `<p style="color:var(--muted);font-size:.85rem;grid-column:1/-1;">${tr().noGroups}</p>`;
     return;
   }
-  chips.innerHTML = groups.map(g =>
-    `<div class="group-chip" onclick="openManageGroupModal(${g.id}, ${JSON.stringify(g.group_letter)})">
-      Groupe ${g.group_letter}
-      <span style="color:var(--muted);font-size:.75rem;">(${g.member_count})</span>
-      <span class="chip-del" title="Supprimer" onclick="event.stopPropagation();deleteGroup(${g.id})">✕</span>
-    </div>`
-  ).join('');
+  container.innerHTML = groups.map(g => {
+    const students = parseInt(g.member_count) || 0;
+    const sub = students === 0 ? 'Aucun membre' : students + ' membre' + (students > 1 ? 's' : '');
+    return `<div class="group-card" onclick="openManageGroupModal(${g.id}, ${JSON.stringify(g.group_letter)})">
+      <button class="gc-del" title="Supprimer" onclick="event.stopPropagation();deleteGroup(${g.id})">✕</button>
+      <div class="gc-letter">Groupe ${g.group_letter}</div>
+      <div class="gc-sub">${sub}</div>
+    </div>`;
+  }).join('');
 }
 
 function classesSelectType(key) {
