@@ -182,15 +182,25 @@ $t = [
   .photo-item-caption { position: absolute; bottom: 0.75rem; left: 0.9rem; font-family: var(--font); font-size: 0.7rem; font-weight: 500; color: rgba(255,255,255,0.75); letter-spacing: 0.04em; text-transform: uppercase; z-index: 2; }
   @media (max-width: 768px) { .photos-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; } .photo-item.tall { grid-row: span 1; height: 180px; } .photo-item { height: 180px; } }
   @media (max-width: 500px) { .photos-grid { grid-template-columns: 1fr; } .photo-item, .photo-item.tall { height: 200px; } }
-  .testimonials { padding: 6rem 2rem; background: var(--navy-mid); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  /* ── TESTIMONIALS — section lumineuse ── */
+  .testimonials { padding: 6rem 2rem; background: #eef6ff; }
   .testimonials-inner { max-width: 1100px; margin: 0 auto; }
+  .testimonials .section-label { color: #1a9a52; }
+  .testimonials .section-title { color: #0f1d2e; }
   .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
-  .testimonial-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; gap: 1rem; }
-  .testimonial-quote { font-size: 2.5rem; color: var(--green); font-family: Georgia, serif; line-height: 1; margin-bottom: -0.5rem; }
-  .testimonial-text { color: rgba(255,255,255,0.82); font-size: 0.92rem; line-height: 1.7; font-style: italic; flex: 1; }
-  .testimonial-author { display: flex; flex-direction: column; gap: 0.25rem; }
-  .testimonial-name { font-family: var(--font); font-size: 0.88rem; font-weight: 600; color: var(--white); }
-  .testimonial-badge { font-size: 0.72rem; font-family: var(--font); padding: 0.2rem 0.65rem; border-radius: 100px; background: var(--green-glow); border: 1px solid rgba(62,207,120,0.3); color: var(--green); display: inline-block; width: fit-content; }
+  .testimonial-card { background: #ffffff; border: none; border-radius: 20px; padding: 1.75rem 2rem; display: flex; flex-direction: column; gap: 0.9rem; box-shadow: 0 4px 28px rgba(15,29,46,0.09); transition: transform .2s, box-shadow .2s; }
+  .testimonial-card:hover { transform: translateY(-5px); box-shadow: 0 12px 40px rgba(15,29,46,0.15); }
+  .testimonial-header { display: flex; align-items: center; gap: 0.85rem; }
+  .testimonial-avatar { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font); font-size: 1.05rem; font-weight: 700; flex-shrink: 0; color: #fff; }
+  .testimonial-avatar.av1 { background: linear-gradient(135deg, #3ecf78, #059669); }
+  .testimonial-avatar.av2 { background: linear-gradient(135deg, #3b82f6, #7c3aed); }
+  .testimonial-avatar.av3 { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+  .testimonial-author { display: flex; flex-direction: column; gap: 0.22rem; }
+  .testimonial-name { font-family: var(--font); font-size: 0.9rem; font-weight: 700; color: #0f1d2e; }
+  .testimonial-badge { font-size: 0.7rem; font-family: var(--font); padding: 0.18rem 0.6rem; border-radius: 100px; background: rgba(62,207,120,0.12); border: 1px solid rgba(62,207,120,0.35); color: #1a9a52; display: inline-block; width: fit-content; }
+  .testimonial-stars { color: #f59e0b; font-size: 0.85rem; letter-spacing: 2px; }
+  .testimonial-quote { font-size: 2.4rem; color: #3ecf78; font-family: Georgia, serif; line-height: 0.85; margin-bottom: -0.3rem; opacity: 0.55; }
+  .testimonial-text { color: #374151; font-size: 0.93rem; line-height: 1.75; font-style: italic; }
 </style>
 </head>
 <body>
@@ -371,28 +381,40 @@ $t = [
     <div class="section-title text-center" style="text-align:center;">Des résultats réels, des personnes réelles.</div>
     <div class="testimonials-grid">
       <div class="testimonial-card">
+        <div class="testimonial-header">
+          <div class="testimonial-avatar av1">YB</div>
+          <div class="testimonial-author">
+            <span class="testimonial-name">Yasmine B.</span>
+            <span class="testimonial-badge">Étudiante Baccalauréat</span>
+          </div>
+        </div>
+        <div class="testimonial-stars">★★★★★</div>
         <div class="testimonial-quote">"</div>
         <p class="testimonial-text">Ma note d'anglais au Bac est passée de 8/20 à 16/20 après une seule session avec Upskill. Le petit groupe a tout changé.</p>
-        <div class="testimonial-author">
-          <span class="testimonial-name">Yasmine B.</span>
-          <span class="testimonial-badge">Étudiante Baccalauréat</span>
-        </div>
       </div>
       <div class="testimonial-card">
+        <div class="testimonial-header">
+          <div class="testimonial-avatar av2">KM</div>
+          <div class="testimonial-author">
+            <span class="testimonial-name">Karim M.</span>
+            <span class="testimonial-badge">Étudiant Anglais des affaires</span>
+          </div>
+        </div>
+        <div class="testimonial-stars">★★★★★</div>
         <div class="testimonial-quote">"</div>
         <p class="testimonial-text">Je me sens enfin à l'aise en réunion. Le cours d'anglais des affaires m'a donné du vocabulaire réel que j'utilise chaque jour.</p>
-        <div class="testimonial-author">
-          <span class="testimonial-name">Karim M.</span>
-          <span class="testimonial-badge">Étudiant Anglais des affaires</span>
-        </div>
       </div>
       <div class="testimonial-card">
+        <div class="testimonial-header">
+          <div class="testimonial-avatar av3">NF</div>
+          <div class="testimonial-author">
+            <span class="testimonial-name">Nadia F.</span>
+            <span class="testimonial-badge">Parent · Anglais général</span>
+          </div>
+        </div>
+        <div class="testimonial-stars">★★★★★</div>
         <div class="testimonial-quote">"</div>
         <p class="testimonial-text">La prononciation de ma fille s'est nettement améliorée. Les professeurs sont patients et la plateforme facilite le suivi de sa progression.</p>
-        <div class="testimonial-author">
-          <span class="testimonial-name">Parent d'une étudiante Anglais général</span>
-          <span class="testimonial-badge">Anglais général</span>
-        </div>
       </div>
     </div>
   </div>
