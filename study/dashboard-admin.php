@@ -240,8 +240,10 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 .group-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:1rem; }
 .group-card { background:var(--navy-card); border:1px solid var(--border); border-radius:14px; padding:1.1rem 1.25rem; cursor:pointer; transition:border-color .2s,transform .15s; position:relative; }
 .group-card:hover { border-color:rgba(62,207,120,.45); transform:translateY(-2px); }
-.group-card .gc-letter { font-family:var(--font); font-size:1.5rem; font-weight:800; color:var(--green); margin-bottom:.35rem; }
-.group-card .gc-sub { font-size:.78rem; color:var(--muted); }
+.group-card .gc-letter { font-family:var(--font); font-size:1.3rem; font-weight:800; color:var(--green); margin-bottom:.5rem; }
+.group-card .gc-teacher { font-size:.78rem; color:var(--text); margin-bottom:.3rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.group-card .gc-students { font-size:.74rem; color:var(--muted); line-height:1.5; }
+.group-card .gc-students.gc-empty { font-style:italic; }
 .group-card .gc-del { position:absolute; top:.55rem; right:.6rem; background:none; border:none; color:var(--muted); cursor:pointer; font-size:.85rem; line-height:1; padding:.2rem; border-radius:6px; transition:color .15s,background .15s; }
 .group-card .gc-del:hover { color:var(--red); background:rgba(232,93,117,.1); }
 .breadcrumb { display:flex; align-items:center; gap:.5rem; font-size:.82rem; color:var(--muted); margin-bottom:1.5rem; flex-wrap:wrap; }
@@ -1440,12 +1442,20 @@ async function loadGroupChips() {
     return;
   }
   container.innerHTML = groups.map(g => {
-    const students = parseInt(g.member_count) || 0;
-    const sub = students === 0 ? 'Aucun membre' : students + ' membre' + (students > 1 ? 's' : '');
+    const members  = g.members || [];
+    const teachers = members.filter(m => m.role === 'teacher');
+    const students = members.filter(m => m.role === 'student');
+    const teacherHtml = teachers.length
+      ? `<div class="gc-teacher">👨‍🏫 ${teachers.map(t => t.name).join(', ')}</div>`
+      : '';
+    const studentHtml = students.length
+      ? `<div class="gc-students">${students.map(s => s.name).join(' · ')}</div>`
+      : `<div class="gc-students gc-empty">Aucun élève</div>`;
     return `<div class="group-card" onclick="openManageGroupModal(${g.id}, '${g.group_letter}')">
       <button class="gc-del" title="Supprimer" onclick="event.stopPropagation();deleteGroup(${g.id})">✕</button>
       <div class="gc-letter">Groupe ${g.group_letter}</div>
-      <div class="gc-sub">${sub}</div>
+      ${teacherHtml}
+      ${studentHtml}
     </div>`;
   }).join('');
 }

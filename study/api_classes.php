@@ -116,7 +116,29 @@ if ($action === 'list_groups') {
 
   $stmt = $pdo->prepare($sql);
   $stmt->execute($params);
-  jsonOut(['ok'=>true, 'groups'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
+  $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  if ($groups) {
+    $groupIds    = array_column($groups, 'id');
+    $placeholders = implode(',', array_fill(0, count($groupIds), '?'));
+    $mStmt = $pdo->prepare(
+      "SELECT m.group_id, u.id, u.full_name AS name, u.role
+       FROM class_group_members m
+       JOIN users u ON u.id = m.user_id
+       WHERE m.group_id IN ($placeholders)
+       ORDER BY u.role DESC, u.full_name"
+    );
+    $mStmt->execute($groupIds);
+    $byGroup = [];
+    foreach ($mStmt->fetchAll(PDO::FETCH_ASSOC) as $mr) {
+      $byGroup[$mr['group_id']][] = ['id'=>(int)$mr['id'], 'name'=>$mr['name'], 'role'=>$mr['role']];
+    }
+    foreach ($groups as &$g) {
+      $g['members'] = $byGroup[$g['id']] ?? [];
+    }
+  }
+
+  jsonOut(['ok'=>true, 'groups'=>$groups]);
 }
 
 // create_group
