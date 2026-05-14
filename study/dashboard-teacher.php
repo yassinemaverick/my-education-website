@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 // Mini dino SVG used as the default avatar (face-crop viewBox)
 $dinoAvatarSvg = '<svg class="av-dino" id="%ID%" xmlns="http://www.w3.org/2000/svg" viewBox="22 14 76 90" aria-hidden="true">'
   . '<path d="M32 56 Q8 76 14 100 Q30 88 42 68 Q46 86 42 102 Q60 90 56 70" fill="#dc2626"/>'
@@ -924,7 +924,7 @@ const QUIZZES_T = [
   { id:5, title_fr:'Expression orale – Évaluation', title_ar:'التعبير الشفهي – تقييم', qs:8, min:12, attempts:16, avg:68 },
 ];
 
-let currentLang = 'fr';
+let currentLang = 'en';
 let activePage = 'home';
 
 /* ── TRANSLATIONS ── */
@@ -981,6 +981,31 @@ const T = {
     attUnsavedTxt:'⚡ Modifications non enregistrées', attSaveNowLbl:'Enregistrer maintenant',
     attThStudent:'Étudiant', attThSessions:'Sessions (1–20)', attThTotal:'Présence',
     attSavingLbl:'Enregistrement…', toastAttError:'Erreur lors de la sauvegarde. Réessayez.',
+    noAssignments:'Aucun devoir pour le moment.', noAssignmentsSub:'Aucun devoir',
+    pendingBadge:'à corriger', gradedBadge:'Corrigé', deleteTitle:'Supprimer',
+    deleteConfirm:'Supprimer ce devoir ?', toastAssignDeleted:'Devoir supprimé',
+    toastNetError:'❌ Erreur réseau', toastServerError:'Erreur serveur',
+    toastErrorPrefix:'Erreur : ',
+    loading:'Chargement…', errorLoading:'Erreur de chargement',
+    subBack:'← Retour aux devoirs', dueLbl2:'Échéance : ', noText:'(Pas de texte)',
+    scorePlaceholder:'Note /100', commentPlaceholder:"Commentaire pour l'étudiant…",
+    yourComment:'Votre commentaire :', saveGrade:'Enregistrer',
+    toastGraded:'✅ Correction enregistrée', noSubmissions:'Aucune soumission pour le moment.',
+    noClassAssigned:'— Aucune classe assignée —', chooseClass:'— Choisir la classe —',
+    classLabel:'Classe', validateChooseClass:'Veuillez choisir une classe.',
+    validateTitleRequired:'Le titre est requis.', networkError:'❌ Erreur réseau',
+    backCourses2:'← Retour', groupStudentsTitle:'Étudiants du groupe',
+    studentUnit:'étudiant(s)', noStudentsInGroup:'Aucun étudiant dans ce groupe',
+    levelWord:'Niveau', groupWord:'Groupe', allClasses:'Classes',
+    allStudents:'— Tous les étudiants —', studentSuffix:' étudiant(s)',
+    niveauSuffix:(n) => n + (n > 1 ? ' niveaux' : ' niveau'),
+    groupeSuffix:(n) => n + (n > 1 ? ' groupes' : ' groupe'),
+    imageTooLarge:'Image trop grande (max 2 Mo)', photoUpdated:'Photo mise à jour ✓',
+    postsLoading:'Chargement…', postsErrorPrefix:'Erreur : ',
+    openLink:'Ouvrir le lien', allGraded:'Tout corrigé ✅',
+    phAssignDesc:'Instructions pour les étudiants…',
+    phPostTitle:'ex: Séance 12 – Passé composé',
+    phPostNotes:'Points clés, rappels, vocabulaire…',
   },
   en: {
     topbarTitle: { home:'Teacher Dashboard', students:'Students', courses:'Classes', assignments:'Assignments', posts:'Lesson Notes', quizzes:'Quizzes', grades:'Grades & Results', settings:'Settings', attendance:'Attendance' },
@@ -1034,6 +1059,31 @@ const T = {
     attUnsavedTxt:'⚡ Unsaved changes', attSaveNowLbl:'Save now',
     attThStudent:'Student', attThSessions:'Sessions (1–20)', attThTotal:'Attendance',
     attSavingLbl:'Saving…', toastAttError:'Error saving. Please try again.',
+    noAssignments:'No assignments yet.', noAssignmentsSub:'No assignments',
+    pendingBadge:'to grade', gradedBadge:'Graded', deleteTitle:'Delete',
+    deleteConfirm:'Delete this assignment?', toastAssignDeleted:'Assignment deleted',
+    toastNetError:'❌ Network error', toastServerError:'Server error',
+    toastErrorPrefix:'Error: ',
+    loading:'Loading…', errorLoading:'Error loading',
+    subBack:'← Back to assignments', dueLbl2:'Due: ', noText:'(No text)',
+    scorePlaceholder:'Score /100', commentPlaceholder:'Comment for student…',
+    yourComment:'Your comment:', saveGrade:'Save',
+    toastGraded:'✅ Grade saved', noSubmissions:'No submissions yet.',
+    noClassAssigned:'— No class assigned —', chooseClass:'— Choose a class —',
+    classLabel:'Class', validateChooseClass:'Please choose a class.',
+    validateTitleRequired:'Title is required.', networkError:'❌ Network error',
+    backCourses2:'← Back', groupStudentsTitle:'Group students',
+    studentUnit:'student(s)', noStudentsInGroup:'No students in this group',
+    levelWord:'Level', groupWord:'Group', allClasses:'Classes',
+    allStudents:'— All students —', studentSuffix:' student(s)',
+    niveauSuffix:(n) => n + (n > 1 ? ' levels' : ' level'),
+    groupeSuffix:(n) => n + (n > 1 ? ' groups' : ' group'),
+    imageTooLarge:'Image too large (max 2 MB)', photoUpdated:'Photo updated ✓',
+    postsLoading:'Loading…', postsErrorPrefix:'Error: ',
+    openLink:'Open link', allGraded:'All graded ✅',
+    phAssignDesc:'Instructions for students…',
+    phPostTitle:'e.g. Session 12 – Present Perfect',
+    phPostNotes:'Key points, reminders, vocabulary…',
   }
 };
 
@@ -1089,7 +1139,7 @@ function applyTranslations() {
   set('lbl-fullname', tr.lblFullname); set('save-btn', tr.saveBtn); set('pref-title', tr.prefTitle); set('pref-txt', tr.prefTxt);
   set('modal-assign-title', tr.modalAssignTitle); set('mlbl-title', tr.mlblTitle); set('mlbl-desc', tr.mlblDesc); set('mlbl-due', tr.mlblDue); set('mlbl-subject', tr.mlblSubject);
   const lbl = document.getElementById('mlbl-course');
-  if (lbl) lbl.innerHTML = (currentLang === 'ar' ? 'الفصل' : 'Classe') + ' <span style="color:var(--red)">*</span>';
+  if (lbl) lbl.innerHTML = T[currentLang].classLabel + ' <span style="color:var(--red)">*</span>';
   populateCourseSelect(); // repopulate with correct language
   set('modal-cancel', tr.modalCancel); set('modal-submit', tr.modalSubmit);
   set('modal-quiz-title', tr.modalQuizTitle); set('qmlbl-title', tr.qmlblTitle); set('qmlbl-qs', tr.qmlblQs); set('qmlbl-time', tr.qmlblTime);
@@ -1101,6 +1151,9 @@ function applyTranslations() {
   set('posts-lbl-date', tr.postsLblDate); set('posts-lbl-link', tr.postsLblLink);
   set('posts-lbl-notes', tr.postsLblNotes); set('post-submit-lbl', tr.postsSubmitBtn);
   populatePostCourseSelect();
+  const phDesc = document.getElementById('new-assign-desc'); if(phDesc) phDesc.placeholder = tr.phAssignDesc;
+  const phPostTitle = document.getElementById('post-title'); if(phPostTitle) phPostTitle.placeholder = tr.phPostTitle;
+  const phPostNotes = document.getElementById('post-notes'); if(phPostNotes) phPostNotes.placeholder = tr.phPostNotes;
   // Attendance
   set('nav-attendance-lbl', tr.navAttendance);
   set('att-page-title', tr.attPageTitle); set('att-page-sub', tr.attPageSub);
@@ -1190,16 +1243,14 @@ function renderAssignments() {
   const lang = currentLang;
 
   if (ASSIGNMENTS_LIVE.length === 0) {
-    list.innerHTML = `<div style="color:var(--muted);font-size:.88rem;padding:1rem 0;text-align:center;">${lang==='ar'?'لا توجد واجبات بعد.':'Aucun devoir pour le moment.'}</div>`;
-    const sub = document.getElementById('assign-page-sub'); if (sub) sub.textContent = lang==='ar'?'لا توجد واجبات':'Aucun devoir';
+    list.innerHTML = `<div style="color:var(--muted);font-size:.88rem;padding:1rem 0;text-align:center;">${tr.noAssignments}</div>`;
+    const sub = document.getElementById('assign-page-sub'); if (sub) sub.textContent = tr.noAssignmentsSub;
     return;
   }
 
   const pending = ASSIGNMENTS_LIVE.reduce((s,a) => s + Math.max(0,(parseInt(a.submitted_count)||0)-(parseInt(a.graded_count)||0)), 0);
   const sub = document.getElementById('assign-page-sub');
-  if (sub) sub.textContent = lang==='ar'
-    ? `${ASSIGNMENTS_LIVE.length} واجبات · ${pending>0?pending+' تسليمات تنتظر':'جميعها مصححة ✅'}`
-    : `${ASSIGNMENTS_LIVE.length} devoir(s) · ${pending>0?pending+' à corriger':'Tout corrigé ✅'}`;
+  if (sub) sub.textContent = `${ASSIGNMENTS_LIVE.length} ${tr.newAssignLbl.replace('+ ','')} · ${pending>0?pending+' '+tr.pendingBadge:tr.allGraded}`;
   const s2 = document.getElementById('stat2-val'); if (s2) s2.textContent = pending;
 
   list.innerHTML = ASSIGNMENTS_LIVE.map(a => {
@@ -1210,10 +1261,10 @@ function renderAssignments() {
     const total     = parseInt(a.total_students)||0;
     const graded    = parseInt(a.graded_count)||0;
     const ungraded  = submitted - graded;
-    const dueStr    = a.due_date ? new Date(a.due_date).toLocaleDateString(lang==='ar'?'ar-MA':'fr-FR',{day:'numeric',month:'short'}) : '—';
+    const dueStr    = a.due_date ? new Date(a.due_date).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'short'}) : '—';
     const pendingBadge = ungraded > 0
-      ? `<span style="background:rgba(245,197,66,.15);color:var(--yellow);border:1px solid rgba(245,197,66,.3);font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;font-family:var(--font);">${ungraded} ${lang==='ar'?'تنتظر':'à corriger'}</span>`
-      : `<span style="background:rgba(62,207,120,.1);color:var(--green);border:1px solid rgba(62,207,120,.25);font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;font-family:var(--font);">✓ ${lang==='ar'?'مصحح':'Corrigé'}</span>`;
+      ? `<span style="background:rgba(245,197,66,.15);color:var(--yellow);border:1px solid rgba(245,197,66,.3);font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;font-family:var(--font);">${ungraded} ${tr.pendingBadge}</span>`
+      : `<span style="background:rgba(62,207,120,.1);color:var(--green);border:1px solid rgba(62,207,120,.25);font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;font-family:var(--font);">✓ ${tr.gradedBadge}</span>`;
     return `<div class="assign-row">
       <div class="assign-info">
         <div class="assign-title-t">${escHtml(title)} ${pendingBadge}</div>
@@ -1222,27 +1273,27 @@ function renderAssignments() {
           ${dueStr!=='—' ? `<span>📅 ${tr.dueLbl} ${dueStr}</span>` : ''}
           ${subject   ? `<span>📚 ${tr.subjectLbl} ${escHtml(subject)}</span>` : ''}
           <span style="color:${submitted===0?'var(--muted)':submitted/Math.max(total,1)>.7?'var(--green)':'var(--yellow)'}">
-            📨 ${submitted}${total?'/'+total:''} ${lang==='ar'?'تسليم':'soumis'}
+            📨 ${submitted}${total?'/'+total:''} ${tr.submittedLbl}
           </span>
         </div>
       </div>
       <div class="assign-actions">
         <button class="btn-primary btn-sm" onclick="openSubmissions(${a.id})">${tr.viewGradeBtn}</button>
         <button class="btn-secondary btn-sm" onclick="deleteAssignment(${a.id})" style="color:var(--red);border-color:rgba(232,93,117,.3);"
-          title="${lang==='ar'?'حذف':'Supprimer'}">🗑</button>
+          title="${tr.deleteTitle}">🗑</button>
       </div>
     </div>`;
   }).join('');
 }
 
 async function deleteAssignment(id) {
-  if (!confirm(currentLang==='ar'?'حذف هذا الواجب؟':'Supprimer ce devoir ?')) return;
+  if (!confirm(T[currentLang].deleteConfirm)) return;
   try {
     const res  = await fetch('api_assignments.php', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken}, body:JSON.stringify({action:'delete',id}) });
     const data = await res.json();
-    if (data.ok) { await loadAssignments(); showToast(currentLang==='ar'?'تم الحذف':'Devoir supprimé'); }
-    else showToast('❌ '+(data.error||'Erreur'));
-  } catch(e) { showToast('❌ Erreur réseau'); }
+    if (data.ok) { await loadAssignments(); showToast(T[currentLang].toastAssignDeleted); }
+    else showToast('❌ '+(data.error||T[currentLang].toastServerError));
+  } catch(e) { showToast(T[currentLang].toastNetError); }
 }
 
 /* ── Submissions sub-view ── */
@@ -1256,48 +1307,49 @@ async function openSubmissions(assignId) {
   const metaEl  = document.getElementById('sub-view-meta');
   const subList = document.getElementById('submissions-list');
   if (titleEl) titleEl.textContent = '…';
-  if (subList) subList.innerHTML = `<div style="color:var(--muted);padding:1rem;">${currentLang==='ar'?'جارِ التحميل…':'Chargement…'}</div>`;
+  if (subList) subList.innerHTML = `<div style="color:var(--muted);padding:1rem;">${T[currentLang].loading}</div>`;
   try {
     const res  = await fetch(`api_assignments.php?action=submissions&id=${assignId}`);
     const data = await res.json();
-    if (!data.ok) { if(subList) subList.innerHTML = '<div style="color:var(--red);">Erreur</div>'; return; }
+    if (!data.ok) { if(subList) subList.innerHTML = `<div style="color:var(--red);">${T[currentLang].errorLoading}</div>`; return; }
     const a    = data.assignment;
     const lang = currentLang;
     const title = lang==='ar' ? (a.title_ar||a.title_fr) : (a.title_fr||a.title_ar);
     const cn    = lang==='ar' ? (a.group_name_ar||a.group_name_fr||'') : (a.group_name_fr||a.group_name_ar||'');
     if (titleEl) titleEl.textContent = title;
-    if (metaEl)  metaEl.textContent  = cn + (a.due_date ? ' · ' + (lang==='ar'?'الموعد: ':'Échéance : ') + new Date(a.due_date).toLocaleDateString(lang==='ar'?'ar-MA':'fr-FR',{day:'numeric',month:'long',year:'numeric'}) : '');
+    if (metaEl)  metaEl.textContent  = cn + (a.due_date ? ' · ' + T[lang].dueLbl2 + new Date(a.due_date).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'long',year:'numeric'}) : '');
     const backLbl = document.getElementById('back-assign-lbl');
-    if (backLbl) backLbl.textContent = lang==='ar'?'→ العودة':'← Retour aux devoirs';
+    if (backLbl) backLbl.textContent = T[lang].subBack;
     renderSubmissions(data.submissions);
-  } catch(e) { if(subList) subList.innerHTML = '<div style="color:var(--red);">Erreur réseau</div>'; }
+  } catch(e) { if(subList) subList.innerHTML = `<div style="color:var(--red);">${T[currentLang].toastNetError}</div>`; }
 }
 
 function renderSubmissions(submissions) {
   const subList = document.getElementById('submissions-list');
   if (!subList) return;
   const lang = currentLang;
+  const tr2 = T[lang];
   if (!submissions.length) {
-    subList.innerHTML = `<div style="color:var(--muted);text-align:center;padding:2rem;">${lang==='ar'?'لا توجد تسليمات.':'Aucune soumission pour le moment.'}</div>`;
+    subList.innerHTML = `<div style="color:var(--muted);text-align:center;padding:2rem;">${tr2.noSubmissions}</div>`;
     return;
   }
   subList.innerHTML = submissions.map(s => {
-    const date = new Date(s.submitted_at).toLocaleDateString(lang==='ar'?'ar-MA':'fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    const date = new Date(s.submitted_at).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
     const scoreBadge = s.score!=null ? `<span style="background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:100px;font-family:var(--font);">📊 ${s.score}/100</span>` : '';
-    const fbBlock = s.teacher_comment ? `<div style="margin-top:.4rem;padding:.5rem .75rem;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:8px;font-size:.8rem;"><strong style="color:var(--purple);font-size:.72rem;display:block;margin-bottom:.2rem;">${lang==='ar'?'تعليقك:':'Votre commentaire :'}</strong>${escHtml(s.teacher_comment)}</div>` : '';
+    const fbBlock = s.teacher_comment ? `<div style="margin-top:.4rem;padding:.5rem .75rem;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:8px;font-size:.8rem;"><strong style="color:var(--purple);font-size:.72rem;display:block;margin-bottom:.2rem;">${tr2.yourComment}</strong>${escHtml(s.teacher_comment)}</div>` : '';
     return `<div style="display:flex;align-items:flex-start;gap:.85rem;padding:1.1rem 0;border-bottom:1px solid var(--border2);" id="sub-row-${s.id}">
       <div style="width:32px;height:32px;border-radius:50%;background:rgba(167,139,250,.15);border:1.5px solid rgba(167,139,250,.35);display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);font-size:.72rem;font-weight:700;color:var(--purple);flex-shrink:0;">${escHtml(s.initials)}</div>
       <div style="flex:1;min-width:0;">
         <div style="font-family:var(--font);font-size:.9rem;font-weight:600;margin-bottom:.2rem;">${escHtml(s.student_name||s.username)} ${scoreBadge}</div>
-        ${s.comment ? `<div style="font-size:.82rem;color:var(--muted);line-height:1.5;margin-bottom:.4rem;white-space:pre-wrap;">${escHtml(s.comment)}</div>` : `<div style="font-size:.82rem;color:var(--muted2);font-style:italic;margin-bottom:.4rem;">${lang==='ar'?'(لا نص)':'(Pas de texte)'}</div>`}
+        ${s.comment ? `<div style="font-size:.82rem;color:var(--muted);line-height:1.5;margin-bottom:.4rem;white-space:pre-wrap;">${escHtml(s.comment)}</div>` : `<div style="font-size:.82rem;color:var(--muted2);font-style:italic;margin-bottom:.4rem;">${tr2.noText}</div>`}
         <div style="font-size:.74rem;color:var(--muted2);">📅 ${date}</div>
         ${fbBlock}
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.65rem;align-items:center;">
-          <input type="number" min="0" max="100" id="score-${s.id}" placeholder="${lang==='ar'?'/100':'Note /100'}" value="${s.score!=null?s.score:''}"
+          <input type="number" min="0" max="100" id="score-${s.id}" placeholder="${tr2.scorePlaceholder}" value="${s.score!=null?s.score:''}"
             style="width:80px;padding:.4rem .6rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.85rem;text-align:center;outline:none;">
-          <input type="text" id="comment-${s.id}" placeholder="${lang==='ar'?'تعليق للطالب…':'Commentaire pour l\'étudiant…'}" value="${escHtml(s.teacher_comment||'')}"
+          <input type="text" id="comment-${s.id}" placeholder="${tr2.commentPlaceholder}" value="${escHtml(s.teacher_comment||'')}"
             style="flex:1;min-width:160px;padding:.4rem .7rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;">
-          <button class="btn-primary btn-sm" onclick="gradeSubmission(${s.id})">${lang==='ar'?'حفظ':'Enregistrer'}</button>
+          <button class="btn-primary btn-sm" onclick="gradeSubmission(${s.id})">${tr2.saveGrade}</button>
         </div>
       </div>
     </div>`;
@@ -1320,12 +1372,12 @@ async function gradeSubmission(subId) {
     const res  = await fetch('api_assignments.php', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken}, body:JSON.stringify({action:'grade',submission_id:subId,score:score!==''?parseInt(score):null,teacher_comment:comment}) });
     const data = await res.json();
     if (data.ok) {
-      showToast(currentLang==='ar'?'✅ تم الحفظ':'✅ Correction enregistrée');
+      showToast(T[currentLang].toastGraded);
       // Update badge inline
       const row = document.getElementById('sub-row-'+subId);
       if (row && score!=='') { let b=row.querySelector('span[style*="var(--purple)"]'); if(!b){b=document.createElement('span');b.style.cssText='background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:100px;';row.querySelector('div[style*="font-weight:600"]').appendChild(b);} b.textContent='📊 '+score+'/100'; }
-    } else showToast('❌ '+(data.error||'Erreur'));
-  } catch(e) { showToast('❌ Erreur réseau'); }
+    } else showToast('❌ '+(data.error||T[currentLang].toastServerError));
+  } catch(e) { showToast(T[currentLang].toastNetError); }
   finally { btn.textContent=orig; btn.disabled=false; }
 }
 
@@ -1418,8 +1470,8 @@ function populateCourseSelect() {
   if (!sel) return;
   const lang = typeof currentLang !== 'undefined' ? currentLang : 'fr';
   sel.innerHTML = TEACHER_COURSES.length === 0
-    ? `<option value="">${lang === 'ar' ? '— لا توجد فصول مسندة —' : '— Aucune classe assignée —'}</option>`
-    : `<option value="">${lang === 'ar' ? '— اختر الفصل —' : '— Choisir la classe —'}</option>`
+    ? `<option value="">${T[lang].noClassAssigned}</option>`
+    : `<option value="">${T[lang].chooseClass}</option>`
       + TEACHER_COURSES.map(c => {
           const name = lang === 'ar'
             ? (c.group_name_ar || c.group_name_fr)
@@ -1438,7 +1490,7 @@ async function openAssignModal() {
   // Update label language
   const lang = typeof currentLang !== 'undefined' ? currentLang : 'fr';
   const lbl = document.getElementById('mlbl-course');
-  if (lbl) lbl.innerHTML = (lang === 'ar' ? 'الفصل' : 'Classe') + ' <span style="color:var(--red)">*</span>';
+  if (lbl) lbl.innerHTML = T[lang].classLabel + ' <span style="color:var(--red)">*</span>';
   const errEl = document.getElementById('assign-modal-error');
   if (errEl) errEl.style.display = 'none';
   openModal('assign');
@@ -1456,11 +1508,11 @@ async function submitNewAssign() {
 
   // Validation
   if (!courseId) {
-    if (errEl) { errEl.textContent = lang === 'ar' ? 'يرجى اختيار الفصل.' : 'Veuillez choisir une classe.'; errEl.style.display = ''; }
+    if (errEl) { errEl.textContent = T[lang].validateChooseClass; errEl.style.display = ''; }
     return;
   }
   if (!title) {
-    if (errEl) { errEl.textContent = lang === 'ar' ? 'العنوان مطلوب.' : 'Le titre est requis.'; errEl.style.display = ''; }
+    if (errEl) { errEl.textContent = T[lang].validateTitleRequired; errEl.style.display = ''; }
     return;
   }
   if (errEl) errEl.style.display = 'none';
@@ -1492,11 +1544,11 @@ async function submitNewAssign() {
       if (typeof loadAssignments === 'function') await loadAssignments();
       showToast(T[lang].toastAssignPublished);
     } else {
-      if (errEl) { errEl.textContent = '❌ ' + (data.error || 'Erreur'); errEl.style.display = ''; }
-      else showToast('❌ ' + (data.error || 'Erreur'));
+      if (errEl) { errEl.textContent = '❌ ' + (data.error || T[lang].toastServerError); errEl.style.display = ''; }
+      else showToast('❌ ' + (data.error || T[lang].toastServerError));
     }
   } catch(e) {
-    if (errEl) { errEl.textContent = '❌ Erreur réseau'; errEl.style.display = ''; }
+    if (errEl) { errEl.textContent = T[lang].networkError; errEl.style.display = ''; }
   } finally {
     if (btn) { btn.textContent = origText; btn.disabled = false; }
   }
@@ -1522,12 +1574,12 @@ async function saveProfile() {
       body:    JSON.stringify({ action: 'update_name', name })
     });
     const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Erreur serveur');
+    if (!data.ok) throw new Error(data.error || T[currentLang].toastServerError);
     document.getElementById('sidebar-name').textContent = name;
     document.getElementById('settings-name').textContent = name;
     showToast(T[currentLang].toastSaved);
   } catch(e) {
-    showToast('Erreur : ' + e.message);
+    showToast(T[currentLang].toastErrorPrefix + e.message);
   } finally {
     if (btn) btn.disabled = false;
   }
@@ -1704,7 +1756,7 @@ async function attSave() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   const _sl = sessionStorage.getItem('upskill_lang');
-  const savedLang = (_sl === 'fr' || _sl === 'en') ? _sl : 'fr';
+  const savedLang = (_sl === 'fr' || _sl === 'en') ? _sl : 'en';
   // Load everything in parallel
   await loadLiveStudents();
   await Promise.all([initAttData(), loadTeacherCourses(), loadAssignments()]);
@@ -1797,14 +1849,14 @@ const TYPE_ICONS = {
   business:'💼', kids:'🧒'
 };
 const TYPE_LABELS = {
-  beginners:          {fr:'Débutants',          ar:'مبتدئون'},
-  pre_intermediate:   {fr:'Pré-intermédiaire',  ar:'ما قبل المتوسط'},
-  intermediate:       {fr:'Intermédiaire',      ar:'متوسط'},
-  upper_intermediate: {fr:'Upper-intermédiaire',ar:'فوق المتوسط'},
-  advanced:           {fr:'Avancé',             ar:'متقدم'},
-  baccalaureate:      {fr:'Baccalauréat',       ar:'البكالوريا'},
-  business:           {fr:'Business',           ar:'الأعمال'},
-  kids:               {fr:'Kids',               ar:'أطفال'},
+  beginners:          {fr:'Débutants',          en:'Beginners'},
+  pre_intermediate:   {fr:'Pré-intermédiaire',  en:'Pre-Intermediate'},
+  intermediate:       {fr:'Intermédiaire',      en:'Intermediate'},
+  upper_intermediate: {fr:'Upper-intermédiaire',en:'Upper-Intermediate'},
+  advanced:           {fr:'Avancé',             en:'Advanced'},
+  baccalaureate:      {fr:'Baccalauréat',       en:'Baccalaureate'},
+  business:           {fr:'Business',           en:'Business'},
+  kids:               {fr:'Kids',               en:'Kids'},
 };
 const TYPE_ICON_CLASS = {
   beginners:'c2', pre_intermediate:'c1', intermediate:'c2',
@@ -1836,19 +1888,20 @@ function _tcRenderTypes() {
     byType[g.type_key].push(g);
   });
 
-  const studentLbl = lang === 'ar' ? 'طالب' : 'étudiant(s)';
+  const tr2 = T[lang];
+  const studentLbl = tr2.studentUnit;
 
   const cards = order.map(typeKey => {
     const groups   = byType[typeKey];
     const icon     = TYPE_ICONS[typeKey]      || '🏫';
     const iconCls  = TYPE_ICON_CLASS[typeKey] || 'c1';
-    const labels   = TYPE_LABELS[typeKey]     || {fr: typeKey, ar: typeKey};
-    const typeName = lang === 'ar' ? labels.ar : labels.fr;
+    const labels   = TYPE_LABELS[typeKey]     || {fr: typeKey, en: typeKey};
+    const typeName = lang === 'en' ? (labels.en || labels.fr) : labels.fr;
     const levels   = [...new Set(groups.map(g => g.level_number).filter(l => l !== null))];
     const hasLvl   = levels.length > 0;
     const subLbl   = hasLvl
-      ? levels.length + (lang === 'ar' ? ' مستوى' : (' niveau' + (levels.length > 1 ? 'x' : '')))
-      : groups.length + (lang === 'ar' ? ' مجموعة' : (' groupe' + (groups.length > 1 ? 's' : '')));
+      ? tr2.niveauSuffix(levels.length)
+      : tr2.groupeSuffix(groups.length);
     const total    = groups.reduce((s, g) => s + (g.student_count || 0), 0);
     return `<div class="course-card" onclick="tcSelectType('${typeKey}')">
       <div class="course-card-header">
@@ -1879,8 +1932,8 @@ function _tcRenderLevels() {
   const el      = document.getElementById('teacher-assigned-groups');
   if (!el) return;
   const groups  = teacherGroups.filter(g => g.type_key === teacherSelType);
-  const labels  = TYPE_LABELS[teacherSelType] || {fr: teacherSelType, ar: teacherSelType};
-  const typeName = lang === 'ar' ? labels.ar : labels.fr;
+  const labels  = TYPE_LABELS[teacherSelType] || {fr: teacherSelType, en: teacherSelType};
+  const typeName = lang === 'en' ? (labels.en || labels.fr) : labels.fr;
   const icon    = TYPE_ICONS[teacherSelType]      || '🏫';
   const iconCls = TYPE_ICON_CLASS[teacherSelType] || 'c1';
 
@@ -1892,15 +1945,16 @@ function _tcRenderLevels() {
   });
   const levels = Object.keys(levelMap).map(Number).sort((a, b) => a - b);
 
-  const studentLbl = lang === 'ar' ? 'طالب' : 'étudiant(s)';
-  const levelWord  = lang === 'ar' ? 'المستوى' : 'Niveau';
-  const groupWord  = lang === 'ar' ? 'مجموعة' : 'groupe';
+  const tr3 = T[lang];
+  const studentLbl = tr3.studentUnit;
+  const levelWord  = tr3.levelWord;
+  const groupWord  = tr3.groupWord;
 
   const cards = levels.map(lvl => {
     const gs    = levelMap[lvl];
     const total = gs.reduce((s, g) => s + (g.student_count || 0), 0);
     const gc    = gs.length;
-    const gcLbl = gc + ' ' + groupWord + (gc > 1 && lang !== 'ar' ? 's' : '');
+    const gcLbl = tr3.groupeSuffix(gc);
     return `<div class="course-card" onclick="tcSelectLevel(${lvl})">
       <div class="course-card-header">
         <div class="course-icon ${iconCls}">${icon}</div>
@@ -1913,7 +1967,7 @@ function _tcRenderLevels() {
     </div>`;
   }).join('');
 
-  const crumbHome = lang === 'ar' ? 'الكل' : 'Classes';
+  const crumbHome = T[lang].allClasses;
   el.innerHTML = _tcBreadcrumb(
     [{label: crumbHome, fn: 'tcGoTypes()'}],
     typeName
@@ -1934,13 +1988,14 @@ function _tcRenderGroups() {
     g.type_key === teacherSelType &&
     (teacherSelLevel === null || g.level_number === teacherSelLevel)
   );
-  const labels   = TYPE_LABELS[teacherSelType] || {fr: teacherSelType, ar: teacherSelType};
-  const typeName = lang === 'ar' ? labels.ar : labels.fr;
+  const labels   = TYPE_LABELS[teacherSelType] || {fr: teacherSelType, en: teacherSelType};
+  const typeName = lang === 'en' ? (labels.en || labels.fr) : labels.fr;
   const icon     = TYPE_ICONS[teacherSelType]      || '🏫';
   const iconCls  = TYPE_ICON_CLASS[teacherSelType] || 'c1';
-  const studentLbl = lang === 'ar' ? 'طالب' : 'étudiant(s)';
-  const groupWord  = lang === 'ar' ? 'مجموعة' : 'Groupe';
-  const levelWord  = lang === 'ar' ? 'المستوى' : 'Niveau';
+  const tr5 = T[lang];
+  const studentLbl = tr5.studentUnit;
+  const groupWord  = tr5.groupWord;
+  const levelWord  = tr5.levelWord;
 
   const cards = groups.map(g =>
     `<div class="course-card" onclick="openGroupDetail(${g.group_id})">
@@ -1954,7 +2009,7 @@ function _tcRenderGroups() {
     </div>`
   ).join('');
 
-  const crumbs = [{label: lang === 'ar' ? 'الكل' : 'Classes', fn: 'tcGoTypes()'}];
+  const crumbs = [{label: T[lang].allClasses, fn: 'tcGoTypes()'}];
   if (teacherSelLevel !== null)
     crumbs.push({label: typeName, fn: 'tcGoLevels()'});
   const current = teacherSelLevel !== null ? `${levelWord} ${teacherSelLevel}` : typeName;
@@ -1975,7 +2030,7 @@ function populateAttGroupSelect() {
   const sel = document.getElementById('att-group-select');
   if (!sel) return;
   const lang = currentLang;
-  const noGroup = lang==='ar' ? '— جميع الطلاب —' : '— Tous les étudiants —';
+  const noGroup = T[lang].allStudents;
   sel.innerHTML = `<option value="">${noGroup}</option>`
     + teacherGroups.map(g => {
         const label = lang==='ar' ? g.label_ar : g.label_fr;
@@ -2025,14 +2080,14 @@ async function openGroupDetail(groupId) {
   const g    = teacherGroups.find(g => g.group_id === groupId);
   if (!g) return;
   const lang = currentLang;
-  const label = lang==='ar' ? g.label_ar : g.label_fr;
+  const label = g.label_fr;
 
   document.getElementById('courses-list-view').style.display = 'none';
   document.getElementById('courses-detail-view').style.display = 'block';
   document.getElementById('course-detail-title').textContent = label;
-  document.getElementById('course-detail-meta').textContent = g.student_count + ' étudiant(s)';
-  document.getElementById('cd-students-title').textContent = lang==='ar' ? 'طلاب المجموعة' : 'Étudiants du groupe';
-  document.getElementById('back-courses-lbl').textContent = lang==='ar' ? '→ رجوع' : '← Retour';
+  document.getElementById('course-detail-meta').textContent = g.student_count + T[lang].studentSuffix;
+  document.getElementById('cd-students-title').textContent = T[lang].groupStudentsTitle;
+  document.getElementById('back-courses-lbl').textContent = T[lang].backCourses2;
 
   const listEl = document.getElementById('cd-students-list');
   listEl.innerHTML = '<div class="loading-overlay" style="position:relative;height:60px;"><div class="spinner"></div></div>';
@@ -2054,9 +2109,9 @@ async function openGroupDetail(groupId) {
         </div>
       </div>`;
     }).join('');
-    document.getElementById('course-detail-meta').textContent = students.length + (lang==='ar' ? ' طالب' : ' étudiant(s)');
+    document.getElementById('course-detail-meta').textContent = students.length + T[lang].studentSuffix;
   } catch(e) {
-    listEl.innerHTML = `<p style="color:var(--red);font-size:.85rem;">Erreur de chargement</p>`;
+    listEl.innerHTML = `<p style="color:var(--red);font-size:.85rem;"></p>`;
   }
 }
 
@@ -2070,7 +2125,7 @@ function handleAvatarUpload(input) {
   const file = input.files[0];
   if (!file) return;
   if (file.size > 2 * 1024 * 1024) {
-    showToast(currentLang === 'ar' ? 'الصورة أكبر من 2 ميغا' : 'Image trop grande (max 2 Mo)');
+    showToast(T[currentLang].imageTooLarge);
     return;
   }
   const reader = new FileReader();
@@ -2078,7 +2133,7 @@ function handleAvatarUpload(input) {
     const dataUrl = e.target.result;
     applyAvatarEverywhere(dataUrl);
     try { localStorage.setItem('upskill_avatar_t', dataUrl); } catch(e) {}
-    showToast(currentLang === 'ar' ? 'تم تحديث الصورة ✓' : 'Photo mise à jour ✓');
+    showToast(T[currentLang].photoUpdated);
   };
   reader.readAsDataURL(file);
 }
@@ -2110,14 +2165,14 @@ async function loadPosts() {
   if (TEACHER_COURSES.length === 0) await loadTeacherCourses();
   populatePostCourseSelect();
   const list = document.getElementById('posts-list');
-  list.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">Chargement…</p>';
+  list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;"></p>`;
   try {
     const res  = await fetch('api_lesson_posts.php?action=list');
     const data = await res.json();
     if (!data.ok) throw new Error(data.error);
     renderPostsList(data.posts);
   } catch(e) {
-    list.innerHTML = '<p style="color:var(--red);font-size:.85rem;">Erreur : ' + e.message + '</p>';
+    list.innerHTML = `<p style="color:var(--red);font-size:.85rem;"></p>`;
   }
 }
 
@@ -2126,10 +2181,10 @@ function populatePostCourseSelect() {
   if (!sel) return;
   const lang = currentLang;
   sel.innerHTML = TEACHER_COURSES.length === 0
-    ? `<option value="">${lang === 'ar' ? '— لا توجد فصول —' : '— Aucune classe assignée —'}</option>`
-    : `<option value="">${lang === 'ar' ? '— اختر الفصل —' : '— Choisir la classe —'}</option>`
+    ? `<option value="">${T[lang].noClassAssigned}</option>`
+    : `<option value="">${T[lang].chooseClass}</option>`
       + TEACHER_COURSES.map(c => {
-          const name = lang === 'ar' ? (c.group_name_ar || c.group_name_fr) : (c.group_name_fr || c.group_name_ar);
+          const name = c.group_name_fr || c.group_name_ar;
           return `<option value="${c.id}">${name}</option>`;
         }).join('');
 }
@@ -2147,9 +2202,9 @@ function renderPostsList(posts) {
   }
   list.innerHTML = posts.map(p => {
     const lang = currentLang;
-    const courseName = lang === 'ar' ? (p.group_name_ar || p.group_name_fr) : (p.group_name_fr || p.group_name_ar);
-    const dateStr = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'ar' ? 'ar-MA' : 'fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
-    const linkBtn = p.link ? `<a href="${escHtml(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--blue);text-decoration:none;font-weight:500;margin-top:.5rem;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Ouvrir le lien</a>` : '';
+    const courseName = p.group_name_fr || p.group_name_ar;
+    const dateStr = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { day:'numeric', month:'long', year:'numeric' }) : '';
+    const linkBtn = p.link ? `<a href="${escHtml(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--blue);text-decoration:none;font-weight:500;margin-top:.5rem;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> ${T[lang].openLink}</a>` : '';
     const notesHtml = p.notes ? `<p style="color:var(--muted);font-size:.85rem;margin-top:.6rem;white-space:pre-wrap;line-height:1.6;">${escHtml(p.notes)}</p>` : '';
     return `<div class="card" style="margin-bottom:1rem;">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;">

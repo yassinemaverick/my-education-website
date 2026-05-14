@@ -1031,7 +1031,7 @@ const QUIZZES = [
   { id:4, title_fr:'Grammaire – Temps passés', title_ar:'القواعد – الأزمنة الماضية', desc_fr:'Maîtriser le passé simple et composé.', desc_ar:'إتقان الأزمنة الماضية.', qs:12, min:18, status:'done', score:85 },
 ];
 
-let currentLang = 'fr';
+let currentLang = 'en';
 let currentAssignFilter = 'all';
 let currentQuizFilter = 'all';
 let activePage = 'home';
@@ -1078,6 +1078,15 @@ const T = {
     toastSaved:'Profil mis à jour !',
     qsLabel:'questions', minLabel:'min',
     dueLbl:'Échéance :', subjectLbl:'Matière :',
+    teacherLbl:'Professeur', classmatesLbl:'Camarades',
+    noAssignments:'Aucun devoir pour le moment', noResults:'Aucun résultat',
+    submitBtn:'Soumettre →', retractBtn:'Rétracter', retractTitle:'Sécuriser la soumission',
+    retractConfirm:'Rétracter cette soumission ?', pendingStatus:'Devoir en attente',
+    dueLblPre:'Échéance : ',
+    modalTitle:'Soumettre le devoir', cancelBtn:'Annuler',
+    loading:'Chargement…', errorPrefix:'Erreur : ', serverError:'Erreur serveur',
+    networkError:'❌ Erreur réseau', toastErrorPrefix:'Erreur : ',
+    feedLoading:'Chargement…',
   },
   en: {
     topbarTitle: { home:'Dashboard', myclass:'My Class', assignments:'Assignments', feed:'Lesson Notes', quizzes:'Challenge', progress:'Progress', howto:'How-to', settings:'Settings' },
@@ -1118,6 +1127,15 @@ const T = {
     toastSaved:'Profile updated!',
     qsLabel:'questions', minLabel:'min',
     dueLbl:'Due:', subjectLbl:'Subject:',
+    teacherLbl:'Teacher', classmatesLbl:'Classmates',
+    noAssignments:'No assignments yet', noResults:'No results',
+    submitBtn:'Submit →', retractBtn:'Retract', retractTitle:'Retract submission',
+    retractConfirm:'Retract this submission?', pendingStatus:'Pending assignment',
+    dueLblPre:'Due: ',
+    modalTitle:'Submit assignment', cancelBtn:'Cancel',
+    loading:'Loading…', errorPrefix:'Error: ', serverError:'Server error',
+    networkError:'❌ Network error', toastErrorPrefix:'Error: ',
+    feedLoading:'Loading…',
   }
 };
 
@@ -1374,11 +1392,11 @@ async function loadMyGroup() {
           <div style="width:34px;height:34px;border-radius:50%;background:rgba(62,207,120,.12);border:1px solid rgba(62,207,120,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.75rem;color:var(--green);flex-shrink:0;">${init}</div>
           <div>
             <div style="font-size:.88rem;">${t.name||t.username}</div>
-            <div style="font-size:.72rem;color:var(--green);">${lang==='ar'?'أستاذ':'Professeur'}</div>
+            <div style="font-size:.72rem;color:var(--green);">${T[lang].teacherLbl}</div>
           </div>
         </div>`;
       }).join('');
-      matesEl.innerHTML = `<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;">${lang==='ar'?'الأستاذ':'Professeur'}</div>${teacherHtml}<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:.75rem 0 .5rem;">${lang==='ar'?'الزملاء':'Camarades'}</div>` + matesEl.innerHTML;
+      matesEl.innerHTML = `<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;">${T[lang].teacherLbl}</div>${teacherHtml}<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:.75rem 0 .5rem;">${T[lang].classmatesLbl}</div>` + matesEl.innerHTML;
     }
   } catch(e) {}
 }
@@ -1450,7 +1468,7 @@ function renderAssignments() {
   if (rows.length === 0) {
     list.innerHTML = `<div style="text-align:center;padding:3rem 1rem;color:var(--muted);">
       <div style="font-size:2rem;margin-bottom:.75rem;">📭</div>
-      <div style="font-family:var(--font);font-size:.95rem;">${currentLang === 'ar' ? 'لا توجد واجبات حتى الآن' : 'Aucun devoir pour le moment'}</div>
+      <div style="font-family:var(--font);font-size:.95rem;">${tr.noAssignments}</div>
     </div>`;
     return;
   }
@@ -1469,33 +1487,32 @@ function renderAssignments() {
   };
 
   list.innerHTML = items.length === 0
-    ? `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.88rem;">${currentLang === 'ar' ? 'لا توجد نتائج' : 'Aucun résultat'}</div>`
+    ? `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.88rem;">${tr.noResults}</div>`
     : items.map(a => {
-        const title   = e(currentLang === 'ar' ? (a.title_ar || a.title_fr) : (a.title_fr || a.title_ar));
-        const desc    = e(currentLang === 'ar' ? (a.description_ar || a.description_fr || '') : (a.description_fr || a.description_ar || ''));
-        const subject = e(currentLang === 'ar' ? (a.subject_ar || a.subject_fr) : (a.subject_fr || a.subject_ar));
+        const title   = e(a.title_fr || a.title_ar);
+        const desc    = e(a.description_fr || a.description_ar || '');
+        const subject = e(a.subject_fr || a.subject_ar);
         const due     = e(a.due_fmt || (a.due_date ? a.due_date : '—'));
-        const isAr    = currentLang === 'ar';
 
         // Action button based on status
         let actionBtn = '';
         if (a.status === 'pending' || a.status === 'overdue') {
           actionBtn = `<button class="btn-primary" style="margin-top:1rem;padding:.6rem 1.2rem;font-size:.83rem;"
             onclick="openSubmitModal(${a.id},'${title.replace(/'/g,"\\'")}','${due.replace(/'/g,"\\'")}')">
-            ${isAr ? '← تسليم الواجب' : 'Soumettre →'}
+            ${tr.submitBtn}
           </button>`;
         } else if (a.status === 'submitted') {
           actionBtn = `<div style="display:flex;align-items:center;gap:.75rem;margin-top:1rem;flex-wrap:wrap;">
             <div style="font-size:.8rem;color:var(--green);display:flex;align-items:center;gap:.35rem;">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-              ${isAr ? 'تم التسليم' : 'Soumis'}
+              ${tr.badgeSubmitted}
               ${a.submitted_at ? `<span style="color:var(--muted);font-weight:400;">· ${formatRelativeTime(a.submitted_at, currentLang)}</span>` : ''}
             </div>
             <button onclick="retractSubmission(${a.id})"
               style="font-size:.75rem;padding:.3rem .7rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--font);"
               onmouseenter="this.style.color='var(--white)'" onmouseleave="this.style.color='var(--muted)'"
-              title="${isAr ? 'سحب التسليم' : 'Rétracter la soumission'}">
-              ${isAr ? 'سحب' : 'Rétracter'}
+              title="${tr.retractTitle}">
+              ${tr.retractBtn}
             </button>
           </div>`;
         }
@@ -1525,18 +1542,19 @@ function renderActivityFeed() {
     // Fall back: show pending/overdue assignments as activity
     const fallback = (LIVE.assignments || []).slice(0, 5);
     if (fallback.length === 0) {
-      feed.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:1rem 0;text-align:center;">${lang === 'ar' ? 'لا يوجد نشاط حتى الآن' : 'Aucune activité pour le moment'}</div>`;
+      feed.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:1rem 0;text-align:center;">${T[lang].lbEmpty}</div>`;
       return;
     }
+    const tr2 = T[lang];
     feed.innerHTML = fallback.map(a => {
       const color = a.status === 'overdue' ? 'red' : a.status === 'submitted' ? 'green' : 'yellow';
       const label = a.status === 'overdue'
-        ? (lang === 'ar' ? 'واجب متأخر' : 'Devoir en retard')
+        ? tr2.badgeOverdue
         : a.status === 'submitted'
-          ? (lang === 'ar' ? 'واجب مُسلَّم' : 'Devoir soumis')
-          : (lang === 'ar' ? 'واجب معلق' : 'Devoir en attente');
-      const title = e(lang === 'ar' ? (a.title_ar || a.title_fr) : (a.title_fr || a.title_ar));
-      const due   = a.due_fmt ? `${lang === 'ar' ? 'الموعد: ' : 'Échéance : '}${e(a.due_fmt)}` : '';
+          ? tr2.badgeSubmitted
+          : tr2.pendingStatus;
+      const title = e(a.title_fr || a.title_ar);
+      const due   = a.due_fmt ? `${tr2.dueLblPre}${e(a.due_fmt)}` : '';
       return `<div class="activity-item">
         <div class="activity-dot ${color}"></div>
         <div><div class="activity-text"><strong>${label}</strong> — <span>${title}</span></div>
@@ -1613,7 +1631,7 @@ async function saveProfile() {
       body: JSON.stringify({ action: 'update_name', name })
     });
     const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Erreur serveur');
+    if (!data.ok) throw new Error(data.error || T[currentLang].serverError);
 
     // Update all name displays
     const parts = name.trim().split(/\s+/);
@@ -1637,14 +1655,14 @@ function escHtml(s) {
 
 async function loadFeed() {
   const list = document.getElementById('feed-list');
-  list.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">Chargement…</p>';
+  list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${T[currentLang].feedLoading}</p>`;
   try {
     const res  = await fetch('api_lesson_posts.php?action=feed');
     const data = await res.json();
     if (!data.ok) throw new Error(data.error);
     renderFeed(data.posts);
   } catch(e) {
-    list.innerHTML = '<p style="color:var(--red);font-size:.85rem;">Erreur : ' + e.message + '</p>';
+    list.innerHTML = `<p style="color:var(--red);font-size:.85rem;">${T[currentLang].errorPrefix + e.message}</p>`;
   }
 }
 
@@ -1761,7 +1779,7 @@ function logout() {
 /* INIT */
 document.addEventListener('DOMContentLoaded', () => {
   const _sl = sessionStorage.getItem('upskill_lang');
-  const savedLang = (_sl === 'fr' || _sl === 'en') ? _sl : 'fr';
+  const savedLang = (_sl === 'fr' || _sl === 'en') ? _sl : 'en';
   setLang(savedLang);
   hydrateLiveData();
   renderStars();
@@ -1822,7 +1840,7 @@ function hydrateLiveData() {
     const cs = document.getElementById('course-session');
     if (cs) cs.textContent = courseName;
     const sr = document.getElementById('settings-role');
-    if (sr) sr.textContent = (lang === 'ar' ? 'طالب · ' : 'Étudiant · ') + courseName;
+    if (sr) sr.textContent = T[lang].roleLabel + ' · ' + courseName;
   }
 
   // ── 6. Assignment page subtitle ──────────────────────────────────────────
@@ -1831,9 +1849,8 @@ function hydrateLiveData() {
     const p = LIVE.pending_count || 0;
     const o = LIVE.overdue_count || 0;
     const s = LIVE.submitted_count || 0;
-    sub.textContent = lang === 'ar'
-      ? `${p} معلقة · ${o} متأخرة · ${s} مُسلَّمة`
-      : `${p} en attente · ${o} en retard · ${s} soumis`;
+    const tr3 = T[lang];
+    sub.textContent = `${p} ${tr3.tabPending.toLowerCase()} · ${o} ${tr3.badgeOverdue.toLowerCase()} · ${s} ${tr3.badgeSubmitted.toLowerCase()}`;
   }
 
   // ── 7. Nav badge on assignments ──────────────────────────────────────────
@@ -1851,17 +1868,14 @@ const _csrf = document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 function openSubmitModal(assignId, title, due) {
   document.getElementById('submit-assign-id').value = assignId;
   document.getElementById('submit-assign-title').textContent = title;
-  document.getElementById('submit-assign-due').textContent =
-    (currentLang === 'ar' ? 'الموعد: ' : 'Échéance : ') + due;
+  document.getElementById('submit-assign-due').textContent = T[currentLang].dueLblPre + due;
   document.getElementById('submit-comment').value = '';
   document.getElementById('submit-char-count').textContent = '0';
   document.getElementById('submit-error').style.display = 'none';
-  document.getElementById('submit-btn-text').textContent =
-    currentLang === 'ar' ? '← تسليم' : 'Soumettre →';
-  document.getElementById('submit-modal-title').textContent =
-    currentLang === 'ar' ? 'تسليم الواجب' : 'Soumettre le devoir';
-  document.getElementById('submit-comment-lbl').textContent =
-    currentLang === 'ar' ? 'ملاحظة (اختياري)' : 'Commentaire (optionnel)';
+  document.getElementById('submit-btn-text').textContent = T[currentLang].submitBtn;
+  document.getElementById('submit-modal-title').textContent = T[currentLang].modalTitle;
+  const commentLbl = document.getElementById('submit-comment-lbl');
+  if (commentLbl) commentLbl.textContent = currentLang === 'fr' ? 'Commentaire (optionnel)' : 'Comment (optional)';
   document.getElementById('modal-submit').classList.add('open');
   document.getElementById('submit-comment').focus();
 }
@@ -1898,7 +1912,7 @@ async function confirmSubmit() {
     });
     const data = await res.json();
 
-    if (!data.ok) throw new Error(data.error || 'Erreur serveur');
+    if (!data.ok) throw new Error(data.error || T[currentLang].serverError);
 
     // Update local LIVE data
     const a = LIVE.assignments.find(x => x.id == aid);
@@ -1913,20 +1927,19 @@ async function confirmSubmit() {
     closeSubmitModal();
     renderAssignments();
     hydrateLiveData();
-    showToast(currentLang === 'ar' ? 'تم تسليم الواجب ✓' : 'Devoir soumis ✓', 'success');
+    showToast(T[currentLang].badgeSubmitted + ' ✓', 'success');
 
   } catch(err) {
     errEl.textContent = err.message;
     errEl.style.display = '';
   } finally {
-    btnText.textContent = currentLang === 'ar' ? '← تسليم' : 'Soumettre →';
+    btnText.textContent = T[currentLang].submitBtn;
     btn.disabled = false;
   }
 }
 
 async function retractSubmission(aid) {
-  const isAr = currentLang === 'ar';
-  if (!confirm(isAr ? 'هل تريد سحب هذا التسليم؟' : 'Rétracter cette soumission ?')) return;
+  if (!confirm(T[currentLang].retractConfirm)) return;
 
   try {
     const res = await fetch('api_submit.php?action=unsubmit', {
@@ -1935,7 +1948,7 @@ async function retractSubmission(aid) {
       body: JSON.stringify({ assignment_id: aid })
     });
     const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Erreur');
+    if (!data.ok) throw new Error(data.error || T[currentLang].serverError);
 
     const a = LIVE.assignments.find(x => x.id == aid);
     if (a) {
@@ -1948,7 +1961,7 @@ async function retractSubmission(aid) {
 
     renderAssignments();
     hydrateLiveData();
-    showToast(isAr ? 'تم سحب التسليم' : 'Soumission rétractée', 'default');
+    showToast(T[currentLang].retractBtn + ' ✓', 'default');
 
   } catch(err) {
     showToast(err.message, 'error');
@@ -2128,7 +2141,7 @@ const NOTIF_ICONS = {
 };
 const NOTIF_T = {
   fr: { title:'Notifications', markAll:'Tout lire', empty:'Aucune notification', justNow:'À l\'instant', minAgo:'min', hrsAgo:'h', daysAgo:'j' },
-  ar: { title:'الإشعارات', markAll:'تحديد الكل كمقروء', empty:'لا توجد إشعارات', justNow:'الآن', minAgo:'د', hrsAgo:'س', daysAgo:'ي' },
+  en: { title:'Notifications', markAll:'Mark all read', empty:'No notifications', justNow:'Just now', minAgo:'min', hrsAgo:'h', daysAgo:'d' },
 };
 
 let notifOpen = false;
