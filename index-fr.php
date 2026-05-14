@@ -38,6 +38,11 @@ $t = [
 <meta property="og:title"       content="Upskill Education – Cours d'anglais en ligne">
 <meta property="og:description" content="Cours d'anglais en direct sur Zoom, petits groupes, suivi personnalisé. 599 DH/session.">
 <meta property="og:image"       content="https://upskill-edu.com/assets/img/1.png">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<link rel="alternate" hreflang="en" href="https://upskill-edu.com/en">
+<link rel="alternate" hreflang="fr" href="https://upskill-edu.com/fr">
+<link rel="alternate" hreflang="x-default" href="https://upskill-edu.com/en">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -146,7 +151,17 @@ $t = [
   .text-center .section-sub { margin: 0 auto; }
   #toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 999; background: #1a2f21; border: 1px solid var(--green); color: var(--white); font-family: var(--font); font-size: 0.85rem; padding: 0.8rem 1.2rem; border-radius: 12px; transform: translateY(100px); opacity: 0; transition: all 0.35s; max-width: 300px; }
   #toast.show { transform: translateY(0); opacity: 1; }
-  @media (max-width: 600px) { nav { padding: 1rem 1.2rem; } .nav-links { display: none; } .form-grid { grid-template-columns: 1fr; } footer { flex-direction: column; } }
+  .hamburger-btn { display:none; background:none; border:none; cursor:pointer; padding:.35rem; color:var(--white); flex-direction:column; gap:5px; align-items:center; justify-content:center; }
+  .hamburger-btn span { display:block; width:22px; height:2px; background:var(--white); border-radius:2px; transition:transform .2s,opacity .2s; }
+  @media (max-width: 600px) {
+    nav { padding: 1rem 1.2rem; }
+    .hamburger-btn { display: flex; }
+    .nav-links { display:none; flex-direction:column; position:absolute; top:65px; left:0; right:0; background:rgba(15,29,46,.97); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:1rem 1.5rem; gap:1rem; z-index:99; }
+    .nav-links.open { display:flex; }
+    .form-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; }
+    .form-card { padding: 1.5rem; }
+  }
   .hero {
     background-image: url('assets/img/2.png');
     background-size: cover; background-position: center 30%; background-repeat: no-repeat;
@@ -184,9 +199,11 @@ $t = [
     </a>
     <a href="/en" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇬🇧 EN</a>
     <a href="/fr" style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--green-glow);border:1px solid rgba(62,207,120,0.4);color:var(--green);font-weight:600;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇫🇷 FR</a>
-    <a href="/ar" style="display:inline-flex;align-items:center;gap:0.3rem;background:transparent;border:1px solid var(--border);color:var(--muted);font-weight:500;font-family:var(--font);font-size:0.73rem;padding:0.3rem 0.75rem;border-radius:100px;text-decoration:none;">🇲🇦 عربي</a>
   </div>
-  <div class="nav-links">
+  <button class="hamburger-btn" id="hamburger" onclick="toggleNav()" aria-label="Ouvrir le menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="nav-links">
     <a href="#courses">Cours</a>
     <a href="#how">Comment ça marche</a>
     <a href="#enroll">Inscription</a>
@@ -309,13 +326,14 @@ $t = [
       <hr class="course-divider">
       <div class="features-label">Ce qui est inclus</div>
       <ul class="course-features">
-        <li>~30 heures d'enseignement (deux séances de 1h30 par semaine)</li>
+        <li>~29 heures d'enseignement (deux séances de 1h30 par semaine)</li>
         <li>Cours de communication axés sur l'expression orale</li>
         <li>Professeurs hautement qualifiés</li>
         <li>9 à 12 étudiants par classe</li>
         <li>Apprenez de n'importe où — sans déplacement</li>
         <li>Exercices, devoirs et évaluations</li>
         <li>Concours et défis</li>
+        <li>Certificat à l'issue du cours</li>
       </ul>
       <div class="course-tags"><span class="tag">Prépa examen</span><span class="tag">Sujets corrigés</span><span class="tag">Oral</span><span class="tag">Rédaction</span></div>
     </div>
@@ -557,8 +575,31 @@ async function sendContact() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeContact(); });
 
-
+function toggleNav() {
+  const links = document.getElementById('nav-links');
+  const btn   = document.getElementById('hamburger');
+  const open  = links.classList.toggle('open');
+  btn.setAttribute('aria-expanded', open);
+}
+document.addEventListener('click', e => {
+  const links = document.getElementById('nav-links');
+  const btn   = document.getElementById('hamburger');
+  if (links && btn && !links.contains(e.target) && !btn.contains(e.target)) {
+    links.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  }
+});
 </script>
+
+<!-- Bouton WhatsApp — remplacer 212XXXXXXXXX par votre vrai numéro (sans le signe +) -->
+<a href="https://wa.me/212XXXXXXXXX" target="_blank" rel="noopener noreferrer"
+   style="position:fixed;bottom:2rem;left:2rem;z-index:998;background:#25d366;color:white;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s;"
+   onmouseenter="this.style.transform='scale(1.12)'" onmouseleave="this.style.transform=''"
+   title="Contacter sur WhatsApp">
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+    <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.656 1.438 5.168L2 22l4.975-1.395A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm5.093 13.677c-.22.616-1.287 1.174-1.762 1.214-.476.04-.923.214-3.1-.648-2.606-1.038-4.267-3.7-4.396-3.872-.128-.172-1.053-1.402-1.053-2.676 0-1.273.665-1.9.9-2.16.236-.258.516-.322.687-.322.172 0 .344.002.494.008.159.006.37-.06.58.458.215.518.731 1.79.795 1.921.064.13.107.282.021.452-.086.172-.13.28-.258.43-.13.15-.272.337-.386.45-.13.13-.264.27-.113.527.15.258.666 1.098 1.43 1.778.982.874 1.815 1.143 2.072 1.273.257.13.408.108.558-.065.15-.172.63-.737.797-.99.168-.257.336-.215.565-.13.23.086 1.452.685 1.702.81.25.128.416.192.479.3.063.107.063.579-.157 1.2z"/>
+  </svg>
+</a>
 
 </body>
 </html>
