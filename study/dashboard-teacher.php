@@ -570,39 +570,17 @@ body.ar .profile-menu-item { flex-direction:row-reverse; text-align:right; font-
     </div>
     <div id="courses-detail-view" style="display:none;">
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;">
-        <button class="btn-secondary btn-sm" onclick="closeCourseDetail()" id="btn-back-courses">
-          <span id="back-courses-lbl">← Retour aux cours</span>
+        <button class="btn-secondary btn-sm" onclick="closeCourseDetail()">
+          <span id="back-courses-lbl">← Retour</span>
         </button>
         <div>
           <h2 style="font-family:var(--font);font-size:1.3rem;font-weight:700;" id="course-detail-title">—</h2>
           <p style="color:var(--muted);font-size:.82rem;margin-top:.15rem;" id="course-detail-meta">—</p>
         </div>
       </div>
-      <div class="att-summary-bar" style="margin-bottom:1.5rem;">
-        <div class="att-stat"><div class="att-stat-icon purple">👥</div>
-          <div><div class="att-stat-val" id="cd-stat-students">—</div><div class="att-stat-lbl" id="cd-stat-students-lbl">Étudiants</div></div></div>
-        <div class="att-stat"><div class="att-stat-icon green">📊</div>
-          <div><div class="att-stat-val" id="cd-stat-avg">—</div><div class="att-stat-lbl" id="cd-stat-avg-lbl">Moyenne</div></div></div>
-        <div class="att-stat"><div class="att-stat-icon yellow">📝</div>
-          <div><div class="att-stat-val" id="cd-stat-assigns">—</div><div class="att-stat-lbl" id="cd-stat-assigns-lbl">Devoirs actifs</div></div></div>
-        <div class="att-stat"><div class="att-stat-icon blue">✅</div>
-          <div><div class="att-stat-val" id="cd-stat-att">—</div><div class="att-stat-lbl" id="cd-stat-att-lbl">Présence</div></div></div>
-      </div>
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-title" id="cd-students-title">Étudiants du groupe</div>
-          <div id="cd-students-list"></div>
-        </div>
-        <div>
-          <div class="card" style="margin-bottom:1.5rem;">
-            <div class="card-title" id="cd-schedule-title">Emploi du temps / الجدول</div>
-            <div id="cd-schedule-list"></div>
-          </div>
-          <div class="card">
-            <div class="card-title" id="cd-prog-title">Progression du groupe</div>
-            <div id="cd-prog-bars"></div>
-          </div>
-        </div>
+      <div class="card">
+        <div class="card-title" id="cd-students-title">Étudiants du groupe</div>
+        <div id="cd-students-list" style="margin-top:.75rem;"></div>
       </div>
     </div>
   </div>
@@ -1130,7 +1108,6 @@ function applyTranslations() {
   set('att-th-student', tr.attThStudent); set('att-th-sessions', tr.attThSessions); set('att-th-total', tr.attThTotal);
   renderAttention(); renderAssignments(); renderQuizzes(); renderGrades();
   renderAttendance(); renderCourses();
-  if (activeCourse) openCourseDetail(activeCourse.id);
 }
 
 function navigate(page, el) {
@@ -1845,7 +1822,7 @@ function renderTeacherGroups() {
     const icon     = TYPE_ICONS[g.type_key]      || '🏫';
     const iconCls  = TYPE_ICON_CLASS[g.type_key] || 'c1';
     const students = g.student_count || 0;
-    return `<div class="course-card" onclick="attSelectGroup(${g.group_id}); navigate('attendance', document.getElementById('nav-attendance'))">
+    return `<div class="course-card" onclick="openGroupDetail(${g.group_id})">
       <div class="course-card-header">
         <div class="course-icon ${iconCls}">${icon}</div>
         <div>
@@ -1854,9 +1831,6 @@ function renderTeacherGroups() {
       </div>
       <div class="course-meta-row">
         <span>👥 ${students} ${studentLbl}</span>
-      </div>
-      <div class="course-schedule-chips">
-        <span class="schedule-chip">${attendanceLbl}</span>
       </div>
     </div>`;
   }).join('');
@@ -1916,61 +1890,48 @@ function renderCourses(){
   const ttl=document.getElementById('courses-page-title'); if(ttl)ttl.textContent=tr.coursesPageTitle;
   const badge=document.getElementById('nav-courses-badge'); if(badge){ badge.textContent=n; badge.style.display=n>0?'':'none'; }
 }
-function openCourseDetail(id){
-  activeCourse=COURSES.find(c=>c.id===id); if(!activeCourse)return;
-  const c=activeCourse, tr=CT[currentLang];
-  document.getElementById('courses-list-view').style.display='none';
-  document.getElementById('courses-detail-view').style.display='block';
-  const gname=currentLang==='ar'?c.group_ar:c.group_fr;
-  const subject=currentLang==='ar'?c.subject_ar:c.subject_fr;
-  const level=currentLang==='ar'?c.level_ar:c.level_fr;
-  document.getElementById('course-detail-title').textContent=gname;
-  document.getElementById('course-detail-meta').textContent=subject+' · '+level;
-  document.getElementById('cd-stat-students').textContent=c.students;
-  document.getElementById('cd-stat-avg').textContent=c.avg+'%';
-  document.getElementById('cd-stat-assigns').textContent=c.assigns;
-  document.getElementById('cd-stat-att').textContent=c.att+'%';
-  document.getElementById('cd-stat-students-lbl').textContent=tr.cdStatStudentsLbl;
-  document.getElementById('cd-stat-avg-lbl').textContent=tr.cdStatAvgLbl;
-  document.getElementById('cd-stat-assigns-lbl').textContent=tr.cdStatAssignsLbl;
-  document.getElementById('cd-stat-att-lbl').textContent=tr.cdStatAttLbl;
-  document.getElementById('cd-students-title').textContent=tr.cdStudentsTitle;
-  document.getElementById('cd-schedule-title').textContent=tr.cdScheduleTitle;
-  document.getElementById('cd-prog-title').textContent=tr.cdProgTitle;
-  document.getElementById('back-courses-lbl').textContent=tr.backCourses;
-  document.getElementById('cd-students-list').innerHTML=c.studentList.map(s=>{
-    const sk='status'+s.status.charAt(0).toUpperCase()+s.status.slice(1);
-    return '<div class="cd-student-row">'
-      +'<div class="student-avatar-sm">'+s.init+'</div>'
-      +'<div style="flex:1"><div style="font-family:var(--font);font-size:.88rem;font-weight:600;">'+s.name+'</div>'
-      +'<div style="font-size:.75rem;color:var(--muted2);">'+tr.thAvg+': '+s.avg+'% · '+tr.thAtt+': '+s.att+'%</div></div>'
-      +'<span class="badge '+(s.status==='good'?'good':s.status==='warn'?'warn':'low')+'">'+tr[sk]+'</span>'
-    +'</div>';
-  }).join('');
-  document.getElementById('cd-schedule-list').innerHTML=c.schedule.map(s=>
-    '<div class="cd-sched-row">'
-    +'<span class="sched-day">'+(currentLang==='ar'?s.day_ar:s.day_fr)+'</span>'
-    +'<span class="sched-time">⏰ '+s.time+'</span>'
-    +'<span class="sched-room">'+s.room+'</span>'
-    +'</div>'
-  ).join('');
-  const bars=[
-    {label:tr.progGeneral, val:c.avg,  color:c.avg>=75?'var(--green)':c.avg>=55?'var(--yellow)':'var(--red)'},
-    {label:tr.progAtt,     val:c.att,  color:c.att>=80?'var(--green)':c.att>=60?'var(--yellow)':'var(--red)'},
-    {label:tr.progAssigns, val:Math.round(c.assigns/5*100), color:'var(--purple)'}
-  ];
-  document.getElementById('cd-prog-bars').innerHTML=bars.map(b=>
-    '<div style="margin-bottom:.9rem;">'
-    +'<div style="display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-bottom:.35rem;">'
-    +'<span>'+b.label+'</span><span style="font-family:var(--font);font-weight:700;color:'+b.color+'">'+b.val+'%</span></div>'
-    +'<div class="progress-bar"><div class="progress-fill" style="width:'+b.val+'%;background:'+b.color+'"></div></div>'
-    +'</div>'
-  ).join('');
+async function openGroupDetail(groupId) {
+  const g    = teacherGroups.find(g => g.group_id === groupId);
+  if (!g) return;
+  const lang = currentLang;
+  const label = lang==='ar' ? g.label_ar : g.label_fr;
+
+  document.getElementById('courses-list-view').style.display = 'none';
+  document.getElementById('courses-detail-view').style.display = 'block';
+  document.getElementById('course-detail-title').textContent = label;
+  document.getElementById('course-detail-meta').textContent = g.student_count + ' étudiant(s)';
+  document.getElementById('cd-students-title').textContent = lang==='ar' ? 'طلاب المجموعة' : 'Étudiants du groupe';
+  document.getElementById('back-courses-lbl').textContent = lang==='ar' ? '→ رجوع' : '← Retour';
+
+  const listEl = document.getElementById('cd-students-list');
+  listEl.innerHTML = '<div class="loading-overlay" style="position:relative;height:60px;"><div class="spinner"></div></div>';
+
+  try {
+    const data = await fetch(`api_classes.php?action=group_students&group_id=${groupId}`).then(r => r.json());
+    const students = data.students || [];
+    if (students.length === 0) {
+      listEl.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${lang==='ar'?'لا يوجد طلاب في هذه المجموعة':'Aucun étudiant dans ce groupe'}</p>`;
+      return;
+    }
+    listEl.innerHTML = students.map((s, i) => {
+      const init = (s.name || s.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      return `<div class="cd-student-row" style="${i > 0 ? 'border-top:1px solid var(--border2);' : ''}padding:.65rem 0;">
+        <div class="student-avatar-sm">${init}</div>
+        <div style="flex:1;">
+          <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${s.name || s.username}</div>
+          <div style="font-size:.75rem;color:var(--muted);">@${s.username}</div>
+        </div>
+      </div>`;
+    }).join('');
+    document.getElementById('course-detail-meta').textContent = students.length + (lang==='ar' ? ' طالب' : ' étudiant(s)');
+  } catch(e) {
+    listEl.innerHTML = `<p style="color:var(--red);font-size:.85rem;">Erreur de chargement</p>`;
+  }
 }
-function closeCourseDetail(){
-  document.getElementById('courses-list-view').style.display='block';
-  document.getElementById('courses-detail-view').style.display='none';
-  activeCourse=null;
+
+function closeCourseDetail() {
+  document.getElementById('courses-list-view').style.display = 'block';
+  document.getElementById('courses-detail-view').style.display = 'none';
 }
 
 /* ── AVATAR UPLOAD ── */
