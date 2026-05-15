@@ -72,7 +72,7 @@ html { scroll-behavior:smooth; }
 body { background:var(--navy); color:var(--white); font-family:var(--font-body); min-height:100vh; display:flex; overflow-x:hidden; }
 body.ar { font-family:var(--font-ar); direction:rtl; }
 body.ar .sidebar { left:auto; right:0; border-right:none; border-left:1px solid var(--border); }
-body.ar .main { margin-left:0; margin-right:var(--sidebar-w); }
+body.ar .main { margin-left:0; margin-right:0; }
 body.ar .nav-badge { margin-left:0; margin-right:auto; }
 
 /* SIDEBAR */
@@ -116,7 +116,7 @@ body.ar .btn-logout { flex-direction:row-reverse; font-family:var(--font-ar); }
 .btn-logout:hover { border-color:var(--red); color:var(--red); background:rgba(232,93,117,.08); }
 
 /* MAIN */
-.main { margin-left:var(--sidebar-w); flex:1; min-height:100vh; display:flex; flex-direction:column; background:var(--navy); }
+.main { flex:1; min-height:100vh; display:flex; flex-direction:column; background:var(--navy); }
 .topbar { background:rgba(214,238,255,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
 body.ar .topbar { flex-direction:row-reverse; }
 .topbar-title { font-family:var(--font); font-size:1rem; font-weight:600; }
@@ -126,8 +126,7 @@ body.ar .topbar-title { font-family:var(--font-ar); }
 .btn-icon:hover { border-color:var(--blue); color:var(--blue); background:rgba(59,130,246,.08); }
 .page { padding:2rem; display:none; animation:fadeIn .25s ease; }
 .page.active { display:block; }
-#page-attendance { padding-top:1rem !important; padding-left:0 !important; padding-right:1rem !important; outline:3px solid red; }
-.main { outline:3px solid blue; }
+#page-attendance { padding-top:1rem !important; padding-left:0 !important; padding-right:1rem !important; }
 #page-attendance .att-toolbar { margin-bottom:.6rem; padding-left:1rem; }
 #page-attendance .att-summary-bar { margin-bottom:.6rem; padding-left:1rem; }
 #page-attendance #att-group-selector-wrap { padding-left:1rem; }
