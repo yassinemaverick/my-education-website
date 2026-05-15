@@ -1778,12 +1778,16 @@ async function loadSchedulePage() {
   grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.88rem;"><div class="spinner" style="margin:0 auto 1rem;"></div>Chargement…</div>';
   try {
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
-    const res  = await fetch('assign_courses.php?action=list_courses', {
+    const res  = await fetch('api_classes.php?action=list_all_groups', {
       headers: { 'X-CSRF-Token': csrf }
     });
     const data = await res.json();
-    if (!data.ok) throw new Error(data.error?.fr || 'Erreur');
-    _schedCourses = data.courses || [];
+    if (!data.ok) throw new Error(data.error || 'Erreur');
+    // Parse schedule_json string → schedule array for each group
+    _schedCourses = (data.groups || []).map(g => ({
+      ...g,
+      schedule: g.schedule_json ? (JSON.parse(g.schedule_json) || []) : []
+    }));
     renderScheduleCards();
   } catch(e) {
     grid.innerHTML = `<div style="grid-column:1/-1;color:var(--red);padding:1rem;">${e.message}</div>`;
@@ -1802,27 +1806,27 @@ function renderScheduleCards() {
   }
 
   grid.innerHTML = _schedCourses.map(c => {
-    const name    = lang === 'ar' ? (c.group_name_ar || c.group_name_fr) : (c.group_name_fr || c.group_name_ar);
-    const subject = lang === 'ar' ? (c.subject_ar || c.subject_fr) : (c.subject_fr || c.subject_ar);
-    const slots   = c.schedule || [];
+    const gid   = c.group_id;
+    const name  = lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
+    const slots = c.schedule || [];
     const slotHtml = slots.length === 0
       ? `<div style="color:var(--muted);font-size:.82rem;font-style:italic;padding:.4rem 0 .6rem;">${t.schNoSlots}</div>`
-      : slots.map((s, i) => schedSlotRow(c.id, i, s, t)).join('');
+      : slots.map((s, i) => schedSlotRow(gid, i, s, t)).join('');
 
     return `
-    <div class="card" style="display:flex;flex-direction:column;gap:0;" id="sched-card-${c.id}">
+    <div class="card" style="display:flex;flex-direction:column;gap:0;" id="sched-card-${gid}">
       <!-- Card header -->
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:1rem;">
         <div>
           <div style="font-family:var(--font);font-weight:700;font-size:1rem;color:var(--white);margin-bottom:.2rem;">${escHtmlA(name)}</div>
           <div style="font-size:.78rem;color:var(--muted);">
-            ${subject ? `<span>${escHtmlA(subject)}</span> · ` : ''}<span>${c.students_count || 0} ${t.schStudents}</span>
+            <span>${c.student_count || 0} ${t.schStudents}</span>
             ${c.teacher_name ? `<span style="margin-left:.5rem;">· ${t.schTeacher} ${escHtmlA(c.teacher_name)}</span>` : ''}
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0;">
-          <span id="sched-status-${c.id}" style="display:none;font-size:.75rem;color:var(--green);font-family:var(--font);font-weight:600;"></span>
-          <button onclick="saveSchedule(${c.id})" id="sched-save-${c.id}"
+          <span id="sched-status-${gid}" style="display:none;font-size:.75rem;color:var(--green);font-family:var(--font);font-weight:600;"></span>
+          <button onclick="saveSchedule(${gid})" id="sched-save-${gid}"
             style="padding:.45rem .9rem;background:var(--blue);border:none;border-radius:8px;color:white;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;transition:opacity .15s;"
             onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t.schSave}</button>
         </div>
@@ -1837,10 +1841,10 @@ function renderScheduleCards() {
       </div>
 
       <!-- Slots -->
-      <div id="sched-slots-${c.id}">${slotHtml}</div>
+      <div id="sched-slots-${gid}">${slotHtml}</div>
 
       <!-- Add session button -->
-      <button onclick="addScheduleSlot(${c.id})"
+      <button onclick="addScheduleSlot(${gid})"
         style="margin-top:.6rem;display:flex;align-items:center;gap:.4rem;background:none;border:1px dashed var(--border);border-radius:8px;color:var(--muted);font-family:var(--font);font-size:.8rem;font-weight:500;padding:.45rem .75rem;cursor:pointer;transition:all .2s;width:100%;justify-content:center;"
         onmouseover="this.style.borderColor='rgba(91,156,246,.5)';this.style.color='var(--blue)'"
         onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">${t.schAddSlot}</button>
@@ -1874,7 +1878,7 @@ function schedSlotRow(courseId, idx, slot, t) {
 }
 
 function addScheduleSlot(courseId) {
-  const c    = _schedCourses.find(x => x.id == courseId);
+  const c    = _schedCourses.find(x => x.group_id == courseId);
   if (!c) return;
   if (!c.schedule) c.schedule = [];
   const idx  = c.schedule.length;
@@ -1929,16 +1933,16 @@ async function saveSchedule(courseId) {
   statusEl.style.display = 'none';
 
   try {
-    const res  = await fetch('assign_courses.php?action=update_schedule', {
+    const res  = await fetch('api_classes.php?action=update_schedule', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
-      body: JSON.stringify({ course_id: courseId, schedule })
+      body: JSON.stringify({ group_id: courseId, schedule })
     });
     const data = await res.json();
-    if (!data.ok) throw new Error(data.error?.fr || data.error || 'Erreur');
+    if (!data.ok) throw new Error(data.error || 'Erreur');
 
     // Update cached schedule
-    const c = _schedCourses.find(x => x.id == courseId);
+    const c = _schedCourses.find(x => x.group_id == courseId);
     if (c) c.schedule = schedule;
 
     statusEl.textContent   = t.schSaved;

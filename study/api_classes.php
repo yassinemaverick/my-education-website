@@ -39,6 +39,10 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS class_groups (
   UNIQUE KEY uq_class_group (type_key, level_number, group_letter)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
+// Add schedule_json and zoom_url columns if they don't exist yet
+try { $pdo->exec("ALTER TABLE class_groups ADD COLUMN schedule_json TEXT DEFAULT NULL"); } catch(Throwable $e) {}
+try { $pdo->exec("ALTER TABLE class_groups ADD COLUMN zoom_url VARCHAR(500) DEFAULT NULL"); } catch(Throwable $e) {}
+
 $pdo->exec("CREATE TABLE IF NOT EXISTS class_group_members (
   id          INT AUTO_INCREMENT PRIMARY KEY,
   group_id    INT NOT NULL,
@@ -60,9 +64,10 @@ const CLASS_TYPES = [
 ];
 
 $action = $_GET['action'] ?? ($_POST['action'] ?? '');
-if ($action === '' && $_SERVER['REQUEST_METHOD']==='POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // Always parse JSON body on POST so callers can mix GET ?action= with JSON payload
   $body = json_decode(file_get_contents('php://input'), true) ?? [];
-  $action = $body['action'] ?? '';
+  if ($action === '') $action = $body['action'] ?? '';
 } else {
   $body = [];
 }
@@ -338,6 +343,7 @@ if ($action === 'teacher_groups') {
 
   $stmt = $pdo->prepare(
     "SELECT g.id AS group_id, g.type_key, g.level_number, g.group_letter,
+            g.schedule_json, g.zoom_url,
             (SELECT COUNT(*) FROM class_group_members m2
              JOIN users u2 ON u2.id=m2.user_id
              WHERE m2.group_id=g.id AND u2.role='student') AS student_count
@@ -403,6 +409,94 @@ if ($action === 'teacher_all_students') {
   );
   $stmt->execute([$tid]);
   jsonOut(['ok'=>true, 'students'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
+}
+
+// list_all_groups: every group with schedule, teacher, student count (admin only)
+if ($action === 'list_all_groups') {
+  if ($role !== 'admin') err('Accès refusé', 403);
+
+  $stmt = $pdo->query(
+    "SELECT g.id AS group_id, g.type_key, g.level_number, g.group_letter,
+            g.schedule_json, g.zoom_url,
+            (SELECT u.full_name
+               FROM class_group_members m2
+               JOIN users u ON u.id = m2.user_id
+              WHERE m2.group_id = g.id AND u.role = 'teacher'
+              LIMIT 1) AS teacher_name,
+            (SELECT COUNT(*)
+               FROM class_group_members m3
+               JOIN users u3 ON u3.id = m3.user_id
+              WHERE m3.group_id = g.id AND u3.role = 'student') AS student_count
+     FROM class_groups g
+     ORDER BY g.type_key, g.level_number, g.group_letter"
+  );
+  $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  $typeLabels = [];
+  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'ar'=>$t['label_ar']]; }
+
+  foreach ($groups as &$g) {
+    $lvl = $g['level_number'];
+    $g['label_fr']     = $typeLabels[$g['type_key']]['fr'] . ($lvl ? ' ' . $lvl : '') . ' – Groupe ' . $g['group_letter'];
+    $g['label_ar']     = $typeLabels[$g['type_key']]['ar'] . ($lvl ? ' ' . $lvl : '') . ' – مجموعة ' . $g['group_letter'];
+    $g['group_id']     = (int)$g['group_id'];
+    $g['level_number'] = $lvl ? (int)$lvl : null;
+    $g['student_count']= (int)$g['student_count'];
+  }
+  jsonOut(['ok'=>true, 'groups'=>$groups]);
+}
+
+// update_schedule: admin sets schedule_json for a class_group
+if ($action === 'update_schedule') {
+  if ($role !== 'admin') err('Accès refusé', 403);
+
+  $groupId = filter_var($body['group_id'] ?? null, FILTER_VALIDATE_INT);
+  if (!$groupId) err('group_id invalide');
+
+  // Verify group exists
+  $check = $pdo->prepare("SELECT id FROM class_groups WHERE id = ?");
+  $check->execute([$groupId]);
+  if (!$check->fetch()) err('Groupe introuvable', 404);
+
+  $slots = $body['schedule'] ?? [];
+  $VALID_DAYS_FR = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
+  $clean = [];
+  if (is_array($slots)) {
+    foreach ($slots as $s) {
+      $day  = trim($s['day_fr'] ?? '');
+      $time = trim($s['time']   ?? '');
+      $room = trim($s['room']   ?? '');
+      if (!in_array($day, $VALID_DAYS_FR, true)) continue;
+      if (!preg_match('/^\d{2}:\d{2}$/', $time))  continue;
+      $clean[] = ['day_fr'=>$day, 'time'=>$time, 'room'=>substr($room, 0, 100)];
+    }
+  }
+
+  $json = count($clean) > 0 ? json_encode($clean, JSON_UNESCAPED_UNICODE) : null;
+  $pdo->prepare("UPDATE class_groups SET schedule_json = ? WHERE id = ?")->execute([$json, $groupId]);
+  jsonOut(['ok'=>true]);
+}
+
+// set_group_zoom_url: teacher (or admin) sets zoom_url for a class_group
+if ($action === 'set_group_zoom_url') {
+  $groupId = filter_var($body['group_id'] ?? null, FILTER_VALIDATE_INT);
+  $zoomUrl = trim($body['zoom_url'] ?? '');
+  if (!$groupId) err('group_id invalide');
+
+  // Teachers may only update groups they belong to
+  if ($role === 'teacher') {
+    $owns = $pdo->prepare("SELECT 1 FROM class_group_members WHERE group_id = ? AND user_id = ?");
+    $owns->execute([$groupId, $userId]);
+    if (!$owns->fetch()) err('Accès refusé', 403);
+  } elseif ($role !== 'admin') {
+    err('Accès refusé', 403);
+  }
+
+  // Basic URL validation
+  if ($zoomUrl !== '' && !filter_var($zoomUrl, FILTER_VALIDATE_URL)) err('URL invalide');
+
+  $pdo->prepare("UPDATE class_groups SET zoom_url = ? WHERE id = ?")->execute([$zoomUrl ?: null, $groupId]);
+  jsonOut(['ok'=>true]);
 }
 
 err('Action inconnue: ' . htmlspecialchars($action), 400);

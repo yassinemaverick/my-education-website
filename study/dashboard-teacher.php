@@ -2574,24 +2574,26 @@ async function loadTodayClasses() {
 
   container.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${tr.loading || 'Chargement…'}</div>`;
 
-  let courses = [];
+  let groups = [];
   try {
-    const res  = await fetch('api_assignments.php?action=my_courses');
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    const res  = await fetch('api_classes.php?action=teacher_groups', {
+      headers: { 'X-CSRF-Token': csrf }
+    });
     const data = await res.json();
-    courses = data.ok ? (data.courses || []) : [];
+    groups = data.ok ? (data.groups || []) : [];
   } catch(e) {
     container.innerHTML = `<div style="color:var(--red);font-size:.84rem;">❌ Erreur réseau</div>`;
     return;
   }
 
-  // Filter: courses whose schedule_json includes today's day
-  const todayCourses = courses.filter(c => {
+  // Filter: groups whose schedule_json includes today's day
+  const todayCourses = groups.filter(c => {
     if (!c.schedule_json) return false;
     try {
       const sched = JSON.parse(c.schedule_json);
       return Array.isArray(sched) && sched.some(s =>
-        (s.day_fr && s.day_fr.toLowerCase() === todayFr.toLowerCase()) ||
-        (s.day_en && s.day_en.toLowerCase() === todayEn.toLowerCase())
+        s.day_fr && s.day_fr.toLowerCase() === todayFr.toLowerCase()
       );
     } catch(e) { return false; }
   });
@@ -2602,17 +2604,15 @@ async function loadTodayClasses() {
   }
 
   container.innerHTML = todayCourses.map((c, idx) => {
-    const name = lang === 'ar'
-      ? (c.group_name_ar || c.group_name_fr)
-      : (c.group_name_fr || c.group_name_ar);
+    const gid  = c.group_id;
+    const name = lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
 
     // Parse schedule for time/room of today's session
     let sessionInfo = '';
     try {
       const sched = JSON.parse(c.schedule_json || '[]');
       const todaySlot = sched.find(s =>
-        (s.day_fr && s.day_fr.toLowerCase() === todayFr.toLowerCase()) ||
-        (s.day_en && s.day_en.toLowerCase() === todayEn.toLowerCase())
+        s.day_fr && s.day_fr.toLowerCase() === todayFr.toLowerCase()
       );
       if (todaySlot) {
         if (todaySlot.time) sessionInfo += todaySlot.time;
@@ -2621,27 +2621,27 @@ async function loadTodayClasses() {
     } catch(e) {}
 
     const hasZoom   = c.zoom_url && c.zoom_url.trim() !== '';
-    const inputId   = `zoom-input-${c.id}`;
-    const btnId     = `zoom-btn-${c.id}`;
-    const statusId  = `zoom-status-${c.id}`;
-    const detailId  = `today-detail-${c.id}`;
+    const inputId   = `zoom-input-${gid}`;
+    const btnId     = `zoom-btn-${gid}`;
+    const statusId  = `zoom-status-${gid}`;
+    const detailId  = `today-detail-${gid}`;
 
     return `
     <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:.85rem;">
       <!-- Class header — click to expand -->
-      <button onclick="toggleTodayDetail('${c.id}')"
+      <button onclick="toggleTodayDetail('${gid}')"
         style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border:none;cursor:pointer;text-align:left;transition:background .15s;"
         onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='rgba(255,255,255,.03)'"
-        aria-expanded="false" id="today-hdr-${c.id}">
+        aria-expanded="false" id="today-hdr-${gid}">
         <div>
           <div style="font-family:var(--font);font-weight:700;font-size:.95rem;color:var(--white);">${name}</div>
           <div style="font-size:.78rem;color:var(--muted);margin-top:.2rem;">
             ${sessionInfo ? `<span>🕐 ${sessionInfo}</span>` : ''}
-            <span style="${sessionInfo?'margin-left:.75rem':''}">👥 ${c.students_count || 0} ${tr.todayStudents}</span>
+            <span style="${sessionInfo?'margin-left:.75rem':''}">👥 ${c.student_count || 0} ${tr.todayStudents}</span>
             ${hasZoom ? `<span style="margin-left:.75rem;color:var(--green);font-size:.73rem;">● Zoom ✓</span>` : `<span style="margin-left:.75rem;color:var(--yellow);font-size:.73rem;">● Zoom manquant</span>`}
           </div>
         </div>
-        <svg id="today-chevron-${c.id}" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="flex-shrink:0;color:var(--muted);transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
+        <svg id="today-chevron-${gid}" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="flex-shrink:0;color:var(--muted);transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
 
       <!-- Expanded Zoom URL editor -->
@@ -2652,8 +2652,8 @@ async function loadTodayClasses() {
             placeholder="${tr.todayZoomPlaceholder}"
             style="flex:1;min-width:200px;padding:.75rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;transition:border-color .2s;"
             onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"
-            onkeydown="if(event.key==='Enter'){saveTodayZoom(${c.id})}">
-          <button id="${btnId}" onclick="saveTodayZoom(${c.id})"
+            onkeydown="if(event.key==='Enter'){saveTodayZoom(${gid})}">
+          <button id="${btnId}" onclick="saveTodayZoom(${gid})"
             style="padding:.73rem 1.1rem;background:var(--blue);border:none;border-radius:10px;color:white;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .15s;"
             onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
             ${tr.todayZoomSave}
@@ -2700,10 +2700,10 @@ async function saveTodayZoom(courseId) {
   if (btn) { btn.textContent = tr.todaySaving; btn.disabled = true; }
   statusEl.style.display = 'none';
   try {
-    const res  = await fetch('api_assignments.php', {
+    const res  = await fetch('api_classes.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
-      body: JSON.stringify({ action: 'set_course_zoom_url', course_id: courseId, zoom_url: zoomUrl })
+      body: JSON.stringify({ action: 'set_group_zoom_url', group_id: courseId, zoom_url: zoomUrl })
     });
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || tr.toastServerError);
