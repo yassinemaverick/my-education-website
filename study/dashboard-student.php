@@ -1115,10 +1115,25 @@ const QUIZZES = [
   { id:4, title_fr:'Grammaire – Temps passés', title_ar:'القواعد – الأزمنة الماضية', desc_fr:'Maîtriser le passé simple et composé.', desc_ar:'إتقان الأزمنة الماضية.', qs:12, min:18, status:'done', score:85 },
 ];
 
+/* ── PAGE PERSISTENCE — synchronous, runs before first paint ── */
+(function() {
+  const _valid = ['home','myclass','assignments','feed','quizzes','progress','howto','settings'];
+  const _saved = sessionStorage.getItem('upskill_page_s');
+  if (_saved && _valid.includes(_saved) && _saved !== 'home') {
+    const _home   = document.getElementById('page-home');
+    const _target = document.getElementById('page-' + _saved);
+    if (_home)   _home.classList.remove('active');
+    if (_target) _target.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const _nav = document.getElementById('nav-' + _saved);
+    if (_nav) _nav.classList.add('active');
+  }
+})();
+
 let currentLang = 'en';
 let currentAssignFilter = 'all';
 let currentQuizFilter = 'all';
-let activePage = 'home';
+let activePage = sessionStorage.getItem('upskill_page_s') || 'home';
 
 /* ── TRANSLATIONS ── */
 const T = {
