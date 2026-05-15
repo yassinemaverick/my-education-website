@@ -970,8 +970,23 @@ const QUIZZES_T = [
   { id:5, title_fr:'Expression orale – Évaluation', title_en:'Speaking – Assessment', title_ar:'التعبير الشفهي – تقييم', qs:8, min:12, attempts:16, avg:68 },
 ];
 
+/* ── PAGE PERSISTENCE — synchronous, runs before first paint ── */
+(function() {
+  const _valid = ['home','students','courses','assignments','posts','quizzes','grades','settings','attendance'];
+  const _saved = sessionStorage.getItem('upskill_page_t');
+  if (_saved && _valid.includes(_saved) && _saved !== 'home') {
+    const _home   = document.getElementById('page-home');
+    const _target = document.getElementById('page-' + _saved);
+    if (_home)   _home.classList.remove('active');
+    if (_target) _target.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const _nav = document.getElementById('nav-' + _saved);
+    if (_nav) _nav.classList.add('active');
+  }
+})();
+
 let currentLang = 'en';
-let activePage = 'home';
+let activePage = sessionStorage.getItem('upskill_page_t') || 'home';
 
 /* ── TRANSLATIONS ── */
 const T = {
