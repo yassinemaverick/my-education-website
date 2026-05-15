@@ -1062,6 +1062,7 @@ function navigate(page, el) {
   document.getElementById('page-' + page).classList.add('active');
   if (el) el.classList.add('active');
   activePage = page;
+  sessionStorage.setItem('upskill_admin_page', page);
   document.getElementById('topbar-title').textContent = tr().topbar[page] || tr().topbar.home;
   if (page === 'users') loadUsers();
   if (page === 'inscriptions') loadEnrollments();
@@ -2155,6 +2156,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch(e) { console.warn('Admin stats load error:', e); }
 
   setLang(lang);
+
+  // Restore last active page after refresh
+  const validPages = ['home','users','inscriptions','classes','assigning-classes','schedule','settings'];
+  const savedPage  = sessionStorage.getItem('upskill_admin_page');
+  if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
+    const navEl = document.getElementById('nav-' + savedPage);
+    navigate(savedPage, navEl);
+  }
 });
 </script>
 </body>
