@@ -69,7 +69,7 @@ $username  = htmlspecialchars($_SESSION['username'] ?? '');
 }
 html { scroll-behavior:smooth; }
 .skip-link:focus { top:0 !important; outline:3px solid var(--green); }
-body { background:var(--navy); color:var(--white); font-family:var(--font-body); min-height:100vh; display:flex; overflow-x:hidden; }
+body { background:var(--navy); color:var(--white); font-family:var(--font-body); min-height:100vh; display:block; overflow-x:hidden; }
 body.ar { font-family:var(--font-ar); direction:rtl; }
 body.ar .sidebar { left:auto; right:0; border-right:none; border-left:1px solid var(--border); }
 body.ar .main { margin-left:0; margin-right:var(--sidebar-w); }
