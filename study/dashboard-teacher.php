@@ -2247,17 +2247,42 @@ function _tcRenderGroups() {
   const groupWord  = tr5.groupWord;
   const levelWord  = tr5.levelWord;
 
-  const cards = groups.map(g =>
-    `<div class="course-card" onclick="openGroupDetail(${g.group_id})">
+  const DAY_EN_GC = {Lundi:'Monday',Mardi:'Tuesday',Mercredi:'Wednesday',Jeudi:'Thursday',Vendredi:'Friday',Samedi:'Saturday',Dimanche:'Sunday'};
+
+  const cards = groups.map(g => {
+    // Parse schedule
+    let schedSlots = [];
+    try { schedSlots = JSON.parse(g.schedule_json || '[]'); } catch(e) {}
+    const slotCount = schedSlots.length;
+
+    // Build day + time line
+    const schedLines = schedSlots.map(s => {
+      const day = lang === 'en' ? (DAY_EN_GC[s.day_fr] || s.day_fr)
+                : lang === 'ar' ? (s.day_ar || s.day_fr)
+                : s.day_fr;
+      const timeStr = s.time ? (s.time_end ? `${s.time} – ${s.time_end}` : s.time) : '';
+      return timeStr ? `${day} · ${timeStr}` : day;
+    });
+
+    const schedHtml = schedLines.length
+      ? `<div style="font-size:.73rem;color:var(--primary);margin-top:.3rem;font-weight:600;display:flex;flex-wrap:wrap;gap:.2rem .5rem;">${schedLines.map(l => `<span>📅 ${escHtml(l)}</span>`).join('')}</div>`
+      : '';
+
+    const sessionsHtml = slotCount
+      ? `<div style="font-size:.72rem;color:var(--muted);margin-top:.25rem;">🔁 ${slotCount} ${lang==='en'?(slotCount===1?'session/week':'sessions/week'):lang==='ar'?(slotCount===1?'جلسة/أسبوع':'جلسات/أسبوع'):(slotCount===1?'séance/semaine':'séances/semaine')}</div>`
+      : '';
+
+    return `<div class="course-card" onclick="openGroupDetail(${g.group_id})">
       <div class="course-card-header">
         <div class="course-icon ${iconCls}">${icon}</div>
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="course-group-name">${groupWord} ${g.group_letter}</div>
           <div style="font-size:.75rem;color:var(--muted);margin-top:.15rem;">👥 ${g.student_count || 0} ${studentLbl}</div>
+          ${schedHtml}${sessionsHtml}
         </div>
       </div>
-    </div>`
-  ).join('');
+    </div>`;
+  }).join('');
 
   const crumbs = [{label: T[lang].allClasses, fn: 'tcGoTypes()'}];
   if (teacherSelLevel !== null)
@@ -2349,6 +2374,31 @@ async function openGroupDetail(groupId) {
   document.getElementById('course-detail-meta').textContent = g.student_count + T[lang].studentSuffix;
   document.getElementById('cd-students-title').textContent = T[lang].groupStudentsTitle;
   document.getElementById('back-courses-lbl').textContent = T[lang].backCourses2;
+
+  /* ── Schedule timing ── */
+  const DAY_EN_T = {Lundi:'Monday',Mardi:'Tuesday',Mercredi:'Wednesday',Jeudi:'Thursday',Vendredi:'Friday',Samedi:'Saturday',Dimanche:'Sunday'};
+  let schedHtml = '';
+  if (g.schedule_json) {
+    try {
+      const sched = JSON.parse(g.schedule_json);
+      if (Array.isArray(sched) && sched.length) {
+        schedHtml = sched.map(s => {
+          const day = lang === 'en' ? (DAY_EN_T[s.day_fr] || s.day_fr) : lang === 'ar' ? (s.day_ar || s.day_fr) : s.day_fr;
+          const timeStr = s.time ? (s.time_end ? s.time + ' – ' + s.time_end : s.time) : '';
+          return `<span style="display:inline-flex;align-items:center;gap:.3rem;background:var(--tag-bg,#f0f4ff);color:var(--primary);border-radius:6px;padding:.25rem .6rem;font-size:.8rem;font-weight:600;">🕐 ${escHtml(day)}${timeStr ? ' · ' + timeStr : ''}</span>`;
+        }).join(' ');
+      }
+    } catch(e) {}
+  }
+  let schedEl = document.getElementById('cd-schedule-row');
+  if (!schedEl) {
+    schedEl = document.createElement('div');
+    schedEl.id = 'cd-schedule-row';
+    schedEl.style.cssText = 'display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0 .8rem;';
+    const metaEl = document.getElementById('course-detail-meta');
+    if (metaEl && metaEl.parentNode) metaEl.parentNode.insertBefore(schedEl, metaEl.nextSibling);
+  }
+  schedEl.innerHTML = schedHtml;
 
   const listEl = document.getElementById('cd-students-list');
   listEl.innerHTML = '<div class="loading-overlay" style="position:relative;height:60px;"><div class="spinner"></div></div>';
