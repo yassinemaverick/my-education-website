@@ -126,7 +126,12 @@ body.ar .topbar-title { font-family:var(--font-ar); }
 .btn-icon:hover { border-color:var(--blue); color:var(--blue); background:rgba(59,130,246,.08); }
 .page { padding:2rem; display:none; animation:fadeIn .25s ease; }
 .page.active { display:block; }
-#page-attendance { padding-left:0; }
+#page-attendance { padding-left:0 !important; }
+#page-attendance .att-toolbar,
+#page-attendance .att-summary-bar,
+#page-attendance #att-group-selector-wrap,
+#page-attendance .att-save-banner { padding-left:1rem; }
+#page-attendance .att-card { border-radius:0 16px 16px 0; margin-left:0; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
 /* CARDS */
