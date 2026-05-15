@@ -419,6 +419,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
 #notif-badge { position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; border-radius:100px; background:var(--red); color:#fff; font-family:var(--font); font-size:.6rem; font-weight:700; display:none; align-items:center; justify-content:center; padding:0 3px; }
 #notif-badge.show { display:flex; }
 </style>
+<style id="lang-hide">body{visibility:hidden}</style>
 </head>
 <body id="body">
 <a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;background:var(--green);color:#0f1d2e;padding:.5rem 1rem;font-family:var(--font);font-weight:700;font-size:.85rem;z-index:9999;border-radius:0 0 8px 0;transition:top .2s;text-decoration:none;" id="skip-link">Skip to content</a>
@@ -1247,6 +1248,7 @@ function applyTranslations() {
     const txt = opt.getAttribute('data-' + currentLang) || opt.getAttribute('data-fr');
     if (txt) opt.textContent = txt;
   });
+  const _lh = document.getElementById('lang-hide'); if (_lh) _lh.remove();
 }
 
 function navigate(page, el) {

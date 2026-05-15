@@ -281,6 +281,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
 }
 </style>
+<style id="lang-hide">body{visibility:hidden}</style>
 </head>
 <body id="body">
 <a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;background:var(--green);color:#0f1d2e;padding:.5rem 1rem;font-family:var(--font);font-weight:700;font-size:.85rem;z-index:9999;border-radius:0 0 8px 0;transition:top .2s;text-decoration:none;">Skip to content</a>
@@ -1071,6 +1072,8 @@ function applyTranslations() {
   set('security-label', t.securityLabel);
   // Re-render dynamic tables to pick up new language
   if (allUsers.length > 0) renderUsersTable();
+  // Reveal body once translations are applied (removes lang-hide style)
+  const _lh = document.getElementById('lang-hide'); if (_lh) _lh.remove();
 }
 
 function navigate(page, el) {
