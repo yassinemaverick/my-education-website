@@ -126,7 +126,8 @@ body.ar .topbar-title { font-family:var(--font-ar); }
 .btn-icon:hover { border-color:var(--blue); color:var(--blue); background:rgba(59,130,246,.08); }
 .page { padding:2rem; display:none; animation:fadeIn .25s ease; }
 .page.active { display:block; }
-#page-attendance { padding-top:1rem !important; padding-left:0 !important; padding-right:1rem !important; }
+#page-attendance { padding-top:1rem !important; padding-left:0 !important; padding-right:1rem !important; outline:3px solid red; }
+.main { outline:3px solid blue; }
 #page-attendance .att-toolbar { margin-bottom:.6rem; padding-left:1rem; }
 #page-attendance .att-summary-bar { margin-bottom:.6rem; padding-left:1rem; }
 #page-attendance #att-group-selector-wrap { padding-left:1rem; }
