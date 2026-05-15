@@ -51,7 +51,7 @@ $username  = htmlspecialchars($_SESSION['username'] ?? '');
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
 <meta name="robots" content="noindex,nofollow">
-<title>Upskill – Tableau de bord Professeur</title>
+<title>Upskill – Teacher Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" onload="this.onload=null;this.rel='stylesheet'">
@@ -421,10 +421,10 @@ body.ar .notif-panel { right:auto; left:1rem; }
 </style>
 </head>
 <body id="body">
-<a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;background:var(--green);color:#0f1d2e;padding:.5rem 1rem;font-family:var(--font);font-weight:700;font-size:.85rem;z-index:9999;border-radius:0 0 8px 0;transition:top .2s;text-decoration:none;">Aller au contenu</a>
+<a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;background:var(--green);color:#0f1d2e;padding:.5rem 1rem;font-family:var(--font);font-weight:700;font-size:.85rem;z-index:9999;border-radius:0 0 8px 0;transition:top .2s;text-decoration:none;" id="skip-link">Skip to content</a>
 
 <!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu principal">
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
   <div class="sidebar-logo">
     <svg width="26" height="26" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="8" fill="#a78bfa"/><path d="M8 14l4 4 8-8" stroke="#0f1d2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span>Up<em style="color:var(--purple)">skill</em></span>
@@ -481,7 +481,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
     </div>
   </nav>
   <div class="sidebar-bottom">
-    <button class="btn-logout" onclick="logout()" aria-label="Se déconnecter">
+    <button class="btn-logout" onclick="logout()" aria-label="Log out">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       <span id="logout-lbl">Déconnexion</span>
     </button>
@@ -492,7 +492,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
 <main class="main" role="main" id="main-content">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:.75rem;">
-      <button class="hamburger" onclick="toggleSidebar()" aria-label="Ouvrir le menu" aria-expanded="false">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Open menu" aria-expanded="false">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <div class="topbar-title" id="topbar-title">Tableau de bord Professeur</div>
@@ -503,7 +503,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span id="notif-badge" aria-live="polite"></span>
       </button>
-      <div class="avatar" id="topbar-avatar" style="cursor:pointer;" onclick="toggleProfileMenu(event)" title="Mon profil"><?= str_replace(['%ID%','%IMGID%'], ['topbar-dino-svg','topbar-av-img'], $dinoAvatarSvg) ?></div>
+      <div class="avatar" id="topbar-avatar" style="cursor:pointer;" onclick="toggleProfileMenu(event)" title="My profile"><?= str_replace(['%ID%','%IMGID%'], ['topbar-dino-svg','topbar-av-img'], $dinoAvatarSvg) ?></div>
     </div>
   </div>
 
@@ -683,7 +683,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
             <div class="settings-av-wrap" id="settings-av-wrap">
               <div class="avatar" style="width:64px;height:64px;" id="settings-avatar"><?= str_replace(['%ID%','%IMGID%'], ['settings-dino-svg','settings-av-img'], $dinoAvatarSvg) ?></div>
             </div>
-            <label for="avatar-input" class="av-upload-btn" title="Changer la photo">
+            <label for="avatar-input" class="av-upload-btn" id="avatar-upload-btn" title="Change photo">
               <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             </label>
             <input type="file" id="avatar-input" accept="image/*" style="display:none;" onchange="handleAvatarUpload(this)">
@@ -691,7 +691,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
           <div>
             <div style="font-family:var(--font);font-weight:600;font-size:.95rem;color:var(--white);" id="settings-name"><?= $full_name ?></div>
             <div style="color:var(--muted);font-size:.82rem;margin-top:.2rem;" id="settings-role">Professeur · Anglais Général</div>
-            <label for="avatar-input" style="display:inline-block;margin-top:.5rem;font-size:.75rem;color:var(--blue);cursor:pointer;font-family:var(--font);font-weight:500;">Changer la photo</label>
+            <label for="avatar-input" id="change-photo-lbl" style="display:inline-block;margin-top:.5rem;font-size:.75rem;color:var(--blue);cursor:pointer;font-family:var(--font);font-weight:500;">Change photo</label>
           </div>
         </div>
         <div class="form-group">
@@ -702,7 +702,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
       </div>
       <div class="card">
         <div class="card-title" id="pref-title">Préférences</div>
-        <p style="color:var(--muted);font-size:.85rem;line-height:1.6;" id="pref-txt">Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Arabe.</p>
+        <p style="color:var(--muted);font-size:.85rem;line-height:1.6;" id="pref-txt">Use the language selector in the sidebar to switch between French and English.</p>
       </div>
     </div>
 
@@ -736,12 +736,12 @@ body.ar .notif-panel { right:auto; left:1rem; }
   <div class="modal">
     <div class="modal-header">
       <h3 id="modal-assign-title">Nouveau devoir</h3>
-      <button class="btn-close" onclick="closeModal('assign')" aria-label="Fermer">✕</button>
+      <button class="btn-close" onclick="closeModal('assign')" aria-label="Close">✕</button>
     </div>
     <div class="form-group">
       <label id="mlbl-course">Classe <span style="color:var(--red)">*</span></label>
       <select id="new-assign-course" style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;">
-        <option value="">— Chargement des classes… —</option>
+        <option value="" id="assign-course-loading-opt">— Loading classes… —</option>
       </select>
     </div>
     <div class="form-group">
@@ -781,7 +781,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
   <div class="modal">
     <div class="modal-header">
       <h3 id="modal-quiz-title">Créer un quiz</h3>
-      <button class="btn-close" onclick="closeModal('quiz')" aria-label="Fermer">✕</button>
+      <button class="btn-close" onclick="closeModal('quiz')" aria-label="Close">✕</button>
     </div>
     <div class="form-group">
       <label id="qmlbl-title">Titre du quiz</label>
@@ -895,7 +895,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
         style="padding:.55rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;min-width:200px;">
         <option value="">— Tous les étudiants —</option>
       </select>
-      <span id="att-group-loading" style="display:none;font-size:.8rem;color:var(--muted);">Chargement…</span>
+      <span id="att-group-loading" style="display:none;font-size:.8rem;color:var(--muted);">Loading…</span>
     </div>
 
     <!-- Grid -->
@@ -930,7 +930,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
 <div class="notif-panel" id="notif-panel" onclick="event.stopPropagation()">
   <div class="notif-header">
     <h4 id="notif-panel-title">Notifications</h4>
-    <button class="btn-close" onclick="closeNotifPanel()" aria-label="Fermer">✕</button>
+    <button class="btn-close" onclick="closeNotifPanel()" aria-label="Close">✕</button>
   </div>
   <div id="notif-list"><div style="padding:1.5rem;text-align:center;color:var(--muted);font-size:.85rem;">Chargement…</div></div>
 </div>
@@ -956,18 +956,18 @@ body.ar .notif-panel { right:auto; left:1rem; }
 /* ── DATA ── */
 let STUDENTS = []; // populated from api_students.php on load
 const ASSIGNS_T = [
-  { id:1, title_fr:'Dissertation : Mes objectifs professionnels', title_ar:'مقال: أهدافي المهنية', due_fr:'9 mai', due_ar:'9 مايو', submitted:18, total:24, subject_fr:'Écriture', subject_ar:'الكتابة' },
-  { id:2, title_fr:'Exercice de compréhension orale #3', title_ar:'تمرين الاستماع #3', due_fr:'12 mai', due_ar:'12 مايو', submitted:10, total:24, subject_fr:'Écoute', subject_ar:'الاستماع' },
-  { id:3, title_fr:'Présentation orale – Sujet libre', title_ar:'عرض شفهي – موضوع حر', due_fr:'15 mai', due_ar:'15 مايو', submitted:5, total:24, subject_fr:'Expression', subject_ar:'التعبير' },
-  { id:4, title_fr:'Rédaction Email professionnel', title_ar:'كتابة بريد إلكتروني مهني', due_fr:'1 mai', due_ar:'1 مايو', submitted:22, total:24, subject_fr:'Écriture', subject_ar:'الكتابة' },
-  { id:5, title_fr:'Quiz de grammaire de base', title_ar:'اختبار القواعد الأساسية', due_fr:'28 avril', due_ar:'28 أبريل', submitted:24, total:24, subject_fr:'Grammaire', subject_ar:'القواعد' },
+  { id:1, title_fr:'Dissertation : Mes objectifs professionnels', title_en:'Essay: My Career Goals', title_ar:'مقال: أهدافي المهنية', due_fr:'9 mai', due_ar:'9 مايو', submitted:18, total:24, subject_fr:'Écriture', subject_en:'Writing', subject_ar:'الكتابة' },
+  { id:2, title_fr:'Exercice de compréhension orale #3', title_en:'Listening Exercise #3', title_ar:'تمرين الاستماع #3', due_fr:'12 mai', due_ar:'12 مايو', submitted:10, total:24, subject_fr:'Écoute', subject_en:'Listening', subject_ar:'الاستماع' },
+  { id:3, title_fr:'Présentation orale – Sujet libre', title_en:'Oral Presentation – Free Topic', title_ar:'عرض شفهي – موضوع حر', due_fr:'15 mai', due_ar:'15 مايو', submitted:5, total:24, subject_fr:'Expression', subject_en:'Speaking', subject_ar:'التعبير' },
+  { id:4, title_fr:'Rédaction Email professionnel', title_en:'Professional Email Writing', title_ar:'كتابة بريد إلكتروني مهني', due_fr:'1 mai', due_ar:'1 مايو', submitted:22, total:24, subject_fr:'Écriture', subject_en:'Writing', subject_ar:'الكتابة' },
+  { id:5, title_fr:'Quiz de grammaire de base', title_en:'Basic Grammar Quiz', title_ar:'اختبار القواعد الأساسية', due_fr:'28 avril', due_ar:'28 أبريل', submitted:24, total:24, subject_fr:'Grammaire', subject_en:'Grammar', subject_ar:'القواعد' },
 ];
 const QUIZZES_T = [
-  { id:1, title_fr:'Quiz Grammaire Unité 1', title_ar:'اختبار القواعد – الوحدة 1', qs:15, min:20, attempts:22, avg:78 },
-  { id:2, title_fr:'Vocabulaire Unité 3', title_ar:'المفردات – الوحدة 3', qs:20, min:25, attempts:18, avg:74 },
-  { id:3, title_fr:'Compréhension écrite #2', title_ar:'الفهم القرائي #2', qs:10, min:15, attempts:24, avg:82 },
-  { id:4, title_fr:'Grammaire – Temps passés', title_ar:'القواعد – الأزمنة الماضية', qs:12, min:18, attempts:20, avg:71 },
-  { id:5, title_fr:'Expression orale – Évaluation', title_ar:'التعبير الشفهي – تقييم', qs:8, min:12, attempts:16, avg:68 },
+  { id:1, title_fr:'Quiz Grammaire Unité 1', title_en:'Grammar Quiz Unit 1', title_ar:'اختبار القواعد – الوحدة 1', qs:15, min:20, attempts:22, avg:78 },
+  { id:2, title_fr:'Vocabulaire Unité 3', title_en:'Vocabulary Unit 3', title_ar:'المفردات – الوحدة 3', qs:20, min:25, attempts:18, avg:74 },
+  { id:3, title_fr:'Compréhension écrite #2', title_en:'Reading Comprehension #2', title_ar:'الفهم القرائي #2', qs:10, min:15, attempts:24, avg:82 },
+  { id:4, title_fr:'Grammaire – Temps passés', title_en:'Grammar – Past Tenses', title_ar:'القواعد – الأزمنة الماضية', qs:12, min:18, attempts:20, avg:71 },
+  { id:5, title_fr:'Expression orale – Évaluation', title_en:'Speaking – Assessment', title_ar:'التعبير الشفهي – تقييم', qs:8, min:12, attempts:16, avg:68 },
 ];
 
 let currentLang = 'en';
@@ -1026,6 +1026,7 @@ const T = {
     attStatRateLbl:'Taux de présence', attStatAtRiskLbl:'Étudiants à risque (<70%)',
     attUnsavedTxt:'⚡ Modifications non enregistrées', attSaveNowLbl:'Enregistrer maintenant',
     attThStudent:'Étudiant', attThSessions:'Sessions (1–20)', attThTotal:'Présence',
+    attGroupLbl:'Groupe',
     attSavingLbl:'Enregistrement…', toastAttError:'Erreur lors de la sauvegarde. Réessayez.',
     noAssignments:'Aucun devoir pour le moment.', noAssignmentsSub:'Aucun devoir',
     pendingBadge:'à corriger', gradedBadge:'Corrigé', deleteTitle:'Supprimer',
@@ -1046,9 +1047,12 @@ const T = {
     allStudents:'— Tous les étudiants —', studentSuffix:' étudiant(s)',
     niveauSuffix:(n) => n + (n > 1 ? ' niveaux' : ' niveau'),
     groupeSuffix:(n) => n + (n > 1 ? ' groupes' : ' groupe'),
+    changePhotoLbl:'Changer la photo',
     imageTooLarge:'Image trop grande (max 2 Mo)', photoUpdated:'Photo mise à jour ✓',
     postsLoading:'Chargement…', postsErrorPrefix:'Erreur : ',
     openLink:'Ouvrir le lien', allGraded:'Tout corrigé ✅',
+    phAssignTitle:'Ex : Dissertation – Unité 4',
+    phQuizTitle:'Ex : Grammaire – Unité 5',
     phAssignDesc:'Instructions pour les étudiants…',
     phPostTitle:'ex: Séance 12 – Passé composé',
     phPostNotes:'Points clés, rappels, vocabulaire…',
@@ -1104,6 +1108,7 @@ const T = {
     attStatRateLbl:'Attendance rate', attStatAtRiskLbl:'At-risk students (<70%)',
     attUnsavedTxt:'⚡ Unsaved changes', attSaveNowLbl:'Save now',
     attThStudent:'Student', attThSessions:'Sessions (1–20)', attThTotal:'Attendance',
+    attGroupLbl:'Group',
     attSavingLbl:'Saving…', toastAttError:'Error saving. Please try again.',
     noAssignments:'No assignments yet.', noAssignmentsSub:'No assignments',
     pendingBadge:'to grade', gradedBadge:'Graded', deleteTitle:'Delete',
@@ -1124,9 +1129,12 @@ const T = {
     allStudents:'— All students —', studentSuffix:' student(s)',
     niveauSuffix:(n) => n + (n > 1 ? ' levels' : ' level'),
     groupeSuffix:(n) => n + (n > 1 ? ' groups' : ' group'),
+    changePhotoLbl:'Change photo',
     imageTooLarge:'Image too large (max 2 MB)', photoUpdated:'Photo updated ✓',
     postsLoading:'Loading…', postsErrorPrefix:'Error: ',
     openLink:'Open link', allGraded:'All graded ✅',
+    phAssignTitle:'e.g. Essay – Unit 4',
+    phQuizTitle:'e.g. Grammar – Unit 5',
     phAssignDesc:'Instructions for students…',
     phPostTitle:'e.g. Session 12 – Present Perfect',
     phPostNotes:'Key points, reminders, vocabulary…',
@@ -1153,6 +1161,9 @@ function toggleSidebar() {
 function applyTranslations() {
   const tr = T[currentLang];
   const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  // Update skip link text
+  const skipLink = document.getElementById('skip-link');
+  if (skipLink) skipLink.textContent = currentLang==='en'?'Skip to content':currentLang==='ar'?'انتقل إلى المحتوى':'Aller au contenu';
   set('topbar-title', tr.topbarTitle[activePage] || tr.topbarTitle.home);
   set('teacher-chip-lbl', tr.teacherChip);
   set('nav-main-label', tr.navMain); set('nav-account-label', tr.navAccount);
@@ -1180,6 +1191,9 @@ function applyTranslations() {
   set('dist-title', tr.distTitle); set('top-title', tr.topTitle); set('quiz-scores-title', tr.quizScoresTitle);
   set('gth-student', tr.gthStudent); set('gth-assign', tr.gthAssign); set('gth-score', tr.gthScore); set('gth-date', tr.gthDate);
   set('settings-title', tr.settingsTitle); set('profile-title', tr.profileTitle); set('settings-role', tr.settingsRole);
+  set('change-photo-lbl', tr.changePhotoLbl);
+  const avUploadBtn = document.getElementById('avatar-upload-btn');
+  if (avUploadBtn) avUploadBtn.title = tr.changePhotoLbl;
   set('lbl-fullname', tr.lblFullname); set('save-btn', tr.saveBtn); set('pref-title', tr.prefTitle); set('pref-txt', tr.prefTxt);
   set('pwd-card-title', tr.pwdCardTitle); set('lbl-pwd-current', tr.lblPwdCurrent); set('lbl-pwd-new', tr.lblPwdNew); set('lbl-pwd-confirm', tr.lblPwdConfirm); set('pwd-btn-text', tr.pwdBtn);
   set('modal-assign-title', tr.modalAssignTitle); set('mlbl-title', tr.mlblTitle); set('mlbl-desc', tr.mlblDesc); set('mlbl-due', tr.mlblDue); set('mlbl-subject', tr.mlblSubject);
@@ -1196,6 +1210,8 @@ function applyTranslations() {
   set('posts-lbl-date', tr.postsLblDate); set('posts-lbl-link', tr.postsLblLink);
   set('posts-lbl-notes', tr.postsLblNotes); set('post-submit-lbl', tr.postsSubmitBtn);
   populatePostCourseSelect();
+  const phAssignTitleEl = document.getElementById('new-assign-title'); if(phAssignTitleEl) phAssignTitleEl.placeholder = tr.phAssignTitle || '';
+  const phQuizTitleEl = document.getElementById('new-quiz-title'); if(phQuizTitleEl) phQuizTitleEl.placeholder = tr.phQuizTitle || '';
   const phDesc = document.getElementById('new-assign-desc'); if(phDesc) phDesc.placeholder = tr.phAssignDesc;
   const phPostTitle = document.getElementById('post-title'); if(phPostTitle) phPostTitle.placeholder = tr.phPostTitle;
   const phPostNotes = document.getElementById('post-notes'); if(phPostNotes) phPostNotes.placeholder = tr.phPostNotes;
@@ -1207,12 +1223,13 @@ function applyTranslations() {
   set('att-stat-rate-lbl', tr.attStatRateLbl); set('att-stat-at-risk-lbl', tr.attStatAtRiskLbl);
   set('att-unsaved-txt', tr.attUnsavedTxt); set('att-save-now-lbl', tr.attSaveNowLbl);
   set('att-th-student', tr.attThStudent); set('att-th-sessions', tr.attThSessions); set('att-th-total', tr.attThTotal);
+  set('att-group-lbl', tr.attGroupLbl);
   renderAttention(); renderAssignments(); renderQuizzes(); renderGrades();
   renderAttendance(); renderCourses();
   loadActivityFeed();
   // Translate subject dropdown options
   document.querySelectorAll('#new-assign-subject option').forEach(opt => {
-    const txt = opt.getAttribute('data-' + lang);
+    const txt = opt.getAttribute('data-' + currentLang) || opt.getAttribute('data-fr');
     if (txt) opt.textContent = txt;
   });
 }
@@ -1370,9 +1387,9 @@ function renderAssignments() {
   const s2 = document.getElementById('stat2-val'); if (s2) s2.textContent = pending;
 
   list.innerHTML = ASSIGNMENTS_LIVE.map(a => {
-    const title     = lang==='ar' ? (a.title_ar||a.title_fr) : (a.title_fr||a.title_ar);
-    const subject   = lang==='ar' ? (a.subject_ar||a.subject_fr||'') : (a.subject_fr||a.subject_ar||'');
-    const className = lang==='ar' ? (a.group_name_ar||a.group_name_fr||'') : (a.group_name_fr||a.group_name_ar||'');
+    const title     = lang==='ar' ? (a.title_ar||a.title_fr) : lang==='en' ? (a.title_en||a.title_fr||a.title_ar) : (a.title_fr||a.title_ar);
+    const subject   = lang==='ar' ? (a.subject_ar||a.subject_fr||'') : lang==='en' ? (a.subject_en||a.subject_fr||a.subject_ar||'') : (a.subject_fr||a.subject_ar||'');
+    const className = lang==='ar' ? (a.group_name_ar||a.group_name_fr||'') : lang==='en' ? (a.group_name_en||a.group_name_fr||a.group_name_ar||'') : (a.group_name_fr||a.group_name_ar||'');
     const submitted = parseInt(a.submitted_count)||0;
     const total     = parseInt(a.total_students)||0;
     const graded    = parseInt(a.graded_count)||0;
@@ -1416,7 +1433,7 @@ async function deleteAssignment(id) {
 async function openSubmissions(assignId) {
   const listView = document.getElementById('assign-list-view');
   const subView  = document.getElementById('assign-sub-view');
-  if (!subView) { showToast('Sous-vue introuvable'); return; }
+  if (!subView) { showToast(currentLang==='en'?'Sub-view not found':currentLang==='ar'?'العرض الفرعي غير موجود':'Sous-vue introuvable'); return; }
   if (listView) listView.style.display = 'none';
   subView.style.display = 'block';
   const titleEl = document.getElementById('sub-view-title');
@@ -1504,7 +1521,7 @@ function renderQuizzes() {
   list.innerHTML = QUIZZES_T.map(q => `
     <div class="card" style="display:flex;flex-direction:column;">
       <div style="font-size:2rem;margin-bottom:.8rem;">🧠</div>
-      <div style="font-family:var(--font);font-size:1rem;font-weight:700;margin-bottom:.4rem;">${currentLang === 'ar' ? q.title_ar : q.title_fr}</div>
+      <div style="font-family:var(--font);font-size:1rem;font-weight:700;margin-bottom:.4rem;">${currentLang === 'ar' ? q.title_ar : currentLang === 'en' ? (q.title_en || q.title_fr) : q.title_fr}</div>
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem;">
         <span style="font-size:.75rem;background:rgba(30,27,75,.06);border:1px solid var(--border);padding:.2rem .6rem;border-radius:100px;color:var(--muted);">📝 ${q.qs} q</span>
         <span style="font-size:.75rem;background:rgba(30,27,75,.06);border:1px solid var(--border);padding:.2rem .6rem;border-radius:100px;color:var(--muted);">⏱ ${q.min} min</span>
@@ -1638,10 +1655,14 @@ function populateCourseSelect() {
       + TEACHER_COURSES.map(c => {
           const name = lang === 'ar'
             ? (c.group_name_ar || c.group_name_fr)
-            : (c.group_name_fr || c.group_name_ar);
+            : lang === 'en'
+              ? (c.group_name_en || c.group_name_fr || c.group_name_ar)
+              : (c.group_name_fr || c.group_name_ar);
           const subject = lang === 'ar'
             ? (c.subject_ar || c.subject_fr)
-            : (c.subject_fr || c.subject_ar);
+            : lang === 'en'
+              ? (c.subject_en || c.subject_fr || c.subject_ar)
+              : (c.subject_fr || c.subject_ar);
           return `<option value="${c.id}">${name}${subject ? ' – ' + subject : ''}${c.level ? ' ('+c.level+')' : ''}</option>`;
         }).join('');
 }
@@ -1938,10 +1959,10 @@ async function attSave() {
       document.getElementById('att-save-banner').classList.remove('visible');
       showToast(T[currentLang].toastAttSaved);
     } else {
-      showToast(T[currentLang].toastAttError || 'Erreur lors de la sauvegarde');
+      showToast(T[currentLang].toastAttError || (currentLang==='en'?'Error saving. Please try again.':'Erreur lors de la sauvegarde'));
     }
   } catch (e) {
-    showToast(T[currentLang].toastAttError || 'Erreur réseau');
+    showToast(T[currentLang].toastAttError || (currentLang==='en'?'Network error':'Erreur réseau'));
     console.error('Save attendance error:', e);
   } finally {
     attSaving = false;
@@ -2245,7 +2266,15 @@ function populateAttGroupSelect() {
   const noGroup = T[lang].allStudents;
   sel.innerHTML = `<option value="">${noGroup}</option>`
     + teacherGroups.map(g => {
-        const label = lang==='ar' ? g.label_ar : g.label_fr;
+        let label;
+        if (lang === 'ar') {
+          label = g.label_ar || g.label_fr;
+        } else if (lang === 'en') {
+          const tl = TYPE_LABELS[g.type_key] || {en: g.type_key, fr: g.type_key};
+          label = (tl.en || tl.fr) + (g.level_number ? ' ' + g.level_number : '') + (g.group_letter ? ' ' + g.group_letter : '');
+        } else {
+          label = g.label_fr;
+        }
         return `<option value="${g.group_id}">${label}</option>`;
       }).join('');
 }
@@ -2292,7 +2321,10 @@ async function openGroupDetail(groupId) {
   const g    = teacherGroups.find(g => g.group_id === groupId);
   if (!g) return;
   const lang = currentLang;
-  const label = g.label_fr;
+  const typeKey = g.type_key;
+  const typeLabels = TYPE_LABELS[typeKey] || {fr: typeKey, en: typeKey};
+  const labelEn = (typeLabels.en || typeLabels.fr) + (g.level_number ? ' ' + g.level_number : '') + (g.group_letter ? ' ' + g.group_letter : '');
+  const label = lang === 'en' ? labelEn : (lang === 'ar' ? (g.label_ar || g.label_fr) : g.label_fr);
 
   document.getElementById('courses-list-view').style.display = 'none';
   document.getElementById('courses-detail-view').style.display = 'block';
@@ -2308,7 +2340,7 @@ async function openGroupDetail(groupId) {
     const data = await fetch(`api_classes.php?action=group_students&group_id=${groupId}`).then(r => r.json());
     const students = data.students || [];
     if (students.length === 0) {
-      listEl.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${lang==='ar'?'لا يوجد طلاب في هذه المجموعة':'Aucun étudiant dans ce groupe'}</p>`;
+      listEl.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${lang==='en'?'No students in this group':lang==='ar'?'لا يوجد طلاب في هذه المجموعة':'Aucun étudiant dans ce groupe'}</p>`;
       return;
     }
     listEl.innerHTML = students.map((s, i) => {
@@ -2396,7 +2428,11 @@ function populatePostCourseSelect() {
     ? `<option value="">${T[lang].noClassAssigned}</option>`
     : `<option value="">${T[lang].chooseClass}</option>`
       + TEACHER_COURSES.map(c => {
-          const name = c.group_name_fr || c.group_name_ar;
+          const name = lang === 'ar'
+            ? (c.group_name_ar || c.group_name_fr)
+            : lang === 'en'
+              ? (c.group_name_en || c.group_name_fr || c.group_name_ar)
+              : (c.group_name_fr || c.group_name_ar);
           return `<option value="${c.id}">${name}</option>`;
         }).join('');
 }
@@ -2414,7 +2450,7 @@ function renderPostsList(posts) {
   }
   list.innerHTML = posts.map(p => {
     const lang = currentLang;
-    const courseName = p.group_name_fr || p.group_name_ar;
+    const courseName = lang === 'ar' ? (p.group_name_ar || p.group_name_fr) : lang === 'en' ? (p.group_name_en || p.group_name_fr || p.group_name_ar) : (p.group_name_fr || p.group_name_ar);
     const dateStr = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { day:'numeric', month:'long', year:'numeric' }) : '';
     const linkBtn = p.link ? `<a href="${escHtml(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--blue);text-decoration:none;font-weight:500;margin-top:.5rem;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> ${T[lang].openLink}</a>` : '';
     const notesHtml = p.notes ? `<p style="color:var(--muted);font-size:.85rem;margin-top:.6rem;white-space:pre-wrap;line-height:1.6;">${escHtml(p.notes)}</p>` : '';
@@ -2429,10 +2465,10 @@ function renderPostsList(posts) {
           ${linkBtn}${notesHtml}
         </div>
         <div style="display:flex;gap:.4rem;flex-shrink:0;">
-          <button onclick="editPost(${p.id},'${escHtml(p.title).replace(/'/g,"\\'")}','${p.session_date}','${escHtml(p.link||'').replace(/'/g,"\\'")}','${escHtml(p.notes||'').replace(/\n/g,'\\n').replace(/'/g,"\\'")}',${p.course_id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="${T[currentLang]?.editPost||'Modifier'}">
+          <button onclick="editPost(${p.id},'${escHtml(p.title).replace(/'/g,"\\'")}','${p.session_date}','${escHtml(p.link||'').replace(/'/g,"\\'")}','${escHtml(p.notes||'').replace(/\n/g,'\\n').replace(/'/g,"\\'")}',${p.course_id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="${T[currentLang]?.editPost||(lang==='en'?'Edit':'Modifier')}">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
-          <button onclick="deletePost(${p.id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="${T[currentLang]?.postsDeleteConfirm||'Supprimer'}">
+          <button onclick="deletePost(${p.id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="${T[currentLang]?.postsDeleteConfirm||(lang==='en'?'Delete':'Supprimer')}">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
           </button>
         </div>
@@ -2453,7 +2489,7 @@ async function submitPost() {
   errEl.style.display = 'none';
 
   if (!courseId || !title || !date) {
-    errEl.textContent = currentLang === 'ar' ? 'يرجى ملء الحقول المطلوبة' : 'Veuillez remplir les champs requis.';
+    errEl.textContent = currentLang === 'en' ? 'Please fill in the required fields.' : currentLang === 'ar' ? 'يرجى ملء الحقول المطلوبة' : 'Veuillez remplir les champs requis.';
     errEl.style.display = '';
     return;
   }
@@ -2493,7 +2529,7 @@ async function deletePost(id) {
     if (!data.ok) throw new Error(data.error);
     showToast(T[currentLang].toastPostDeleted);
     loadPosts();
-  } catch(e) { showToast('Erreur : ' + e.message); }
+  } catch(e) { showToast((currentLang==='en'?'Error: ':currentLang==='ar'?'خطأ: ':'Erreur : ') + e.message); }
 }
 
 let _editPostId = null;
@@ -2506,7 +2542,7 @@ function editPost(id, title, date, link, notes, courseId) {
   document.getElementById('post-notes').value = notes.replace(/\\n/g, '\n');
   // Mark form as editing mode
   const btn = document.getElementById('post-submit-lbl');
-  if (btn) btn.textContent = T[currentLang]?.editPost || 'Mettre à jour';
+  if (btn) btn.textContent = T[currentLang]?.editPost || (currentLang==='en'?'Update note':'Mettre à jour');
   // Scroll form into view
   document.getElementById('posts-form-title')?.scrollIntoView({ behavior: 'smooth' });
 }
@@ -2520,7 +2556,7 @@ async function updatePost() {
   const btnLbl = document.getElementById('post-submit-lbl');
   errEl.style.display = 'none';
   if (!title || !date) {
-    errEl.textContent = 'Veuillez remplir les champs requis.';
+    errEl.textContent = currentLang==='en'?'Please fill in the required fields.':currentLang==='ar'?'يرجى ملء الحقول المطلوبة':'Veuillez remplir les champs requis.';
     errEl.style.display = ''; return;
   }
   btnLbl.textContent = '…';
@@ -2535,7 +2571,7 @@ async function updatePost() {
     if (!data.ok) throw new Error(data.error);
     _editPostId = null;
     ['post-title','post-link','post-notes'].forEach(id => { document.getElementById(id).value = ''; });
-    showToast(currentLang === 'fr' ? 'Note mise à jour !' : 'Note updated!');
+    showToast(currentLang === 'en' ? 'Note updated!' : currentLang === 'ar' ? 'تم تحديث الملاحظة!' : 'Note mise à jour !');
     loadPosts();
   } catch(e) { errEl.textContent = e.message; errEl.style.display = ''; }
   finally {
@@ -2572,7 +2608,7 @@ async function loadTodayClasses() {
     dateLbl.textContent = today.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { weekday:'long', day:'numeric', month:'long' });
   }
 
-  container.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${tr.loading || 'Chargement…'}</div>`;
+  container.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${tr.loading || (lang==='en'?'Loading…':'Chargement…')}</div>`;
 
   let groups = [];
   try {
@@ -2583,7 +2619,7 @@ async function loadTodayClasses() {
     const data = await res.json();
     groups = data.ok ? (data.groups || []) : [];
   } catch(e) {
-    container.innerHTML = `<div style="color:var(--red);font-size:.84rem;">❌ Erreur réseau</div>`;
+    container.innerHTML = `<div style="color:var(--red);font-size:.84rem;">${T[currentLang].toastNetError}</div>`;
     return;
   }
 
@@ -2638,7 +2674,7 @@ async function loadTodayClasses() {
           <div style="font-size:.78rem;color:var(--muted);margin-top:.2rem;">
             ${sessionInfo ? `<span>🕐 ${sessionInfo}</span>` : ''}
             <span style="${sessionInfo?'margin-left:.75rem':''}">👥 ${c.student_count || 0} ${tr.todayStudents}</span>
-            ${hasZoom ? `<span style="margin-left:.75rem;color:var(--green);font-size:.73rem;">● Zoom ✓</span>` : `<span style="margin-left:.75rem;color:var(--yellow);font-size:.73rem;">● Zoom manquant</span>`}
+            ${hasZoom ? `<span style="margin-left:.75rem;color:var(--green);font-size:.73rem;">● Zoom ✓</span>` : `<span style="margin-left:.75rem;color:var(--yellow);font-size:.73rem;">${lang==='en'?'● Zoom link missing':lang==='ar'?'● رابط Zoom مفقود':'● Zoom manquant'}</span>`}
           </div>
         </div>
         <svg id="today-chevron-${gid}" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="flex-shrink:0;color:var(--muted);transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
@@ -2666,7 +2702,7 @@ async function loadTodayClasses() {
             style="display:inline-flex;align-items:center;gap:.4rem;font-size:.83rem;color:var(--blue);text-decoration:none;font-family:var(--font);font-weight:600;"
             onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-            Rejoindre le cours →
+            ${lang==='en'?'Join class →':lang==='ar'?'الانضمام إلى الدرس ←':'Rejoindre le cours →'}
           </a>
         </div>` : ''}
       </div>
@@ -2883,9 +2919,10 @@ function toggleProfileMenu(e) {
 function applyProfileMenuTranslations() {
   const PM = {
     fr: { name:"Changer le prénom", avatar:"Changer l'avatar", logout:"Déconnexion" },
+    en: { name:"Change first name",  avatar:"Change avatar",    logout:"Log out" },
     ar: { name:"تغيير الاسم",       avatar:"تغيير الصورة",      logout:"تسجيل الخروج" },
   };
-  const t = PM[currentLang] || PM.fr;
+  const t = PM[currentLang] || PM.en;
   const s = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
   s('pm-name-lbl',   t.name);
   s('pm-avatar-lbl', t.avatar);

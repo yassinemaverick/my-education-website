@@ -26,7 +26,7 @@ $username  = htmlspecialchars($_SESSION['username'] ?? '');
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
 <meta name="robots" content="noindex,nofollow">
-<title>Upskill – Tableau de bord Admin</title>
+<title>Upskill – Admin Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cairo:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
@@ -283,10 +283,10 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 </style>
 </head>
 <body id="body">
-<a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;background:var(--green);color:#0f1d2e;padding:.5rem 1rem;font-family:var(--font);font-weight:700;font-size:.85rem;z-index:9999;border-radius:0 0 8px 0;transition:top .2s;text-decoration:none;">Aller au contenu</a>
+<a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;background:var(--green);color:#0f1d2e;padding:.5rem 1rem;font-family:var(--font);font-weight:700;font-size:.85rem;z-index:9999;border-radius:0 0 8px 0;transition:top .2s;text-decoration:none;">Skip to content</a>
 
 <!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu principal">
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
   <div class="sidebar-logo">
     <svg width="26" height="26" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="8" fill="#fb923c"/><path d="M8 14l4 4 8-8" stroke="#0f1d2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span>Up<em style="color:var(--orange)">skill</em></span>
@@ -339,7 +339,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     </div>
   </nav>
   <div class="sidebar-bottom">
-    <button class="btn-logout" onclick="logout()" aria-label="Se déconnecter">
+    <button class="btn-logout" onclick="logout()" aria-label="Log out">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
       <span id="logout-lbl">Déconnexion</span>
     </button>
@@ -350,7 +350,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 <main class="main" role="main" id="main-content">
   <div class="topbar">
     <div style="display:flex;align-items:center;gap:.75rem;">
-      <button class="hamburger" onclick="toggleSidebar()" aria-label="Ouvrir le menu" aria-expanded="false">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Open menu" aria-expanded="false">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
       <div class="topbar-title" id="topbar-title">Tableau de bord Admin</div>
@@ -364,7 +364,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   <div class="page active" id="page-home">
     <div class="welcome-banner">
       <div class="welcome-text">
-        <h2>Bonjour, <span id="welcome-name"><?= $full_name ?: 'Admin' ?></span> 👋</h2>
+        <h2><span id="welcome-greeting">Bonjour,</span> <span id="welcome-name"><?= $full_name ?: 'Admin' ?></span> 👋</h2>
         <p id="welcome-sub">Gérez les classes et les groupes depuis ce tableau de bord.</p>
       </div>
       <div style="font-size:3rem;">🛠️</div>
@@ -379,7 +379,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
       <div class="card">
         <div class="card-title" id="recent-activity-title">Activité récente</div>
         <div id="activity-list">
-          <div class="activity-item"><div class="activity-dot orange"></div><div><div class="activity-text"><strong>Chargement…</strong></div></div></div>
+          <div class="activity-item"><div class="activity-dot orange"></div><div><div class="activity-text"><strong id="activity-loading-lbl">Loading…</strong></div></div></div>
         </div>
       </div>
     </div>
@@ -573,7 +573,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     </div>
     <div id="schedule-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem;">
       <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.88rem;">
-        <div class="spinner" style="margin:0 auto 1rem;"></div>Chargement…
+        <div class="spinner" style="margin:0 auto 1rem;"></div><span id="sched-loading-lbl">Loading…</span>
       </div>
     </div>
   </div>
@@ -623,7 +623,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   <div class="modal" style="max-width:480px;">
     <div class="modal-header">
       <h3 id="modal-add-user-title">Nouvel utilisateur</h3>
-      <button class="modal-close" onclick="closeModal('add-user')" aria-label="Fermer">✕</button>
+      <button class="modal-close" onclick="closeModal('add-user')" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
       <div class="form-group">
@@ -641,8 +641,8 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
       <div class="form-group">
         <label id="lbl-au-role">Rôle</label>
         <select id="au-role" style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;">
-          <option value="student">Étudiant</option>
-          <option value="teacher">Professeur</option>
+          <option value="student" id="au-role-student">Étudiant</option>
+          <option value="teacher" id="au-role-teacher">Professeur</option>
         </select>
       </div>
       <div class="form-group">
@@ -664,7 +664,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   <div class="modal" style="max-width:420px;">
     <div class="modal-header">
       <h3 id="modal-reset-title">Réinitialiser le mot de passe</h3>
-      <button class="modal-close" onclick="closeModal('reset-pw')" aria-label="Fermer">✕</button>
+      <button class="modal-close" onclick="closeModal('reset-pw')" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
       <p style="color:var(--muted);font-size:.88rem;margin-bottom:1.25rem;" id="reset-pw-sub">
@@ -692,7 +692,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   <div class="modal sm">
     <div class="modal-header">
       <h3 id="modal-add-group-title">Nouveau groupe</h3>
-      <button class="btn-close" onclick="closeModal('add-group')" aria-label="Fermer">✕</button>
+      <button class="btn-close" onclick="closeModal('add-group')" aria-label="Close">✕</button>
     </div>
     <div class="form-group">
       <label id="lbl-group-letter">Lettre du groupe</label>
@@ -711,7 +711,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   <div class="modal" style="max-width:600px;">
     <div class="modal-header">
       <h3 id="modal-members-title">Membres du groupe</h3>
-      <button class="btn-close" onclick="closeModal('group-members')" aria-label="Fermer">✕</button>
+      <button class="btn-close" onclick="closeModal('group-members')" aria-label="Close">✕</button>
     </div>
 
     <!-- Current members list -->
@@ -726,11 +726,11 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
       <select id="member-user-select" style="flex:1;padding:.7rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;">
         <option value="">— Sélectionner un utilisateur —</option>
       </select>
-      <button class="btn-primary btn-sm" onclick="submitAddMember()" id="btn-add-member">Ajouter</button>
+      <button class="btn-primary btn-sm" onclick="submitAddMember()" id="btn-add-member">Add</button>
     </div>
     <div id="member-add-error" style="display:none;color:var(--red);font-size:.82rem;margin-top:.4rem;"></div>
     <div class="modal-footer" style="margin-top:1.25rem;">
-      <button class="btn-secondary" onclick="closeModal('group-members')" id="members-close-btn">Fermer</button>
+      <button class="btn-secondary" onclick="closeModal('group-members')" id="members-close-btn">Close</button>
     </div>
   </div>
 </div>
@@ -766,8 +766,8 @@ const T = {
     schDayLabel:'Jour', schTimeFromLabel:'De', schTimeToLabel:'À',
     schNoSlots:'Aucune séance configurée.',
     schDays:[
-      {fr:'Lundi',ar:'الاثنين'},{fr:'Mardi',ar:'الثلاثاء'},{fr:'Mercredi',ar:'الأربعاء'},
-      {fr:'Jeudi',ar:'الخميس'},{fr:'Vendredi',ar:'الجمعة'},{fr:'Samedi',ar:'السبت'}
+      {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
+      {fr:'Jeudi',en:'Thursday',ar:'الخميس'},{fr:'Vendredi',en:'Friday',ar:'الجمعة'},{fr:'Samedi',en:'Saturday',ar:'السبت'}
     ],
     topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes', schedule:'Horaires des groupes' },
     assigningStudentsTitle:'Étudiants', assigningTeachersTitle:'Professeurs',
@@ -800,6 +800,26 @@ const T = {
     toastStatusUpdated:'Statut mis à jour.',
     toastEnrollDeleted:'Demande supprimée.',
     confirmDeleteEnroll:'Supprimer cette demande définitivement ?',
+    greeting:'Bonjour,',
+    schLoading:'Chargement…',
+    membersCloseBtn:'Fermer', btnAddMember:'Ajouter', addGroupCancel:'Annuler', addGroupSubmit:'Créer',
+    tabAll:'Tous', tabStudents:'Étudiants', tabTeachers:'Professeurs',
+    thName:'Nom', thUser:'Identifiant', thEmail:'Email', thRole:'Rôle', thActions:'Actions',
+    modalAddUserTitle:'Nouvel utilisateur',
+    lblAuFullname:'Nom complet', lblAuUsername:'Identifiant (login)', lblAuEmail:'Email', lblAuRole:'Rôle',
+    lblAuPassword:'Mot de passe initial', auPwPlaceholder:'Minimum 8 caractères',
+    auCancelBtn:'Annuler', auSubmitBtn:'Créer l\'utilisateur',
+    modalResetTitle:'Réinitialiser le mot de passe',
+    resetPwSub:'Définir un nouveau mot de passe pour',
+    lblNewPw:'Nouveau mot de passe', lblNewPw2:'Confirmer',
+    newPwPlaceholder:'Minimum 8 caractères', newPw2Placeholder:'Répétez le mot de passe',
+    rpCancelBtn:'Annuler', rpSubmitBtn:'Enregistrer',
+    twoFaTitle:'Double authentification (2FA)', twoFaSub:'Configurer Google Authenticator ou Authy',
+    securityLabel:'Sécurité',
+    btnAddUser:'Nouvel utilisateur',
+    usersSearchPlaceholder:'Rechercher par nom ou email…',
+    usersPageTitle:'Gestion des utilisateurs', usersPageSub:'Gérez les emails et mots de passe des étudiants et professeurs',
+    classesPageSub2:'Sélectionnez un type de classe',
   },
   ar: {
     adminChip:'مسؤول', roleLabel:'مسؤول النظام',
@@ -816,8 +836,8 @@ const T = {
     schDayLabel:'اليوم', schTimeFromLabel:'من', schTimeToLabel:'إلى',
     schNoSlots:'لم يتم تكوين أي جلسة.',
     schDays:[
-      {fr:'Lundi',ar:'الاثنين'},{fr:'Mardi',ar:'الثلاثاء'},{fr:'Mercredi',ar:'الأربعاء'},
-      {fr:'Jeudi',ar:'الخميس'},{fr:'Vendredi',ar:'الجمعة'},{fr:'Samedi',ar:'السبت'}
+      {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
+      {fr:'Jeudi',en:'Thursday',ar:'الخميس'},{fr:'Vendredi',en:'Friday',ar:'الجمعة'},{fr:'Samedi',en:'Saturday',ar:'السبت'}
     ],
     topbar:{ home:'لوحة تحكم المسؤول', users:'المستخدمون', inscriptions:'التسجيلات', settings:'الإعدادات', classes:'الفصول', 'assigning-classes':'تعيين الفصول', schedule:'جداول المجموعات' },
     assigningStudentsTitle:'الطلاب', assigningTeachersTitle:'الأساتذة',
@@ -850,6 +870,26 @@ const T = {
     toastStatusUpdated:'تم تحديث الحالة.',
     toastEnrollDeleted:'تم حذف الطلب.',
     confirmDeleteEnroll:'حذف هذا الطلب نهائياً؟',
+    greeting:'مرحباً،',
+    schLoading:'جارٍ التحميل…',
+    membersCloseBtn:'إغلاق', btnAddMember:'إضافة', addGroupCancel:'إلغاء', addGroupSubmit:'إنشاء',
+    tabAll:'الكل', tabStudents:'الطلاب', tabTeachers:'الأساتذة',
+    thName:'الاسم', thUser:'المعرّف', thEmail:'البريد الإلكتروني', thRole:'الدور', thActions:'إجراءات',
+    modalAddUserTitle:'مستخدم جديد',
+    lblAuFullname:'الاسم الكامل', lblAuUsername:'اسم المستخدم', lblAuEmail:'البريد الإلكتروني', lblAuRole:'الدور',
+    lblAuPassword:'كلمة المرور الأولية', auPwPlaceholder:'8 أحرف على الأقل',
+    auCancelBtn:'إلغاء', auSubmitBtn:'إنشاء المستخدم',
+    modalResetTitle:'إعادة تعيين كلمة المرور',
+    resetPwSub:'تعيين كلمة مرور جديدة لـ',
+    lblNewPw:'كلمة المرور الجديدة', lblNewPw2:'تأكيد',
+    newPwPlaceholder:'8 أحرف على الأقل', newPw2Placeholder:'أعد كلمة المرور',
+    rpCancelBtn:'إلغاء', rpSubmitBtn:'حفظ',
+    twoFaTitle:'المصادقة الثنائية (2FA)', twoFaSub:'إعداد Google Authenticator أو Authy',
+    securityLabel:'الأمان',
+    btnAddUser:'مستخدم جديد',
+    usersSearchPlaceholder:'البحث بالاسم أو البريد…',
+    usersPageTitle:'إدارة المستخدمين', usersPageSub:'أدر بريد الطلاب والأساتذة وكلمات مرورهم',
+    classesPageSub2:'اختر نوع الفصل',
   },
   en: {
     adminChip:'Admin', roleLabel:'Administrator',
@@ -866,8 +906,8 @@ const T = {
     schDayLabel:'Day', schTimeFromLabel:'From', schTimeToLabel:'To',
     schNoSlots:'No sessions configured.',
     schDays:[
-      {fr:'Lundi',ar:'الاثنين'},{fr:'Mardi',ar:'الثلاثاء'},{fr:'Mercredi',ar:'الأربعاء'},
-      {fr:'Jeudi',ar:'الخميس'},{fr:'Vendredi',ar:'الجمعة'},{fr:'Samedi',ar:'السبت'}
+      {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
+      {fr:'Jeudi',en:'Thursday',ar:'الخميس'},{fr:'Vendredi',en:'Friday',ar:'الجمعة'},{fr:'Samedi',en:'Saturday',ar:'السبت'}
     ],
     topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments', schedule:'Allocate dates & times' },
     assigningStudentsTitle:'Students', assigningTeachersTitle:'Teachers',
@@ -900,6 +940,26 @@ const T = {
     toastStatusUpdated:'Status updated.',
     toastEnrollDeleted:'Request deleted.',
     confirmDeleteEnroll:'Permanently delete this request?',
+    greeting:'Hello,',
+    schLoading:'Loading…',
+    membersCloseBtn:'Close', btnAddMember:'Add', addGroupCancel:'Cancel', addGroupSubmit:'Create',
+    tabAll:'All', tabStudents:'Students', tabTeachers:'Teachers',
+    thName:'Name', thUser:'Username', thEmail:'Email', thRole:'Role', thActions:'Actions',
+    modalAddUserTitle:'New user',
+    lblAuFullname:'Full name', lblAuUsername:'Username', lblAuEmail:'Email', lblAuRole:'Role',
+    lblAuPassword:'Initial password', auPwPlaceholder:'Minimum 8 characters',
+    auCancelBtn:'Cancel', auSubmitBtn:'Create user',
+    modalResetTitle:'Reset password',
+    resetPwSub:'Set a new password for',
+    lblNewPw:'New password', lblNewPw2:'Confirm',
+    newPwPlaceholder:'Minimum 8 characters', newPw2Placeholder:'Repeat password',
+    rpCancelBtn:'Cancel', rpSubmitBtn:'Save',
+    twoFaTitle:'Two-factor authentication (2FA)', twoFaSub:'Set up Google Authenticator or Authy',
+    securityLabel:'Security',
+    btnAddUser:'New user',
+    usersSearchPlaceholder:'Search by name or email…',
+    usersPageTitle:'User management', usersPageSub:'Manage student and teacher emails and passwords',
+    classesPageSub2:'Select a class type',
   }
 };
 const tr = () => T[currentLang] || T.fr;
@@ -939,6 +999,8 @@ function applyTranslations() {
   set('btn-add-group-lbl', t.btnAddGroup);
   set('modal-add-group-title', t.modalAddGroupTitle); set('lbl-group-letter', t.lblGroupLetter);
   set('members-current-lbl', t.membersCurrentLbl); set('members-add-lbl', t.membersAddLbl);
+  set('members-close-btn', t.membersCloseBtn); set('btn-add-member', t.btnAddMember);
+  set('add-group-cancel', t.addGroupCancel); set('add-group-submit', t.addGroupSubmit);
   set('inscriptions-title', t.inscriptionsTitle); set('inscriptions-sub', t.inscriptionsSub);
   set('export-csv-lbl', t.exportCSV);
   set('etab-all-lbl', t.etabAll); set('etab-new-lbl', t.etabNew);
@@ -955,6 +1017,43 @@ function applyTranslations() {
   set('settings-role', t.settingsRole);
   set('lbl-fullname', t.lblFullname); set('save-btn', t.saveBtn);
   set('pref-title', t.prefTitle); set('pref-txt', t.prefTxt);
+  // Greeting
+  set('welcome-greeting', t.greeting);
+  // Schedule loading placeholder
+  set('sched-loading-lbl', t.schLoading);
+  // Users page
+  set('tab-all-users', t.tabAll); set('tab-students', t.tabStudents); set('tab-teachers', t.tabTeachers);
+  set('th-name', t.thName); set('th-user', t.thUser); set('th-email', t.thEmail); set('th-role', t.thRole); set('th-actions', t.thActions);
+  set('users-page-title', t.usersPageTitle); set('users-page-sub', t.usersPageSub);
+  set('btn-add-user-lbl', t.btnAddUser);
+  const usp = document.getElementById('users-search'); if (usp) usp.placeholder = t.usersSearchPlaceholder;
+  // Add User modal
+  set('modal-add-user-title', t.modalAddUserTitle);
+  set('lbl-au-fullname', t.lblAuFullname); set('lbl-au-username', t.lblAuUsername);
+  set('lbl-au-email', t.lblAuEmail); set('lbl-au-role', t.lblAuRole);
+  set('lbl-au-password', t.lblAuPassword);
+  const auPw = document.getElementById('au-password'); if (auPw) auPw.placeholder = t.auPwPlaceholder;
+  set('au-cancel-btn', t.auCancelBtn); set('au-submit-btn', t.auSubmitBtn);
+  set('au-role-student', currentLang==='en'?'Student':currentLang==='ar'?'طالب':'Étudiant');
+  set('au-role-teacher', currentLang==='en'?'Teacher':currentLang==='ar'?'أستاذ':'Professeur');
+  // Reset password modal
+  set('modal-reset-title', t.modalResetTitle);
+  // reset-pw-sub contains a <strong> child — update only the text node, not innerHTML
+  const rpSubEl = document.getElementById('reset-pw-sub');
+  if (rpSubEl) {
+    const strongEl = rpSubEl.querySelector('strong');
+    rpSubEl.childNodes.forEach(n => { if (n.nodeType === Node.TEXT_NODE) n.textContent = t.resetPwSub + ' '; });
+    if (!rpSubEl.querySelector('strong') && strongEl) rpSubEl.appendChild(strongEl);
+  }
+  const npw = document.getElementById('new-pw'); if (npw) npw.placeholder = t.newPwPlaceholder;
+  const npw2 = document.getElementById('new-pw2'); if (npw2) npw2.placeholder = t.newPw2Placeholder;
+  set('lbl-new-pw', t.lblNewPw); set('lbl-new-pw2', t.lblNewPw2);
+  set('rp-cancel-btn', t.rpCancelBtn); set('rp-submit-btn', t.rpSubmitBtn);
+  // Settings page
+  set('2fa-link-title', t.twoFaTitle); set('2fa-link-sub', t.twoFaSub);
+  set('security-label', t.securityLabel);
+  // Re-render dynamic tables to pick up new language
+  if (allUsers.length > 0) renderUsersTable();
 }
 
 function navigate(page, el) {
@@ -990,7 +1089,7 @@ async function api(url, method='GET', body=null) {
   if (body) opts.body = JSON.stringify(body);
   const res  = await fetch(url, opts);
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error?.[currentLang] || json.error || 'Erreur');
+  if (!json.ok) throw new Error(json.error?.[currentLang] || json.error || (currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'));
   return json;
 }
 
@@ -1009,7 +1108,8 @@ async function loadUsers() {
     renderUsersTable();
   } catch(e) {
     const tbody = document.getElementById('users-tbody');
-    if (tbody) tbody.innerHTML = '<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--muted);">Erreur de chargement</td></tr>';
+    const loadErrMsg = currentLang==='en'?'Loading error':currentLang==='ar'?'خطأ في التحميل':'Erreur de chargement';
+    if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--muted);">${loadErrMsg}</td></tr>`;
   }
 }
 
@@ -1037,11 +1137,11 @@ function renderUsersTable() {
 
   if (rows.length === 0) {
     tbody.innerHTML = '<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--muted);">'
-      + (lang === 'ar' ? 'لا توجد نتائج' : 'Aucun utilisateur trouvé') + '</td></tr>';
+      + (lang==='en' ? 'No users found' : lang==='ar' ? 'لا توجد نتائج' : 'Aucun utilisateur trouvé') + '</td></tr>';
     return;
   }
 
-  const roleLabel = { student: lang==='ar'?'طالب':'Étudiant', teacher: lang==='ar'?'أستاذ':'Professeur', admin: lang==='ar'?'مشرف':'Admin' };
+  const roleLabel = { student: lang==='en'?'Student':lang==='ar'?'طالب':'Étudiant', teacher: lang==='en'?'Teacher':lang==='ar'?'أستاذ':'Professeur', admin: lang==='ar'?'مشرف':'Admin' };
   const roleColor = { student:'var(--blue)', teacher:'var(--green)', admin:'var(--orange)' };
 
   tbody.innerHTML = rows.map(u => {
@@ -1049,8 +1149,8 @@ function renderUsersTable() {
     const emailHtml = `<span class="email-cell" data-uid="${u.id}" data-email="${e(u.email||'')}"
       onclick="editEmailInline(this)"
       style="cursor:pointer;color:${u.email ? 'var(--white)' : 'var(--muted)'};border-bottom:1px dashed var(--border);padding-bottom:1px;"
-      title="${lang==='ar'?'انقر للتعديل':'Cliquer pour modifier'}">
-      ${u.email ? e(u.email) : (lang==='ar'?'+ إضافة بريد':'+ Ajouter email')}
+      title="${lang==='en'?'Click to edit':lang==='ar'?'انقر للتعديل':'Cliquer pour modifier'}">
+      ${u.email ? e(u.email) : (lang==='en'?'+ Add email':lang==='ar'?'+ إضافة بريد':'+ Ajouter email')}
     </span>`;
     return `<tr style="border-bottom:1px solid var(--border2);transition:background .15s;" onmouseenter="this.style.background='rgba(255,255,255,.03)'" onmouseleave="this.style.background=''">
       <td style="padding:.85rem 1.2rem;">
@@ -1069,8 +1169,8 @@ function renderUsersTable() {
           style="font-size:.78rem;font-family:var(--font);font-weight:600;padding:.3rem .7rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:.2s;"
           onmouseenter="this.style.color='var(--white)';this.style.borderColor='rgba(255,255,255,.3)'"
           onmouseleave="this.style.color='var(--muted)';this.style.borderColor='var(--border)'"
-          title="${lang==='ar'?'إعادة تعيين كلمة المرور':'Réinitialiser le mot de passe'}">
-          🔑 ${lang==='ar'?'كلمة المرور':'Mot de passe'}
+          title="${lang==='en'?'Reset password':lang==='ar'?'إعادة تعيين كلمة المرور':'Réinitialiser le mot de passe'}">
+          🔑 ${lang==='en'?'Password':lang==='ar'?'كلمة المرور':'Mot de passe'}
         </button>
       </td>
     </tr>`;
@@ -1102,10 +1202,10 @@ function editEmailInline(span) {
       // Update local cache
       const u = allUsers.find(u => String(u.id) === String(uid));
       if (u) u.email = newEmail;
-      showToast('Email mis à jour ✓', 'success');
+      showToast(currentLang==='en'?'Email updated ✓':currentLang==='ar'?'تم تحديث البريد ✓':'Email mis à jour ✓', 'success');
       renderUsersTable();
     } catch(err) {
-      showToast(err.message || 'Erreur', 'error');
+      showToast(err.message || (currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'), 'error');
       renderUsersTable();
     }
   };
@@ -1129,19 +1229,20 @@ async function submitResetPassword() {
   const pw2  = document.getElementById('new-pw2').value;
   const errEl= document.getElementById('reset-pw-error');
 
-  if (!pw1 || pw1.length < 8) { errEl.textContent = 'Le mot de passe doit contenir au moins 8 caractères.'; errEl.style.display=''; return; }
-  if (pw1 !== pw2)             { errEl.textContent = 'Les mots de passe ne correspondent pas.'; errEl.style.display=''; return; }
+  const _rlang = currentLang;
+  if (!pw1 || pw1.length < 8) { errEl.textContent = _rlang==='en'?'Password must be at least 8 characters.':_rlang==='ar'?'يجب أن تكون كلمة المرور 8 أحرف على الأقل.':'Le mot de passe doit contenir au moins 8 caractères.'; errEl.style.display=''; return; }
+  if (pw1 !== pw2)             { errEl.textContent = _rlang==='en'?'Passwords do not match.':_rlang==='ar'?'كلمتا المرور غير متطابقتين.':'Les mots de passe ne correspondent pas.'; errEl.style.display=''; return; }
 
   try {
     document.getElementById('rp-submit-btn').textContent = '…';
     await api('api_students.php?action=reset_password', 'POST', { user_id: uid, password: pw1 });
     closeModal('reset-pw');
-    showToast('Mot de passe mis à jour ✓', 'success');
-    addActivity('Mot de passe réinitialisé — ' + document.getElementById('reset-pw-name').textContent);
+    showToast(currentLang==='en'?'Password updated ✓':currentLang==='ar'?'تم تحديث كلمة المرور ✓':'Mot de passe mis à jour ✓', 'success');
+    addActivity((currentLang==='en'?'Password reset — ':currentLang==='ar'?'إعادة تعيين كلمة المرور — ':'Mot de passe réinitialisé — ') + document.getElementById('reset-pw-name').textContent);
   } catch(err) {
-    errEl.textContent = err.message || 'Erreur serveur'; errEl.style.display = '';
+    errEl.textContent = err.message || (currentLang==='en'?'Server error':currentLang==='ar'?'خطأ في الخادم':'Erreur serveur'); errEl.style.display = '';
   } finally {
-    document.getElementById('rp-submit-btn').textContent = 'Enregistrer';
+    document.getElementById('rp-submit-btn').textContent = tr().rpSubmitBtn;
   }
 }
 
@@ -1171,9 +1272,10 @@ async function submitAddUser() {
   const password = document.getElementById('au-password').value;
   const errEl    = document.getElementById('au-error');
 
-  if (!fullname || !username || !password) { errEl.textContent='Nom, identifiant et mot de passe sont requis.'; errEl.style.display=''; return; }
-  if (password.length < 8) { errEl.textContent='Le mot de passe doit contenir au moins 8 caractères.'; errEl.style.display=''; return; }
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent='Email invalide.'; errEl.style.display=''; return; }
+  const _lang = currentLang;
+  if (!fullname || !username || !password) { errEl.textContent=_lang==='en'?'Name, username and password are required.':_lang==='ar'?'الاسم والمعرف وكلمة المرور مطلوبة.':'Nom, identifiant et mot de passe sont requis.'; errEl.style.display=''; return; }
+  if (password.length < 8) { errEl.textContent=_lang==='en'?'Password must be at least 8 characters.':_lang==='ar'?'يجب أن تكون كلمة المرور 8 أحرف على الأقل.':'Le mot de passe doit contenir au moins 8 caractères.'; errEl.style.display=''; return; }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent=_lang==='en'?'Invalid email.':_lang==='ar'?'بريد إلكتروني غير صالح.':'Email invalide.'; errEl.style.display=''; return; }
 
   try {
     document.getElementById('au-submit-btn').textContent = '…';
@@ -1184,14 +1286,14 @@ async function submitAddUser() {
       try { await api('api_students.php?action=update_enrollment_status', 'POST', { id: enrollId, status: 'accepted' }); } catch(e){}
     }
     closeModal('add-user');
-    showToast('Utilisateur créé ✓', 'success');
-    addActivity('Nouvel utilisateur créé — ' + fullname);
+    showToast(currentLang==='en'?'User created ✓':currentLang==='ar'?'تم إنشاء المستخدم ✓':'Utilisateur créé ✓', 'success');
+    addActivity((currentLang==='en'?'New user created — ':currentLang==='ar'?'مستخدم جديد — ':'Nouvel utilisateur créé — ') + fullname);
     await loadUsers();
     if (enrollId) await loadEnrollments(); // refresh inscriptions tab too
   } catch(err) {
-    errEl.textContent = err.message || 'Erreur serveur'; errEl.style.display='';
+    errEl.textContent = err.message || (currentLang==='en'?'Server error':currentLang==='ar'?'خطأ في الخادم':'Erreur serveur'); errEl.style.display='';
   } finally {
-    document.getElementById('au-submit-btn').textContent = 'Créer l\'utilisateur';
+    document.getElementById('au-submit-btn').textContent = tr().auSubmitBtn;
   }
 }
 function openModal(id)  { document.getElementById('modal-' + id).classList.add('open'); }
@@ -1274,7 +1376,8 @@ async function loadEnrollments() {
     if (badge) { badge.textContent = c.new||0; badge.style.display = (c.new||0)>0?'':'none'; }
     renderEnrollmentsTable();
   } catch(e) {
-    tbody.innerHTML = '<tr><td colspan="6" style="padding:1.5rem;color:var(--red);">Erreur: ' + (e.message||'') + '</td></tr>';
+    const errLbl = currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur';
+    tbody.innerHTML = `<tr><td colspan="6" style="padding:1.5rem;color:var(--red);">${errLbl}: ${e.message||''}</td></tr>`;
   }
 }
 
@@ -1284,7 +1387,8 @@ function renderEnrollmentsTable() {
 
   // All tabs now use enrollmentsData (enrollment form submissions)
   if (!enrollmentsData.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="padding:2.5rem;text-align:center;color:var(--muted);">Aucune demande trouvée.</td></tr>';
+    const noReqMsg = currentLang==='en' ? 'No requests found.' : currentLang==='ar' ? 'لم يُعثر على أي طلب.' : 'Aucune demande trouvée.';
+    tbody.innerHTML = `<tr><td colspan="6" style="padding:2.5rem;text-align:center;color:var(--muted);">${noReqMsg}</td></tr>`;
     return;
   }
   const statusConfig = {
@@ -1330,7 +1434,7 @@ function renderEnrollmentsTable() {
               <button onclick="acceptEnrollment(${row.id})"
                 style="background:rgba(62,207,120,.1);border:1px solid rgba(62,207,120,.3);color:var(--green);border-radius:8px;padding:.3rem .7rem;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;white-space:nowrap;"
                 onmouseenter="this.style.background='rgba(62,207,120,.22)'"
-                onmouseleave="this.style.background='rgba(62,207,120,.1)'">✓ Accepter</button>
+                onmouseleave="this.style.background='rgba(62,207,120,.1)'">✓ ${currentLang==='en'?'Accept':currentLang==='ar'?'قبول':'Accepter'}</button>
               <button onclick="deleteEnrollment(${row.id})"
                 style="background:transparent;border:1px solid rgba(232,93,117,.3);color:var(--red);border-radius:8px;padding:.3rem .6rem;font-size:.78rem;cursor:pointer;transition:.2s;"
                 onmouseenter="this.style.background='rgba(232,93,117,.1)'"
@@ -1346,7 +1450,7 @@ async function updateEnrollmentStatus(id, status) {
   try {
     await api('api_students.php?action=update_enrollment_status', 'POST', { id, status });
     showToast(tr().toastStatusUpdated, 'success');
-    addActivity('Inscription #' + id + ' → ' + status);
+    addActivity((currentLang==='en'?'Enrollment #':currentLang==='ar'?'تسجيل #':'Inscription #') + id + ' → ' + status);
     await loadEnrollments(); // reload to refresh counts
   } catch(e) {
     showToast(e.message || tr().errNetwork, 'error');
@@ -1356,8 +1460,8 @@ async function updateEnrollmentStatus(id, status) {
 async function acceptEnrollment(id) {
   try {
     await api('api_students.php?action=update_enrollment_status', 'POST', { id, status: 'accepted' });
-    showToast('Demande acceptée ✓', 'success');
-    addActivity('Inscription #' + id + ' acceptée');
+    showToast(currentLang==='en'?'Request accepted ✓':currentLang==='ar'?'تم قبول الطلب ✓':'Demande acceptée ✓', 'success');
+    addActivity((currentLang==='en'?'Enrollment #':currentLang==='ar'?'تسجيل #':'Inscription #') + id + (currentLang==='en'?' accepted':currentLang==='ar'?' مقبول':' acceptée'));
     // Switch to "Acceptées" tab and reload
     const tab = document.getElementById('enroll-tab-accepted');
     if (tab) filterEnrollments('accepted', tab);
@@ -1409,14 +1513,14 @@ let classesAllUsers  = []; // separate from allUsers (Users page)
 
 // Fixed type definitions (mirrors PHP CLASS_TYPES)
 const CLASS_TYPE_DEFS = [
-  {key:'beginners',          label_fr:'Débutants',           label_ar:'مبتدئون',         levels:3, icon:'🌱'},
-  {key:'pre_intermediate',   label_fr:'Pré-intermédiaire',   label_ar:'ما قبل المتوسط',  levels:3, icon:'📗'},
-  {key:'intermediate',       label_fr:'Intermédiaire',       label_ar:'متوسط',            levels:3, icon:'📘'},
-  {key:'upper_intermediate', label_fr:'Upper-intermédiaire', label_ar:'فوق المتوسط',     levels:3, icon:'📙'},
-  {key:'advanced',           label_fr:'Avancé',              label_ar:'متقدم',            levels:3, icon:'🔥'},
-  {key:'baccalaureate',      label_fr:'Baccalauréat',        label_ar:'البكالوريا',       levels:0, icon:'🎓'},
-  {key:'business',           label_fr:'Business',            label_ar:'الأعمال',          levels:0, icon:'💼'},
-  {key:'kids',               label_fr:'Kids',                label_ar:'أطفال',            levels:0, icon:'🧒'},
+  {key:'beginners',          label_fr:'Débutants',           label_en:'Beginners',          label_ar:'مبتدئون',         levels:3, icon:'🌱'},
+  {key:'pre_intermediate',   label_fr:'Pré-intermédiaire',   label_en:'Pre-intermediate',   label_ar:'ما قبل المتوسط',  levels:3, icon:'📗'},
+  {key:'intermediate',       label_fr:'Intermédiaire',       label_en:'Intermediate',       label_ar:'متوسط',            levels:3, icon:'📘'},
+  {key:'upper_intermediate', label_fr:'Upper-intermédiaire', label_en:'Upper-intermediate', label_ar:'فوق المتوسط',     levels:3, icon:'📙'},
+  {key:'advanced',           label_fr:'Avancé',              label_en:'Advanced',           label_ar:'متقدم',            levels:3, icon:'🔥'},
+  {key:'baccalaureate',      label_fr:'Baccalauréat',        label_en:'Baccalaureate',      label_ar:'البكالوريا',       levels:0, icon:'🎓'},
+  {key:'business',           label_fr:'Business',            label_en:'Business',           label_ar:'الأعمال',          levels:0, icon:'💼'},
+  {key:'kids',               label_fr:'Kids',                label_en:'Kids',               label_ar:'أطفال',            levels:0, icon:'🧒'},
 ];
 
 async function renderClassesPage() {
@@ -1435,11 +1539,12 @@ async function renderClassesPage() {
     await renderTypesGrid();
 
   } else if (classesView === 'levels') {
-    document.getElementById('classes-page-sub').textContent = currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+    const typeNameL = currentLang==='en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+    document.getElementById('classes-page-sub').textContent = typeNameL;
     bc.style.display = '';
     bc.innerHTML = `<span class="bc-link" onclick="classesGoTypes()">Classes</span>`
       + `<span class="bc-sep">›</span>`
-      + `<span class="bc-cur">${currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr}</span>`;
+      + `<span class="bc-cur">${typeNameL}</span>`;
     document.getElementById('classes-view-levels').style.display = '';
     renderLevelCards();
 
@@ -1449,7 +1554,8 @@ async function renderClassesPage() {
     bc.style.display = '';
     let bcHtml = `<span class="bc-link" onclick="classesGoTypes()">Classes</span><span class="bc-sep">›</span>`;
     if (classesTypeMeta.levels > 0) {
-      bcHtml += `<span class="bc-link" onclick="classesGoLevels()">${currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr}</span><span class="bc-sep">›</span>`;
+      const typeNameG = currentLang==='en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+      bcHtml += `<span class="bc-link" onclick="classesGoLevels()">${typeNameG}</span><span class="bc-sep">›</span>`;
     }
     bcHtml += `<span class="bc-cur">${label}</span>`;
     bc.innerHTML = bcHtml;
@@ -1460,7 +1566,7 @@ async function renderClassesPage() {
 }
 
 function buildGroupLabel() {
-  const name = currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+  const name = currentLang==='en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
   return classesLevel ? name + ' ' + classesLevel : name;
 }
 
@@ -1469,9 +1575,11 @@ async function renderTypesGrid() {
 
   // Render immediately from local definitions so cards are always clickable
   const render = (counts) => {
+    const niveauxWord = currentLang==='en' ? 'level(s)' : currentLang==='ar' ? 'مستوى' : 'niveaux';
+    const groupsWord  = currentLang==='en' ? 'group(s)' : currentLang==='ar' ? 'مجموعة' : 'groupe(s)';
     grid.innerHTML = CLASS_TYPE_DEFS.map(def => {
-      const name = currentLang === 'ar' ? def.label_ar : def.label_fr;
-      let sub = def.levels > 0 ? def.levels + ' niveaux' : '';
+      const name = currentLang === 'en' ? (def.label_en||def.label_fr) : currentLang === 'ar' ? def.label_ar : def.label_fr;
+      let sub = def.levels > 0 ? def.levels + ' ' + niveauxWord : '';
       if (counts) {
         const t = counts.find(c => c.key === def.key);
         let tally = 0;
@@ -1481,8 +1589,8 @@ async function renderTypesGrid() {
             : (t.group_count || 0);
         }
         sub = def.levels > 0
-          ? def.levels + ' niveaux · ' + tally + ' groupe(s)'
-          : tally + ' groupe(s)';
+          ? def.levels + ' ' + niveauxWord + ' · ' + tally + ' ' + groupsWord
+          : tally + ' ' + groupsWord;
       }
       return `<div class="class-type-card" onclick="classesSelectType('${def.key}')">
         <div style="font-size:1.8rem;margin-bottom:.6rem;">${def.icon}</div>
@@ -1505,7 +1613,7 @@ async function renderTypesGrid() {
 
 function renderLevelCards() {
   const container = document.getElementById('classes-view-levels');
-  const baseName  = currentLang === 'ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+  const baseName  = currentLang === 'en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : currentLang === 'ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
   const levels    = classesTypeMeta.levels || 0;
   // Build level list: use API data if available, otherwise fall back to count from def
   const apiType   = allClassTypes.find(t => t.key === classesTypeKey);
@@ -1514,9 +1622,10 @@ function renderLevelCards() {
     const gc   = apiType ? ((apiType.level_groups || []).find(lg => lg.level === lvl)?.group_count ?? 0) : null;
     return { level: lvl, group_count: gc };
   });
+  const groupsWord2 = currentLang==='en' ? 'group(s)' : currentLang==='ar' ? 'مجموعة' : 'groupe(s)';
   container.innerHTML = rows.map(lg => {
     const name = baseName + ' ' + lg.level;
-    const sub  = lg.group_count !== null ? lg.group_count + ' groupe(s)' : '';
+    const sub  = lg.group_count !== null ? lg.group_count + ' ' + groupsWord2 : '';
     return `<div class="level-card" onclick="classesSelectLevel(${lg.level})">
       <div class="lc-title">${name}</div>
       <div class="lc-sub">${sub}</div>
@@ -1531,13 +1640,17 @@ async function loadGroupChips() {
   let url = `api_classes.php?action=list_groups&type_key=${classesTypeKey}`;
   if (classesLevel) url += `&level=${classesLevel}`;
   let data;
-  try { data = await api(url); } catch(e) { container.innerHTML = '<p style="color:var(--red);font-size:.85rem;grid-column:1/-1;">Erreur de chargement</p>'; return; }
+  const loadErrMsg2 = currentLang==='en'?'Loading error':currentLang==='ar'?'خطأ في التحميل':'Erreur de chargement';
+  try { data = await api(url); } catch(e) { container.innerHTML = `<p style="color:var(--red);font-size:.85rem;grid-column:1/-1;">${loadErrMsg2}</p>`; return; }
 
   const groups = data.groups || [];
   if (groups.length === 0) {
     container.innerHTML = `<p style="color:var(--muted);font-size:.85rem;grid-column:1/-1;">${tr().noGroups}</p>`;
     return;
   }
+  const groupWord   = currentLang==='en' ? 'Group' : currentLang==='ar' ? 'مجموعة' : 'Groupe';
+  const noStudents  = currentLang==='en' ? 'No students' : currentLang==='ar' ? 'لا طلاب' : 'Aucun élève';
+  const deleteTitle = currentLang==='en' ? 'Delete' : currentLang==='ar' ? 'حذف' : 'Supprimer';
   container.innerHTML = groups.map(g => {
     const members  = g.members || [];
     const teachers = members.filter(m => m.role === 'teacher');
@@ -1547,10 +1660,10 @@ async function loadGroupChips() {
       : '';
     const studentHtml = students.length
       ? `<div class="gc-students">${students.map(s => s.name).join(' · ')}</div>`
-      : `<div class="gc-students gc-empty">Aucun élève</div>`;
+      : `<div class="gc-students gc-empty">${noStudents}</div>`;
     return `<div class="group-card" onclick="openManageGroupModal(${g.id}, '${g.group_letter}')">
-      <button class="gc-del" title="Supprimer" onclick="event.stopPropagation();deleteGroup(${g.id})">✕</button>
-      <div class="gc-letter">Groupe ${g.group_letter}</div>
+      <button class="gc-del" title="${deleteTitle}" onclick="event.stopPropagation();deleteGroup(${g.id})">✕</button>
+      <div class="gc-letter">${groupWord} ${g.group_letter}</div>
       ${teacherHtml}
       ${studentHtml}
     </div>`;
@@ -1638,7 +1751,9 @@ async function deleteGroup(groupId) {
 // Manage members modal
 async function openManageGroupModal(groupId, groupLetter) {
   classesGroupId = groupId;
-  document.getElementById('modal-members-title').textContent = 'Groupe ' + groupLetter + ' – Membres';
+  const gWord = currentLang==='en' ? 'Group' : currentLang==='ar' ? 'مجموعة' : 'Groupe';
+  const mWord = currentLang==='en' ? 'Members' : currentLang==='ar' ? 'الأعضاء' : 'Membres';
+  document.getElementById('modal-members-title').textContent = gWord + ' ' + groupLetter + ' – ' + mWord;
   document.getElementById('member-add-error').style.display = 'none';
   document.getElementById('modal-group-members').classList.add('open');
   await Promise.all([loadMembersList(), loadUsersForSelect()]);
@@ -1654,9 +1769,12 @@ async function loadMembersList() {
     list.innerHTML = members.map(m => {
       const init = (m.name||m.username||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       const isTeacher = m.role === 'teacher';
+      const teacherLabel  = currentLang==='en'?'Teacher':currentLang==='ar'?'أستاذ':'Prof';
+      const studentLabel  = currentLang==='en'?'Student':currentLang==='ar'?'طالب':'Étudiant';
+      const removeLabel   = currentLang==='en'?'Remove':currentLang==='ar'?'إزالة':'Retirer';
       const roleBadge = isTeacher
-        ? '<span style="font-size:.7rem;background:rgba(62,207,120,.12);color:var(--green);border:1px solid rgba(62,207,120,.3);padding:.1rem .45rem;border-radius:100px;font-family:var(--font);font-weight:700;">Prof</span>'
-        : '<span style="font-size:.7rem;background:rgba(91,156,246,.12);color:var(--blue);border:1px solid rgba(91,156,246,.3);padding:.1rem .45rem;border-radius:100px;font-family:var(--font);font-weight:700;">Étudiant</span>';
+        ? `<span style="font-size:.7rem;background:rgba(62,207,120,.12);color:var(--green);border:1px solid rgba(62,207,120,.3);padding:.1rem .45rem;border-radius:100px;font-family:var(--font);font-weight:700;">${teacherLabel}</span>`
+        : `<span style="font-size:.7rem;background:rgba(91,156,246,.12);color:var(--blue);border:1px solid rgba(91,156,246,.3);padding:.1rem .45rem;border-radius:100px;font-family:var(--font);font-weight:700;">${studentLabel}</span>`;
       return `<div class="member-row">
         <div class="member-info">
           <div class="member-init${isTeacher?' teacher':''}">${init}</div>
@@ -1666,10 +1784,10 @@ async function loadMembersList() {
           </div>
           ${roleBadge}
         </div>
-        <button class="btn-secondary btn-sm" onclick="removeMember(${m.id})">Retirer</button>
+        <button class="btn-secondary btn-sm" onclick="removeMember(${m.id})">${removeLabel}</button>
       </div>`;
     }).join('');
-  } catch(e) { list.innerHTML = '<p style="color:var(--red);font-size:.85rem;">Erreur</p>'; }
+  } catch(e) { list.innerHTML = `<p style="color:var(--red);font-size:.85rem;">${currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'}</p>`; }
 }
 
 async function loadUsersForSelect() {
@@ -1731,7 +1849,7 @@ async function loadAssigningClasses() {
   const renderRows = (users, role) => users.length === 0 ? noRow : users.map(u => {
     const init = (u.name||u.username||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
     const groupTags = u.groups.map(g =>
-      `<span style="display:inline-block;margin:.15rem .2rem;padding:.15rem .55rem;background:rgba(62,207,120,.08);border:1px solid rgba(62,207,120,.2);border-radius:100px;font-size:.72rem;color:var(--green);font-family:var(--font);font-weight:600;">${currentLang==='ar'?g.label_ar:g.label_fr}</span>`
+      `<span style="display:inline-block;margin:.15rem .2rem;padding:.15rem .55rem;background:rgba(62,207,120,.08);border:1px solid rgba(62,207,120,.2);border-radius:100px;font-size:.72rem;color:var(--green);font-family:var(--font);font-weight:600;">${currentLang==='ar'?g.label_ar:(g.label_fr||g.label_ar)}</span>`
     ).join('');
     return `<tr>
       <td style="padding:.85rem 1.2rem;">
@@ -1775,14 +1893,14 @@ let _schedCourses = []; // cached after first load
 async function loadSchedulePage() {
   const grid = document.getElementById('schedule-cards-grid');
   if (!grid) return;
-  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.88rem;"><div class="spinner" style="margin:0 auto 1rem;"></div>Chargement…</div>';
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.88rem;"><div class="spinner" style="margin:0 auto 1rem;"></div>${tr().schLoading}</div>`;
   try {
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
     const res  = await fetch('api_classes.php?action=list_all_groups', {
       headers: { 'X-CSRF-Token': csrf }
     });
     const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Erreur');
+    if (!data.ok) throw new Error(data.error || (currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'));
     // Parse schedule_json string → schedule array for each group
     _schedCourses = (data.groups || []).map(g => ({
       ...g,
@@ -1807,7 +1925,7 @@ function renderScheduleCards() {
 
   grid.innerHTML = _schedCourses.map(c => {
     const gid   = c.group_id;
-    const name  = lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
+    const name  = lang === 'en' ? (c.label_en || c.label_fr || c.label_ar) : lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
     const slots = c.schedule || [];
     const slotHtml = slots.length === 0
       ? `<div style="color:var(--muted);font-size:.82rem;font-style:italic;padding:.4rem 0 .6rem;">${t.schNoSlots}</div>`
@@ -1853,9 +1971,10 @@ function renderScheduleCards() {
 }
 
 function schedSlotRow(courseId, idx, slot, t) {
-  const days = (t.schDays || []).map(d =>
-    `<option value="${d.fr}" data-ar="${d.ar}" ${d.fr === slot.day_fr ? 'selected' : ''}>${d.fr}</option>`
-  ).join('');
+  const days = (t.schDays || []).map(d => {
+    const label = currentLang === 'en' ? (d.en || d.fr) : currentLang === 'ar' ? (d.ar || d.fr) : d.fr;
+    return `<option value="${d.fr}" data-ar="${d.ar}" ${d.fr === slot.day_fr ? 'selected' : ''}>${label}</option>`;
+  }).join('');
   const timeStyle = `width:100%;padding:.5rem .4rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;transition:border-color .2s;color-scheme:dark;`;
   return `
   <div id="slot-row-${courseId}-${idx}" style="display:grid;grid-template-columns:1fr 90px 90px 28px;gap:.4rem;margin-bottom:.4rem;align-items:center;">
@@ -1865,16 +1984,16 @@ function schedSlotRow(courseId, idx, slot, t) {
       <option value="">—</option>${days}
     </select>
     <input type="time" id="slot-time-${courseId}-${idx}" value="${escHtmlA(slot.time||'')}"
-      style="${timeStyle}" title="De"
+      style="${timeStyle}" title="${currentLang==='en'?'From':currentLang==='ar'?'من':'De'}"
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
     <input type="time" id="slot-time-end-${courseId}-${idx}" value="${escHtmlA(slot.time_end||'')}"
-      style="${timeStyle}" title="À"
+      style="${timeStyle}" title="${currentLang==='en'?'To':currentLang==='ar'?'إلى':'À'}"
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
     <button onclick="removeScheduleSlot(${courseId},${idx})"
       style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:.2rem;border-radius:6px;transition:color .15s,background .15s;text-align:center;"
       onmouseover="this.style.color='var(--red)';this.style.background='rgba(232,93,117,.1)'"
       onmouseout="this.style.color='var(--muted)';this.style.background='none'"
-      title="Supprimer">✕</button>
+      title="${currentLang==='en'?'Delete':currentLang==='ar'?'حذف':'Supprimer'}">✕</button>
   </div>`;
 }
 
@@ -1940,11 +2059,12 @@ async function saveSchedule(courseId) {
       body: JSON.stringify({ group_id: courseId, schedule })
     });
     const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Erreur');
+    if (!data.ok) throw new Error(data.error || (currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'));
 
     // Warn if server rejected all slots (e.g. missing day or invalid time)
     if (data.saved === 0 && schedule.length > 0) {
-      throw new Error('Aucune séance sauvegardée — vérifiez que chaque ligne a un jour et une heure sélectionnés.');
+      const noSaveMsg = currentLang==='en' ? 'No sessions saved — ensure each row has a day and time selected.' : currentLang==='ar' ? 'لم يتم حفظ أي جلسة — تأكد من تحديد يوم وساعة لكل صف.' : 'Aucune séance sauvegardée — vérifiez que chaque ligne a un jour et une heure sélectionnés.';
+      throw new Error(noSaveMsg);
     }
 
     // Update cached schedule
@@ -2018,7 +2138,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (actList && enrollments.length > 0) {
       const colors = ['green','blue','orange','purple','green'];
       actList.innerHTML = enrollments.slice(0, 5).map((e, i) => {
-        const name = e.full_name || e.name || 'Étudiant';
+        const name = e.full_name || e.name || (currentLang==='en'?'Student':currentLang==='ar'?'طالب':'Étudiant');
         const course = e.course || e.program || '';
         const when = e.submitted_at ? new Date(e.submitted_at).toLocaleDateString('fr-FR') : '';
         return `<div class="activity-item">
@@ -2028,7 +2148,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>`;
       }).join('');
     } else if (actList) {
-      actList.innerHTML = '<div class="activity-item"><div class="activity-dot orange"></div><div><div class="activity-text" style="color:var(--muted)">Aucune inscription récente</div></div></div>';
+      const noRecentMsg = currentLang==='en' ? 'No recent enrollments' : currentLang==='ar' ? 'لا توجد تسجيلات حديثة' : 'Aucune inscription récente';
+      actList.innerHTML = `<div class="activity-item"><div class="activity-dot orange"></div><div><div class="activity-text" style="color:var(--muted)">${noRecentMsg}</div></div></div>`;
     }
 
   } catch(e) { console.warn('Admin stats load error:', e); }

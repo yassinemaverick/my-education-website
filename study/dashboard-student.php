@@ -116,11 +116,17 @@ try {
                 'intermediate'=>'متوسط','upper_intermediate'=>'فوق المتوسط',
                 'advanced'=>'متقدم','baccalaureate'=>'البكالوريا','business'=>'الأعمال','kids'=>'أطفال'
             ];
+            $typeLabelsEn = [
+                'beginners'=>'Beginners','pre_intermediate'=>'Pre-intermediate',
+                'intermediate'=>'Intermediate','upper_intermediate'=>'Upper-intermediate',
+                'advanced'=>'Advanced','baccalaureate'=>'Baccalaureate','business'=>'Business','kids'=>'Kids'
+            ];
             $lvl  = $row['level_number'];
             $tk   = $row['type_key'];
             $gl   = $row['group_letter'];
             $row['label_fr'] = ($typeLabelsFr[$tk] ?? $tk) . ($lvl ? ' ' . $lvl : '') . ' – Groupe ' . $gl;
             $row['label_ar'] = ($typeLabelsAr[$tk] ?? $tk) . ($lvl ? ' ' . $lvl : '') . ' – مجموعة ' . $gl;
+            $row['label_en'] = ($typeLabelsEn[$tk] ?? $tk) . ($lvl ? ' ' . $lvl : '') . ' – Group ' . $gl;
         }
         $liveData['course'] = $row;
     } catch (Throwable $e) {}
@@ -190,8 +196,10 @@ try {
                 'type'    => 'attendance',
                 'color'   => 'green',
                 'label_fr'=> 'Séance assistée',
+                'label_en'=> 'Session attended',
                 'label_ar'=> 'جلسة حضرت',
                 'detail_fr'=> 'Séance n°' . $r['session_num'],
+                'detail_en'=> 'Session #' . $r['session_num'],
                 'detail_ar'=> 'جلسة رقم ' . $r['session_num'],
                 'time'    => $r['ts'],
             ];
@@ -212,8 +220,10 @@ try {
                 'type'    => 'submission',
                 'color'   => 'green',
                 'label_fr'=> 'Devoir soumis',
+                'label_en'=> 'Assignment submitted',
                 'label_ar'=> 'واجب مُسلَّم',
                 'detail_fr'=> $r['title_fr'],
+                'detail_en'=> $r['title_fr'],
                 'detail_ar'=> $r['title_ar'],
                 'time'    => $r['ts'],
             ];
@@ -225,8 +235,10 @@ try {
                 'type'    => 'overdue',
                 'color'   => 'red',
                 'label_fr'=> 'Devoir en retard',
+                'label_en'=> 'Overdue assignment',
                 'label_ar'=> 'واجب متأخر',
                 'detail_fr'=> $r['title_fr'],
+                'detail_en'=> $r['title_fr'],
                 'detail_ar'=> $r['title_ar'],
                 'time'    => null,
             ];
@@ -318,7 +330,7 @@ $dinoAvatarSvg = '<svg class="av-dino" id="%ID%" xmlns="http://www.w3.org/2000/s
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 <meta name="robots" content="noindex,nofollow">
-<title>Upskill – Tableau de bord Étudiant</title>
+<title>Upskill – Student Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" onload="this.onload=null;this.rel='stylesheet'">
@@ -641,10 +653,10 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
 </style>
 </head>
 <body id="body">
-<a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;background:var(--green);color:#0f1d2e;padding:.5rem 1rem;font-family:var(--font);font-weight:700;font-size:.85rem;z-index:9999;border-radius:0 0 8px 0;transition:top .2s;text-decoration:none;">Aller au contenu</a>
+<a href="#main-content" class="skip-link" style="position:absolute;top:-40px;left:0;background:var(--green);color:#0f1d2e;padding:.5rem 1rem;font-family:var(--font);font-weight:700;font-size:.85rem;z-index:9999;border-radius:0 0 8px 0;transition:top .2s;text-decoration:none;">Skip to content</a>
 
 <!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu principal">
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
   <div class="sidebar-logo">
     <svg width="26" height="26" viewBox="0 0 28 28" fill="none"><rect width="28" height="28" rx="8" fill="#3ecf78"/><path d="M8 14l4 4 8-8" stroke="#0f1d2e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span>Up<em>skill</em></span>
@@ -657,7 +669,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
     <div class="avatar" id="sidebar-avatar"><?= str_replace(['%ID%','%IMGID%'], ['sidebar-dino-svg','sidebar-av-img'], $dinoAvatarSvg) ?></div>
     <div class="user-info">
       <div class="name" id="sidebar-name"><?= $full_name ?></div>
-      <div class="role-tag" id="role-label">Étudiant(e)</div>
+      <div class="role-tag" id="role-label">Student</div>
     </div>
   </div>
 
@@ -668,21 +680,21 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
     </div>
     <div class="nav-item" role="button" tabindex="0" onclick="navigate('myclass',this)" id="nav-myclass">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span id="nav-myclass-lbl">Ma classe</span>
+      <span id="nav-myclass-lbl">My Class</span>
     </div>
     <div class="nav-item" role="button" tabindex="0" onclick="navigate('assignments',this)" id="nav-assign">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      <span id="nav-assign-lbl">Devoirs</span>
+      <span id="nav-assign-lbl">Assignments</span>
       <span class="nav-badge" id="assign-nav-badge" style="display:none;"></span>
     </div>
     <div class="nav-item" role="button" tabindex="0" onclick="navigate('feed',this)" id="nav-feed">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-      <span id="nav-feed-lbl">Notes de cours</span>
+      <span id="nav-feed-lbl">Lesson Notes</span>
     </div>
 
     <div class="nav-item" role="button" tabindex="0" onclick="navigate('progress',this)" id="nav-progress">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      <span id="nav-progress-lbl">Progression</span>
+      <span id="nav-progress-lbl">Progress</span>
     </div>
     <div class="nav-item" role="button" tabindex="0" onclick="navigate('quizzes',this)" id="nav-quiz">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
@@ -694,13 +706,13 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
     </div>
     <div class="nav-item" role="button" tabindex="0" onclick="navigate('settings',this)" id="nav-set">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      <span id="nav-set-lbl">Paramètres</span>
+      <span id="nav-set-lbl">Settings</span>
     </div>
   </nav>
   <div class="sidebar-bottom">
-    <button class="btn-logout" onclick="logout()" aria-label="Se déconnecter">
+    <button class="btn-logout" onclick="logout()" aria-label="Log out">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      <span id="logout-lbl">Déconnexion</span>
+      <span id="logout-lbl">Log out</span>
     </button>
   </div>
 </aside>
@@ -714,14 +726,14 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
       <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
-      <div class="topbar-title" id="topbar-title">Tableau de bord</div>
+      <div class="topbar-title" id="topbar-title">Dashboard</div>
     </div>
     <div class="topbar-actions">
       <div class="btn-icon" id="notif-btn" onclick="toggleNotifPanel()" title="Notifications" style="cursor:pointer;">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="notif-badge" id="notif-badge" style="display:none;"></span>
       </div>
-      <div class="avatar" id="topbar-avatar" style="cursor:pointer;" onclick="toggleProfileMenu(event)" title="Mon profil"><?= str_replace(['%ID%','%IMGID%'], ['topbar-dino-svg','topbar-av-img'], $dinoAvatarSvg) ?></div>
+      <div class="avatar" id="topbar-avatar" style="cursor:pointer;" onclick="toggleProfileMenu(event)" title="My profile"><?= str_replace(['%ID%','%IMGID%'], ['topbar-dino-svg','topbar-av-img'], $dinoAvatarSvg) ?></div>
     </div>
   </div>
 
@@ -788,7 +800,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
         </svg>
       </div>
       <h1 class="hero-hello"><span id="welcome-name"><?= htmlspecialchars(explode(' ', $full_name)[0]) ?></span> !</h1>
-      <p class="hero-sub" id="welcome-sub">Votre tableau de bord d'apprentissage</p>
+      <p class="hero-sub" id="welcome-sub">Your learning dashboard</p>
     </div>
 
     <!-- Stars of the Month + Leaderboard -->
@@ -797,22 +809,22 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
         <div class="stars-header">
           <div class="stars-crown">👑</div>
           <div>
-            <div class="stars-title" id="stars-title">Étudiants du mois</div>
-            <div class="stars-month" id="stars-month">Ce mois-ci</div>
+            <div class="stars-title" id="stars-title">Students of the month</div>
+            <div class="stars-month" id="stars-month">This month</div>
           </div>
         </div>
-        <div id="stars-list"><div class="stars-empty">Chargement…</div></div>
+        <div id="stars-list"><div class="stars-empty">Loading…</div></div>
       </div>
 
       <div class="leaderboard-card">
         <div class="lb-header">
           <div class="lb-trophy">🏆</div>
           <div>
-            <div class="lb-title" id="lb-title">Activité de la classe</div>
-            <div class="lb-sub" id="lb-sub">Activité récente</div>
+            <div class="lb-title" id="lb-title">Class activity</div>
+            <div class="lb-sub" id="lb-sub">Recent activity</div>
           </div>
         </div>
-        <div id="leaderboard-list"><div class="lb-empty">Chargement…</div></div>
+        <div id="leaderboard-list"><div class="lb-empty">Loading…</div></div>
       </div>
     </div>
   </div>
@@ -820,18 +832,18 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
   <!-- MY CLASS PAGE -->
   <div class="page" id="page-myclass">
     <div style="margin-bottom:1.5rem;">
-      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;color:var(--white);" id="myclass-title">Ma classe</h2>
-      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="myclass-sub">Votre classe, groupe et camarades</p>
+      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;color:var(--white);" id="myclass-title">My Class</h2>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="myclass-sub">Your course and classmates</p>
     </div>
 
     <!-- Group info banner (loaded from api_classes.php) -->
     <div id="myclass-group-section" style="margin-bottom:1.25rem;">
-      <div class="loading-overlay"><div class="spinner"></div><span style="margin-left:.5rem;font-size:.88rem;color:var(--muted);">Chargement du groupe…</span></div>
+      <div class="loading-overlay"><div class="spinner"></div><span style="margin-left:.5rem;font-size:.88rem;color:var(--muted);" id="group-loading-lbl">Loading group…</span></div>
     </div>
 
     <div class="grid-2">
       <div class="card" style="background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(124,58,237,.05));border-color:rgba(59,130,246,.2);">
-        <div class="card-title" id="myclass-course-label">Cours actuel</div>
+        <div class="card-title" id="myclass-course-label">Current course</div>
         <div id="myclass-assigned">
           <div style="font-family:var(--font);font-size:1.1rem;font-weight:700;color:var(--white);margin-bottom:.5rem;" id="myclass-course-name">—</div>
           <div style="color:var(--muted);font-size:.84rem;margin-bottom:.35rem;">👨‍🏫 <span id="myclass-teacher">—</span></div>
@@ -844,18 +856,18 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
               style="display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.1rem;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:10px;color:var(--blue);font-family:var(--font);font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s;"
               onmouseover="this.style.background='rgba(59,130,246,.2)'" onmouseout="this.style.background='rgba(59,130,246,.12)'">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-              <span id="myclass-zoom-lbl">Rejoindre le cours</span>
+              <span id="myclass-zoom-lbl">Join class →</span>
             </a>
           </div>
         </div>
         <div id="myclass-empty" style="display:none;text-align:center;padding:1.5rem 0;">
           <div style="font-size:2rem;margin-bottom:.6rem;">📚</div>
-          <div style="font-family:var(--font);font-size:.9rem;font-weight:600;color:var(--white);" id="myclass-empty-txt">Aucun cours assigné</div>
+          <div style="font-family:var(--font);font-size:.9rem;font-weight:600;color:var(--white);" id="myclass-empty-txt">No course assigned yet</div>
         </div>
       </div>
       <div class="card">
-        <div class="card-title" id="myclass-mates-lbl">Camarades de groupe</div>
-        <div id="myclass-mates"><div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;">Chargement…</div></div>
+        <div class="card-title" id="myclass-mates-lbl">Classmates</div>
+        <div id="myclass-mates"><div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;">Loading…</div></div>
       </div>
     </div>
   </div>
@@ -864,14 +876,14 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
   <div class="page" id="page-assignments">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
       <div>
-        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;letter-spacing:-.02em;" id="assign-page-title">Devoirs</h2>
-        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="assign-page-sub">3 en attente · 1 en retard · 2 soumis</p>
+        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;letter-spacing:-.02em;" id="assign-page-title">Assignments</h2>
+        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="assign-page-sub">3 pending · 1 overdue · 2 submitted</p>
       </div>
     </div>
     <div class="tabs">
-      <div class="tab active" onclick="filterTab(this,'all','assign')" id="tab-all-assign">Tous</div>
-      <div class="tab" onclick="filterTab(this,'pending','assign')" id="tab-pending-assign">En attente</div>
-      <div class="tab" onclick="filterTab(this,'submitted','assign')" id="tab-done-assign">Soumis</div>
+      <div class="tab active" onclick="filterTab(this,'all','assign')" id="tab-all-assign">All</div>
+      <div class="tab" onclick="filterTab(this,'pending','assign')" id="tab-pending-assign">Pending</div>
+      <div class="tab" onclick="filterTab(this,'submitted','assign')" id="tab-done-assign">Submitted</div>
     </div>
     <div id="assign-list"></div>
   </div>
@@ -879,13 +891,13 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
   <!-- QUIZZES PAGE -->
   <div class="page" id="page-quizzes">
     <div style="margin-bottom:1.5rem;">
-      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="quiz-page-title">Quiz</h2>
-      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="quiz-page-sub">Testez vos connaissances avec des quiz chronométrés</p>
+      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="quiz-page-title">Quizzes</h2>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="quiz-page-sub">Test your knowledge with timed quizzes</p>
     </div>
     <div class="tabs">
-      <div class="tab active" onclick="filterTab(this,'all','quiz')" id="tab-all-quiz">Tous</div>
-      <div class="tab" onclick="filterTab(this,'available','quiz')" id="tab-avail-quiz">Disponibles</div>
-      <div class="tab" onclick="filterTab(this,'done','quiz')" id="tab-done-quiz">Complétés</div>
+      <div class="tab active" onclick="filterTab(this,'all','quiz')" id="tab-all-quiz">All</div>
+      <div class="tab" onclick="filterTab(this,'available','quiz')" id="tab-avail-quiz">Available</div>
+      <div class="tab" onclick="filterTab(this,'done','quiz')" id="tab-done-quiz">Completed</div>
     </div>
     <div id="quiz-list" class="grid-3"></div>
   </div>
@@ -893,17 +905,17 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
   <!-- LESSON FEED PAGE -->
   <div class="page" id="page-feed">
     <div style="margin-bottom:1.5rem;">
-      <h2 style="font-family:var(--font);font-size:1.6rem;font-weight:800;letter-spacing:-.03em;" id="feed-title">Notes de cours</h2>
-      <p style="color:var(--muted);font-size:.9rem;margin-top:.3rem;" id="feed-sub">Les résumés publiés par votre professeur après chaque session</p>
+      <h2 style="font-family:var(--font);font-size:1.6rem;font-weight:800;letter-spacing:-.03em;" id="feed-title">Lesson Notes</h2>
+      <p style="color:var(--muted);font-size:.9rem;margin-top:.3rem;" id="feed-sub">Summaries posted by your teacher after each Zoom session</p>
     </div>
-    <div id="feed-list"><p style="color:var(--muted);font-size:.85rem;">Chargement…</p></div>
+    <div id="feed-list"><p style="color:var(--muted);font-size:.85rem;">Loading…</p></div>
   </div>
 
   <!-- HOW-TO PAGE -->
   <div class="page" id="page-howto">
     <div style="margin-bottom:1.75rem;">
-      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;color:var(--white);" id="howto-title">Comment utiliser la plateforme ?</h2>
-      <p style="color:var(--muted);font-size:.88rem;margin-top:.3rem;" id="howto-sub">Regardez ces courtes vidéos pour découvrir chaque fonctionnalité.</p>
+      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;color:var(--white);" id="howto-title">How to use the platform?</h2>
+      <p style="color:var(--muted);font-size:.88rem;margin-top:.3rem;" id="howto-sub">Watch these short videos to discover each feature.</p>
     </div>
     <div class="howto-grid" id="howto-grid">
       <!-- Cards injected by renderHowTo() -->
@@ -913,12 +925,12 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
   <!-- PROGRESS PAGE -->
   <div class="page" id="page-progress">
     <div style="margin-bottom:1.5rem;">
-      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="prog-page-title">Progression</h2>
-      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="prog-page-sub">Suivez votre parcours d'apprentissage module par module</p>
+      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="prog-page-title">Progress</h2>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="prog-page-sub">Track your learning journey module by module</p>
     </div>
     <div class="grid-2" style="margin-bottom:1.5rem;">
       <div class="card">
-        <div class="card-title" id="overall-title">Progression globale</div>
+        <div class="card-title" id="overall-title">Overall progress</div>
         <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1rem;">
           <div style="position:relative;width:90px;height:90px;flex-shrink:0;">
             <svg viewBox="0 0 90 90" width="90" height="90">
@@ -927,41 +939,41 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
             </svg>
             <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
               <span style="font-family:var(--font);font-size:1.2rem;font-weight:700;" id="prog-circle-pct">68%</span>
-              <span style="font-size:.6rem;color:var(--muted);" id="done-lbl">fait</span>
+              <span style="font-size:.6rem;color:var(--muted);" id="done-lbl">done</span>
             </div>
           </div>
           <div>
             <div style="font-family:var(--font);font-size:1.5rem;font-weight:700;">20 <span style="font-size:1rem;color:var(--muted);font-weight:400;" id="hrs-of">/ 29 hrs</span></div>
-            <div style="color:var(--muted);font-size:.83rem;margin:.3rem 0;" id="course-session">Anglais Général · Session 2</div>
-            <div style="font-size:.78rem;background:var(--green-glow);color:var(--green);border:1px solid rgba(62,207,120,.3);padding:.25rem .65rem;border-radius:100px;display:inline-block;font-family:var(--font);font-weight:600;" id="on-track">En bonne voie 🎯</div>
+            <div style="color:var(--muted);font-size:.83rem;margin:.3rem 0;" id="course-session">General English · Session 2</div>
+            <div style="font-size:.78rem;background:var(--green-glow);color:var(--green);border:1px solid rgba(62,207,120,.3);padding:.25rem .65rem;border-radius:100px;display:inline-block;font-family:var(--font);font-weight:600;" id="on-track">On track 🎯</div>
           </div>
         </div>
       </div>
       <div class="card">
-        <div class="card-title" id="scores-title">Performance des devoirs</div>
+        <div class="card-title" id="scores-title">Assignment performance</div>
         <div id="progress-assign-stats">
           <!-- Populated by updateProgress() -->
         </div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title" id="modules-title">Progression par module</div>
+      <div class="card-title" id="modules-title">Progress by module</div>
       <div class="module-row"><div class="module-name" id="m1">Module 1 – Introduction</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></div><div class="module-pct">100%</div></div>
-      <div class="module-row"><div class="module-name" id="m2">Module 2 – Grammaire</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div></div><div class="module-pct">85%</div></div>
-      <div class="module-row"><div class="module-name" id="m3">Module 3 – Vocabulaire</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div></div><div class="module-pct">70%</div></div>
-      <div class="module-row"><div class="module-name" id="m4">Module 4 – Expression orale</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill yellow" style="width:40%"></div></div></div><div class="module-pct" style="color:var(--yellow)">40%</div></div>
-      <div class="module-row"><div class="module-name" id="m5">Module 5 – Compréhension</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div></div><div class="module-pct">20%</div></div>
+      <div class="module-row"><div class="module-name" id="m2">Module 2 – Grammar</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div></div><div class="module-pct">85%</div></div>
+      <div class="module-row"><div class="module-name" id="m3">Module 3 – Vocabulary</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div></div><div class="module-pct">70%</div></div>
+      <div class="module-row"><div class="module-name" id="m4">Module 4 – Speaking</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill yellow" style="width:40%"></div></div></div><div class="module-pct" style="color:var(--yellow)">40%</div></div>
+      <div class="module-row"><div class="module-name" id="m5">Module 5 – Comprehension</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div></div><div class="module-pct">20%</div></div>
     </div>
   </div>
 
   <!-- SETTINGS PAGE -->
   <div class="page" id="page-settings">
     <div style="margin-bottom:1.5rem;">
-      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="settings-title">Paramètres</h2>
+      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="settings-title">Settings</h2>
     </div>
     <div class="grid-2">
       <div class="card">
-        <div class="card-title" id="profile-title">Profil</div>
+        <div class="card-title" id="profile-title">Profile</div>
 
         <!-- Avatar upload row -->
         <div style="display:flex;align-items:center;gap:1.2rem;margin-bottom:1.75rem;">
@@ -970,53 +982,53 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
               <div class="avatar" style="width:64px;height:64px;" id="settings-avatar"><?= str_replace(['%ID%','%IMGID%'], ['settings-dino-svg','settings-av-img'], $dinoAvatarSvg) ?></div>
               <img id="settings-av-img" src="" alt="" style="display:none;width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid rgba(245,158,11,.4);">
             </div>
-            <label for="avatar-input" class="av-upload-btn" title="Changer la photo">
+            <label for="avatar-input" class="av-upload-btn" title="Change photo">
               <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             </label>
             <input type="file" id="avatar-input" accept="image/*" style="display:none;" onchange="handleAvatarUpload(this)">
           </div>
           <div>
             <div style="font-family:var(--font);font-weight:600;font-size:.95rem;color:var(--white);" id="settings-name"><?= $full_name ?></div>
-            <div style="color:var(--muted);font-size:.82rem;margin-top:.2rem;" id="settings-role">Étudiante · Anglais Général S2</div>
-            <label for="avatar-input" style="display:inline-block;margin-top:.5rem;font-size:.75rem;color:var(--blue);cursor:pointer;font-family:var(--font);font-weight:500;" id="lbl-change-photo">Changer la photo</label>
+            <div style="color:var(--muted);font-size:.82rem;margin-top:.2rem;" id="settings-role">Student · General English S2</div>
+            <label for="avatar-input" style="display:inline-block;margin-top:.5rem;font-size:.75rem;color:var(--blue);cursor:pointer;font-family:var(--font);font-weight:500;" id="lbl-change-photo">Change photo</label>
           </div>
         </div>
 
         <div class="form-group" style="margin-bottom:1.1rem;">
-          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-fullname">Nom complet</label>
+          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-fullname">Full name</label>
           <input type="text" id="pref-name" style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;"
             onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"
             value="<?= htmlspecialchars($full_name) ?>">
         </div>
         <div id="save-profile-error" style="display:none;color:var(--red);font-size:.82rem;margin-bottom:.6rem;"></div>
         <button class="btn-primary" onclick="saveProfile()" id="save-btn">
-          <span id="save-btn-text">Enregistrer</span>
+          <span id="save-btn-text">Save</span>
         </button>
       </div>
       <div class="card">
-        <div class="card-title" id="pref-title">Préférences</div>
-        <p style="color:var(--muted);font-size:.85rem;line-height:1.6;" id="pref-txt">Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Arabe.</p>
+        <div class="card-title" id="pref-title">Preferences</div>
+        <p style="color:var(--muted);font-size:.85rem;line-height:1.6;" id="pref-txt">Use the language selector in the sidebar to switch between French and English.</p>
       </div>
     </div>
 
     <!-- Password change card (full width below) -->
     <div class="card" style="margin-top:1.25rem;">
-      <div class="card-title" id="pwd-card-title">Changer le mot de passe</div>
+      <div class="card-title" id="pwd-card-title">Change password</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:.9rem;">
         <div class="form-group" style="margin-bottom:0;">
-          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-pwd-current">Mot de passe actuel</label>
+          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-pwd-current">Current password</label>
           <input type="password" id="pwd-current" autocomplete="current-password"
             style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;"
             onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
         </div>
         <div class="form-group" style="margin-bottom:0;">
-          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-pwd-new">Nouveau mot de passe</label>
+          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-pwd-new">New password</label>
           <input type="password" id="pwd-new" autocomplete="new-password"
             style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;"
             onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
         </div>
         <div class="form-group" style="margin-bottom:0;">
-          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-pwd-confirm">Confirmer le mot de passe</label>
+          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-pwd-confirm">Confirm password</label>
           <input type="password" id="pwd-confirm" autocomplete="new-password"
             style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;"
             onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
@@ -1024,7 +1036,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
       </div>
       <div id="pwd-error" style="display:none;color:var(--red);font-size:.82rem;margin-bottom:.6rem;"></div>
       <button class="btn-primary" onclick="changePassword()" id="pwd-btn">
-        <span id="pwd-btn-text">Changer le mot de passe</span>
+        <span id="pwd-btn-text">Change password</span>
       </button>
     </div>
   </div>
@@ -1037,8 +1049,8 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
 <div class="modal-overlay" id="modal-submit" role="dialog" aria-modal="true" aria-labelledby="submit-modal-title">
   <div class="modal">
     <div class="modal-header">
-      <h3 id="submit-modal-title">Soumettre le devoir</h3>
-      <button class="btn-close" onclick="closeSubmitModal()" aria-label="Fermer">✕</button>
+      <h3 id="submit-modal-title">Submit assignment</h3>
+      <button class="btn-close" onclick="closeSubmitModal()" aria-label="Close">✕</button>
     </div>
     <div class="modal-body">
       <div id="submit-assign-info" style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem;margin-bottom:1.25rem;">
@@ -1046,9 +1058,9 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
         <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" id="submit-assign-due">—</div>
       </div>
       <div class="form-group">
-        <label for="submit-comment" style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="submit-comment-lbl">Commentaire (optionnel)</label>
+        <label for="submit-comment" style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="submit-comment-lbl">Comment (optional)</label>
         <textarea id="submit-comment" maxlength="2000" rows="5"
-          placeholder="Décrivez votre travail, ajoutez des notes pour le professeur…"
+          placeholder="Describe your work, add notes for the teacher…"
           style="width:100%;padding:.85rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;resize:vertical;transition:border-color .2s;"
           onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"></textarea>
         <div style="text-align:right;font-size:.73rem;color:var(--muted);margin-top:.3rem;"><span id="submit-char-count">0</span>/2000</div>
@@ -1057,9 +1069,9 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
       <input type="hidden" id="submit-assign-id">
     </div>
     <div class="modal-footer" style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;">
-      <button class="btn-secondary" onclick="closeSubmitModal()" id="submit-cancel-btn">Annuler</button>
+      <button class="btn-secondary" onclick="closeSubmitModal()" id="submit-cancel-btn">Cancel</button>
       <button class="btn-primary" onclick="confirmSubmit()" id="submit-confirm-btn">
-        <span id="submit-btn-text">Soumettre →</span>
+        <span id="submit-btn-text">Submit →</span>
       </button>
     </div>
   </div>
@@ -1430,7 +1442,7 @@ async function loadMyGroup() {
 
   // Show group badge(s)
   const badges = groups.map(g => {
-    const label = lang==='ar' ? g.label_ar : g.label_fr;
+    const label = lang==='en' ? (g.label_en || g.label_fr) : lang==='ar' ? g.label_ar : g.label_fr;
     return `<span style="display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;background:rgba(62,207,120,.1);border:1px solid rgba(62,207,120,.3);border-radius:100px;font-family:var(--font);font-size:.85rem;font-weight:700;color:var(--green);">
       🏫 ${label}
     </span>`;
@@ -1438,7 +1450,7 @@ async function loadMyGroup() {
 
   section.innerHTML = `<div class="card" style="padding:1rem 1.25rem;background:linear-gradient(135deg,rgba(62,207,120,.05),rgba(91,156,246,.03));border-color:rgba(62,207,120,.2);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
     <div>
-      <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">${lang==='ar'?'مجموعتك':'Votre groupe'}</div>
+      <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">${lang==='en'?'Your group':lang==='ar'?'مجموعتك':'Votre groupe'}</div>
       <div style="display:flex;gap:.5rem;flex-wrap:wrap;">${badges}</div>
     </div>
   </div>`;
@@ -1449,7 +1461,7 @@ async function loadMyGroup() {
 
   // Use first group for classmates
   const primaryGroupId = groups[0].group_id;
-  matesEl.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem;">Chargement…</div>';
+  matesEl.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem;">${lang==='en'?'Loading…':lang==='ar'?'جارٍ التحميل…':'Chargement…'}</div>`;
 
   try {
     const mdata = await fetch(`api_classes.php?action=group_classmates&group_id=${primaryGroupId}`).then(r => r.json());
@@ -1457,7 +1469,7 @@ async function loadMyGroup() {
     const students = members.filter(m => m.role === 'student');
 
     if (students.length === 0) {
-      matesEl.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;">${lang==='ar'?'لا يوجد زملاء في هذه المجموعة بعد.':'Aucun camarade dans ce groupe pour l\'instant.'}</div>`;
+      matesEl.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;">${lang==='en'?'No classmates in this group yet.':lang==='ar'?'لا يوجد زملاء في هذه المجموعة بعد.':'Aucun camarade dans ce groupe pour l\'instant.'}</div>`;
       return;
     }
     matesEl.innerHTML = students.map(s => {
@@ -1498,9 +1510,9 @@ function renderMyClass() {
   if (c) {
     if (assignedEl) assignedEl.style.display = '';
     if (emptyEl)    emptyEl.style.display    = 'none';
-    const name = lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
+    const name = lang === 'en' ? (c.label_en || c.label_fr) : lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
     st('myclass-course-name', name || '—');
-    st('myclass-teacher', (c.teacher_name ? ((lang === 'ar' ? 'أ. ' : 'Prof. ') + c.teacher_name) : '—'));
+    st('myclass-teacher', (c.teacher_name ? ((lang === 'en' ? '' : lang === 'ar' ? 'أ. ' : 'Prof. ') + c.teacher_name) : '—'));
     if (c.schedule_json) {
       try {
         const sched = JSON.parse(c.schedule_json);
@@ -1515,9 +1527,11 @@ function renderMyClass() {
       const bar = document.getElementById('myclass-att-bar');
       if (bar) bar.style.width = rate + '%';
       const det = document.getElementById('myclass-att-detail');
-      if (det) det.textContent = lang === 'ar'
-        ? `${LIVE.att_present} / ${LIVE.att_total} جلسة`
-        : `${LIVE.att_present} / ${LIVE.att_total} séances`;
+      if (det) det.textContent = lang === 'en'
+        ? `${LIVE.att_present} / ${LIVE.att_total} sessions`
+        : lang === 'ar'
+          ? `${LIVE.att_present} / ${LIVE.att_total} جلسة`
+          : `${LIVE.att_present} / ${LIVE.att_total} séances`;
     }
     // H9: Zoom link
     const zoomWrap = document.getElementById('myclass-zoom-wrap');
@@ -1670,8 +1684,8 @@ function renderActivityFeed() {
   }
 
   feed.innerHTML = items.map(item => {
-    const label  = e(lang === 'ar' ? item.label_ar  : item.label_fr);
-    const detail = e(lang === 'ar' ? item.detail_ar : item.detail_fr);
+    const label  = e(lang === 'en' ? (item.label_en  || item.label_fr)  : lang === 'ar' ? item.label_ar  : item.label_fr);
+    const detail = e(lang === 'en' ? (item.detail_en || item.detail_fr) : lang === 'ar' ? item.detail_ar : item.detail_fr);
     const time   = item.time ? formatRelativeTime(item.time, lang) : '';
     return `<div class="activity-item">
       <div class="activity-dot ${item.color}"></div>
@@ -1685,12 +1699,12 @@ function formatRelativeTime(ts, lang) {
   const d = new Date(ts.replace(' ', 'T'));
   if (isNaN(d)) return '';
   const diff = Math.floor((Date.now() - d) / 1000);
-  if (diff < 60)   return lang === 'ar' ? 'الآن' : "À l'instant";
-  if (diff < 3600) return lang === 'ar' ? `منذ ${Math.floor(diff/60)} د` : `Il y a ${Math.floor(diff/60)} min`;
-  if (diff < 86400)return lang === 'ar' ? `منذ ${Math.floor(diff/3600)} س` : `Il y a ${Math.floor(diff/3600)} h`;
+  if (diff < 60)   return lang === 'en' ? 'Just now'                        : lang === 'ar' ? 'الآن'                         : "À l'instant";
+  if (diff < 3600) return lang === 'en' ? `${Math.floor(diff/60)} min ago`   : lang === 'ar' ? `منذ ${Math.floor(diff/60)} د`  : `Il y a ${Math.floor(diff/60)} min`;
+  if (diff < 86400)return lang === 'en' ? `${Math.floor(diff/3600)} h ago`   : lang === 'ar' ? `منذ ${Math.floor(diff/3600)} س` : `Il y a ${Math.floor(diff/3600)} h`;
   const days = Math.floor(diff/86400);
-  if (days === 1)  return lang === 'ar' ? 'أمس' : 'Hier';
-  return lang === 'ar' ? `منذ ${days} أيام` : `Il y a ${days} jours`;
+  if (days === 1)  return lang === 'en' ? 'Yesterday'                        : lang === 'ar' ? 'أمس'                           : 'Hier';
+  return lang === 'en' ? `${days} days ago` : lang === 'ar' ? `منذ ${days} أيام` : `Il y a ${days} jours`;
 }
 
 function renderQuizzes() {
@@ -1866,7 +1880,7 @@ function renderFeed(posts) {
   list.innerHTML = posts.map(p => {
     const lang       = currentLang;
     const courseName = lang === 'ar' ? (p.group_name_ar || p.group_name_fr) : (p.group_name_fr || p.group_name_ar);
-    const dateStr    = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'ar' ? 'ar-MA' : 'fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
+    const dateStr    = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'ar' ? 'ar-MA' : lang === 'en' ? 'en-GB' : 'fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
     const linkBtn    = p.link ? `<a href="${escHtml(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.45rem;margin-top:.75rem;padding:.5rem 1rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:8px;font-size:.82rem;font-weight:600;color:var(--blue);text-decoration:none;font-family:var(--font);transition:background .2s;" onmouseover="this.style.background='rgba(59,130,246,.18)'" onmouseout="this.style.background='rgba(59,130,246,.1)'"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${escHtml(tr.feedOpenLink)}</a>` : '';
     const notesHtml  = p.notes ? `<div style="margin-top:.75rem;padding:.85rem 1rem;background:rgba(30,27,75,.04);border-radius:10px;border-left:3px solid rgba(59,130,246,.4);"><p style="color:var(--muted);font-size:.87rem;white-space:pre-wrap;line-height:1.7;margin:0;">${escHtml(p.notes)}</p></div>` : '';
     return `<div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(30,27,75,.05);">
@@ -1884,7 +1898,7 @@ function handleAvatarUpload(input) {
   const file = input.files[0];
   if (!file) return;
   if (file.size > 2 * 1024 * 1024) {
-    showToast(currentLang === 'ar' ? 'الصورة أكبر من 2 ميغا' : 'Image trop grande (max 2 Mo)');
+    showToast(currentLang === 'en' ? 'Image too large (max 2 MB)' : currentLang === 'ar' ? 'الصورة أكبر من 2 ميغا' : 'Image trop grande (max 2 Mo)');
     return;
   }
   const reader = new FileReader();
@@ -1892,7 +1906,7 @@ function handleAvatarUpload(input) {
     const dataUrl = e.target.result;
     applyAvatarEverywhere(dataUrl);
     try { localStorage.setItem('upskill_avatar', dataUrl); } catch(e) {}
-    showToast(currentLang === 'ar' ? 'تم تحديث الصورة ✓' : 'Photo mise à jour ✓');
+    showToast(currentLang === 'en' ? 'Photo updated ✓' : currentLang === 'ar' ? 'تم تحديث الصورة ✓' : 'Photo mise à jour ✓');
   };
   reader.readAsDataURL(file);
 }
@@ -1947,7 +1961,7 @@ function renderHowTo() {
 }
 
 function playHowTo(idx) {
-  showToast(currentLang === 'ar' ? 'قريباً — ستُضاف الفيديوهات قريباً!' : 'Bientôt disponible — vidéos en cours de préparation !');
+  showToast(currentLang === 'en' ? 'Coming soon — videos are being prepared!' : currentLang === 'ar' ? 'قريباً — ستُضاف الفيديوهات قريباً!' : 'Bientôt disponible — vidéos en cours de préparation !');
 }
 
 function showToast(msg) {
@@ -2014,9 +2028,11 @@ function hydrateLiveData() {
     if (pct) pct.textContent = attRate + '%';
     // hrs label on progress page
     const hrs = document.getElementById('hrs-of');
-    if (hrs) hrs.textContent = lang === 'ar'
-      ? `/ ${LIVE.att_total} جلسة`
-      : `/ ${LIVE.att_total} séances`;
+    if (hrs) hrs.textContent = lang === 'en'
+      ? `/ ${LIVE.att_total} sessions`
+      : lang === 'ar'
+        ? `/ ${LIVE.att_total} جلسة`
+        : `/ ${LIVE.att_total} séances`;
     const hrsVal = hrs?.previousSibling;
     const hrsParent = document.getElementById('hrs-of')?.parentElement;
     if (hrsParent) {
@@ -2029,9 +2045,11 @@ function hydrateLiveData() {
 
   // ── 5. Course name on progress page ─────────────────────────────────────
   if (c) {
-    const courseName = lang === 'ar'
-      ? (c.label_ar || c.label_fr)
-      : (c.label_fr || c.label_ar);
+    const courseName = lang === 'en'
+      ? (c.label_en || c.label_fr)
+      : lang === 'ar'
+        ? (c.label_ar || c.label_fr)
+        : (c.label_fr || c.label_ar);
     const cs = document.getElementById('course-session');
     if (cs) cs.textContent = courseName;
     const sr = document.getElementById('settings-role');
@@ -2070,7 +2088,11 @@ function openSubmitModal(assignId, title, due) {
   document.getElementById('submit-btn-text').textContent = T[currentLang].submitBtn;
   document.getElementById('submit-modal-title').textContent = T[currentLang].modalTitle;
   const commentLbl = document.getElementById('submit-comment-lbl');
-  if (commentLbl) commentLbl.textContent = currentLang === 'fr' ? 'Commentaire (optionnel)' : 'Comment (optional)';
+  if (commentLbl) commentLbl.textContent = currentLang === 'fr' ? 'Commentaire (optionnel)' : currentLang === 'ar' ? 'تعليق (اختياري)' : 'Comment (optional)';
+  const cancelBtn = document.getElementById('submit-cancel-btn');
+  if (cancelBtn) cancelBtn.textContent = T[currentLang].cancelBtn;
+  const commentInput = document.getElementById('submit-comment');
+  if (commentInput) commentInput.placeholder = currentLang === 'fr' ? 'Décrivez votre travail, ajoutez des notes pour le professeur…' : currentLang === 'ar' ? 'صف عملك، أضف ملاحظات للأستاذ…' : 'Describe your work, add notes for the teacher…';
   document.getElementById('modal-submit').classList.add('open');
   document.getElementById('submit-comment').focus();
 }
@@ -2167,10 +2189,10 @@ async function retractSubmission(aid) {
 <div class="notif-panel" id="notif-panel" onclick="event.stopPropagation()" style="position:fixed;top:64px;right:1rem;z-index:9000;">
   <div class="notif-panel-header">
     <span class="notif-panel-title" id="notif-panel-title">Notifications</span>
-    <button class="notif-mark-all" onclick="markAllRead()" id="notif-mark-all-btn">Tout lire</button>
+    <button class="notif-mark-all" onclick="markAllRead()" id="notif-mark-all-btn">Mark all read</button>
   </div>
   <div class="notif-list" id="notif-list">
-    <div class="notif-empty" id="notif-loading">Chargement…</div>
+    <div class="notif-empty" id="notif-loading">Loading…</div>
   </div>
 </div>
 
@@ -2178,16 +2200,16 @@ async function retractSubmission(aid) {
 <div class="profile-menu" id="profile-menu" onclick="event.stopPropagation()">
   <button class="profile-menu-item" onclick="profileMenuAction('name')">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span id="pm-name-lbl">Changer le prénom</span>
+    <span id="pm-name-lbl">Change first name</span>
   </button>
   <button class="profile-menu-item" onclick="profileMenuAction('avatar')">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-    <span id="pm-avatar-lbl">Changer l'avatar</span>
+    <span id="pm-avatar-lbl">Change avatar</span>
   </button>
   <hr class="profile-menu-sep">
   <button class="profile-menu-item danger" onclick="profileMenuAction('logout')">
     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    <span id="pm-logout-lbl">Déconnexion</span>
+    <span id="pm-logout-lbl">Log out</span>
   </button>
 </div>
 
@@ -2198,12 +2220,12 @@ async function retractSubmission(aid) {
     <div style="width:52px;height:52px;background:rgba(62,207,120,.12);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:1.25rem;">
       <svg width="24" height="24" fill="none" stroke="#3ecf78" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
     </div>
-    <div id="eml-title" style="font-family:'Sora',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:.4rem;">Ajoutez votre adresse e-mail</div>
-    <div id="eml-sub" style="color:rgba(255,255,255,.55);font-size:.88rem;margin-bottom:1.5rem;line-height:1.5;">Pour recevoir vos rappels de cours, devoirs et identifiants de connexion, ajoutez votre e-mail. Vous ne verrez ce message qu'une seule fois.</div>
+    <div id="eml-title" style="font-family:'Sora',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:.4rem;">Add your email address</div>
+    <div id="eml-sub" style="color:rgba(255,255,255,.55);font-size:.88rem;margin-bottom:1.5rem;line-height:1.5;">To receive your class reminders, assignments and login credentials, add your email. You will only see this message once.</div>
     <div style="margin-bottom:1.25rem;">
-      <label id="eml-label" style="display:block;font-family:'Sora',sans-serif;font-size:.72rem;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.4rem;">ADRESSE E-MAIL</label>
+      <label id="eml-label" style="display:block;font-family:'Sora',sans-serif;font-size:.72rem;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.4rem;">EMAIL ADDRESS</label>
       <input id="eml-input" type="email" maxlength="180"
-        placeholder="vous@exemple.com"
+        placeholder="you@example.com"
         style="width:100%;padding:.85rem 1rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;font-family:'DM Sans',sans-serif;font-size:.95rem;outline:none;box-sizing:border-box;transition:border-color .2s;"
         oninput="document.getElementById('eml-error').style.display='none'"
         onkeydown="if(event.key==='Enter')submitEmail()">
@@ -2211,11 +2233,11 @@ async function retractSubmission(aid) {
     <div id="eml-error" style="display:none;color:#f87171;font-size:.82rem;margin-bottom:.75rem;"></div>
     <button id="eml-btn" onclick="submitEmail()"
       style="width:100%;padding:.9rem;background:#3ecf78;color:#0f1d2e;font-family:'Sora',sans-serif;font-weight:700;font-size:.95rem;border:none;border-radius:12px;cursor:pointer;margin-bottom:.75rem;">
-      <span id="eml-btn-lbl">Enregistrer mon e-mail →</span>
+      <span id="eml-btn-lbl">Save my email →</span>
     </button>
     <button onclick="dismissEmail()"
       style="width:100%;padding:.6rem;background:none;border:none;color:rgba(255,255,255,.3);font-family:'DM Sans',sans-serif;font-size:.83rem;cursor:pointer;">
-      <span id="eml-skip-lbl">Me le rappeler plus tard</span>
+      <span id="eml-skip-lbl">Remind me later</span>
     </button>
   </div>
 </div>
@@ -2248,6 +2270,19 @@ const EMAIL_T = {
     errTaken: 'هذا البريد مستخدم بالفعل.',
     errFail:  'حدث خطأ. يرجى المحاولة.',
     saving:   '…جارٍ الحفظ',
+  },
+  en: {
+    title:    'Add your email address',
+    sub:      'To receive your class reminders, assignments and login credentials, add your email. You will only see this message once.',
+    label:    'EMAIL ADDRESS',
+    ph:       'you@example.com',
+    btn:      'Save my email →',
+    skip:     'Remind me later',
+    errEmpty: 'Please enter an email address.',
+    errInvalid:'Invalid email address.',
+    errTaken: 'This email is already in use.',
+    errFail:  'An error occurred. Please try again.',
+    saving:   'Saving…',
   },
 };
 
@@ -2303,7 +2338,7 @@ async function submitEmail() {
       const eo = document.getElementById('email-overlay');
   eo.style.display = 'none';
   eo.style.pointerEvents = 'none';
-      showToast(currentLang === 'ar' ? '✅ تم حفظ بريدك الإلكتروني' : '✅ E-mail enregistré !');
+      showToast(currentLang === 'en' ? '✅ Email saved!' : currentLang === 'ar' ? '✅ تم حفظ بريدك الإلكتروني' : '✅ E-mail enregistré !');
     } else {
       errEl.textContent = data.error || t.errFail;
       errEl.style.display = '';
@@ -2389,6 +2424,7 @@ function applyProfileMenuTranslations() {
   const PM = {
     fr: { name:"Changer le prénom", avatar:"Changer l'avatar", logout:"Déconnexion" },
     ar: { name:"تغيير الاسم",       avatar:"تغيير الصورة",      logout:"تسجيل الخروج" },
+    en: { name:"Change first name",  avatar:"Change avatar",     logout:"Log out" },
   };
   const t = PM[currentLang] || PM.fr;
   const s = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
