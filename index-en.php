@@ -377,7 +377,7 @@ $t = [
     <div class="testimonials-grid">
       <div class="testimonial-card">
         <div class="testimonial-header">
-          <img class="testimonial-avatar" src="/assets/img/testimonial-yasmine.png" alt="Yasmine B.">
+          <img class="testimonial-avatar" src="/assets/img/testimonial-yasmine.png" alt="Yasmine B." width="54" height="54" loading="lazy">
           <div class="testimonial-author">
             <span class="testimonial-name">Yasmine B.</span>
             <span class="testimonial-badge">Baccalaureate student</span>
@@ -389,7 +389,7 @@ $t = [
       </div>
       <div class="testimonial-card">
         <div class="testimonial-header">
-          <img class="testimonial-avatar" src="/assets/img/testimonial-karim.jpg" alt="Karim M.">
+          <img class="testimonial-avatar" src="/assets/img/testimonial-karim.jpg" alt="Karim M." width="54" height="54" loading="lazy">
           <div class="testimonial-author">
             <span class="testimonial-name">Karim M.</span>
             <span class="testimonial-badge">Business English student</span>
@@ -401,7 +401,7 @@ $t = [
       </div>
       <div class="testimonial-card">
         <div class="testimonial-header">
-          <img class="testimonial-avatar" src="/assets/img/testimonial-nadia.png" alt="Nadia F.">
+          <img class="testimonial-avatar" src="/assets/img/testimonial-nadia.png" alt="Nadia F." width="54" height="54" loading="lazy">
           <div class="testimonial-author">
             <span class="testimonial-name">Nadia F.</span>
             <span class="testimonial-badge">Parent · General English</span>
@@ -427,7 +427,7 @@ $t = [
           <span id="pill-text">Business English</span>
         </div>
         <div class="form-group">
-          <label>SELECT COURSE</label>
+          <label for="course-select">SELECT COURSE</label>
           <select id="course-select" required>
             <option value="">— Choose a program —</option>
             <option value="Business English">Business English</option>
@@ -436,16 +436,16 @@ $t = [
           </select>
         </div>
         <div class="form-group">
-          <label>FULL NAME</label>
+          <label for="name">FULL NAME</label>
           <input type="text" id="name" placeholder="Your full name" required>
         </div>
         <div class="form-grid">
           <div class="form-group">
-            <label>EMAIL ADDRESS</label>
+            <label for="email">EMAIL ADDRESS</label>
             <input type="email" id="email" placeholder="you@example.com" required>
           </div>
           <div class="form-group">
-            <label>PHONE NUMBER</label>
+            <label for="phone">PHONE NUMBER</label>
             <input type="tel" id="phone" placeholder="+212 6XX XXX XXX" required>
           </div>
         </div>

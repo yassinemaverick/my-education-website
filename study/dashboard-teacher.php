@@ -45,7 +45,7 @@ $full_name = htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username'] ??
 $username  = htmlspecialchars($_SESSION['username'] ?? '');
 ?>
 <!DOCTYPE html>
-<html lang="fr" dir="ltr">
+<html lang="<?= htmlspecialchars($_SESSION['lang'] ?? 'fr') ?>" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -449,12 +449,12 @@ body.ar .notif-panel { right:auto; left:1rem; }
     <div class="nav-item" onclick="navigate('courses',this)" id="nav-students">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       <span id="nav-students-lbl">Classes</span>
-      <span class="nav-badge" aria-hidden="true">3</span>
+      <span class="nav-badge" id="badge-classes" aria-hidden="true" style="display:none;"></span>
     </div>
     <div class="nav-item" onclick="navigate('assignments',this)" id="nav-assign">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       <span id="nav-assign-lbl">Devoirs</span>
-      <span class="nav-badge" aria-hidden="true">8</span>
+      <span class="nav-badge" id="badge-assignments" aria-hidden="true" style="display:none;"></span>
     </div>
     <div class="nav-item" onclick="navigate('posts',this)" id="nav-posts">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
@@ -724,7 +724,11 @@ body.ar .notif-panel { right:auto; left:1rem; }
       <div class="form-group">
         <label id="mlbl-subject">Matière</label>
         <select id="new-assign-subject">
-          <option>Écriture</option><option>Grammaire</option><option>Vocabulaire</option><option>Expression orale</option><option>Écoute</option>
+          <option data-fr="Écriture"       data-en="Writing">Écriture</option>
+          <option data-fr="Grammaire"      data-en="Grammar">Grammaire</option>
+          <option data-fr="Vocabulaire"    data-en="Vocabulary">Vocabulaire</option>
+          <option data-fr="Expression orale" data-en="Speaking">Expression orale</option>
+          <option data-fr="Écoute"         data-en="Listening">Écoute</option>
         </select>
       </div>
     </div>
@@ -1161,6 +1165,11 @@ function applyTranslations() {
   renderAttention(); renderAssignments(); renderQuizzes(); renderGrades();
   renderAttendance(); renderCourses();
   loadActivityFeed();
+  // Translate subject dropdown options
+  document.querySelectorAll('#new-assign-subject option').forEach(opt => {
+    const txt = opt.getAttribute('data-' + lang);
+    if (txt) opt.textContent = txt;
+  });
 }
 
 function navigate(page, el) {
@@ -1238,6 +1247,12 @@ async function loadAssignments() {
     const data = await res.json();
     if (data.ok && Array.isArray(data.assignments)) ASSIGNMENTS_LIVE = data.assignments;
   } catch(e) { console.warn('Could not load assignments:', e); }
+  // Update Assignments sidebar badge (shows pending-review count)
+  const ba = document.getElementById('badge-assignments');
+  if (ba) {
+    const pending = ASSIGNMENTS_LIVE.reduce((s,a) => s + Math.max(0,(parseInt(a.submitted_count)||0)-(parseInt(a.graded_count)||0)), 0);
+    ba.textContent = pending; ba.style.display = pending ? '' : 'none';
+  }
   renderAssignments();
 }
 
@@ -1931,6 +1946,10 @@ async function loadTeacherGroups() {
     const data = await fetch('api_classes.php?action=teacher_groups').then(r=>r.json());
     teacherGroups = (data.ok && data.groups) ? data.groups : [];
   } catch(e) { teacherGroups = []; }
+
+  // Update Classes sidebar badge
+  const bc = document.getElementById('badge-classes');
+  if (bc) { bc.textContent = teacherGroups.length; bc.style.display = teacherGroups.length ? '' : 'none'; }
 
   renderTeacherGroups();
   renderCourses();

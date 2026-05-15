@@ -292,7 +292,7 @@ $dinoAvatarSvg = '<svg class="av-dino" id="%ID%" xmlns="http://www.w3.org/2000/s
   . '<img class="av-photo" id="%IMGID%" src="" alt="">';
 ?>
 <!DOCTYPE html>
-<html lang="fr" dir="ltr">
+<html lang="<?= htmlspecialchars($_SESSION['lang'] ?? 'fr') ?>" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -635,7 +635,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
     <div class="avatar" id="sidebar-avatar"><?= str_replace(['%ID%','%IMGID%'], ['sidebar-dino-svg','sidebar-av-img'], $dinoAvatarSvg) ?></div>
     <div class="user-info">
       <div class="name" id="sidebar-name"><?= $full_name ?></div>
-      <div class="role-tag" id="role-label">Étudiante</div>
+      <div class="role-tag" id="role-label">Étudiant(e)</div>
     </div>
   </div>
 
@@ -1081,7 +1081,7 @@ const T = {
 
       { icon:'⚙️', from:'#64748b', to:'#475569', title:'Paramètres', desc:'Changez votre nom, ajoutez une photo de profil et choisissez la langue.', btn:'Voir la vidéo' },
     ],
-    settingsTitle:'Paramètres', profileTitle:'Profil', lblChangePhoto:'Changer la photo', settingsRole:'Étudiante · Anglais Général S2', lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l\'Anglais.',
+    settingsTitle:'Paramètres', profileTitle:'Profil', lblChangePhoto:'Changer la photo', settingsRole:'Étudiant(e) · Anglais Général S2', lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l\'Anglais.',
     badgePending:'En attente', badgeSubmitted:'Soumis', badgeOverdue:'En retard',
     startQuiz:'Commencer le quiz', retakeQuiz:'Refaire', doneLabel:'Complété',
     toastSaved:'Profil mis à jour !',
@@ -1096,6 +1096,7 @@ const T = {
     loading:'Chargement…', errorPrefix:'Erreur : ', serverError:'Erreur serveur',
     networkError:'❌ Erreur réseau', toastErrorPrefix:'Erreur : ',
     feedLoading:'Chargement…',
+    gradeLbl:'Note :', teacherFeedback:'Commentaire du professeur :',
   },
   en: {
     topbarTitle: { home:'Dashboard', myclass:'My Class', assignments:'Assignments', feed:'Lesson Notes', quizzes:'Challenge', progress:'Progress', howto:'How-to', settings:'Settings' },
@@ -1145,6 +1146,7 @@ const T = {
     loading:'Loading…', errorPrefix:'Error: ', serverError:'Server error',
     networkError:'❌ Network error', toastErrorPrefix:'Error: ',
     feedLoading:'Loading…',
+    gradeLbl:'Grade:', teacherFeedback:'Teacher feedback:',
   }
 };
 
@@ -1517,18 +1519,27 @@ function renderAssignments() {
             ${tr.submitBtn}
           </button>`;
         } else if (a.status === 'submitted') {
-          actionBtn = `<div style="display:flex;align-items:center;gap:.75rem;margin-top:1rem;flex-wrap:wrap;">
+          const gradeBlock = a.score !== null
+            ? `<div style="margin-top:.75rem;padding:.65rem .9rem;background:rgba(62,207,120,.08);border:1px solid rgba(62,207,120,.2);border-radius:10px;">
+                <div style="display:flex;align-items:center;gap:.5rem;font-size:.83rem;font-weight:600;color:var(--green);">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  ${tr.gradeLbl} <span style="font-size:1rem;">${a.score}/100</span>
+                </div>
+                ${a.teacher_comment ? `<div style="margin-top:.4rem;font-size:.8rem;color:var(--muted);">${tr.teacherFeedback} <em>${e(a.teacher_comment)}</em></div>` : ''}
+              </div>`
+            : '';
+          actionBtn = `${gradeBlock}<div style="display:flex;align-items:center;gap:.75rem;margin-top:.75rem;flex-wrap:wrap;">
             <div style="font-size:.8rem;color:var(--green);display:flex;align-items:center;gap:.35rem;">
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
               ${tr.badgeSubmitted}
               ${a.submitted_at ? `<span style="color:var(--muted);font-weight:400;">· ${formatRelativeTime(a.submitted_at, currentLang)}</span>` : ''}
             </div>
-            <button onclick="retractSubmission(${a.id})"
+            ${a.score === null ? `<button onclick="retractSubmission(${a.id})"
               style="font-size:.75rem;padding:.3rem .7rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--font);"
               onmouseenter="this.style.color='var(--white)'" onmouseleave="this.style.color='var(--muted)'"
               title="${tr.retractTitle}">
               ${tr.retractBtn}
-            </button>
+            </button>` : ''}
           </div>`;
         }
 

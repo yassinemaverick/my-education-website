@@ -379,7 +379,7 @@ $t = [
     <div class="testimonials-grid">
       <div class="testimonial-card">
         <div class="testimonial-header">
-          <img class="testimonial-avatar" src="/assets/img/testimonial-yasmine.png" alt="Yasmine B.">
+          <img class="testimonial-avatar" src="/assets/img/testimonial-yasmine.png" alt="Yasmine B." width="54" height="54" loading="lazy">
           <div class="testimonial-author">
             <span class="testimonial-name">Yasmine B.</span>
             <span class="testimonial-badge">Étudiante Baccalauréat</span>
@@ -391,7 +391,7 @@ $t = [
       </div>
       <div class="testimonial-card">
         <div class="testimonial-header">
-          <img class="testimonial-avatar" src="/assets/img/testimonial-karim.jpg" alt="Karim M.">
+          <img class="testimonial-avatar" src="/assets/img/testimonial-karim.jpg" alt="Karim M." width="54" height="54" loading="lazy">
           <div class="testimonial-author">
             <span class="testimonial-name">Karim M.</span>
             <span class="testimonial-badge">Étudiant Anglais des affaires</span>
@@ -403,7 +403,7 @@ $t = [
       </div>
       <div class="testimonial-card">
         <div class="testimonial-header">
-          <img class="testimonial-avatar" src="/assets/img/testimonial-nadia.png" alt="Nadia F.">
+          <img class="testimonial-avatar" src="/assets/img/testimonial-nadia.png" alt="Nadia F." width="54" height="54" loading="lazy">
           <div class="testimonial-author">
             <span class="testimonial-name">Nadia F.</span>
             <span class="testimonial-badge">Parent · Anglais général</span>
@@ -429,7 +429,7 @@ $t = [
           <span id="pill-text">Anglais des affaires</span>
         </div>
         <div class="form-group">
-          <label>CHOISIR UN COURS</label>
+          <label for="course-select">CHOISIR UN COURS</label>
           <select id="course-select" required>
             <option value="">— Choisissez un programme —</option>
             <option value="Anglais des affaires">Anglais des affaires</option>
@@ -438,16 +438,16 @@ $t = [
           </select>
         </div>
         <div class="form-group">
-          <label>NOM COMPLET</label>
+          <label for="name">NOM COMPLET</label>
           <input type="text" id="name" placeholder="Votre nom complet" required>
         </div>
         <div class="form-grid">
           <div class="form-group">
-            <label>ADRESSE E-MAIL</label>
+            <label for="email">ADRESSE E-MAIL</label>
             <input type="email" id="email" placeholder="vous@exemple.com" required>
           </div>
           <div class="form-group">
-            <label>NUMÉRO DE TÉLÉPHONE</label>
+            <label for="phone">NUMÉRO DE TÉLÉPHONE</label>
             <input type="tel" id="phone" placeholder="+212 6XX XXX XXX" required>
           </div>
         </div>

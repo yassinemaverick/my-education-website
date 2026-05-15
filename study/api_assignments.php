@@ -325,7 +325,8 @@ try {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 INDEX idx_user(user_id)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
-            $msg = "✅ Devoir «{$sub['title_fr']}» corrigé" . ($score !== null ? " — {$score}/100" : '');
+            $scoreStr = $score !== null ? " — {$score}/100" : '';
+            $msg = "✅ Devoir corrigé / Assignment graded : «{$sub['title_fr']}»{$scoreStr}";
             $pdo->prepare("INSERT INTO notifications (user_id,type,message) VALUES (?,?,?)")
                 ->execute([$sub['student_id'], 'assignment_graded', $msg]);
         } catch(Throwable $e) {}
@@ -361,7 +362,7 @@ try {
         try {
             $name = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Étudiant';
             $pdo->prepare("INSERT INTO notifications (user_id,type,message) VALUES (?,?,?)")
-                ->execute([$assign['teacher_id'], 'assignment_submitted', "📝 {$name} a rendu «{$assign['title_fr']}»"]);
+                ->execute([$assign['teacher_id'], 'assignment_submitted', "📝 {$name} a rendu / submitted «{$assign['title_fr']}»"]);
         } catch(Throwable $e) {}
 
         echo json_encode(['ok'=>true], JSON_UNESCAPED_UNICODE);

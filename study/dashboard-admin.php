@@ -20,7 +20,7 @@ $full_name = htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username'] ??
 $username  = htmlspecialchars($_SESSION['username'] ?? '');
 ?>
 <!DOCTYPE html>
-<html lang="fr" dir="ltr">
+<html lang="<?= htmlspecialchars($_SESSION['lang'] ?? 'fr') ?>" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
