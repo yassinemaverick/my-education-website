@@ -297,10 +297,12 @@ $dinoAvatarSvg = '<svg class="av-dino" id="%ID%" xmlns="http://www.w3.org/2000/s
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+<meta name="robots" content="noindex,nofollow">
 <title>Upskill – Tableau de bord Étudiant</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"></noscript>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -640,33 +642,37 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
   </div>
 
   <nav class="sidebar-nav">
-    <div class="nav-item active" onclick="navigate('home',this)" id="nav-home">
+    <div class="nav-item active" role="button" tabindex="0" onclick="navigate('home',this)" id="nav-home">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span id="nav-home-lbl">Dashboard</span>
     </div>
-    <div class="nav-item" onclick="navigate('myclass',this)" id="nav-myclass">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('myclass',this)" id="nav-myclass">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span id="nav-myclass-lbl">Ma classe</span>
     </div>
-    <div class="nav-item" onclick="navigate('assignments',this)" id="nav-assign">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('assignments',this)" id="nav-assign">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
       <span id="nav-assign-lbl">Devoirs</span>
       <span class="nav-badge" id="assign-nav-badge" style="display:none;"></span>
     </div>
-    <div class="nav-item" onclick="navigate('feed',this)" id="nav-feed">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('feed',this)" id="nav-feed">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       <span id="nav-feed-lbl">Notes de cours</span>
     </div>
 
-    <div class="nav-item" onclick="navigate('quizzes',this)" id="nav-quiz">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('progress',this)" id="nav-progress">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span id="nav-progress-lbl">Progression</span>
+    </div>
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('quizzes',this)" id="nav-quiz">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
       <span id="nav-quiz-lbl">Challenge</span>
     </div>
-    <div class="nav-item" onclick="navigate('howto',this)" id="nav-howto">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('howto',this)" id="nav-howto">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       <span id="nav-howto-lbl">How-to</span>
     </div>
-    <div class="nav-item" onclick="navigate('settings',this)" id="nav-set">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('settings',this)" id="nav-set">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span id="nav-set-lbl">Paramètres</span>
     </div>
@@ -1049,7 +1055,7 @@ let activePage = 'home';
 const T = {
   fr: {
     topbarTitle: { home:'Tableau de bord', myclass:'Ma classe', assignments:'Devoirs', feed:'Notes de cours', quizzes:'Challenge', progress:'Progression', howto:'How-to', settings:'Paramètres' },
-    navHome:'Dashboard', navMyclass:'Ma classe', navAssign:'Devoirs', navFeed:'Notes de cours', navQuiz:'Challenge', navHowto:'How-to', navSet:'Paramètres',
+    navHome:'Dashboard', navMyclass:'Ma classe', navAssign:'Devoirs', navFeed:'Notes de cours', navProgress:'Progression', navQuiz:'Challenge', navHowto:'How-to', navSet:'Paramètres',
     feedTitle:'Notes de cours', feedSub:'Les résumés publiés par votre professeur après chaque session',
     feedEmptyTitle:'Aucune note publiée pour l\'instant', feedEmptyTxt:'Votre professeur publiera ses résumés et liens ici après chaque cours Zoom.',
     feedOpenLink:'Ouvrir le lien',
@@ -1100,7 +1106,7 @@ const T = {
   },
   en: {
     topbarTitle: { home:'Dashboard', myclass:'My Class', assignments:'Assignments', feed:'Lesson Notes', quizzes:'Challenge', progress:'Progress', howto:'How-to', settings:'Settings' },
-    navHome:'Dashboard', navMyclass:'My Class', navAssign:'Assignments', navFeed:'Lesson Notes', navQuiz:'Challenge', navHowto:'How-to', navSet:'Settings',
+    navHome:'Dashboard', navMyclass:'My Class', navAssign:'Assignments', navFeed:'Lesson Notes', navProgress:'Progress', navQuiz:'Challenge', navHowto:'How-to', navSet:'Settings',
     feedTitle:'Lesson Notes', feedSub:'Summaries posted by your teacher after each Zoom session',
     feedEmptyTitle:'No notes published yet', feedEmptyTxt:'Your teacher will post summaries and links here after each Zoom session.',
     feedOpenLink:'Open link',
@@ -1180,6 +1186,7 @@ function applyTranslations() {
   st('nav-myclass-lbl', tr.navMyclass);
   st('nav-assign-lbl', tr.navAssign);
   st('nav-feed-lbl', tr.navFeed);
+  st('nav-progress-lbl', tr.navProgress);
   st('nav-quiz-lbl', tr.navQuiz);
   st('nav-howto-lbl', tr.navHowto);
   st('nav-set-lbl', tr.navSet);
@@ -1819,6 +1826,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
     navigate(savedPage);
   }
+  // Keyboard accessibility for sidebar nav items
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
+  });
 });
 
 /* ── LIVE DATA HYDRATION ── */

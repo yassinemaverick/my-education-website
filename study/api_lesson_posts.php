@@ -11,6 +11,8 @@
 require_once __DIR__ . '/session.php';
 require_once __DIR__ . '/csrf.php';
 header('Content-Type: application/json; charset=UTF-8');
+if ($_SERVER['REQUEST_METHOD'] === 'GET') { header('Cache-Control: private, max-age=60'); }
+else { header('Cache-Control: no-store'); }
 
 $role      = $_SESSION['role'] ?? '';
 $uid       = (int)($_SESSION['user_id'] ?? 0);
@@ -98,6 +100,9 @@ try {
             if ($link && !preg_match('#^https?://#i', $link)) {
                 echo json_encode(['ok' => false, 'error' => 'Le lien doit commencer par http:// ou https://']); exit;
             }
+            if (strtotime($date) > strtotime('+1 year')) {
+                echo json_encode(['ok' => false, 'error' => 'Date trop éloignée dans le futur']); exit;
+            }
 
             $check = $pdo->prepare("SELECT id FROM teacher_courses WHERE teacher_id = ? AND course_id = ?");
             $check->execute([$uid, $courseId]);
@@ -111,6 +116,31 @@ try {
             ");
             $stmt->execute([$uid, $courseId, $title, $date, $link, $notes]);
             echo json_encode(['ok' => true, 'id' => (int)$pdo->lastInsertId()], JSON_UNESCAPED_UNICODE);
+
+        } elseif ($action === 'update' && $isTeacher) {
+            $id    = (int)($bodyData['id'] ?? 0);
+            $title = trim($bodyData['title'] ?? '');
+            $date  = trim($bodyData['session_date'] ?? '');
+            $link  = trim($bodyData['link'] ?? '') ?: null;
+            $notes = trim($bodyData['notes'] ?? '') ?: null;
+
+            if (!$id || $title === '' || $date === '') {
+                echo json_encode(['ok' => false, 'error' => 'Champs requis manquants']); exit;
+            }
+            if (mb_strlen($title) > 200) {
+                echo json_encode(['ok' => false, 'error' => 'Titre trop long']); exit;
+            }
+            if ($link && !preg_match('#^https?://#i', $link)) {
+                echo json_encode(['ok' => false, 'error' => 'Le lien doit commencer par http:// ou https://']); exit;
+            }
+            // Upper-bound: no dates more than 1 year in the future
+            if (strtotime($date) > strtotime('+1 year')) {
+                echo json_encode(['ok' => false, 'error' => 'Date trop éloignée dans le futur']); exit;
+            }
+
+            $stmt = $pdo->prepare("UPDATE lesson_posts SET title=?, session_date=?, link=?, notes=? WHERE id=? AND teacher_id=?");
+            $stmt->execute([$title, $date, $link, $notes, $id, $uid]);
+            echo json_encode(['ok' => true], JSON_UNESCAPED_UNICODE);
 
         } elseif ($action === 'delete' && $isTeacher) {
             $id = (int)($bodyData['id'] ?? 0);

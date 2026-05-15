@@ -16,6 +16,11 @@
 require_once __DIR__ . '/session.php';
 require_once __DIR__ . '/csrf.php';
 header('Content-Type: application/json; charset=UTF-8');
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    header('Cache-Control: private, max-age=30');
+} else {
+    header('Cache-Control: no-store');
+}
 
 $role      = $_SESSION['role'] ?? '';
 $uid       = (int)($_SESSION['user_id'] ?? 0);
@@ -91,7 +96,7 @@ function migrateSchema(PDO $pdo): void {
 
 function logActivity(PDO $pdo, int $userId, string $type, string $desc): void {
     try {
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? null;
+        $ip = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '')[0]) ?: ($_SERVER['REMOTE_ADDR'] ?? null);
         $pdo->prepare("INSERT INTO activity_log (user_id,type,description,ip) VALUES (?,?,?,?)")
             ->execute([$userId, $type, $desc, $ip]);
     } catch(Throwable $e) {}

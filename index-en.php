@@ -199,6 +199,45 @@ $t = [
   .testimonial-quote { font-size: 2.4rem; color: #3ecf78; font-family: Georgia, serif; line-height: 0.85; margin-bottom: -0.3rem; opacity: 0.55; }
   .testimonial-text { color: #374151; font-size: 0.93rem; line-height: 1.75; font-style: italic; }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "Upskill Education",
+      "url": "https://upskill-edu.com",
+      "logo": "https://upskill-edu.com/assets/img/logo.png",
+      "contactPoint": { "@type": "ContactPoint", "contactType": "customer service", "availableLanguage": ["French","English","Arabic"] }
+    },
+    {
+      "@type": "Course",
+      "name": "Business English",
+      "description": "Professional English for the workplace — emails, meetings, presentations.",
+      "provider": { "@type": "Organization", "name": "Upskill Education" },
+      "educationalLevel": "Intermediate to Advanced",
+      "inLanguage": "en",
+      "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
+    },
+    {
+      "@type": "Course",
+      "name": "General English",
+      "description": "Conversational and written English for everyday communication and confidence.",
+      "provider": { "@type": "Organization", "name": "Upskill Education" },
+      "educationalLevel": "Beginner to Intermediate",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "Course",
+      "name": "English for Baccalaureate",
+      "description": "Targeted preparation for the Moroccan Bac exam — grammar, reading and writing.",
+      "provider": { "@type": "Organization", "name": "Upskill Education" },
+      "educationalLevel": "Secondary",
+      "inLanguage": "en"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -362,7 +401,7 @@ $t = [
     <p class="section-sub" style="margin: 0 auto; text-align:center;">From sign-up to fluency — here's your journey.</p>
     <div class="steps">
       <div class="step"><div class="step-num">01</div><h3>Choose your course</h3><p>Browse our three programs and select the one that fits your goals and current level.</p></div>
-      <div class="step"><div class="step-num">02</div><h3>Submit your details</h3><p>Fill in your name, email and phone. Our team will reach out to confirm your enrollment.</p></div>
+      <div class="step"><div class="step-num">02</div><h3>Submit your details</h3><p>Fill in your name, email and phone. Our team will reach out within 24 hours to confirm your enrollment.</p></div>
       <div class="step"><div class="step-num">03</div><h3>Get your login</h3><p>Receive your personal credentials for the student platform from our admin team.</p></div>
       <div class="step"><div class="step-num">04</div><h3>Start learning</h3><p>Log in to your dashboard, access materials, assignments, and track your progress live.</p></div>
     </div>
@@ -597,6 +636,8 @@ function openContact() {
 function closeContact() {
   document.getElementById('contact-overlay').style.display = 'none';
   ['c-name','c-email','c-phone','c-msg'].forEach(id => document.getElementById(id).value = '');
+  const s = document.getElementById('c-success'); if (s) s.style.display = 'none';
+  const e = document.getElementById('c-error');   if (e) e.style.display = 'none';
 }
 async function sendContact() {
   const name  = document.getElementById('c-name').value.trim();

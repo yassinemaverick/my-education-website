@@ -25,10 +25,12 @@ $username  = htmlspecialchars($_SESSION['username'] ?? '');
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+<meta name="robots" content="noindex,nofollow">
 <title>Upskill – Tableau de bord Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cairo:wght@300;400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cairo:wght@300;400;500;600;700&display=swap"></noscript>
 <style>
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 :root {
@@ -365,12 +367,15 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     </div>
     <div class="grid-4" style="margin-bottom:1.5rem;">
       <div class="card"><div class="stat-icon blue"><span aria-hidden="true">👨‍🏫</span></div><div class="stat-value" id="stat-teachers">—</div><div class="stat-label" id="stat-teachers-lbl">Professeurs</div></div>
+      <div class="card"><div class="stat-icon green"><span aria-hidden="true">🎓</span></div><div class="stat-value" id="stat-students">—</div><div class="stat-label" id="stat-students-lbl">Étudiants</div></div>
+      <div class="card"><div class="stat-icon orange"><span aria-hidden="true">📋</span></div><div class="stat-value" id="stat-enrollments">—</div><div class="stat-label" id="stat-enrollments-lbl">Inscriptions</div></div>
+      <div class="card"><div class="stat-icon purple"><span aria-hidden="true">🏫</span></div><div class="stat-value" id="stat-groups">—</div><div class="stat-label" id="stat-groups-lbl">Groupes actifs</div></div>
     </div>
     <div class="grid-2">
       <div class="card">
         <div class="card-title" id="recent-activity-title">Activité récente</div>
         <div id="activity-list">
-          <div class="activity-item"><div class="activity-dot orange"></div><div><div class="activity-text"><strong id="act1">Tableau de bord chargé</strong></div><div class="activity-time" id="act1-time">À l'instant</div></div></div>
+          <div class="activity-item"><div class="activity-dot orange"></div><div><div class="activity-text"><strong>Chargement…</strong></div></div></div>
         </div>
       </div>
     </div>
@@ -749,7 +754,7 @@ const T = {
     noAssignments:'Aucun groupe assigné.',
     topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes' },
     welcomeSub:'Gérez les classes et les groupes depuis ce tableau de bord.',
-    statTeachersLbl:'Professeurs',
+    statTeachersLbl:'Professeurs', statStudentsLbl:'Étudiants', statEnrollmentsLbl:'Inscriptions', statGroupsLbl:'Groupes actifs',
     recentActivityTitle:'Activité récente',
     settingsTitle:'Paramètres', profileTitle:'Profil administrateur',
     settingsRole:'Administrateur · Upskill',
@@ -790,7 +795,7 @@ const T = {
     noAssignments:'لا توجد مجموعات معينة.',
     topbar:{ home:'لوحة تحكم المسؤول', users:'المستخدمون', inscriptions:'التسجيلات', settings:'الإعدادات', classes:'الفصول', 'assigning-classes':'تعيين الفصول' },
     welcomeSub:'أدر الفصول والمجموعات من لوحة التحكم هذه.',
-    statTeachersLbl:'الأساتذة',
+    statTeachersLbl:'الأساتذة', statStudentsLbl:'الطلاب', statEnrollmentsLbl:'التسجيلات', statGroupsLbl:'المجموعات النشطة',
     recentActivityTitle:'النشاط الأخير',
     settingsTitle:'الإعدادات', profileTitle:'الملف الشخصي',
     settingsRole:'مسؤول النظام · Upskill',
@@ -831,7 +836,7 @@ const T = {
     noAssignments:'No groups assigned.',
     topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments' },
     welcomeSub:'Manage classes and groups from this dashboard.',
-    statTeachersLbl:'Teachers',
+    statTeachersLbl:'Teachers', statStudentsLbl:'Students', statEnrollmentsLbl:'Enrollments', statGroupsLbl:'Active groups',
     recentActivityTitle:'Recent activity',
     settingsTitle:'Settings', profileTitle:'Admin profile',
     settingsRole:'Administrator · Upskill',
@@ -896,7 +901,8 @@ function applyTranslations() {
   const sph = document.getElementById('enroll-search'); if (sph) sph.placeholder = t.enrollSearchPlaceholder;
   set('topbar-title', t.topbar[activePage] || t.topbar.home);
   set('welcome-sub', t.welcomeSub);
-  set('stat-teachers-lbl', t.statTeachersLbl);
+  set('stat-teachers-lbl', t.statTeachersLbl); set('stat-students-lbl', t.statStudentsLbl);
+  set('stat-enrollments-lbl', t.statEnrollmentsLbl); set('stat-groups-lbl', t.statGroupsLbl);
   set('recent-activity-title', t.recentActivityTitle);
   set('settings-title', t.settingsTitle); set('profile-title', t.profileTitle);
   set('settings-role', t.settingsRole);
@@ -1727,21 +1733,58 @@ document.addEventListener('DOMContentLoaded', async () => {
     const el = document.getElementById(id); if (el) el.textContent = init;
   });
 
-  // Preload enrollment counts for sidebar badge
+  // Preload enrollment counts, student count, group count for stat cards + sidebar badge
   try {
-    const [enrollData, studentsData] = await Promise.all([
+    const [enrollData, studentsData, usersData, groupsData] = await Promise.all([
       api('api_students.php?action=enrollments&status=all'),
-      api('api_students.php?action=registered_students')
+      api('api_students.php?action=registered_students'),
+      api('api_students.php?action=all_users'),
+      api('api_classes.php?action=list_types')
     ]);
+
+    // Sidebar inscription badge
     const badge = document.getElementById('nav-inscriptions-badge');
     const newCount = enrollData.counts?.new || 0;
     if (badge && newCount > 0) { badge.textContent = newCount; badge.style.display = ''; }
+
+    // Accepted student badge on inscriptions page
     const acceptedBadge = document.getElementById('enroll-count-accepted');
     if (acceptedBadge) { acceptedBadge.textContent = studentsData.total || 0; acceptedBadge.style.display = 'inline'; }
-  } catch(e) {}
+
+    // Home stat cards
+    const teachers = (usersData.users || []).filter(u => u.role === 'teacher').length;
+    const students = (usersData.users || []).filter(u => u.role === 'student').length;
+    const totalEnroll = (enrollData.counts?.new || 0) + (enrollData.counts?.accepted || 0) + (enrollData.counts?.rejected || 0);
+    const totalGroups = (groupsData.types || []).reduce((s, t) => s + (parseInt(t.group_count) || 0), 0);
+
+    const el = id => document.getElementById(id);
+    if (el('stat-teachers'))    el('stat-teachers').textContent    = teachers;
+    if (el('stat-students'))    el('stat-students').textContent    = students;
+    if (el('stat-enrollments')) el('stat-enrollments').textContent = totalEnroll;
+    if (el('stat-groups'))      el('stat-groups').textContent      = totalGroups;
+
+    // Live activity feed: show recent enrollments
+    const actList = document.getElementById('activity-list');
+    const enrollments = enrollData.enrollments || [];
+    if (actList && enrollments.length > 0) {
+      const colors = ['green','blue','orange','purple','green'];
+      actList.innerHTML = enrollments.slice(0, 5).map((e, i) => {
+        const name = e.full_name || e.name || 'Étudiant';
+        const course = e.course || e.program || '';
+        const when = e.submitted_at ? new Date(e.submitted_at).toLocaleDateString('fr-FR') : '';
+        return `<div class="activity-item">
+          <div class="activity-dot ${colors[i%5]}"></div>
+          <div><div class="activity-text"><strong>${name}</strong>${course ? ' — ' + course : ''}</div>
+          ${when ? `<div class="activity-time">${when}</div>` : ''}</div>
+        </div>`;
+      }).join('');
+    } else if (actList) {
+      actList.innerHTML = '<div class="activity-item"><div class="activity-dot orange"></div><div><div class="activity-text" style="color:var(--muted)">Aucune inscription récente</div></div></div>';
+    }
+
+  } catch(e) { console.warn('Admin stats load error:', e); }
 
   setLang(lang);
-  addActivity(currentLang==='ar' ? 'تم تحميل لوحة التحكم' : 'Tableau de bord chargé');
 });
 </script>
 </body>

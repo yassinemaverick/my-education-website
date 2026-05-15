@@ -133,6 +133,14 @@ try {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     ");
 
+    // Duplicate guard: block a second 'new' request from same email within 24h
+    $dup = enroll_db()->prepare("SELECT id FROM enrollments WHERE email = :email AND status = 'new' AND created_at > NOW() - INTERVAL 24 HOUR");
+    $dup->execute([':email' => $email]);
+    if ($dup->fetch()) {
+        echo json_encode(['ok' => true]); // silently succeed to prevent enumeration
+        exit;
+    }
+
     $stmt = enroll_db()->prepare("
         INSERT INTO enrollments (name, email, phone, course, lang)
         VALUES (:name, :email, :phone, :course, :lang)

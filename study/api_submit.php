@@ -111,6 +111,19 @@ if ($action === 'unsubmit') {
         WHERE  assignment_id = ? AND student_id = ? AND status = 'submitted'
     ")->execute([$aid, $studentId]);
 
+    // Notify teacher that student retracted their submission
+    try {
+        $assign = $pdo->prepare("SELECT a.title_fr, a.teacher_id FROM assignments a WHERE a.id = ?");
+        $assign->execute([$aid]);
+        $a = $assign->fetch();
+        if ($a) {
+            $name = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Étudiant';
+            $pdo->prepare("INSERT INTO notifications (user_id,type,message) VALUES (?,?,?)")
+                ->execute([$a['teacher_id'], 'submission_retracted',
+                    "↩️ {$name} a rétracté / retracted «{$a['title_fr']}»"]);
+        }
+    } catch(Throwable $e) {}
+
     echo json_encode(['ok' => true]);
     exit;
 }

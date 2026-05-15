@@ -50,10 +50,12 @@ $username  = htmlspecialchars($_SESSION['username'] ?? '');
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
+<meta name="robots" content="noindex,nofollow">
 <title>Upskill – Tableau de bord Professeur</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"></noscript>
 <style>
 *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
 :root {
@@ -442,38 +444,38 @@ body.ar .notif-panel { right:auto; left:1rem; }
 
   <nav class="sidebar-nav">
     <div class="nav-section-label" id="nav-main-label">Principal</div>
-    <div class="nav-item active" onclick="navigate('home',this)" id="nav-home">
+    <div class="nav-item active" role="button" tabindex="0" onclick="navigate('home',this)" id="nav-home">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span id="nav-home-lbl">Tableau de bord</span>
     </div>
-    <div class="nav-item" onclick="navigate('courses',this)" id="nav-students">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('courses',this)" id="nav-students">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       <span id="nav-students-lbl">Classes</span>
       <span class="nav-badge" id="badge-classes" aria-hidden="true" style="display:none;"></span>
     </div>
-    <div class="nav-item" onclick="navigate('assignments',this)" id="nav-assign">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('assignments',this)" id="nav-assign">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       <span id="nav-assign-lbl">Devoirs</span>
       <span class="nav-badge" id="badge-assignments" aria-hidden="true" style="display:none;"></span>
     </div>
-    <div class="nav-item" onclick="navigate('posts',this)" id="nav-posts">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('posts',this)" id="nav-posts">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
       <span id="nav-posts-lbl">Notes de cours</span>
     </div>
-    <div class="nav-item" onclick="navigate('quizzes',this)" id="nav-quiz">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('quizzes',this)" id="nav-quiz">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       <span id="nav-quiz-lbl">Quiz</span>
     </div>
-    <div class="nav-item" onclick="navigate('grades',this)" id="nav-grades">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('grades',this)" id="nav-grades">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
       <span id="nav-grades-lbl">Notes & Résultats</span>
     </div>
-    <div class="nav-item" onclick="navigate('attendance',this)" id="nav-attendance">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('attendance',this)" id="nav-attendance">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       <span id="nav-attendance-lbl">Présences</span>
     </div>
     <div class="nav-section-label" id="nav-account-label">Compte</div>
-    <div class="nav-item" onclick="navigate('settings',this)" id="nav-set">
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('settings',this)" id="nav-set">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span id="nav-set-lbl">Paramètres</span>
     </div>
@@ -528,16 +530,16 @@ body.ar .notif-panel { right:auto; left:1rem; }
         <div class="card" style="margin-bottom:1.5rem;">
           <div class="card-title" id="class-prog-title">Progression de la classe</div>
           <div style="margin-bottom:1rem;">
-            <div style="display:flex;justify-content:space-between;font-size:.83rem;color:var(--muted);margin-bottom:.4rem;"><span id="cp-label1">Progression générale</span><span style="color:var(--green);font-family:var(--font);font-weight:700;">68%</span></div>
-            <div class="progress-bar"><div class="progress-fill" style="width:68%"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:.83rem;color:var(--muted);margin-bottom:.4rem;"><span id="cp-label1">Progression générale</span><span id="cp-val1" style="color:var(--green);font-family:var(--font);font-weight:700;">—</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="cp-bar1" style="width:0%"></div></div>
           </div>
           <div style="margin-bottom:1rem;">
-            <div style="display:flex;justify-content:space-between;font-size:.83rem;color:var(--muted);margin-bottom:.4rem;"><span id="cp-label2">Taux de soumission devoirs</span><span style="color:var(--yellow);font-family:var(--font);font-weight:700;">82%</span></div>
-            <div class="progress-bar"><div class="progress-fill yellow" style="width:82%"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:.83rem;color:var(--muted);margin-bottom:.4rem;"><span id="cp-label2">Taux de soumission devoirs</span><span id="cp-val2" style="color:var(--yellow);font-family:var(--font);font-weight:700;">—</span></div>
+            <div class="progress-bar"><div class="progress-fill yellow" id="cp-bar2" style="width:0%"></div></div>
           </div>
           <div>
-            <div style="display:flex;justify-content:space-between;font-size:.83rem;color:var(--muted);margin-bottom:.4rem;"><span id="cp-label3">Moyenne quiz</span><span style="color:var(--purple);font-family:var(--font);font-weight:700;">74%</span></div>
-            <div class="progress-bar"><div class="progress-fill purple" style="width:74%"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:.83rem;color:var(--muted);margin-bottom:.4rem;"><span id="cp-label3">Moyenne quiz</span><span id="cp-val3" style="color:var(--purple);font-family:var(--font);font-weight:700;">—</span></div>
+            <div class="progress-bar"><div class="progress-fill purple" id="cp-bar3" style="width:0%"></div></div>
           </div>
         </div>
 
@@ -949,7 +951,7 @@ const T = {
     postsLblLink:'Lien (tableau blanc, slides…)', postsLblNotes:'Notes / Résumé (optionnel)',
     postsSubmitBtn:'Publier la note', postsEmptyTitle:'Aucune note publiée',
     postsEmptyTxt:'Publiez votre premier résumé de cours ci-dessus.',
-    postsDeleteConfirm:'Supprimer cette note ?', toastPostPublished:'Note publiée !', toastPostDeleted:'Note supprimée.',
+    postsDeleteConfirm:'Supprimer cette note ?', toastPostPublished:'Note publiée !', toastPostDeleted:'Note supprimée.', editPost:'Mettre à jour',
     teacherChip:'Prof', roleLabel:'Professeur', logout:'Déconnexion',
     welcomeMsg:'Bonjour, ', welcomeSub:"8 devoirs à corriger · 3 étudiants en difficulté · Moyenne de classe : 74%",
     stat1:'Étudiants actifs', stat2:'Devoirs à corriger', stat3:'Moyenne de la classe', stat4:'Devoirs publiés',
@@ -1024,7 +1026,7 @@ const T = {
     postsLblLink:'Link (whiteboard, slides…)', postsLblNotes:'Notes / Summary (optional)',
     postsSubmitBtn:'Publish note', postsEmptyTitle:'No notes published yet',
     postsEmptyTxt:'Publish your first lesson summary above.',
-    postsDeleteConfirm:'Delete this note?', toastPostPublished:'Note published!', toastPostDeleted:'Note deleted.',
+    postsDeleteConfirm:'Delete this note?', toastPostPublished:'Note published!', toastPostDeleted:'Note deleted.', editPost:'Update note',
     teacherChip:'Teacher', roleLabel:'Teacher', logout:'Log out',
     welcomeMsg:'Hello, ', welcomeSub:'8 assignments to grade · 3 students struggling · Class average: 74%',
     stat1:'Active students', stat2:'Assignments to grade', stat3:'Class average', stat4:'Assignments posted',
@@ -1271,9 +1273,12 @@ function updateHomeStats() {
   const el2 = document.getElementById('stat2-val');
   if (el2) el2.textContent = pendingReview;
 
-  // Stat 3: placeholder — no grade data yet
+  // Stat 3: average score from GRADES_LIVE if available
   const el3 = document.getElementById('stat3-val');
-  if (el3) el3.textContent = '—';
+  if (el3) {
+    const scored = GRADES_LIVE.filter(g => g.score !== null && g.score !== undefined);
+    el3.textContent = scored.length ? Math.round(scored.reduce((s,g)=>s+parseInt(g.score),0)/scored.length)+'%' : '—';
+  }
 
   // Stat 4: total active assignments
   const el4 = document.getElementById('stat4-val');
@@ -1282,12 +1287,26 @@ function updateHomeStats() {
   // Update welcome subtitle with live numbers
   const subEl = document.getElementById('welcome-sub');
   if (subEl) {
-    const pending = pendingReview;
-    const students = STUDENTS.length;
-    if (tr.stat2 && tr.stat1) {
-      subEl.textContent = `${pending} ${tr.stat2.toLowerCase()} · ${students} ${tr.stat1.toLowerCase()}`;
-    }
+    const classes = teacherGroups.length;
+    subEl.textContent = `${pendingReview} ${tr.stat2.toLowerCase()} · ${classes} ${currentLang==='fr'?'groupes actifs':'active groups'}`;
   }
+
+  // Update class progress bars from real assignment data
+  const totalSlots    = ASSIGNMENTS_LIVE.reduce((s,a) => s + Math.max(0, parseInt(a.total_students||a.submitted_count||0)), 0);
+  const totalSubmitted= ASSIGNMENTS_LIVE.reduce((s,a) => s + Math.max(0, parseInt(a.submitted_count||0)), 0);
+  const totalGraded   = ASSIGNMENTS_LIVE.reduce((s,a) => s + Math.max(0, parseInt(a.graded_count||0)), 0);
+
+  const subRate   = totalSlots   > 0 ? Math.round((totalSubmitted / totalSlots)   * 100) : 0;
+  const gradeRate = totalSubmitted > 0 ? Math.round((totalGraded   / totalSubmitted) * 100) : 0;
+
+  const v1 = document.getElementById('cp-val1'); const b1 = document.getElementById('cp-bar1');
+  const v2 = document.getElementById('cp-val2'); const b2 = document.getElementById('cp-bar2');
+  const v3 = document.getElementById('cp-val3'); const b3 = document.getElementById('cp-bar3');
+
+  if (v1) v1.textContent = subRate   + '%'; if (b1) b1.style.width = subRate   + '%';
+  if (v2) v2.textContent = gradeRate + '%'; if (b2) b2.style.width = gradeRate + '%';
+  // cp-val3 (quiz avg) stays — until quiz system is live
+  if (v3) v3.textContent = '—'; if (b3) b3.style.width = '0%';
 }
 
 function renderAssignments() {
@@ -1876,6 +1895,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
     navigate(savedPage);
   }
+  // Keyboard accessibility for sidebar nav items
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
+  });
 });
 
 /* ── LIVE STUDENT FETCH ── */
@@ -2329,15 +2352,21 @@ function renderPostsList(posts) {
           <div style="font-family:var(--font);font-weight:600;font-size:.95rem;">${escHtml(p.title)}</div>
           ${linkBtn}${notesHtml}
         </div>
-        <button onclick="deletePost(${p.id})" style="flex-shrink:0;background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
+        <div style="display:flex;gap:.4rem;flex-shrink:0;">
+          <button onclick="editPost(${p.id},'${escHtml(p.title).replace(/'/g,"\\'")}','${p.session_date}','${escHtml(p.link||'').replace(/'/g,"\\'")}','${escHtml(p.notes||'').replace(/\n/g,'\\n').replace(/'/g,"\\'")}',${p.course_id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="${T[currentLang]?.editPost||'Modifier'}">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button onclick="deletePost(${p.id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="${T[currentLang]?.postsDeleteConfirm||'Supprimer'}">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          </button>
+        </div>
       </div>
     </div>`;
   }).join('');
 }
 
 async function submitPost() {
+  if (_editPostId) { await updatePost(); return; }
   const courseId = document.getElementById('post-course-select').value;
   const title    = document.getElementById('post-title').value.trim();
   const date     = document.getElementById('post-date').value;
@@ -2389,6 +2418,54 @@ async function deletePost(id) {
     showToast(T[currentLang].toastPostDeleted);
     loadPosts();
   } catch(e) { showToast('Erreur : ' + e.message); }
+}
+
+let _editPostId = null;
+function editPost(id, title, date, link, notes, courseId) {
+  _editPostId = id;
+  // Reuse the create form fields
+  document.getElementById('post-title').value = title;
+  document.getElementById('post-date').value  = date;
+  document.getElementById('post-link').value  = link;
+  document.getElementById('post-notes').value = notes.replace(/\\n/g, '\n');
+  // Mark form as editing mode
+  const btn = document.getElementById('post-submit-lbl');
+  if (btn) btn.textContent = T[currentLang]?.editPost || 'Mettre à jour';
+  // Scroll form into view
+  document.getElementById('posts-form-title')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+async function updatePost() {
+  const title = document.getElementById('post-title').value.trim();
+  const date  = document.getElementById('post-date').value;
+  const link  = document.getElementById('post-link').value.trim();
+  const notes = document.getElementById('post-notes').value.trim();
+  const errEl = document.getElementById('post-form-error');
+  const btnLbl = document.getElementById('post-submit-lbl');
+  errEl.style.display = 'none';
+  if (!title || !date) {
+    errEl.textContent = 'Veuillez remplir les champs requis.';
+    errEl.style.display = ''; return;
+  }
+  btnLbl.textContent = '…';
+  document.getElementById('post-submit-btn').disabled = true;
+  try {
+    const res  = await fetch('api_lesson_posts.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
+      body: JSON.stringify({ action: 'update', id: _editPostId, title, session_date: date, link: link || null, notes: notes || null })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    _editPostId = null;
+    ['post-title','post-link','post-notes'].forEach(id => { document.getElementById(id).value = ''; });
+    showToast(currentLang === 'fr' ? 'Note mise à jour !' : 'Note updated!');
+    loadPosts();
+  } catch(e) { errEl.textContent = e.message; errEl.style.display = ''; }
+  finally {
+    btnLbl.textContent = T[currentLang].postsSubmitBtn;
+    document.getElementById('post-submit-btn').disabled = false;
+  }
 }
 
 function escHtml(s) {

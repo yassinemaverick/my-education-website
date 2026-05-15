@@ -19,7 +19,7 @@ $t = [
     'nav_how'       => 'Comment ça marche',
     'nav_enroll'    => 'Inscription',
     'nav_login'     => 'Espace étudiant →',
-    'portal_url'    => 'https://study.upskill-edu.com/index2-fr.php',
+    'portal_url'    => 'https://study.upskill-edu.com',
     'footer_portal' => 'Espace étudiant',
     'footer_contact'=> 'Contact',
     'footer_copy'   => '© 2026 Upskill Education · upskill-edu.com · Tous droits réservés.',
@@ -199,6 +199,45 @@ $t = [
   .testimonial-quote { font-size: 2.4rem; color: #3ecf78; font-family: Georgia, serif; line-height: 0.85; margin-bottom: -0.3rem; opacity: 0.55; }
   .testimonial-text { color: #374151; font-size: 0.93rem; line-height: 1.75; font-style: italic; }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "Upskill Education",
+      "url": "https://upskill-edu.com",
+      "logo": "https://upskill-edu.com/assets/img/logo.png",
+      "contactPoint": { "@type": "ContactPoint", "contactType": "service client", "availableLanguage": ["French","English","Arabic"] }
+    },
+    {
+      "@type": "Course",
+      "name": "Anglais des affaires",
+      "description": "Anglais professionnel pour le monde du travail — emails, réunions, présentations.",
+      "provider": { "@type": "Organization", "name": "Upskill Education" },
+      "educationalLevel": "Intermédiaire à Avancé",
+      "inLanguage": "fr",
+      "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
+    },
+    {
+      "@type": "Course",
+      "name": "Anglais général",
+      "description": "Anglais conversationnel et écrit pour la communication quotidienne.",
+      "provider": { "@type": "Organization", "name": "Upskill Education" },
+      "educationalLevel": "Débutant à Intermédiaire",
+      "inLanguage": "fr"
+    },
+    {
+      "@type": "Course",
+      "name": "Anglais Baccalauréat",
+      "description": "Préparation ciblée pour l'examen du Bac marocain — grammaire, lecture et rédaction.",
+      "provider": { "@type": "Organization", "name": "Upskill Education" },
+      "educationalLevel": "Lycée",
+      "inLanguage": "fr"
+    }
+  ]
+}
+</script>
 </head>
 <body>
 
@@ -223,7 +262,7 @@ $t = [
     <a href="#courses">Cours</a>
     <a href="#how">Comment ça marche</a>
     <a href="#enroll">Inscription</a>
-    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com/index2-fr.php" class="nav-cta">Espace étudiant →</a>
+    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com" class="nav-cta">Espace étudiant →</a>
   </div>
 </nav>
 
@@ -235,7 +274,7 @@ $t = [
   <p>Des cours d'anglais animés par des experts, conçus pour des résultats concrets — que vous construisiez votre carrière, prépariez le Baccalauréat ou souhaitiez simplement progresser.</p>
   <div class="hero-actions">
     <a href="#courses" class="btn-primary">Découvrir les cours</a>
-    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com/index2-fr.php" class="btn-outline">Espace étudiant →</a>
+    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com" class="btn-outline">Espace étudiant →</a>
   </div>
 </div>
 
@@ -364,7 +403,7 @@ $t = [
     <p class="section-sub" style="margin: 0 auto; text-align:center;">De l'inscription à la maîtrise — voici votre parcours.</p>
     <div class="steps">
       <div class="step"><div class="step-num">01</div><h3>Choisissez votre cours</h3><p>Parcourez nos trois programmes et sélectionnez celui qui correspond à vos objectifs et à votre niveau actuel.</p></div>
-      <div class="step"><div class="step-num">02</div><h3>Soumettez vos informations</h3><p>Renseignez votre nom, e-mail et téléphone. Notre équipe vous contactera pour confirmer votre inscription.</p></div>
+      <div class="step"><div class="step-num">02</div><h3>Soumettez vos informations</h3><p>Renseignez votre nom, e-mail et téléphone. Notre équipe vous contactera sous 24 heures pour confirmer votre inscription.</p></div>
       <div class="step"><div class="step-num">03</div><h3>Recevez vos identifiants</h3><p>Vous recevrez vos identifiants personnels pour accéder à la plateforme étudiant depuis notre équipe administrative.</p></div>
       <div class="step"><div class="step-num">04</div><h3>Commencez à apprendre</h3><p>Connectez-vous à votre tableau de bord, accédez aux ressources, devoirs et suivez votre progression en temps réel.</p></div>
     </div>
@@ -470,7 +509,7 @@ $t = [
   <div class="footer-links">
     <a href="#courses">Cours</a>
     <a href="#enroll">Inscription</a>
-    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com/index2-fr.php">Espace étudiant</a>
+    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com">Espace étudiant</a>
     <a href="#" onclick="openContact();return false;">Contact</a>
   </div>
   <div class="footer-copy">© 2026 Upskill Education · upskill-edu.com · Tous droits réservés.</div>
@@ -601,6 +640,8 @@ function openContact() {
 function closeContact() {
   document.getElementById('contact-overlay').style.display = 'none';
   ['c-name','c-email','c-phone','c-msg'].forEach(id => document.getElementById(id).value = '');
+  const s = document.getElementById('c-success'); if (s) s.style.display = 'none';
+  const e = document.getElementById('c-error');   if (e) e.style.display = 'none';
 }
 async function sendContact() {
   const name  = document.getElementById('c-name').value.trim();
