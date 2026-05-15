@@ -126,7 +126,7 @@ body.ar .topbar-title { font-family:var(--font-ar); }
 .btn-icon:hover { border-color:var(--blue); color:var(--blue); background:rgba(59,130,246,.08); }
 .page { padding:2rem; display:none; animation:fadeIn .25s ease; }
 .page.active { display:block; }
-#page-attendance { padding-left:1rem; }
+#page-attendance { padding-left:0; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
 /* CARDS */
