@@ -126,11 +126,13 @@ body.ar .topbar-title { font-family:var(--font-ar); }
 .btn-icon:hover { border-color:var(--blue); color:var(--blue); background:rgba(59,130,246,.08); }
 .page { padding:2rem; display:none; animation:fadeIn .25s ease; }
 .page.active { display:block; }
-#page-attendance { padding-left:0 !important; }
+#page-attendance { padding-left:0 !important; padding-top:1rem !important; }
 #page-attendance .att-toolbar,
 #page-attendance .att-summary-bar,
 #page-attendance #att-group-selector-wrap,
 #page-attendance .att-save-banner { padding-left:1rem; }
+#page-attendance .att-toolbar { margin-bottom:.6rem; }
+#page-attendance .att-summary-bar { margin-bottom:.6rem; }
 #page-attendance .att-card { border-radius:0 16px 16px 0; margin-left:0; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
@@ -266,7 +268,7 @@ body.ar .att-toolbar-left p { font-family:var(--font-ar); }
 .att-actions { display:flex; gap:.6rem; flex-wrap:wrap; }
 
 .att-summary-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
-.att-stat { background:var(--navy-card); border:1px solid var(--border); border-radius:14px; padding:1rem 1.2rem; display:flex; align-items:center; gap:.85rem; }
+.att-stat { background:var(--navy-card); border:1px solid var(--border); border-radius:14px; padding:.7rem 1rem; display:flex; align-items:center; gap:.75rem; }
 .att-stat-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
 .att-stat-icon.green  { background:rgba(62,207,120,.12); }
 .att-stat-icon.yellow { background:rgba(245,197,66,.1); }
@@ -289,10 +291,10 @@ body.ar .att-stat-lbl { font-family:var(--font-ar); }
 .att-table thead tr:first-child th { background:rgba(245,158,11,.06); border-bottom:1px solid var(--border); }
 .att-table thead tr:last-child th  { background:rgba(245,158,11,.03); border-bottom:2px solid rgba(245,158,11,.18); }
 
-.att-th-name { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted2); padding:.75rem 1.2rem; text-align:left; white-space:nowrap; min-width:180px; position:sticky; left:0; background:rgba(245,158,11,.06); z-index:2; }
+.att-th-name { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted2); padding:.75rem 1.2rem; text-align:left; white-space:nowrap; min-width:180px; background:rgba(245,158,11,.06); }
 body.ar .att-th-name { text-align:right; font-family:var(--font-ar); letter-spacing:0; }
 .att-th-sess { font-family:var(--font); font-size:.68rem; font-weight:700; color:var(--muted2); padding:.5rem .35rem; text-align:center; white-space:nowrap; min-width:34px; }
-.att-th-total { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted2); padding:.5rem 1rem; text-align:center; white-space:nowrap; position:sticky; right:0; background:rgba(245,158,11,.06); z-index:2; }
+.att-th-total { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted2); padding:.5rem 1rem; text-align:center; white-space:nowrap; background:rgba(245,158,11,.06); }
 body.ar .att-th-total { font-family:var(--font-ar); letter-spacing:0; }
 
 /* Group-of-5 visual separators */
@@ -303,7 +305,7 @@ body.ar .att-th-total { font-family:var(--font-ar); letter-spacing:0; }
 .att-table tbody tr:last-child { border-bottom:none; }
 .att-table tbody tr:hover { background:rgba(59,130,246,.04); }
 
-.att-td-name { padding:.85rem 1.2rem; white-space:nowrap; position:sticky; left:0; background:var(--navy-card); z-index:1; border-right:1px solid var(--border2); }
+.att-td-name { padding:.85rem 1.2rem; white-space:nowrap; background:var(--navy-card); border-right:1px solid var(--border2); }
 body.ar .att-td-name { text-align:right; }
 .att-student { display:flex; align-items:center; gap:.7rem; }
 body.ar .att-student { flex-direction:row-reverse; }
@@ -317,7 +319,7 @@ body.ar .att-name { font-family:var(--font-ar); }
 .att-box:checked { background:var(--green); border-color:var(--green); background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:center; background-size:10px; }
 .att-box.absent:checked { background:var(--red); border-color:var(--red); background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M9 3L3 9M3 3l6 6' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
 
-.att-td-total { padding:.6rem 1rem; text-align:center; white-space:nowrap; position:sticky; right:0; background:var(--navy-card); border-left:1px solid var(--border2); z-index:1; }
+.att-td-total { padding:.6rem 1rem; text-align:center; white-space:nowrap; background:var(--navy-card); border-left:1px solid var(--border2); }
 .att-pct-wrap { display:flex; flex-direction:column; align-items:center; gap:.25rem; }
 .att-pct { font-family:var(--font); font-size:.9rem; font-weight:700; }
 .att-pct.high { color:var(--green); }
@@ -914,7 +916,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
     </div>
 
     <!-- Group selector (populated from api_classes.php) -->
-    <div id="att-group-selector-wrap" style="margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+    <div id="att-group-selector-wrap" style="margin-bottom:.5rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
       <label style="font-family:var(--font);font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;" id="att-group-lbl">Groupe</label>
       <select id="att-group-select" onchange="attSelectGroup(this.value)">
         <option value="">— Tous les étudiants —</option>
