@@ -88,21 +88,41 @@ try {
         $_SESSION['student_schema_ok'] = true;
     }
 
-    // ── Course info ──────────────────────────────────────────────────────────
+    // ── Course info (from class_groups — new system) ────────────────────────
     try {
         $stmt = $pdo->prepare("
-            SELECT c.id, c.group_name_fr, c.group_name_ar,
-                   c.subject_fr, c.subject_ar, c.level,
-                   c.students_count, c.schedule_json, c.zoom_url,
-                   u.full_name AS teacher_name
-            FROM   student_courses sc
-            JOIN   courses c ON c.id = sc.course_id
-            LEFT   JOIN teacher_courses tc ON tc.course_id = c.id
-            LEFT   JOIN users u ON u.id = tc.teacher_id
-            WHERE  sc.student_id = ? LIMIT 1
+            SELECT g.id AS group_id, g.type_key, g.level_number, g.group_letter,
+                   g.schedule_json, g.zoom_url,
+                   (SELECT u2.full_name
+                      FROM class_group_members m2
+                      JOIN users u2 ON u2.id = m2.user_id
+                     WHERE m2.group_id = g.id AND u2.role = 'teacher'
+                     LIMIT 1) AS teacher_name
+            FROM   class_group_members m
+            JOIN   class_groups g ON g.id = m.group_id
+            WHERE  m.user_id = ?
+            LIMIT  1
         ");
         $stmt->execute([$studentId]);
-        $liveData['course'] = $stmt->fetch() ?: null;
+        $row = $stmt->fetch() ?: null;
+        if ($row) {
+            $typeLabelsFr = [
+                'beginners'=>'Débutants','pre_intermediate'=>'Pré-intermédiaire',
+                'intermediate'=>'Intermédiaire','upper_intermediate'=>'Upper-intermédiaire',
+                'advanced'=>'Avancé','baccalaureate'=>'Baccalauréat','business'=>'Business','kids'=>'Kids'
+            ];
+            $typeLabelsAr = [
+                'beginners'=>'مبتدئون','pre_intermediate'=>'ما قبل المتوسط',
+                'intermediate'=>'متوسط','upper_intermediate'=>'فوق المتوسط',
+                'advanced'=>'متقدم','baccalaureate'=>'البكالوريا','business'=>'الأعمال','kids'=>'أطفال'
+            ];
+            $lvl  = $row['level_number'];
+            $tk   = $row['type_key'];
+            $gl   = $row['group_letter'];
+            $row['label_fr'] = ($typeLabelsFr[$tk] ?? $tk) . ($lvl ? ' ' . $lvl : '') . ' – Groupe ' . $gl;
+            $row['label_ar'] = ($typeLabelsAr[$tk] ?? $tk) . ($lvl ? ' ' . $lvl : '') . ' – مجموعة ' . $gl;
+        }
+        $liveData['course'] = $row;
     } catch (Throwable $e) {}
 
     // ── Attendance ───────────────────────────────────────────────────────────
@@ -1478,7 +1498,7 @@ function renderMyClass() {
   if (c) {
     if (assignedEl) assignedEl.style.display = '';
     if (emptyEl)    emptyEl.style.display    = 'none';
-    const name = lang === 'ar' ? (c.group_name_ar || c.group_name_fr) : (c.group_name_fr || c.group_name_ar);
+    const name = lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
     st('myclass-course-name', name || '—');
     st('myclass-teacher', (c.teacher_name ? ((lang === 'ar' ? 'أ. ' : 'Prof. ') + c.teacher_name) : '—'));
     if (c.schedule_json) {
@@ -2010,8 +2030,8 @@ function hydrateLiveData() {
   // ── 5. Course name on progress page ─────────────────────────────────────
   if (c) {
     const courseName = lang === 'ar'
-      ? (c.group_name_ar || c.group_name_fr)
-      : (c.group_name_fr || c.group_name_ar);
+      ? (c.label_ar || c.label_fr)
+      : (c.label_fr || c.label_ar);
     const cs = document.getElementById('course-session');
     if (cs) cs.textContent = courseName;
     const sr = document.getElementById('settings-role');
