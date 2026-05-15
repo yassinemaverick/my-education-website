@@ -69,7 +69,7 @@ $username  = htmlspecialchars($_SESSION['username'] ?? '');
 }
 html { scroll-behavior:smooth; }
 .skip-link:focus { top:0 !important; outline:3px solid var(--green); }
-body { background:var(--navy); color:var(--white); font-family:var(--font-body); min-height:100vh; display:block; overflow-x:hidden; }
+body { background:var(--navy); color:var(--white); font-family:var(--font-body); min-height:100vh; display:flex; overflow-x:hidden; }
 body.ar { font-family:var(--font-ar); direction:rtl; }
 body.ar .sidebar { left:auto; right:0; border-right:none; border-left:1px solid var(--border); }
 body.ar .main { margin-left:0; margin-right:var(--sidebar-w); }
@@ -126,14 +126,9 @@ body.ar .topbar-title { font-family:var(--font-ar); }
 .btn-icon:hover { border-color:var(--blue); color:var(--blue); background:rgba(59,130,246,.08); }
 .page { padding:2rem; display:none; animation:fadeIn .25s ease; }
 .page.active { display:block; }
-#page-attendance { padding-left:0 !important; padding-top:1rem !important; }
-#page-attendance .att-toolbar,
-#page-attendance .att-summary-bar,
-#page-attendance #att-group-selector-wrap,
-#page-attendance .att-save-banner { padding-left:1rem; }
+#page-attendance { padding-top:1rem !important; padding-left:1rem !important; padding-right:1rem !important; }
 #page-attendance .att-toolbar { margin-bottom:.6rem; }
 #page-attendance .att-summary-bar { margin-bottom:.6rem; }
-#page-attendance .att-card { border-radius:0 16px 16px 0; margin-left:0; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
 /* CARDS */
