@@ -262,7 +262,7 @@ body.ar .att-toolbar-left p { font-family:var(--font-ar); }
 .att-summary-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
 .att-stat { background:var(--navy-card); border:1px solid var(--border); border-radius:14px; padding:1rem 1.2rem; display:flex; align-items:center; gap:.85rem; }
 .att-stat-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
-.att-stat-icon.green  { background:var(--green-dim); }
+.att-stat-icon.green  { background:rgba(62,207,120,.12); }
 .att-stat-icon.yellow { background:rgba(245,197,66,.1); }
 .att-stat-icon.red    { background:rgba(232,93,117,.1); }
 .att-stat-icon.blue   { background:rgba(91,156,246,.1); }
@@ -270,53 +270,61 @@ body.ar .att-toolbar-left p { font-family:var(--font-ar); }
 .att-stat-lbl { font-size:.75rem; color:var(--muted); margin-top:.15rem; }
 body.ar .att-stat-lbl { font-family:var(--font-ar); }
 
+/* Group selector */
+#att-group-selector-wrap { background:var(--navy-card); border:1px solid var(--border); border-radius:12px; padding:.75rem 1rem; }
+#att-group-select { padding:.5rem .85rem; background:var(--navy-light,#eff6ff); border:1px solid var(--border); border-radius:8px; color:var(--white); font-family:var(--font-body); font-size:.88rem; outline:none; min-width:220px; cursor:pointer; }
+#att-group-select:focus { border-color:var(--primary,#5b9cf6); }
+
 .att-card { background:var(--navy-card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
-.att-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.att-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:.5rem; }
 .att-table { width:100%; border-collapse:collapse; min-width:900px; }
 
 /* Header rows */
 .att-table thead tr:first-child th { background:rgba(245,158,11,.06); border-bottom:1px solid var(--border); }
-.att-table thead tr:last-child th  { background:rgba(255,255,255,.02); border-bottom:1px solid rgba(245,158,11,.2); }
+.att-table thead tr:last-child th  { background:rgba(245,158,11,.03); border-bottom:2px solid rgba(245,158,11,.18); }
 
-.att-th-name { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted2); padding:.75rem 1.2rem; text-align:left; white-space:nowrap; min-width:170px; }
+.att-th-name { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted2); padding:.75rem 1.2rem; text-align:left; white-space:nowrap; min-width:180px; position:sticky; left:0; background:rgba(245,158,11,.06); z-index:2; }
 body.ar .att-th-name { text-align:right; font-family:var(--font-ar); letter-spacing:0; }
-.att-th-sess { font-family:var(--font); font-size:.65rem; font-weight:700; color:var(--muted2); padding:.5rem .3rem; text-align:center; white-space:nowrap; min-width:28px; }
-.att-th-total { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted2); padding:.5rem 1rem; text-align:center; white-space:nowrap; }
+.att-th-sess { font-family:var(--font); font-size:.68rem; font-weight:700; color:var(--muted2); padding:.5rem .35rem; text-align:center; white-space:nowrap; min-width:34px; }
+.att-th-total { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted2); padding:.5rem 1rem; text-align:center; white-space:nowrap; position:sticky; right:0; background:rgba(245,158,11,.06); z-index:2; }
 body.ar .att-th-total { font-family:var(--font-ar); letter-spacing:0; }
+
+/* Group-of-5 visual separators */
+.att-th-sess.grp-start, .att-td-box.grp-start { border-left:2px solid rgba(91,156,246,.2); }
 
 /* Body rows */
 .att-table tbody tr { border-bottom:1px solid var(--border2); transition:background .15s; }
 .att-table tbody tr:last-child { border-bottom:none; }
 .att-table tbody tr:hover { background:rgba(59,130,246,.04); }
 
-.att-td-name { padding:.85rem 1.2rem; white-space:nowrap; }
+.att-td-name { padding:.85rem 1.2rem; white-space:nowrap; position:sticky; left:0; background:var(--navy-card); z-index:1; border-right:1px solid var(--border2); }
 body.ar .att-td-name { text-align:right; }
 .att-student { display:flex; align-items:center; gap:.7rem; }
 body.ar .att-student { flex-direction:row-reverse; }
-.att-avatar { width:30px; height:30px; border-radius:50%; background:rgba(59,130,246,.1); border:1.5px solid rgba(59,130,246,.2); display:flex; align-items:center; justify-content:center; font-family:var(--font); font-size:.68rem; font-weight:700; color:var(--blue); flex-shrink:0; }
+.att-avatar { width:32px; height:32px; border-radius:50%; background:rgba(59,130,246,.1); border:1.5px solid rgba(59,130,246,.2); display:flex; align-items:center; justify-content:center; font-family:var(--font); font-size:.7rem; font-weight:700; color:var(--blue); flex-shrink:0; }
 .att-name { font-family:var(--font); font-size:.88rem; font-weight:600; }
 body.ar .att-name { font-family:var(--font-ar); }
 
-.att-td-box { padding:.6rem .3rem; text-align:center; vertical-align:middle; }
-.att-box { width:22px; height:22px; border-radius:5px; border:1.5px solid rgba(255,255,255,.18); background:transparent; cursor:pointer; appearance:none; -webkit-appearance:none; display:inline-block; vertical-align:middle; transition:background .15s, border-color .15s, transform .1s; flex-shrink:0; }
-.att-box:hover { border-color:var(--green); transform:scale(1.1); }
-.att-box:checked { background:var(--green); border-color:var(--green); background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%230f1d2e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:center; background-size:10px; }
+.att-td-box { padding:.55rem .35rem; text-align:center; vertical-align:middle; }
+.att-box { width:22px; height:22px; border-radius:5px; border:1.5px solid rgba(30,27,75,.22); background:rgba(30,27,75,.03); cursor:pointer; appearance:none; -webkit-appearance:none; display:inline-block; vertical-align:middle; transition:background .15s, border-color .15s, transform .1s; flex-shrink:0; }
+.att-box:hover { border-color:var(--green); background:rgba(62,207,120,.08); transform:scale(1.12); }
+.att-box:checked { background:var(--green); border-color:var(--green); background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:center; background-size:10px; }
 .att-box.absent:checked { background:var(--red); border-color:var(--red); background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M9 3L3 9M3 3l6 6' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
 
-.att-td-total { padding:.6rem 1rem; text-align:center; white-space:nowrap; }
+.att-td-total { padding:.6rem 1rem; text-align:center; white-space:nowrap; position:sticky; right:0; background:var(--navy-card); border-left:1px solid var(--border2); z-index:1; }
 .att-pct-wrap { display:flex; flex-direction:column; align-items:center; gap:.25rem; }
 .att-pct { font-family:var(--font); font-size:.9rem; font-weight:700; }
 .att-pct.high { color:var(--green); }
-.att-pct.mid  { color:var(--yellow); }
+.att-pct.mid  { color:#d97706; }
 .att-pct.low  { color:var(--red); }
-.att-mini-bar { width:44px; height:5px; background:rgba(30,27,75,.08); border-radius:100px; overflow:hidden; }
+.att-mini-bar { width:48px; height:5px; background:rgba(30,27,75,.08); border-radius:100px; overflow:hidden; }
 .att-mini-fill { height:100%; border-radius:100px; transition:width .4s; }
 .att-mini-fill.high { background:var(--green); }
-.att-mini-fill.mid  { background:var(--yellow); }
+.att-mini-fill.mid  { background:#d97706; }
 .att-mini-fill.low  { background:var(--red); }
 
 /* Session header labels */
-.sess-num-chip { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; background:rgba(245,158,11,.12); color:#f59e0b; font-family:var(--font); font-size:.62rem; font-weight:700; }
+.sess-num-chip { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:rgba(245,158,11,.12); color:#b45309; font-family:var(--font); font-size:.65rem; font-weight:700; }
 
 /* Save banner */
 .att-save-banner { display:none; align-items:center; justify-content:space-between; background:rgba(62,207,120,.08); border:1px solid rgba(62,207,120,.25); border-radius:12px; padding:.8rem 1.2rem; margin-bottom:1rem; }
@@ -901,9 +909,8 @@ body.ar .notif-panel { right:auto; left:1rem; }
 
     <!-- Group selector (populated from api_classes.php) -->
     <div id="att-group-selector-wrap" style="margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
-      <label style="font-family:var(--font);font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="att-group-lbl">Groupe</label>
-      <select id="att-group-select" onchange="attSelectGroup(this.value)"
-        style="padding:.55rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;min-width:200px;">
+      <label style="font-family:var(--font);font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;" id="att-group-lbl">Groupe</label>
+      <select id="att-group-select" onchange="attSelectGroup(this.value)">
         <option value="">— Tous les étudiants —</option>
       </select>
       <span id="att-group-loading" style="display:none;font-size:.8rem;color:var(--muted);">Loading…</span>
@@ -1274,6 +1281,10 @@ function navigate(page, el) {
   activePage = page;
   sessionStorage.setItem('upskill_page_t', page);
   document.getElementById('topbar-title').textContent = T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home;
+  /* Show "+ New assignment" only on relevant pages */
+  const btnNA = document.getElementById('btn-new-assign');
+  if (btnNA) btnNA.style.display = (page === 'assignments' || page === 'home') ? '' : 'none';
+
   if (page === 'courses')    { teacherClassView='types'; teacherSelType=null; teacherSelLevel=null; _coursesTabUI('groups'); renderCourses(); loadTeacherGroups(); }
   if (page === 'attendance') { if (teacherGroups.length === 0) loadTeacherGroups(); }
   if (page === 'posts')      loadPosts();
@@ -1873,12 +1884,13 @@ function renderAttendance() {
   const sessHeaderRow = document.getElementById('att-sess-header-row');
   if (!tbody || !sessHeaderRow) return;
 
-  // Session header numbers
+  // Session header numbers (visual separator every 5)
   let headerCells = '';
   for (let i = 1; i <= ATT_SESSIONS; i++) {
-    headerCells += `<th class="att-th-sess"><span class="sess-num-chip">${i}</span></th>`;
+    const sepCls = (i % 5 === 1 && i > 1) ? ' grp-start' : '';
+    headerCells += `<th class="att-th-sess${sepCls}"><span class="sess-num-chip">${i}</span></th>`;
   }
-  sessHeaderRow.innerHTML = `<th class="att-th-name" style="background:transparent;"></th>${headerCells}<th class="att-th-total" style="background:transparent;"></th>`;
+  sessHeaderRow.innerHTML = `<th class="att-th-name" style="background:transparent;border-right:1px solid var(--border2);"></th>${headerCells}<th class="att-th-total" style="background:transparent;"></th>`;
 
   // Student rows
   tbody.innerHTML = STUDENTS.map(s => {
@@ -1887,7 +1899,8 @@ function renderAttendance() {
     let boxes = '';
     for (let i = 1; i <= ATT_SESSIONS; i++) {
       const checked = data[i] ? 'checked' : '';
-      boxes += `<td class="att-td-box"><input type="checkbox" class="att-box" data-sid="${s.id}" data-sess="${i}" ${checked} onchange="attToggle(this)"></td>`;
+      const sepCls = (i % 5 === 1 && i > 1) ? ' grp-start' : '';
+      boxes += `<td class="att-td-box${sepCls}"><input type="checkbox" class="att-box" data-sid="${s.id}" data-sess="${i}" ${checked} onchange="attToggle(this)"></td>`;
     }
     const { pct, cls } = attPct(s.id);
     return `<tr>
