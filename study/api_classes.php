@@ -463,16 +463,23 @@ if ($action === 'update_schedule') {
   $clean = [];
   if (is_array($slots)) {
     foreach ($slots as $s) {
-      $day  = trim($s['day_fr'] ?? '');
-      $time = trim($s['time']   ?? '');
-      $room = trim($s['room']   ?? '');
+      $day     = trim($s['day_fr']  ?? '');
+      $time    = trim($s['time']    ?? '');
+      $timeEnd = trim($s['time_end'] ?? '');
       if (!in_array($day, $VALID_DAYS_FR, true)) continue;
-      // Normalize time: accept "H:MM" → "0H:MM", strip seconds if present
+      // Normalize start time: accept "H:MM" → "HH:MM"
       if (preg_match('/^(\d{1,2}):(\d{2})/', $time, $m)) {
         $time = str_pad($m[1], 2, '0', STR_PAD_LEFT) . ':' . $m[2];
       }
       if (!preg_match('/^\d{2}:\d{2}$/', $time)) continue;
-      $clean[] = ['day_fr'=>$day, 'time'=>$time, 'room'=>substr($room, 0, 100)];
+      // Normalize end time (optional)
+      if ($timeEnd !== '') {
+        if (preg_match('/^(\d{1,2}):(\d{2})/', $timeEnd, $m2)) {
+          $timeEnd = str_pad($m2[1], 2, '0', STR_PAD_LEFT) . ':' . $m2[2];
+        }
+        if (!preg_match('/^\d{2}:\d{2}$/', $timeEnd)) $timeEnd = '';
+      }
+      $clean[] = ['day_fr'=>$day, 'time'=>$time, 'time_end'=>$timeEnd];
     }
   }
 

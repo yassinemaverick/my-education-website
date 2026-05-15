@@ -2616,7 +2616,7 @@ async function loadTodayClasses() {
       );
       if (todaySlot) {
         if (todaySlot.time) sessionInfo += todaySlot.time;
-        if (todaySlot.room) sessionInfo += (sessionInfo ? ' · ' : '') + todaySlot.room;
+        if (todaySlot.time_end) sessionInfo += ' – ' + todaySlot.time_end;
       }
     } catch(e) {}
 

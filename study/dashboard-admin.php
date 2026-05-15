@@ -763,7 +763,7 @@ const T = {
     schedulePageTitle:'Horaires des groupes', schedulePageSub:'Définissez les jours et horaires de sessions pour chaque groupe',
     schNoGroups:'Aucun groupe trouvé.', schAddSlot:'+ Ajouter une séance', schSave:'Enregistrer', schSaving:'…',
     schSaved:'✔ Enregistré', schTeacher:'Prof.', schStudents:'étudiant(s)',
-    schDayLabel:'Jour', schTimeLabel:'Heure', schRoomLabel:'Salle / Lien',
+    schDayLabel:'Jour', schTimeLabel:'Heure',
     schNoSlots:'Aucune séance configurée.',
     schDays:[
       {fr:'Lundi',ar:'الاثنين'},{fr:'Mardi',ar:'الثلاثاء'},{fr:'Mercredi',ar:'الأربعاء'},
@@ -1856,21 +1856,20 @@ function schedSlotRow(courseId, idx, slot, t) {
   const days = (t.schDays || []).map(d =>
     `<option value="${d.fr}" data-ar="${d.ar}" ${d.fr === slot.day_fr ? 'selected' : ''}>${d.fr}</option>`
   ).join('');
-  const inp = (id, val, ph, style='') =>
-    `<input type="text" id="${id}" value="${escHtmlA(val||'')}" placeholder="${ph}"
-      style="width:100%;padding:.5rem .65rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;transition:border-color .2s;${style}"
-      onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">`;
+  const timeStyle = `width:100%;padding:.5rem .4rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;transition:border-color .2s;color-scheme:dark;`;
   return `
-  <div id="slot-row-${courseId}-${idx}" style="display:grid;grid-template-columns:1fr 90px 1fr 28px;gap:.4rem;margin-bottom:.4rem;align-items:center;">
+  <div id="slot-row-${courseId}-${idx}" style="display:grid;grid-template-columns:1fr 90px 90px 28px;gap:.4rem;margin-bottom:.4rem;align-items:center;">
     <select id="slot-day-${courseId}-${idx}"
       style="padding:.5rem .65rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;"
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
       <option value="">—</option>${days}
     </select>
     <input type="time" id="slot-time-${courseId}-${idx}" value="${escHtmlA(slot.time||'')}"
-      style="width:100%;padding:.5rem .4rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;transition:border-color .2s;color-scheme:dark;"
+      style="${timeStyle}" title="De"
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
-    ${inp(`slot-room-${courseId}-${idx}`, slot.room, 'Salle A / Zoom')}
+    <input type="time" id="slot-time-end-${courseId}-${idx}" value="${escHtmlA(slot.time_end||'')}"
+      style="${timeStyle}" title="À"
+      onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
     <button onclick="removeScheduleSlot(${courseId},${idx})"
       style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:.2rem;border-radius:6px;transition:color .15s,background .15s;text-align:center;"
       onmouseover="this.style.color='var(--red)';this.style.background='rgba(232,93,117,.1)'"
@@ -1884,7 +1883,7 @@ function addScheduleSlot(courseId) {
   if (!c) return;
   if (!c.schedule) c.schedule = [];
   const idx  = c.schedule.length;
-  c.schedule.push({ day_fr:'', day_ar:'', time:'', room:'' });
+  c.schedule.push({ day_fr:'', day_ar:'', time:'', time_end:'' });
   const container = document.getElementById(`sched-slots-${courseId}`);
   if (!container) return;
   // Remove the "no slots" placeholder if present
@@ -1902,10 +1901,10 @@ function removeScheduleSlot(courseId, idx) {
   const rows = container.querySelectorAll('[id^="slot-row-"]');
   rows.forEach((r, newIdx) => {
     r.id = `slot-row-${courseId}-${newIdx}`;
-    const sel  = r.querySelector('select'); if (sel)  sel.id = `slot-day-${courseId}-${newIdx}`;
-    const time = r.querySelector(`[id^="slot-time-"]`); if (time) time.id = `slot-time-${courseId}-${newIdx}`;
-    const room = r.querySelector(`[id^="slot-room-"]`); if (room) room.id = `slot-room-${courseId}-${newIdx}`;
-    const btn  = r.querySelector('button'); if (btn) btn.setAttribute('onclick', `removeScheduleSlot(${courseId},${newIdx})`);
+    const sel     = r.querySelector('select'); if (sel) sel.id = `slot-day-${courseId}-${newIdx}`;
+    const time    = r.querySelector(`[id^="slot-time-${courseId}-"]`); if (time) time.id = `slot-time-${courseId}-${newIdx}`;
+    const timeEnd = r.querySelector(`[id^="slot-time-end-${courseId}-"]`); if (timeEnd) timeEnd.id = `slot-time-end-${courseId}-${newIdx}`;
+    const btn     = r.querySelector('button'); if (btn) btn.setAttribute('onclick', `removeScheduleSlot(${courseId},${newIdx})`);
   });
   const t = tr();
   if (rows.length === 0) container.innerHTML = `<div style="color:var(--muted);font-size:.82rem;font-style:italic;padding:.4rem 0 .6rem;">${t.schNoSlots}</div>`;
@@ -1923,12 +1922,12 @@ async function saveSchedule(courseId) {
   const schedule  = [];
   let dayNames    = t.schDays || [];
   rows.forEach((r, i) => {
-    const dayFr = (document.getElementById(`slot-day-${courseId}-${i}`)?.value || '').trim();
-    const time  = (document.getElementById(`slot-time-${courseId}-${i}`)?.value || '').trim();
-    const room  = (document.getElementById(`slot-room-${courseId}-${i}`)?.value || '').trim();
+    const dayFr   = (document.getElementById(`slot-day-${courseId}-${i}`)?.value || '').trim();
+    const time    = (document.getElementById(`slot-time-${courseId}-${i}`)?.value || '').trim();
+    const timeEnd = (document.getElementById(`slot-time-end-${courseId}-${i}`)?.value || '').trim();
     if (!dayFr) return;
     const match = dayNames.find(d => d.fr === dayFr);
-    schedule.push({ day_fr: dayFr, day_ar: match?.ar || '', time, room });
+    schedule.push({ day_fr: dayFr, day_ar: match?.ar || '', time, time_end: timeEnd });
   });
 
   if (btn) { btn.textContent = t.schSaving; btn.disabled = true; }
