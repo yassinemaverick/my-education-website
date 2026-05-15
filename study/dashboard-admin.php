@@ -328,6 +328,10 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="23" y2="8"/><line x1="21" y1="6" x2="21" y2="10"/></svg>
       <span id="nav-assigning-classes-lbl">Assignation des classes</span>
     </div>
+    <div class="nav-item" onclick="navigate('schedule',this)" id="nav-schedule">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span id="nav-schedule-lbl">Horaires des groupes</span>
+    </div>
     <div class="nav-section-label" id="nav-account-label">Compte</div>
     <div class="nav-item" onclick="navigate('settings',this)" id="nav-settings">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -559,6 +563,21 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     </div>
   </div>
 
+  <!-- ── SCHEDULE PAGE ── -->
+  <div class="page" id="page-schedule">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+      <div>
+        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="schedule-page-title">Horaires des groupes</h2>
+        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="schedule-page-sub">Définissez les jours et horaires de sessions pour chaque groupe</p>
+      </div>
+    </div>
+    <div id="schedule-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem;">
+      <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.88rem;">
+        <div class="spinner" style="margin:0 auto 1rem;"></div>Chargement…
+      </div>
+    </div>
+  </div>
+
   <!-- ── SETTINGS PAGE ── -->
   <div class="page" id="page-settings">
     <div style="margin-bottom:1.5rem;">
@@ -738,9 +757,19 @@ const T = {
     navMain:'Principal', navAccount:'Compte',
     navHome:'Tableau de bord', navSettings:'Paramètres',
     navUsers:'Utilisateurs', navInscriptions:'Inscriptions',
-    navClasses:'Classes', navAssigningClasses:'Assignation des classes',
+    navClasses:'Classes', navAssigningClasses:'Assignation des classes', navSchedule:'Horaires des groupes',
     classesPageTitle:'Classes', classesPageSub:'Sélectionnez un type de classe',
     assigningPageTitle:'Assignation des classes', assigningPageSub:'Aperçu des groupes assignés aux étudiants et professeurs',
+    schedulePageTitle:'Horaires des groupes', schedulePageSub:'Définissez les jours et horaires de sessions pour chaque groupe',
+    schNoGroups:'Aucun groupe trouvé.', schAddSlot:'+ Ajouter une séance', schSave:'Enregistrer', schSaving:'…',
+    schSaved:'✔ Enregistré', schTeacher:'Prof.', schStudents:'étudiant(s)',
+    schDayLabel:'Jour', schTimeLabel:'Heure', schRoomLabel:'Salle / Lien',
+    schNoSlots:'Aucune séance configurée.',
+    schDays:[
+      {fr:'Lundi',ar:'الاثنين'},{fr:'Mardi',ar:'الثلاثاء'},{fr:'Mercredi',ar:'الأربعاء'},
+      {fr:'Jeudi',ar:'الخميس'},{fr:'Vendredi',ar:'الجمعة'},{fr:'Samedi',ar:'السبت'}
+    ],
+    topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes', schedule:'Horaires des groupes' },
     assigningStudentsTitle:'Étudiants', assigningTeachersTitle:'Professeurs',
     ath_student:'Étudiant', ath_group:'Groupe(s)', ath_teacher:'Professeur', ath_teacher_group:'Groupe(s)',
     classesGroupsOf:'Groupes de', noGroups:'Aucun groupe. Cliquez sur + pour en créer un.',
@@ -752,7 +781,6 @@ const T = {
     selectUser:'— Sélectionner un utilisateur —',
     confirmDeleteGroup:'Supprimer ce groupe et tous ses membres ?',
     noAssignments:'Aucun groupe assigné.',
-    topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes' },
     welcomeSub:'Gérez les classes et les groupes depuis ce tableau de bord.',
     statTeachersLbl:'Professeurs', statStudentsLbl:'Étudiants', statEnrollmentsLbl:'Inscriptions', statGroupsLbl:'Groupes actifs',
     recentActivityTitle:'Activité récente',
@@ -779,9 +807,19 @@ const T = {
     navMain:'الرئيسية', navAccount:'الحساب',
     navHome:'لوحة التحكم', navSettings:'الإعدادات',
     navUsers:'المستخدمون', navInscriptions:'التسجيلات',
-    navClasses:'الفصول', navAssigningClasses:'تعيين الفصول',
+    navClasses:'الفصول', navAssigningClasses:'تعيين الفصول', navSchedule:'جداول المجموعات',
     classesPageTitle:'الفصول', classesPageSub:'اختر نوع الفصل',
     assigningPageTitle:'تعيين الفصول', assigningPageSub:'نظرة عامة على المجموعات المعينة للطلاب والأساتذة',
+    schedulePageTitle:'جداول المجموعات', schedulePageSub:'حدد أيام وأوقات الجلسات لكل مجموعة',
+    schNoGroups:'لم يُعثر على أي مجموعة.', schAddSlot:'+ إضافة جلسة', schSave:'حفظ', schSaving:'…',
+    schSaved:'✔ تم الحفظ', schTeacher:'أ.', schStudents:'طالب/طلاب',
+    schDayLabel:'اليوم', schTimeLabel:'الوقت', schRoomLabel:'القاعة / الرابط',
+    schNoSlots:'لم يتم تكوين أي جلسة.',
+    schDays:[
+      {fr:'Lundi',ar:'الاثنين'},{fr:'Mardi',ar:'الثلاثاء'},{fr:'Mercredi',ar:'الأربعاء'},
+      {fr:'Jeudi',ar:'الخميس'},{fr:'Vendredi',ar:'الجمعة'},{fr:'Samedi',ar:'السبت'}
+    ],
+    topbar:{ home:'لوحة تحكم المسؤول', users:'المستخدمون', inscriptions:'التسجيلات', settings:'الإعدادات', classes:'الفصول', 'assigning-classes':'تعيين الفصول', schedule:'جداول المجموعات' },
     assigningStudentsTitle:'الطلاب', assigningTeachersTitle:'الأساتذة',
     ath_student:'الطالب', ath_group:'المجموعة(ات)', ath_teacher:'الأستاذ', ath_teacher_group:'المجموعة(ات)',
     classesGroupsOf:'مجموعات', noGroups:'لا توجد مجموعات. انقر على + لإنشاء واحدة.',
@@ -793,7 +831,6 @@ const T = {
     selectUser:'— اختر مستخدماً —',
     confirmDeleteGroup:'حذف هذه المجموعة وجميع أعضائها؟',
     noAssignments:'لا توجد مجموعات معينة.',
-    topbar:{ home:'لوحة تحكم المسؤول', users:'المستخدمون', inscriptions:'التسجيلات', settings:'الإعدادات', classes:'الفصول', 'assigning-classes':'تعيين الفصول' },
     welcomeSub:'أدر الفصول والمجموعات من لوحة التحكم هذه.',
     statTeachersLbl:'الأساتذة', statStudentsLbl:'الطلاب', statEnrollmentsLbl:'التسجيلات', statGroupsLbl:'المجموعات النشطة',
     recentActivityTitle:'النشاط الأخير',
@@ -820,9 +857,19 @@ const T = {
     navMain:'Main', navAccount:'Account',
     navHome:'Dashboard', navSettings:'Settings',
     navUsers:'Users', navInscriptions:'Enrollments',
-    navClasses:'Classes', navAssigningClasses:'Class assignments',
+    navClasses:'Classes', navAssigningClasses:'Class assignments', navSchedule:'Allocate dates & times',
     classesPageTitle:'Classes', classesPageSub:'Select a class type',
     assigningPageTitle:'Class assignments', assigningPageSub:'Overview of groups assigned to students and teachers',
+    schedulePageTitle:'Allocate dates & times', schedulePageSub:'Set session days and times for each group',
+    schNoGroups:'No groups found.', schAddSlot:'+ Add session', schSave:'Save', schSaving:'…',
+    schSaved:'✔ Saved', schTeacher:'Teacher:', schStudents:'student(s)',
+    schDayLabel:'Day', schTimeLabel:'Time', schRoomLabel:'Room / Link',
+    schNoSlots:'No sessions configured.',
+    schDays:[
+      {fr:'Lundi',ar:'الاثنين'},{fr:'Mardi',ar:'الثلاثاء'},{fr:'Mercredi',ar:'الأربعاء'},
+      {fr:'Jeudi',ar:'الخميس'},{fr:'Vendredi',ar:'الجمعة'},{fr:'Samedi',ar:'السبت'}
+    ],
+    topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments', schedule:'Allocate dates & times' },
     assigningStudentsTitle:'Students', assigningTeachersTitle:'Teachers',
     ath_student:'Student', ath_group:'Group(s)', ath_teacher:'Teacher', ath_teacher_group:'Group(s)',
     classesGroupsOf:'Groups of', noGroups:'No groups. Click + to create one.',
@@ -834,7 +881,6 @@ const T = {
     selectUser:'— Select a user —',
     confirmDeleteGroup:'Delete this group and all its members?',
     noAssignments:'No groups assigned.',
-    topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments' },
     welcomeSub:'Manage classes and groups from this dashboard.',
     statTeachersLbl:'Teachers', statStudentsLbl:'Students', statEnrollmentsLbl:'Enrollments', statGroupsLbl:'Active groups',
     recentActivityTitle:'Recent activity',
@@ -883,8 +929,9 @@ function applyTranslations() {
   set('nav-main-label', t.navMain); set('nav-account-label', t.navAccount);
   set('nav-home-lbl', t.navHome); set('nav-settings-lbl', t.navSettings);
   set('nav-users-lbl', t.navUsers); set('nav-inscriptions-lbl', t.navInscriptions);
-  set('nav-classes-lbl', t.navClasses); set('nav-assigning-classes-lbl', t.navAssigningClasses);
+  set('nav-classes-lbl', t.navClasses); set('nav-assigning-classes-lbl', t.navAssigningClasses); set('nav-schedule-lbl', t.navSchedule);
   set('classes-page-title', t.classesPageTitle);
+  set('schedule-page-title', t.schedulePageTitle); set('schedule-page-sub', t.schedulePageSub);
   set('assigning-page-title', t.assigningPageTitle); set('assigning-page-sub', t.assigningPageSub);
   set('assigning-students-title', t.assigningStudentsTitle); set('assigning-teachers-title', t.assigningTeachersTitle);
   set('ath-student', t.ath_student); set('ath-group', t.ath_group);
@@ -921,6 +968,7 @@ function navigate(page, el) {
   if (page === 'inscriptions') loadEnrollments();
   if (page === 'classes') { classesView = 'types'; classesTypeKey = null; classesLevel = null; classesGroupId = null; renderClassesPage(); }
   if (page === 'assigning-classes') loadAssigningClasses();
+  if (page === 'schedule') loadSchedulePage();
   if (window.innerWidth <= 768) toggleSidebar();
 }
 
@@ -1717,6 +1765,197 @@ function saveProfile() {
 function logout() {
   sessionStorage.clear();
   window.location.href = 'logout.php';
+}
+
+/* ══════════════════════════════════════════════════════
+   SCHEDULE PAGE
+══════════════════════════════════════════════════════ */
+let _schedCourses = []; // cached after first load
+
+async function loadSchedulePage() {
+  const grid = document.getElementById('schedule-cards-grid');
+  if (!grid) return;
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.88rem;"><div class="spinner" style="margin:0 auto 1rem;"></div>Chargement…</div>';
+  try {
+    const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    const res  = await fetch('assign_courses.php?action=list_courses', {
+      headers: { 'X-CSRF-Token': csrf }
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error?.fr || 'Erreur');
+    _schedCourses = data.courses || [];
+    renderScheduleCards();
+  } catch(e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;color:var(--red);padding:1rem;">${e.message}</div>`;
+  }
+}
+
+function renderScheduleCards() {
+  const grid = document.getElementById('schedule-cards-grid');
+  if (!grid) return;
+  const t    = tr();
+  const lang = currentLang;
+
+  if (_schedCourses.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);text-align:center;padding:2rem;">${t.schNoGroups}</div>`;
+    return;
+  }
+
+  grid.innerHTML = _schedCourses.map(c => {
+    const name    = lang === 'ar' ? (c.group_name_ar || c.group_name_fr) : (c.group_name_fr || c.group_name_ar);
+    const subject = lang === 'ar' ? (c.subject_ar || c.subject_fr) : (c.subject_fr || c.subject_ar);
+    const slots   = c.schedule || [];
+    const slotHtml = slots.length === 0
+      ? `<div style="color:var(--muted);font-size:.82rem;font-style:italic;padding:.4rem 0 .6rem;">${t.schNoSlots}</div>`
+      : slots.map((s, i) => schedSlotRow(c.id, i, s, t)).join('');
+
+    return `
+    <div class="card" style="display:flex;flex-direction:column;gap:0;" id="sched-card-${c.id}">
+      <!-- Card header -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:1rem;">
+        <div>
+          <div style="font-family:var(--font);font-weight:700;font-size:1rem;color:var(--white);margin-bottom:.2rem;">${escHtmlA(name)}</div>
+          <div style="font-size:.78rem;color:var(--muted);">
+            ${subject ? `<span>${escHtmlA(subject)}</span> · ` : ''}<span>${c.students_count || 0} ${t.schStudents}</span>
+            ${c.teacher_name ? `<span style="margin-left:.5rem;">· ${t.schTeacher} ${escHtmlA(c.teacher_name)}</span>` : ''}
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0;">
+          <span id="sched-status-${c.id}" style="display:none;font-size:.75rem;color:var(--green);font-family:var(--font);font-weight:600;"></span>
+          <button onclick="saveSchedule(${c.id})" id="sched-save-${c.id}"
+            style="padding:.45rem .9rem;background:var(--blue);border:none;border-radius:8px;color:white;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;transition:opacity .15s;"
+            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t.schSave}</button>
+        </div>
+      </div>
+
+      <!-- Column headers -->
+      <div style="display:grid;grid-template-columns:1fr 90px 1fr 28px;gap:.4rem;margin-bottom:.35rem;padding:0 .1rem;">
+        <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schDayLabel}</div>
+        <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schTimeLabel}</div>
+        <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schRoomLabel}</div>
+        <div></div>
+      </div>
+
+      <!-- Slots -->
+      <div id="sched-slots-${c.id}">${slotHtml}</div>
+
+      <!-- Add session button -->
+      <button onclick="addScheduleSlot(${c.id})"
+        style="margin-top:.6rem;display:flex;align-items:center;gap:.4rem;background:none;border:1px dashed var(--border);border-radius:8px;color:var(--muted);font-family:var(--font);font-size:.8rem;font-weight:500;padding:.45rem .75rem;cursor:pointer;transition:all .2s;width:100%;justify-content:center;"
+        onmouseover="this.style.borderColor='rgba(91,156,246,.5)';this.style.color='var(--blue)'"
+        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">${t.schAddSlot}</button>
+    </div>`;
+  }).join('');
+}
+
+function schedSlotRow(courseId, idx, slot, t) {
+  const days = (t.schDays || []).map(d =>
+    `<option value="${d.fr}" data-ar="${d.ar}" ${d.fr === slot.day_fr ? 'selected' : ''}>${d.fr}</option>`
+  ).join('');
+  const inp = (id, val, ph, style='') =>
+    `<input type="text" id="${id}" value="${escHtmlA(val||'')}" placeholder="${ph}"
+      style="width:100%;padding:.5rem .65rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;transition:border-color .2s;${style}"
+      onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">`;
+  return `
+  <div id="slot-row-${courseId}-${idx}" style="display:grid;grid-template-columns:1fr 90px 1fr 28px;gap:.4rem;margin-bottom:.4rem;align-items:center;">
+    <select id="slot-day-${courseId}-${idx}"
+      style="padding:.5rem .65rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;"
+      onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+      <option value="">—</option>${days}
+    </select>
+    ${inp(`slot-time-${courseId}-${idx}`, slot.time, '09:00')}
+    ${inp(`slot-room-${courseId}-${idx}`, slot.room, 'Salle A / Zoom')}
+    <button onclick="removeScheduleSlot(${courseId},${idx})"
+      style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:.2rem;border-radius:6px;transition:color .15s,background .15s;text-align:center;"
+      onmouseover="this.style.color='var(--red)';this.style.background='rgba(232,93,117,.1)'"
+      onmouseout="this.style.color='var(--muted)';this.style.background='none'"
+      title="Supprimer">✕</button>
+  </div>`;
+}
+
+function addScheduleSlot(courseId) {
+  const c    = _schedCourses.find(x => x.id == courseId);
+  if (!c) return;
+  if (!c.schedule) c.schedule = [];
+  const idx  = c.schedule.length;
+  c.schedule.push({ day_fr:'', day_ar:'', time:'', room:'' });
+  const container = document.getElementById(`sched-slots-${courseId}`);
+  if (!container) return;
+  // Remove the "no slots" placeholder if present
+  if (container.querySelector('div[style*="font-style:italic"]')) container.innerHTML = '';
+  const t = tr();
+  container.insertAdjacentHTML('beforeend', schedSlotRow(courseId, idx, c.schedule[idx], t));
+}
+
+function removeScheduleSlot(courseId, idx) {
+  const row = document.getElementById(`slot-row-${courseId}-${idx}`);
+  if (row) row.remove();
+  // Re-index remaining rows so saves work correctly
+  const container = document.getElementById(`sched-slots-${courseId}`);
+  if (!container) return;
+  const rows = container.querySelectorAll('[id^="slot-row-"]');
+  rows.forEach((r, newIdx) => {
+    r.id = `slot-row-${courseId}-${newIdx}`;
+    const sel  = r.querySelector('select'); if (sel)  sel.id = `slot-day-${courseId}-${newIdx}`;
+    const time = r.querySelector(`[id^="slot-time-"]`); if (time) time.id = `slot-time-${courseId}-${newIdx}`;
+    const room = r.querySelector(`[id^="slot-room-"]`); if (room) room.id = `slot-room-${courseId}-${newIdx}`;
+    const btn  = r.querySelector('button'); if (btn) btn.setAttribute('onclick', `removeScheduleSlot(${courseId},${newIdx})`);
+  });
+  const t = tr();
+  if (rows.length === 0) container.innerHTML = `<div style="color:var(--muted);font-size:.82rem;font-style:italic;padding:.4rem 0 .6rem;">${t.schNoSlots}</div>`;
+}
+
+async function saveSchedule(courseId) {
+  const t       = tr();
+  const btn     = document.getElementById(`sched-save-${courseId}`);
+  const statusEl= document.getElementById(`sched-status-${courseId}`);
+  const csrf    = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+  // Collect slots from DOM
+  const container = document.getElementById(`sched-slots-${courseId}`);
+  const rows      = container ? container.querySelectorAll('[id^="slot-row-"]') : [];
+  const schedule  = [];
+  let dayNames    = t.schDays || [];
+  rows.forEach((r, i) => {
+    const dayFr = (document.getElementById(`slot-day-${courseId}-${i}`)?.value || '').trim();
+    const time  = (document.getElementById(`slot-time-${courseId}-${i}`)?.value || '').trim();
+    const room  = (document.getElementById(`slot-room-${courseId}-${i}`)?.value || '').trim();
+    if (!dayFr) return;
+    const match = dayNames.find(d => d.fr === dayFr);
+    schedule.push({ day_fr: dayFr, day_ar: match?.ar || '', time, room });
+  });
+
+  if (btn) { btn.textContent = t.schSaving; btn.disabled = true; }
+  statusEl.style.display = 'none';
+
+  try {
+    const res  = await fetch('assign_courses.php?action=update_schedule', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
+      body: JSON.stringify({ course_id: courseId, schedule })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error?.fr || data.error || 'Erreur');
+
+    // Update cached schedule
+    const c = _schedCourses.find(x => x.id == courseId);
+    if (c) c.schedule = schedule;
+
+    statusEl.textContent   = t.schSaved;
+    statusEl.style.color   = 'var(--green)';
+    statusEl.style.display = '';
+    setTimeout(() => { statusEl.style.display = 'none'; }, 3000);
+  } catch(e) {
+    statusEl.textContent   = '❌ ' + e.message;
+    statusEl.style.color   = 'var(--red)';
+    statusEl.style.display = '';
+  } finally {
+    if (btn) { btn.textContent = t.schSave; btn.disabled = false; }
+  }
+}
+
+function escHtmlA(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 /* ══════════════════════════════════════════════════════

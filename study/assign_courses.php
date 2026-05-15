@@ -312,6 +312,42 @@ switch ($action) {
                  'student_id' => $sid, 'course_id' => $cid]);
     }
 
+    case 'update_schedule': {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST')
+            json_err('Méthode non autorisée.', 'الطريقة غير مسموح بها.', 405);
+        $body    = json_decode(file_get_contents('php://input'), true) ?? [];
+        $cid     = filter_var($body['course_id'] ?? null, FILTER_VALIDATE_INT);
+        $slots   = $body['schedule'] ?? [];
+        if (!$cid)
+            json_err('course_id invalide.', 'معرف الدرس غير صالح.');
+        if (!is_array($slots))
+            json_err('schedule doit être un tableau.', 'يجب أن يكون schedule مصفوفة.');
+
+        // Validate and sanitise each slot
+        $clean = [];
+        foreach ($slots as $s) {
+            $dayFr = trim($s['day_fr'] ?? '');
+            $dayAr = trim($s['day_ar'] ?? '');
+            $time  = trim($s['time']   ?? '');
+            $room  = trim($s['room']   ?? '');
+            if ($dayFr === '') continue; // skip empty rows
+            if (strlen($dayFr) > 40 || strlen($dayAr) > 40 || strlen($time) > 20 || strlen($room) > 80)
+                json_err('Données de session trop longues.', 'بيانات الجلسة طويلة جداً.');
+            $clean[] = ['day_fr' => $dayFr, 'day_ar' => $dayAr, 'time' => $time, 'room' => $room];
+        }
+
+        $json = count($clean) > 0 ? json_encode($clean, JSON_UNESCAPED_UNICODE) : null;
+        $stmt = $db->prepare("UPDATE courses SET schedule_json = ? WHERE id = ?");
+        $stmt->execute([$json, $cid]);
+        if ($stmt->rowCount() === 0) {
+            // rowCount can be 0 if value didn't change — verify course exists
+            $chk = $db->prepare("SELECT id FROM courses WHERE id = ?");
+            $chk->execute([$cid]);
+            if (!$chk->fetch()) json_err('Cours introuvable.', 'الدرس غير موجود.', 404);
+        }
+        json_ok(['course_id' => $cid, 'slots' => count($clean)]);
+    }
+
     default:
         json_err("Action inconnue: \"{$action}\". Disponibles: list_courses, list_teachers, teacher_courses, assign, unassign, bulk_assign.",
                  "إجراء غير معروف: \"{$action}\".", 400);
