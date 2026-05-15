@@ -281,7 +281,7 @@ body.ar .att-stat-lbl { font-family:var(--font-ar); }
 #att-group-select { padding:.5rem .85rem; background:var(--navy-light,#eff6ff); border:1px solid var(--border); border-radius:8px; color:var(--white); font-family:var(--font-body); font-size:.88rem; outline:none; min-width:220px; cursor:pointer; }
 #att-group-select:focus { border-color:var(--primary,#5b9cf6); }
 
-.att-card { background:var(--navy-card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+.att-card { background:var(--navy-card); border:1px solid var(--border); border-radius:16px; overflow:clip; }
 .att-table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:.5rem; }
 .att-table { width:100%; border-collapse:collapse; min-width:900px; }
 
