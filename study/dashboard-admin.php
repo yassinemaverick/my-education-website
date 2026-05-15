@@ -742,10 +742,27 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 
 <script>
 /* ══════════════════════════════════════════════════════
+   PAGE PERSISTENCE — runs synchronously before first paint
+══════════════════════════════════════════════════════ */
+(function() {
+  const _validPages = ['home','users','inscriptions','classes','assigning-classes','schedule','settings'];
+  const _saved = sessionStorage.getItem('upskill_admin_page');
+  if (_saved && _validPages.includes(_saved) && _saved !== 'home') {
+    const _home   = document.getElementById('page-home');
+    const _target = document.getElementById('page-' + _saved);
+    if (_home)   _home.classList.remove('active');
+    if (_target) _target.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const _nav = document.getElementById('nav-' + _saved);
+    if (_nav) _nav.classList.add('active');
+  }
+})();
+
+/* ══════════════════════════════════════════════════════
    STATE
 ══════════════════════════════════════════════════════ */
 let currentLang   = 'fr';
-let activePage    = 'home';
+let activePage    = sessionStorage.getItem('upskill_admin_page') || 'home';
 
 /* ══════════════════════════════════════════════════════
    TRANSLATIONS
