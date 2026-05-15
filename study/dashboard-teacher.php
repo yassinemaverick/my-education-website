@@ -573,15 +573,25 @@ body.ar .notif-panel { right:auto; left:1rem; }
   <!-- COURSES PAGE -->
   <div class="page" id="page-courses">
     <div id="courses-list-view">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;flex-wrap:wrap;gap:1rem;">
         <div>
           <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="courses-page-title">Classes</h2>
           <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="courses-page-sub">3 groupes · 2024-2025</p>
         </div>
+        <div style="display:flex;gap:.3rem;background:var(--border2,#eef0f6);border-radius:10px;padding:.25rem;">
+          <button id="tab-btn-groups" onclick="switchCoursesTab('groups')" style="padding:.35rem 1rem;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;background:var(--primary);color:#fff;transition:all .18s;" id="tab-groups-lbl">Groups</button>
+          <button id="tab-btn-schedule" onclick="switchCoursesTab('schedule')" style="padding:.35rem 1rem;border:none;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;background:transparent;color:var(--muted);transition:all .18s;">Schedule</button>
+        </div>
       </div>
-      <!-- Assigned groups from admin (api_classes.php) -->
-      <div id="teacher-assigned-groups" style="margin-bottom:1.5rem;">
-        <div class="loading-overlay"><div class="spinner"></div></div>
+      <!-- Groups tab -->
+      <div id="tc-groups-content">
+        <div id="teacher-assigned-groups" style="margin-bottom:1.5rem;">
+          <div class="loading-overlay"><div class="spinner"></div></div>
+        </div>
+      </div>
+      <!-- Schedule tab -->
+      <div id="tc-schedule-content" style="display:none;">
+        <div id="teacher-schedule-view" style="margin-bottom:1.5rem;"></div>
       </div>
     </div>
     <div id="courses-detail-view" style="display:none;">
@@ -1264,7 +1274,7 @@ function navigate(page, el) {
   activePage = page;
   sessionStorage.setItem('upskill_page_t', page);
   document.getElementById('topbar-title').textContent = T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home;
-  if (page === 'courses')    { teacherClassView='types'; teacherSelType=null; teacherSelLevel=null; renderCourses(); loadTeacherGroups(); }
+  if (page === 'courses')    { teacherClassView='types'; teacherSelType=null; teacherSelLevel=null; _coursesTabUI('groups'); renderCourses(); loadTeacherGroups(); }
   if (page === 'attendance') { if (teacherGroups.length === 0) loadTeacherGroups(); }
   if (page === 'posts')      loadPosts();
   if (page === 'grades')     loadGrades();
@@ -2358,7 +2368,102 @@ function renderCourses(){
   const sub=document.getElementById('courses-page-sub'); if(sub)sub.textContent=tr.coursesPageSub(n);
   const ttl=document.getElementById('courses-page-title'); if(ttl)ttl.textContent=tr.coursesPageTitle;
   const badge=document.getElementById('nav-courses-badge'); if(badge){ badge.textContent=n; badge.style.display=n>0?'':'none'; }
+  /* update tab button labels for current language */
+  const lang = currentLang;
+  const gBtn = document.getElementById('tab-btn-groups');
+  const sBtn = document.getElementById('tab-btn-schedule');
+  if (gBtn) gBtn.textContent = lang==='en'?'Groups':lang==='ar'?'المجموعات':'Groupes';
+  if (sBtn) sBtn.textContent = lang==='en'?'Schedule':lang==='ar'?'الجدول':'Horaires';
 }
+
+/* ── Courses tab switcher ── */
+function _coursesTabUI(tab) {
+  const gc = document.getElementById('tc-groups-content');
+  const sc = document.getElementById('tc-schedule-content');
+  const gb = document.getElementById('tab-btn-groups');
+  const sb = document.getElementById('tab-btn-schedule');
+  if (tab === 'schedule') {
+    if (gc) gc.style.display = 'none';
+    if (sc) sc.style.display = '';
+    if (gb) { gb.style.background = 'transparent'; gb.style.color = 'var(--muted)'; }
+    if (sb) { sb.style.background = 'var(--primary)'; sb.style.color = '#fff'; }
+  } else {
+    if (gc) gc.style.display = '';
+    if (sc) sc.style.display = 'none';
+    if (gb) { gb.style.background = 'var(--primary)'; gb.style.color = '#fff'; }
+    if (sb) { sb.style.background = 'transparent'; sb.style.color = 'var(--muted)'; }
+  }
+}
+function switchCoursesTab(tab) {
+  _coursesTabUI(tab);
+  if (tab === 'schedule') renderTeacherSchedule();
+}
+
+/* ── Weekly schedule view ── */
+function renderTeacherSchedule() {
+  const el = document.getElementById('teacher-schedule-view');
+  if (!el) return;
+  const lang = currentLang;
+
+  const DAY_ORDER = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const DAY_LABELS = {
+    fr: {Lundi:'Lundi',Mardi:'Mardi',Mercredi:'Mercredi',Jeudi:'Jeudi',Vendredi:'Vendredi',Samedi:'Samedi'},
+    en: {Lundi:'Monday',Mardi:'Tuesday',Mercredi:'Wednesday',Jeudi:'Thursday',Vendredi:'Friday',Samedi:'Saturday'},
+    ar: {Lundi:'الاثنين',Mardi:'الثلاثاء',Mercredi:'الأربعاء',Jeudi:'الخميس',Vendredi:'الجمعة',Samedi:'السبت'}
+  };
+
+  /* Collect all slots grouped by day_fr */
+  const byDay = {};
+  DAY_ORDER.forEach(d => { byDay[d] = []; });
+  teacherGroups.forEach(g => {
+    let slots = [];
+    try { slots = JSON.parse(g.schedule_json || '[]'); } catch(e) {}
+    slots.forEach(s => {
+      if (s.day_fr && byDay[s.day_fr] !== undefined) byDay[s.day_fr].push({g, s});
+    });
+  });
+  /* Sort each day by start time */
+  DAY_ORDER.forEach(d => byDay[d].sort((a,b) => (a.s.time||'').localeCompare(b.s.time||'')));
+
+  const hasAny = DAY_ORDER.some(d => byDay[d].length > 0);
+  if (!hasAny) {
+    el.innerHTML = `<div style="text-align:center;padding:3rem 1rem;color:var(--muted);font-size:.9rem;">${lang==='en'?'No schedule configured yet.':lang==='ar'?'لم يتم تكوين الجدول بعد.':'Aucun horaire configuré pour l\'instant.'}</div>`;
+    return;
+  }
+
+  const dayLabels = DAY_LABELS[lang] || DAY_LABELS.fr;
+  const studentWord = lang==='en'?'student(s)':lang==='ar'?'طالب':'étudiant(s)';
+
+  el.innerHTML = DAY_ORDER.filter(d => byDay[d].length > 0).map(d => {
+    const rows = byDay[d].map(({g, s}) => {
+      const name = lang==='en' ? (g.label_en||g.label_fr) : lang==='ar' ? (g.label_ar||g.label_fr) : g.label_fr;
+      const timeStr = s.time ? (s.time_end ? `${s.time} – ${s.time_end}` : s.time) : '—';
+      const icon    = TYPE_ICONS[g.type_key]      || '🏫';
+      const iconCls = TYPE_ICON_CLASS[g.type_key] || 'c1';
+      return `<div onclick="openGroupDetail(${g.group_id})" role="button" tabindex="0"
+        style="display:flex;align-items:center;gap:.85rem;padding:.7rem 1rem;border-radius:10px;cursor:pointer;background:var(--card-bg,#fff);border:1px solid var(--border2);margin-bottom:.45rem;transition:box-shadow .15s;"
+        onmouseover="this.style.boxShadow='0 2px 12px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow='none'">
+        <div style="min-width:90px;font-family:var(--font);font-size:.9rem;font-weight:700;color:var(--primary);flex-shrink:0;">${escHtml(timeStr)}</div>
+        <div class="course-icon ${iconCls}" style="flex-shrink:0;width:32px;height:32px;font-size:.85rem;display:flex;align-items:center;justify-content:center;">${icon}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:var(--font);font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(name)}</div>
+          <div style="font-size:.73rem;color:var(--muted);margin-top:.1rem;">👥 ${g.student_count||0} ${studentWord}</div>
+        </div>
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="color:var(--muted);flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>`;
+    }).join('');
+
+    return `<div style="margin-bottom:1.75rem;">
+      <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;">
+        <span style="font-family:var(--font);font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);">${escHtml(dayLabels[d]||d)}</span>
+        <span style="flex:1;height:2px;background:linear-gradient(to right,var(--primary),transparent);border-radius:2px;"></span>
+        <span style="font-size:.72rem;color:var(--muted);font-weight:600;">${byDay[d].length} ${lang==='en'?(byDay[d].length===1?'class':'classes'):lang==='ar'?'مجموعة':(byDay[d].length===1?'groupe':'groupes')}</span>
+      </div>
+      ${rows}
+    </div>`;
+  }).join('');
+}
+
 async function openGroupDetail(groupId) {
   const g    = teacherGroups.find(g => g.group_id === groupId);
   if (!g) return;
