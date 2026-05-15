@@ -1867,7 +1867,9 @@ function schedSlotRow(courseId, idx, slot, t) {
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
       <option value="">—</option>${days}
     </select>
-    ${inp(`slot-time-${courseId}-${idx}`, slot.time, '09:00')}
+    <input type="time" id="slot-time-${courseId}-${idx}" value="${escHtmlA(slot.time||'')}"
+      style="width:100%;padding:.5rem .4rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;transition:border-color .2s;color-scheme:dark;"
+      onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
     ${inp(`slot-room-${courseId}-${idx}`, slot.room, 'Salle A / Zoom')}
     <button onclick="removeScheduleSlot(${courseId},${idx})"
       style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:.2rem;border-radius:6px;transition:color .15s,background .15s;text-align:center;"
@@ -1940,6 +1942,11 @@ async function saveSchedule(courseId) {
     });
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || 'Erreur');
+
+    // Warn if server rejected all slots (e.g. missing day or invalid time)
+    if (data.saved === 0 && schedule.length > 0) {
+      throw new Error('Aucune séance sauvegardée — vérifiez que chaque ligne a un jour et une heure sélectionnés.');
+    }
 
     // Update cached schedule
     const c = _schedCourses.find(x => x.group_id == courseId);

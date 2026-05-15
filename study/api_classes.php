@@ -467,14 +467,18 @@ if ($action === 'update_schedule') {
       $time = trim($s['time']   ?? '');
       $room = trim($s['room']   ?? '');
       if (!in_array($day, $VALID_DAYS_FR, true)) continue;
-      if (!preg_match('/^\d{2}:\d{2}$/', $time))  continue;
+      // Normalize time: accept "H:MM" → "0H:MM", strip seconds if present
+      if (preg_match('/^(\d{1,2}):(\d{2})/', $time, $m)) {
+        $time = str_pad($m[1], 2, '0', STR_PAD_LEFT) . ':' . $m[2];
+      }
+      if (!preg_match('/^\d{2}:\d{2}$/', $time)) continue;
       $clean[] = ['day_fr'=>$day, 'time'=>$time, 'room'=>substr($room, 0, 100)];
     }
   }
 
   $json = count($clean) > 0 ? json_encode($clean, JSON_UNESCAPED_UNICODE) : null;
   $pdo->prepare("UPDATE class_groups SET schedule_json = ? WHERE id = ?")->execute([$json, $groupId]);
-  jsonOut(['ok'=>true]);
+  jsonOut(['ok'=>true, 'saved'=>count($clean)]);
 }
 
 // set_group_zoom_url: teacher (or admin) sets zoom_url for a class_group
