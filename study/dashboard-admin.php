@@ -763,7 +763,7 @@ const T = {
     schedulePageTitle:'Horaires des groupes', schedulePageSub:'Définissez les jours et horaires de sessions pour chaque groupe',
     schNoGroups:'Aucun groupe trouvé.', schAddSlot:'+ Ajouter une séance', schSave:'Enregistrer', schSaving:'…',
     schSaved:'✔ Enregistré', schTeacher:'Prof.', schStudents:'étudiant(s)',
-    schDayLabel:'Jour', schTimeLabel:'Heure',
+    schDayLabel:'Jour', schTimeFromLabel:'De', schTimeToLabel:'À',
     schNoSlots:'Aucune séance configurée.',
     schDays:[
       {fr:'Lundi',ar:'الاثنين'},{fr:'Mardi',ar:'الثلاثاء'},{fr:'Mercredi',ar:'الأربعاء'},
@@ -813,7 +813,7 @@ const T = {
     schedulePageTitle:'جداول المجموعات', schedulePageSub:'حدد أيام وأوقات الجلسات لكل مجموعة',
     schNoGroups:'لم يُعثر على أي مجموعة.', schAddSlot:'+ إضافة جلسة', schSave:'حفظ', schSaving:'…',
     schSaved:'✔ تم الحفظ', schTeacher:'أ.', schStudents:'طالب/طلاب',
-    schDayLabel:'اليوم', schTimeLabel:'الوقت', schRoomLabel:'القاعة / الرابط',
+    schDayLabel:'اليوم', schTimeFromLabel:'من', schTimeToLabel:'إلى',
     schNoSlots:'لم يتم تكوين أي جلسة.',
     schDays:[
       {fr:'Lundi',ar:'الاثنين'},{fr:'Mardi',ar:'الثلاثاء'},{fr:'Mercredi',ar:'الأربعاء'},
@@ -863,7 +863,7 @@ const T = {
     schedulePageTitle:'Allocate dates & times', schedulePageSub:'Set session days and times for each group',
     schNoGroups:'No groups found.', schAddSlot:'+ Add session', schSave:'Save', schSaving:'…',
     schSaved:'✔ Saved', schTeacher:'Teacher:', schStudents:'student(s)',
-    schDayLabel:'Day', schTimeLabel:'Time', schRoomLabel:'Room / Link',
+    schDayLabel:'Day', schTimeFromLabel:'From', schTimeToLabel:'To',
     schNoSlots:'No sessions configured.',
     schDays:[
       {fr:'Lundi',ar:'الاثنين'},{fr:'Mardi',ar:'الثلاثاء'},{fr:'Mercredi',ar:'الأربعاء'},
@@ -1833,10 +1833,10 @@ function renderScheduleCards() {
       </div>
 
       <!-- Column headers -->
-      <div style="display:grid;grid-template-columns:1fr 90px 1fr 28px;gap:.4rem;margin-bottom:.35rem;padding:0 .1rem;">
+      <div style="display:grid;grid-template-columns:1fr 90px 90px 28px;gap:.4rem;margin-bottom:.35rem;padding:0 .1rem;">
         <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schDayLabel}</div>
-        <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schTimeLabel}</div>
-        <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schRoomLabel}</div>
+        <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schTimeFromLabel}</div>
+        <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schTimeToLabel}</div>
         <div></div>
       </div>
 
