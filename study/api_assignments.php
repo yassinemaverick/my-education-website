@@ -127,7 +127,8 @@ try {
         if (!$isTeacher) { http_response_code(403); echo json_encode(['ok'=>false,'error'=>'Forbidden']); exit; }
         $stmt = $pdo->prepare("
             SELECT c.id, c.group_name_fr, c.group_name_ar,
-                   c.subject_fr, c.subject_ar, c.level, c.students_count
+                   c.subject_fr, c.subject_ar, c.level, c.students_count,
+                   c.schedule_json, c.zoom_url
             FROM   teacher_courses tc
             JOIN   courses c ON c.id = tc.course_id
             WHERE  tc.teacher_id = ?
@@ -135,6 +136,29 @@ try {
         ");
         $stmt->execute([$uid]);
         echo json_encode(['ok'=>true,'courses'=>$stmt->fetchAll()], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    /* ══════════════════════════════════════
+       POST set_course_zoom_url
+    ══════════════════════════════════════ */
+    if ($action === 'set_course_zoom_url') {
+        if (!$isTeacher) { http_response_code(403); echo json_encode(['ok'=>false,'error'=>'Forbidden']); exit; }
+        csrf_verify();
+        $courseId = (int)($bodyData['course_id'] ?? 0);
+        $zoomUrl  = trim($bodyData['zoom_url'] ?? '');
+        if (!$courseId) { echo json_encode(['ok'=>false,'error'=>'course_id manquant']); exit; }
+        if ($zoomUrl !== '' && !filter_var($zoomUrl, FILTER_VALIDATE_URL)) {
+            echo json_encode(['ok'=>false,'error'=>'URL invalide']); exit;
+        }
+        if (strlen($zoomUrl) > 500) { echo json_encode(['ok'=>false,'error'=>'URL trop longue']); exit; }
+        // Verify teacher owns this course
+        $owns = $pdo->prepare("SELECT 1 FROM teacher_courses WHERE teacher_id = ? AND course_id = ?");
+        $owns->execute([$uid, $courseId]);
+        if (!$owns->fetch()) { http_response_code(403); echo json_encode(['ok'=>false,'error'=>'Accès refusé']); exit; }
+        $pdo->prepare("UPDATE courses SET zoom_url = ? WHERE id = ?")
+            ->execute([$zoomUrl ?: null, $courseId]);
+        echo json_encode(['ok'=>true]);
         exit;
     }
 

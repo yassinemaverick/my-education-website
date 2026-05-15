@@ -556,6 +556,17 @@ body.ar .notif-panel { right:auto; left:1rem; }
         <div id="activity-list"><div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">Chargement…</div></div>
       </div>
     </div>
+
+    <!-- CLASSES TODAY CARD -->
+    <div class="card" style="margin-top:1.5rem;" id="today-classes-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <div class="card-title" style="margin-bottom:0;" id="today-classes-title">📅 Cours d'aujourd'hui</div>
+        <span id="today-date-lbl" style="font-size:.78rem;color:var(--muted);font-family:var(--font);"></span>
+      </div>
+      <div id="today-classes-list">
+        <div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">Chargement…</div>
+      </div>
+    </div>
   </div>
 
   <!-- COURSES PAGE -->
@@ -686,11 +697,6 @@ body.ar .notif-panel { right:auto; left:1rem; }
         <div class="form-group">
           <label id="lbl-fullname">Nom complet</label>
           <input type="text" id="pref-name" value="<?= htmlspecialchars($full_name) ?>">
-        </div>
-        <div class="form-group" style="margin-top:.9rem;">
-          <label id="lbl-zoom-url">Lien Zoom (cours en ligne)</label>
-          <input type="url" id="zoom-url-input" placeholder="https://zoom.us/j/..." style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
-          <div style="font-size:.72rem;color:var(--muted);margin-top:.3rem;" id="lbl-zoom-hint">Ce lien sera affiché dans le tableau de bord de vos étudiants.</div>
         </div>
         <button class="btn-primary" onclick="saveProfile()" id="save-btn">Enregistrer</button>
       </div>
@@ -987,6 +993,7 @@ const T = {
     classProgTitle:'Progression de la classe', cp1:'Progression générale', cp2:'Taux de soumission devoirs', cp3:'Moyenne quiz',
     attentionTitle:'Étudiants à surveiller ⚠️',
     activityTitle:'Activité récente', activityEmpty:'Aucune activité récente.',
+    todayClassesTitle:"📅 Cours d'aujourd'hui", todayNoClasses:'Aucun cours prévu aujourd\'hui.', todayZoomPlaceholder:'https://zoom.us/j/...', todayZoomLbl:'Lien Zoom', todayZoomHint:'Ce lien sera visible par vos étudiants dans "Ma classe".', todayZoomSave:'Enregistrer', todaySaving:'…', todayZoomSaved:'✔ Enregistré', todayStudents:'étudiant(s)',
     studentsPageTitle:'Étudiants', studentsPageSub:'24 étudiants inscrits · Session 2',
     thName:'Étudiant', thProgress:'Progression', thAssigns:'Devoirs', thAvg:'Moyenne', thStatus:'Statut',
     statusGood:'Bon niveau', statusWarn:'À surveiller', statusLow:'En difficulté',
@@ -1064,6 +1071,7 @@ const T = {
     classProgTitle:'Class progress', cp1:'Overall progress', cp2:'Assignment submission rate', cp3:'Quiz average',
     attentionTitle:'Students to watch ⚠️',
     activityTitle:'Recent activity', activityEmpty:'No recent activity.',
+    todayClassesTitle:'📅 Classes Today', todayNoClasses:'No classes scheduled for today.', todayZoomPlaceholder:'https://zoom.us/j/...', todayZoomLbl:'Zoom link', todayZoomHint:"This link will be visible to your students in 'My Class'.", todayZoomSave:'Save', todaySaving:'…', todayZoomSaved:'✔ Saved', todayStudents:'student(s)',
     studentsPageTitle:'Students', studentsPageSub:'24 enrolled students · Session 2',
     thName:'Student', thProgress:'Progress', thAssigns:'Assignments', thAvg:'Average', thStatus:'Status',
     statusGood:'On track', statusWarn:'Needs attention', statusLow:'Struggling',
@@ -1162,6 +1170,8 @@ function applyTranslations() {
   set('stat1-lbl', tr.stat1); set('stat2-lbl', tr.stat2); set('stat3-lbl', tr.stat3); set('stat4-lbl', tr.stat4);
   set('class-prog-title', tr.classProgTitle); set('cp-label1', tr.cp1); set('cp-label2', tr.cp2); set('cp-label3', tr.cp3);
   set('attention-title', tr.attentionTitle); set('activity-title', tr.activityTitle);
+  set('today-classes-title', tr.todayClassesTitle);
+  loadTodayClasses();
   set('students-page-title', tr.studentsPageTitle); set('students-page-sub', tr.studentsPageSub);
   set('th-name', tr.thName); set('th-progress', tr.thProgress); set('th-assigns', tr.thAssigns); set('th-avg', tr.thAvg); set('th-status', tr.thStatus);
   set('assign-page-title', tr.assignPageTitle); set('assign-page-sub', tr.assignPageSub);
@@ -1171,7 +1181,6 @@ function applyTranslations() {
   set('gth-student', tr.gthStudent); set('gth-assign', tr.gthAssign); set('gth-score', tr.gthScore); set('gth-date', tr.gthDate);
   set('settings-title', tr.settingsTitle); set('profile-title', tr.profileTitle); set('settings-role', tr.settingsRole);
   set('lbl-fullname', tr.lblFullname); set('save-btn', tr.saveBtn); set('pref-title', tr.prefTitle); set('pref-txt', tr.prefTxt);
-  set('lbl-zoom-url', tr.lblZoomUrl); set('lbl-zoom-hint', tr.lblZoomHint);
   set('pwd-card-title', tr.pwdCardTitle); set('lbl-pwd-current', tr.lblPwdCurrent); set('lbl-pwd-new', tr.lblPwdNew); set('lbl-pwd-confirm', tr.lblPwdConfirm); set('pwd-btn-text', tr.pwdBtn);
   set('modal-assign-title', tr.modalAssignTitle); set('mlbl-title', tr.mlblTitle); set('mlbl-desc', tr.mlblDesc); set('mlbl-due', tr.mlblDue); set('mlbl-subject', tr.mlblSubject);
   const lbl = document.getElementById('mlbl-course');
@@ -1225,7 +1234,7 @@ function navigate(page, el) {
   if (page === 'attendance') { if (teacherGroups.length === 0) loadTeacherGroups(); }
   if (page === 'posts')      loadPosts();
   if (page === 'grades')     loadGrades();
-  if (page === 'home')       loadActivityFeed();
+  if (page === 'home')       { loadActivityFeed(); loadTodayClasses(); }
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-backdrop').classList.remove('open');
@@ -1717,32 +1726,19 @@ function submitNewQuiz() {
 }
 
 async function saveProfile() {
-  const name    = document.getElementById('pref-name').value.trim();
-  const zoomUrl = (document.getElementById('zoom-url-input')?.value || '').trim();
-  const btn     = document.getElementById('save-btn');
+  const name = document.getElementById('pref-name').value.trim();
+  const btn  = document.getElementById('save-btn');
   if (!name) return;
   if (btn) btn.textContent = '…';
   if (btn) btn.disabled = true;
   try {
-    const nameRes = await fetch('api_update_profile.php', {
+    const res  = await fetch('api_update_profile.php', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
       body:    JSON.stringify({ action: 'update_name', name })
     });
-    const nameData = await nameRes.json();
-    if (!nameData.ok) throw new Error(nameData.error || T[currentLang].toastServerError);
-
-    // Save Zoom URL (ignore errors silently — teacher may have no courses yet)
-    if (zoomUrl !== undefined) {
-      const zoomRes = await fetch('api_update_profile.php', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
-        body:    JSON.stringify({ action: 'set_zoom_url', zoom_url: zoomUrl })
-      });
-      const zoomData = await zoomRes.json();
-      if (!zoomData.ok && zoomUrl !== '') throw new Error(zoomData.error || T[currentLang].toastServerError);
-    }
-
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || T[currentLang].toastServerError);
     document.getElementById('sidebar-name').textContent = name;
     document.getElementById('settings-name').textContent = name;
     showToast(T[currentLang].toastSaved);
@@ -1968,6 +1964,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   hydrateTeacherInfo();
   loadSavedAvatar();
   loadActivityFeed();
+  loadTodayClasses();
   loadNotifBadge();
   const validPages = ['home','students','courses','assignments','posts','quizzes','grades','settings','attendance'];
   const savedPage = sessionStorage.getItem('upskill_page_t');
@@ -2553,6 +2550,185 @@ function escHtml(s) {
 
 /* ── ACTIVITY FEED ── */
 const ACT_DOT_COLORS = { assignment_created:'blue', submission_graded:'green', assignment_graded:'purple' };
+
+/* ── TODAY'S CLASSES ── */
+// French weekday names matching schedule_json day_fr values
+const DAY_NAMES_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const DAY_NAMES_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+async function loadTodayClasses() {
+  const container = document.getElementById('today-classes-list');
+  const dateLbl   = document.getElementById('today-date-lbl');
+  if (!container) return;
+
+  const lang    = currentLang;
+  const tr      = T[lang];
+  const today   = new Date();
+  const dow     = today.getDay(); // 0=Sun … 6=Sat
+  const todayFr = DAY_NAMES_FR[dow];
+  const todayEn = DAY_NAMES_EN[dow];
+
+  if (dateLbl) {
+    dateLbl.textContent = today.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { weekday:'long', day:'numeric', month:'long' });
+  }
+
+  container.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${tr.loading || 'Chargement…'}</div>`;
+
+  let courses = [];
+  try {
+    const res  = await fetch('api_assignments.php?action=my_courses');
+    const data = await res.json();
+    courses = data.ok ? (data.courses || []) : [];
+  } catch(e) {
+    container.innerHTML = `<div style="color:var(--red);font-size:.84rem;">❌ Erreur réseau</div>`;
+    return;
+  }
+
+  // Filter: courses whose schedule_json includes today's day
+  const todayCourses = courses.filter(c => {
+    if (!c.schedule_json) return false;
+    try {
+      const sched = JSON.parse(c.schedule_json);
+      return Array.isArray(sched) && sched.some(s =>
+        (s.day_fr && s.day_fr.toLowerCase() === todayFr.toLowerCase()) ||
+        (s.day_en && s.day_en.toLowerCase() === todayEn.toLowerCase())
+      );
+    } catch(e) { return false; }
+  });
+
+  if (todayCourses.length === 0) {
+    container.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.75rem 0;text-align:center;">${tr.todayNoClasses}</div>`;
+    return;
+  }
+
+  container.innerHTML = todayCourses.map((c, idx) => {
+    const name = lang === 'ar'
+      ? (c.group_name_ar || c.group_name_fr)
+      : (c.group_name_fr || c.group_name_ar);
+
+    // Parse schedule for time/room of today's session
+    let sessionInfo = '';
+    try {
+      const sched = JSON.parse(c.schedule_json || '[]');
+      const todaySlot = sched.find(s =>
+        (s.day_fr && s.day_fr.toLowerCase() === todayFr.toLowerCase()) ||
+        (s.day_en && s.day_en.toLowerCase() === todayEn.toLowerCase())
+      );
+      if (todaySlot) {
+        if (todaySlot.time) sessionInfo += todaySlot.time;
+        if (todaySlot.room) sessionInfo += (sessionInfo ? ' · ' : '') + todaySlot.room;
+      }
+    } catch(e) {}
+
+    const hasZoom   = c.zoom_url && c.zoom_url.trim() !== '';
+    const inputId   = `zoom-input-${c.id}`;
+    const btnId     = `zoom-btn-${c.id}`;
+    const statusId  = `zoom-status-${c.id}`;
+    const detailId  = `today-detail-${c.id}`;
+
+    return `
+    <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:.85rem;">
+      <!-- Class header — click to expand -->
+      <button onclick="toggleTodayDetail('${c.id}')"
+        style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border:none;cursor:pointer;text-align:left;transition:background .15s;"
+        onmouseover="this.style.background='rgba(255,255,255,.07)'" onmouseout="this.style.background='rgba(255,255,255,.03)'"
+        aria-expanded="false" id="today-hdr-${c.id}">
+        <div>
+          <div style="font-family:var(--font);font-weight:700;font-size:.95rem;color:var(--white);">${name}</div>
+          <div style="font-size:.78rem;color:var(--muted);margin-top:.2rem;">
+            ${sessionInfo ? `<span>🕐 ${sessionInfo}</span>` : ''}
+            <span style="${sessionInfo?'margin-left:.75rem':''}">👥 ${c.students_count || 0} ${tr.todayStudents}</span>
+            ${hasZoom ? `<span style="margin-left:.75rem;color:var(--green);font-size:.73rem;">● Zoom ✓</span>` : `<span style="margin-left:.75rem;color:var(--yellow);font-size:.73rem;">● Zoom manquant</span>`}
+          </div>
+        </div>
+        <svg id="today-chevron-${c.id}" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="flex-shrink:0;color:var(--muted);transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+
+      <!-- Expanded Zoom URL editor -->
+      <div id="${detailId}" style="display:none;padding:1rem 1.1rem;background:rgba(30,27,75,.06);border-top:1px solid var(--border);">
+        <label style="display:block;font-family:var(--font);font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;">${tr.todayZoomLbl}</label>
+        <div style="display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;">
+          <input type="url" id="${inputId}" value="${c.zoom_url ? escHtml(c.zoom_url) : ''}"
+            placeholder="${tr.todayZoomPlaceholder}"
+            style="flex:1;min-width:200px;padding:.75rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'"
+            onkeydown="if(event.key==='Enter'){saveTodayZoom(${c.id})}">
+          <button id="${btnId}" onclick="saveTodayZoom(${c.id})"
+            style="padding:.73rem 1.1rem;background:var(--blue);border:none;border-radius:10px;color:white;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap;transition:opacity .15s;"
+            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+            ${tr.todayZoomSave}
+          </button>
+        </div>
+        <div id="${statusId}" style="display:none;font-size:.78rem;margin-top:.5rem;"></div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:.45rem;">${tr.todayZoomHint}</div>
+        ${hasZoom ? `<div style="margin-top:.85rem;">
+          <a href="${escHtml(c.zoom_url)}" target="_blank" rel="noopener noreferrer"
+            style="display:inline-flex;align-items:center;gap:.4rem;font-size:.83rem;color:var(--blue);text-decoration:none;font-family:var(--font);font-weight:600;"
+            onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            Rejoindre le cours →
+          </a>
+        </div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleTodayDetail(courseId) {
+  const detail  = document.getElementById(`today-detail-${courseId}`);
+  const chevron = document.getElementById(`today-chevron-${courseId}`);
+  const hdr     = document.getElementById(`today-hdr-${courseId}`);
+  if (!detail) return;
+  const open = detail.style.display === 'none';
+  detail.style.display  = open ? '' : 'none';
+  if (chevron) chevron.style.transform = open ? 'rotate(180deg)' : '';
+  if (hdr) hdr.setAttribute('aria-expanded', String(open));
+  if (open) {
+    const inp = document.getElementById(`zoom-input-${courseId}`);
+    if (inp) setTimeout(() => inp.focus(), 80);
+  }
+}
+
+async function saveTodayZoom(courseId) {
+  const input    = document.getElementById(`zoom-input-${courseId}`);
+  const btn      = document.getElementById(`zoom-btn-${courseId}`);
+  const statusEl = document.getElementById(`zoom-status-${courseId}`);
+  const tr       = T[currentLang];
+  if (!input) return;
+  const zoomUrl = input.value.trim();
+  const origBtn = btn ? btn.textContent : '';
+  if (btn) { btn.textContent = tr.todaySaving; btn.disabled = true; }
+  statusEl.style.display = 'none';
+  try {
+    const res  = await fetch('api_assignments.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
+      body: JSON.stringify({ action: 'set_course_zoom_url', course_id: courseId, zoom_url: zoomUrl })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || tr.toastServerError);
+
+    statusEl.textContent    = tr.todayZoomSaved;
+    statusEl.style.color    = 'var(--green)';
+    statusEl.style.display  = '';
+    // Update the header badge
+    const hdr = document.getElementById(`today-hdr-${courseId}`);
+    if (hdr) {
+      const badge = hdr.querySelector('.zoom-status-dot');
+      if (!badge) {
+        // Refresh the whole card to reflect new zoom state
+        loadTodayClasses();
+        return;
+      }
+    }
+    loadTodayClasses(); // re-render to update ✓ / missing badge & join link
+  } catch(err) {
+    statusEl.textContent   = '❌ ' + err.message;
+    statusEl.style.color   = 'var(--red)';
+    statusEl.style.display = '';
+    if (btn) { btn.textContent = origBtn; btn.disabled = false; }
+  }
+}
 
 async function loadActivityFeed() {
   const list = document.getElementById('activity-list');
