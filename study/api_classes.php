@@ -53,14 +53,14 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS class_group_members (
 
 // ── Fixed class type definitions ───────────────────────────────────────────
 const CLASS_TYPES = [
-  ['key'=>'beginners',         'label_fr'=>'Débutants',          'label_ar'=>'مبتدئون',         'levels'=>3],
-  ['key'=>'pre_intermediate',  'label_fr'=>'Pré-intermédiaire',  'label_ar'=>'ما قبل المتوسط',  'levels'=>3],
-  ['key'=>'intermediate',      'label_fr'=>'Intermédiaire',      'label_ar'=>'متوسط',            'levels'=>3],
-  ['key'=>'upper_intermediate','label_fr'=>'Upper-intermédiaire','label_ar'=>'فوق المتوسط',     'levels'=>3],
-  ['key'=>'advanced',          'label_fr'=>'Avancé',             'label_ar'=>'متقدم',            'levels'=>3],
-  ['key'=>'baccalaureate',     'label_fr'=>'Baccalauréat',       'label_ar'=>'البكالوريا',       'levels'=>0],
-  ['key'=>'business',          'label_fr'=>'Business',           'label_ar'=>'الأعمال',          'levels'=>0],
-  ['key'=>'kids',              'label_fr'=>'Kids',               'label_ar'=>'أطفال',            'levels'=>0],
+  ['key'=>'beginners',         'label_fr'=>'Débutants',          'label_en'=>'Beginners',         'label_ar'=>'مبتدئون',         'levels'=>3],
+  ['key'=>'pre_intermediate',  'label_fr'=>'Pré-intermédiaire',  'label_en'=>'Pre-intermediate',  'label_ar'=>'ما قبل المتوسط',  'levels'=>3],
+  ['key'=>'intermediate',      'label_fr'=>'Intermédiaire',      'label_en'=>'Intermediate',      'label_ar'=>'متوسط',            'levels'=>3],
+  ['key'=>'upper_intermediate','label_fr'=>'Upper-intermédiaire','label_en'=>'Upper-intermediate','label_ar'=>'فوق المتوسط',     'levels'=>3],
+  ['key'=>'advanced',          'label_fr'=>'Avancé',             'label_en'=>'Advanced',          'label_ar'=>'متقدم',            'levels'=>3],
+  ['key'=>'baccalaureate',     'label_fr'=>'Baccalauréat',       'label_en'=>'Baccalaureate',     'label_ar'=>'البكالوريا',       'levels'=>0],
+  ['key'=>'business',          'label_fr'=>'Business',           'label_en'=>'Business',          'label_ar'=>'الأعمال',          'levels'=>0],
+  ['key'=>'kids',              'label_fr'=>'Kids',               'label_en'=>'Kids',              'label_ar'=>'أطفال',            'levels'=>0],
 ];
 
 $action = $_GET['action'] ?? ($_POST['action'] ?? '');
@@ -259,7 +259,7 @@ if ($action === 'list_assignments') {
 
   // Build type label map
   $typeLabels = [];
-  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'ar'=>$t['label_ar']]; }
+  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'en'=>$t['label_en'], 'ar'=>$t['label_ar']]; }
 
   $byUser = [];
   foreach ($rows as $r) {
@@ -275,6 +275,7 @@ if ($action === 'list_assignments') {
       'level_number'=> $lvl ? (int)$lvl : null,
       'group_letter'=> $r['group_letter'],
       'label_fr'    => $typeLabels[$r['type_key']]['fr'] . ($lvl ? ' ' . $lvl : '') . ' – Groupe ' . $r['group_letter'],
+      'label_en'    => $typeLabels[$r['type_key']]['en'] . ($lvl ? ' ' . $lvl : '') . ' – Group ' . $r['group_letter'],
       'label_ar'    => $typeLabels[$r['type_key']]['ar'] . ($lvl ? ' ' . $lvl : '') . ' – مجموعة ' . $r['group_letter'],
     ];
   }
@@ -296,7 +297,7 @@ if ($action === 'my_group') {
   $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   $typeLabels = [];
-  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'ar'=>$t['label_ar']]; }
+  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'en'=>$t['label_en'], 'ar'=>$t['label_ar']]; }
 
   $result = [];
   foreach ($groups as $g) {
@@ -307,6 +308,7 @@ if ($action === 'my_group') {
       'level_number'=> $lvl ? (int)$lvl : null,
       'group_letter'=> $g['group_letter'],
       'label_fr'    => $typeLabels[$g['type_key']]['fr'] . ($lvl ? ' ' . $lvl : '') . ' – Groupe ' . $g['group_letter'],
+      'label_en'    => $typeLabels[$g['type_key']]['en'] . ($lvl ? ' ' . $lvl : '') . ' – Group ' . $g['group_letter'],
       'label_ar'    => $typeLabels[$g['type_key']]['ar'] . ($lvl ? ' ' . $lvl : '') . ' – مجموعة ' . $g['group_letter'],
     ];
   }
@@ -356,11 +358,12 @@ if ($action === 'teacher_groups') {
   $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   $typeLabels = [];
-  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'ar'=>$t['label_ar']]; }
+  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'en'=>$t['label_en'], 'ar'=>$t['label_ar']]; }
 
   foreach ($groups as &$g) {
     $lvl = $g['level_number'];
     $g['label_fr'] = $typeLabels[$g['type_key']]['fr'] . ($lvl ? ' ' . $lvl : '') . ' – Groupe ' . $g['group_letter'];
+    $g['label_en'] = $typeLabels[$g['type_key']]['en'] . ($lvl ? ' ' . $lvl : '') . ' – Group ' . $g['group_letter'];
     $g['label_ar'] = $typeLabels[$g['type_key']]['ar'] . ($lvl ? ' ' . $lvl : '') . ' – مجموعة ' . $g['group_letter'];
     $g['group_id'] = (int)$g['group_id'];
     $g['level_number'] = $lvl ? (int)$lvl : null;
@@ -433,11 +436,12 @@ if ($action === 'list_all_groups') {
   $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
   $typeLabels = [];
-  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'ar'=>$t['label_ar']]; }
+  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'en'=>$t['label_en'], 'ar'=>$t['label_ar']]; }
 
   foreach ($groups as &$g) {
     $lvl = $g['level_number'];
     $g['label_fr']     = $typeLabels[$g['type_key']]['fr'] . ($lvl ? ' ' . $lvl : '') . ' – Groupe ' . $g['group_letter'];
+    $g['label_en']     = $typeLabels[$g['type_key']]['en'] . ($lvl ? ' ' . $lvl : '') . ' – Group ' . $g['group_letter'];
     $g['label_ar']     = $typeLabels[$g['type_key']]['ar'] . ($lvl ? ' ' . $lvl : '') . ' – مجموعة ' . $g['group_letter'];
     $g['group_id']     = (int)$g['group_id'];
     $g['level_number'] = $lvl ? (int)$lvl : null;

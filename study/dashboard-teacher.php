@@ -2641,7 +2641,7 @@ async function loadTodayClasses() {
 
   container.innerHTML = todayCourses.map((c, idx) => {
     const gid  = c.group_id;
-    const name = lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
+    const name = lang === 'en' ? (c.label_en || c.label_fr) : lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
 
     // Parse schedule for time/room of today's session
     let sessionInfo = '';

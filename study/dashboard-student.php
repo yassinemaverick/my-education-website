@@ -1517,7 +1517,11 @@ function renderMyClass() {
       try {
         const sched = JSON.parse(c.schedule_json);
         if (Array.isArray(sched) && sched.length) {
-          st('myclass-schedule', sched.map(s => lang === 'ar' ? (s.day_ar || s.day_fr) : (s.day_fr || s.day_ar)).join(' – '));
+          const DAY_EN = {Lundi:'Monday',Mardi:'Tuesday',Mercredi:'Wednesday',Jeudi:'Thursday',Vendredi:'Friday',Samedi:'Saturday',Dimanche:'Sunday'};
+          st('myclass-schedule', sched.map(s =>
+            lang === 'en' ? (DAY_EN[s.day_fr] || s.day_fr) :
+            lang === 'ar' ? (s.day_ar || s.day_fr) : s.day_fr
+          ).join(' – '));
         }
       } catch(e) {}
     }
