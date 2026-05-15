@@ -93,7 +93,7 @@ try {
         $stmt = $pdo->prepare("
             SELECT c.id, c.group_name_fr, c.group_name_ar,
                    c.subject_fr, c.subject_ar, c.level,
-                   c.students_count, c.schedule_json,
+                   c.students_count, c.schedule_json, c.zoom_url,
                    u.full_name AS teacher_name
             FROM   student_courses sc
             JOIN   courses c ON c.id = sc.course_id
@@ -819,6 +819,14 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
           <div style="display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:var(--muted);margin-bottom:.4rem;"><span id="myclass-att-lbl">Taux de présence</span><strong style="font-family:var(--font);color:var(--green);" id="myclass-att-pct">–</strong></div>
           <div class="progress-bar"><div class="progress-fill" id="myclass-att-bar" style="width:0%"></div></div>
           <div style="font-size:.77rem;color:var(--muted);margin-top:.5rem;" id="myclass-att-detail">—</div>
+          <div id="myclass-zoom-wrap" style="display:none;margin-top:1.1rem;">
+            <a id="myclass-zoom-link" href="#" target="_blank" rel="noopener noreferrer"
+              style="display:inline-flex;align-items:center;gap:.5rem;padding:.6rem 1.1rem;background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);border-radius:10px;color:var(--blue);font-family:var(--font);font-size:.85rem;font-weight:600;text-decoration:none;transition:background .2s;"
+              onmouseover="this.style.background='rgba(59,130,246,.2)'" onmouseout="this.style.background='rgba(59,130,246,.12)'">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+              <span id="myclass-zoom-lbl">Rejoindre le cours</span>
+            </a>
+          </div>
         </div>
         <div id="myclass-empty" style="display:none;text-align:center;padding:1.5rem 0;">
           <div style="font-size:2rem;margin-bottom:.6rem;">📚</div>
@@ -910,10 +918,10 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
         </div>
       </div>
       <div class="card">
-        <div class="card-title" id="scores-title">Scores des quiz</div>
-        <div class="module-row"><div class="module-name" id="q-gram">Grammaire de base</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div></div><div class="module-pct">85%</div></div>
-        <div class="module-row"><div class="module-name" id="q-voc">Vocabulaire Unité 2</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:72%"></div></div></div><div class="module-pct">72%</div></div>
-        <div class="module-row"><div class="module-name" id="q-list">Compréhension orale</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill yellow" style="width:55%"></div></div></div><div class="module-pct" style="color:var(--yellow)">55%</div></div>
+        <div class="card-title" id="scores-title">Performance des devoirs</div>
+        <div id="progress-assign-stats">
+          <!-- Populated by updateProgress() -->
+        </div>
       </div>
     </div>
     <div class="card">
@@ -969,6 +977,35 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
         <div class="card-title" id="pref-title">Préférences</div>
         <p style="color:var(--muted);font-size:.85rem;line-height:1.6;" id="pref-txt">Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Arabe.</p>
       </div>
+    </div>
+
+    <!-- Password change card (full width below) -->
+    <div class="card" style="margin-top:1.25rem;">
+      <div class="card-title" id="pwd-card-title">Changer le mot de passe</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:.9rem;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-pwd-current">Mot de passe actuel</label>
+          <input type="password" id="pwd-current" autocomplete="current-password"
+            style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-pwd-new">Nouveau mot de passe</label>
+          <input type="password" id="pwd-new" autocomplete="new-password"
+            style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="lbl-pwd-confirm">Confirmer le mot de passe</label>
+          <input type="password" id="pwd-confirm" autocomplete="new-password"
+            style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+      </div>
+      <div id="pwd-error" style="display:none;color:var(--red);font-size:.82rem;margin-bottom:.6rem;"></div>
+      <button class="btn-primary" onclick="changePassword()" id="pwd-btn">
+        <span id="pwd-btn-text">Changer le mot de passe</span>
+      </button>
     </div>
   </div>
 </main>
@@ -1068,7 +1105,7 @@ const T = {
     myclassCourseLbl:'Cours actuel', myclassMatesLbl:'Camarades',
     myclassTeacher:'Professeur :', myclassSchedule:'Horaire :',
     myclassAttLbl:'Taux de présence', myclassEmptyTxt:'Aucun cours assigné',
-    myclassNoMates:'Aucun camarade trouvé.',
+    myclassNoMates:'Aucun camarade trouvé.', myclassJoinZoom:'Rejoindre le cours',
 
     assignPageTitle:'Devoirs', assignPageSub:'3 en attente · 1 en retard · 2 soumis',
     tabAll:'Tous', tabPending:'En attente', tabDone:'Soumis',
@@ -1076,7 +1113,7 @@ const T = {
     quizPageTitle:'Quiz', quizPageSub:'Testez vos connaissances avec des quiz chronométrés',
     progPageTitle:'Progression', progPageSub:'Suivez votre parcours module par module',
     overallTitle:'Progression globale', doneLbl:'fait', hrsOf:'/ 29 hrs', courseSession:'Anglais Général · Session 2', onTrack:'En bonne voie 🎯',
-    scoresTitle:'Scores des quiz', qGram:'Grammaire de base', qVoc:'Vocabulaire Unité 2', qList:'Compréhension orale',
+    scoresTitle:'Performance des devoirs', progSubmitted:'devoirs soumis', progGraded:'corrigé(s)', progAvgScore:'Score moyen', progNoData:'Aucun devoir pour l\'instant.',
     modulesTitle:'Progression par module', m1:'Module 1 – Introduction', m2:'Module 2 – Grammaire', m3:'Module 3 – Vocabulaire', m4:'Module 4 – Expression orale', m5:'Module 5 – Compréhension',
     howtoTitle:'Comment utiliser la plateforme ?', howtoSub:'Regardez ces courtes vidéos pour découvrir chaque fonctionnalité.',
     howtoCards:[
@@ -1088,6 +1125,7 @@ const T = {
       { icon:'⚙️', from:'#64748b', to:'#475569', title:'Paramètres', desc:'Changez votre nom, ajoutez une photo de profil et choisissez la langue.', btn:'Voir la vidéo' },
     ],
     settingsTitle:'Paramètres', profileTitle:'Profil', lblChangePhoto:'Changer la photo', settingsRole:'Étudiant(e) · Anglais Général S2', lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l\'Anglais.',
+    pwdCardTitle:'Changer le mot de passe', lblPwdCurrent:'Mot de passe actuel', lblPwdNew:'Nouveau mot de passe', lblPwdConfirm:'Confirmer le mot de passe', pwdBtn:'Changer le mot de passe', toastPwdChanged:'Mot de passe mis à jour !',
     badgePending:'En attente', badgeSubmitted:'Soumis', badgeOverdue:'En retard',
     startQuiz:'Commencer le quiz', retakeQuiz:'Refaire', doneLabel:'Complété',
     toastSaved:'Profil mis à jour !',
@@ -1119,7 +1157,7 @@ const T = {
     myclassCourseLbl:'Current course', myclassMatesLbl:'Classmates',
     myclassTeacher:'Teacher:', myclassSchedule:'Schedule:',
     myclassAttLbl:'Attendance rate', myclassEmptyTxt:'No course assigned yet',
-    myclassNoMates:'No classmates found.',
+    myclassNoMates:'No classmates found.', myclassJoinZoom:'Join class →',
 
     assignPageTitle:'Assignments', assignPageSub:'3 pending · 1 overdue · 2 submitted',
     tabAll:'All', tabPending:'Pending', tabDone:'Submitted',
@@ -1127,7 +1165,7 @@ const T = {
     quizPageTitle:'Quizzes', quizPageSub:'Test your knowledge with timed quizzes',
     progPageTitle:'Progress', progPageSub:'Track your learning journey module by module',
     overallTitle:'Overall progress', doneLbl:'done', hrsOf:'/ 29 hrs', courseSession:'General English · Session 2', onTrack:'On track 🎯',
-    scoresTitle:'Quiz scores', qGram:'Basic Grammar', qVoc:'Vocabulary Unit 2', qList:'Listening comprehension',
+    scoresTitle:'Assignment performance', progSubmitted:'assignments submitted', progGraded:'graded', progAvgScore:'Average score', progNoData:'No assignments yet.',
     modulesTitle:'Progress by module', m1:'Module 1 – Introduction', m2:'Module 2 – Grammar', m3:'Module 3 – Vocabulary', m4:'Module 4 – Speaking', m5:'Module 5 – Comprehension',
     howtoTitle:'How to use the platform?', howtoSub:'Watch these short videos to discover each feature.',
     howtoCards:[
@@ -1138,6 +1176,7 @@ const T = {
       { icon:'⚙️', from:'#64748b', to:'#475569', title:'Settings', desc:'Change your name, add a profile photo and choose your language.', btn:'Watch video' },
     ],
     settingsTitle:'Settings', profileTitle:'Profile', lblChangePhoto:'Change photo', settingsRole:'Student · General English S2', lblFullname:'Full name', saveBtn:'Save', prefTitle:'Preferences', prefTxt:'Use the language selector in the sidebar to switch between French and English.',
+    pwdCardTitle:'Change password', lblPwdCurrent:'Current password', lblPwdNew:'New password', lblPwdConfirm:'Confirm password', pwdBtn:'Change password', toastPwdChanged:'Password updated!',
     badgePending:'Pending', badgeSubmitted:'Submitted', badgeOverdue:'Overdue',
     startQuiz:'Start quiz', retakeQuiz:'Retake', doneLabel:'Completed',
     toastSaved:'Profile updated!',
@@ -1207,6 +1246,7 @@ function applyTranslations() {
   st('myclass-mates-lbl', tr.myclassMatesLbl);
   st('myclass-att-lbl', tr.myclassAttLbl);
   st('myclass-empty-txt', tr.myclassEmptyTxt);
+  st('myclass-zoom-lbl', tr.myclassJoinZoom);
 
 
 
@@ -1236,9 +1276,6 @@ function applyTranslations() {
   document.getElementById('course-session').textContent = tr.courseSession;
   document.getElementById('on-track').textContent = tr.onTrack;
   document.getElementById('scores-title').textContent = tr.scoresTitle;
-  document.getElementById('q-gram').textContent = tr.qGram;
-  document.getElementById('q-voc').textContent = tr.qVoc;
-  document.getElementById('q-list').textContent = tr.qList;
   document.getElementById('modules-title').textContent = tr.modulesTitle;
   document.getElementById('m1').textContent = tr.m1;
   document.getElementById('m2').textContent = tr.m2;
@@ -1258,6 +1295,11 @@ function applyTranslations() {
   st('pref-title', tr.prefTitle);
   st('pref-txt', tr.prefTxt);
   st('lbl-change-photo', tr.lblChangePhoto);
+  st('pwd-card-title', tr.pwdCardTitle);
+  st('lbl-pwd-current', tr.lblPwdCurrent);
+  st('lbl-pwd-new', tr.lblPwdNew);
+  st('lbl-pwd-confirm', tr.lblPwdConfirm);
+  st('pwd-btn-text', tr.pwdBtn);
   renderAssignments();
   renderQuizzes();
   renderStars();
@@ -1282,6 +1324,7 @@ function navigate(page, el) {
   if (page === 'quizzes')     renderQuizzes();
   if (page === 'myclass')     { renderMyClass(); loadMyGroup(); }
   if (page === 'feed')        loadFeed();
+  if (page === 'progress')    updateProgress();
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-backdrop').classList.remove('open');
@@ -1455,6 +1498,15 @@ function renderMyClass() {
       if (det) det.textContent = lang === 'ar'
         ? `${LIVE.att_present} / ${LIVE.att_total} جلسة`
         : `${LIVE.att_present} / ${LIVE.att_total} séances`;
+    }
+    // H9: Zoom link
+    const zoomWrap = document.getElementById('myclass-zoom-wrap');
+    const zoomLink = document.getElementById('myclass-zoom-link');
+    if (zoomWrap && c.zoom_url) {
+      zoomLink.href = c.zoom_url;
+      zoomWrap.style.display = '';
+    } else if (zoomWrap) {
+      zoomWrap.style.display = 'none';
     }
   } else {
     if (assignedEl) assignedEl.style.display = 'none';
@@ -1678,6 +1730,87 @@ async function saveProfile() {
   } finally {
     btnText.textContent = T[currentLang].saveBtn;
     document.getElementById('save-btn').disabled = false;
+  }
+}
+
+function updateProgress() {
+  const tr = T[currentLang];
+  const assignments = LIVE.assignments || [];
+  const total    = assignments.length;
+  const submitted = assignments.filter(a => a.status === 'submitted' || a.status === 'graded' || a.score !== null).length;
+  const graded    = assignments.filter(a => a.score !== null);
+  const pct       = total > 0 ? Math.round(submitted / total * 100) : 0;
+
+  // Update circle
+  const circumference = 238.76;
+  const offset = circumference * (1 - pct / 100);
+  const circle = document.getElementById('prog-circle');
+  if (circle) circle.setAttribute('stroke-dashoffset', offset.toFixed(1));
+  const pctEl = document.getElementById('prog-circle-pct');
+  if (pctEl) pctEl.textContent = pct + '%';
+
+  // Update assignment performance card
+  const statsEl = document.getElementById('progress-assign-stats');
+  if (!statsEl) return;
+  if (total === 0) {
+    statsEl.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${tr.progNoData}</p>`;
+    return;
+  }
+
+  // Submission rate bar
+  const subPct = pct;
+  const subColor = subPct >= 80 ? 'var(--green)' : subPct >= 50 ? 'var(--yellow)' : 'var(--red)';
+
+  // Average score
+  let avgHtml = '';
+  if (graded.length > 0) {
+    const avg = Math.round(graded.reduce((s, a) => s + Number(a.score), 0) / graded.length);
+    const avgColor = avg >= 70 ? 'var(--green)' : avg >= 50 ? 'var(--yellow)' : 'var(--red)';
+    avgHtml = `<div class="module-row" style="margin-top:.75rem;">
+      <div class="module-name">${tr.progAvgScore}</div>
+      <div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:${avg}%;background:${avgColor};"></div></div></div>
+      <div class="module-pct" style="color:${avgColor};">${avg}/100</div>
+    </div>`;
+  }
+
+  statsEl.innerHTML = `
+    <div class="module-row">
+      <div class="module-name">${submitted}/${total} ${tr.progSubmitted}</div>
+      <div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:${subPct}%;background:${subColor};"></div></div></div>
+      <div class="module-pct" style="color:${subColor};">${subPct}%</div>
+    </div>
+    ${graded.length > 0 ? `<div style="font-size:.75rem;color:var(--muted);margin:.4rem 0 0;">${graded.length} ${tr.progGraded}</div>` : ''}
+    ${avgHtml}`;
+}
+
+async function changePassword() {
+  const cur     = document.getElementById('pwd-current').value;
+  const nw      = document.getElementById('pwd-new').value;
+  const conf    = document.getElementById('pwd-confirm').value;
+  const errEl   = document.getElementById('pwd-error');
+  const btnText = document.getElementById('pwd-btn-text');
+  errEl.style.display = 'none';
+  if (!cur || !nw || !conf) { errEl.textContent = T[currentLang].serverError; errEl.style.display=''; return; }
+  btnText.textContent = '…';
+  document.getElementById('pwd-btn').disabled = true;
+  try {
+    const res  = await fetch('api_update_profile.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrf },
+      body: JSON.stringify({ action: 'change_password', current_password: cur, new_password: nw, confirm_password: conf })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || T[currentLang].serverError);
+    document.getElementById('pwd-current').value = '';
+    document.getElementById('pwd-new').value = '';
+    document.getElementById('pwd-confirm').value = '';
+    showToast(T[currentLang].toastPwdChanged);
+  } catch(err) {
+    errEl.textContent = err.message;
+    errEl.style.display = '';
+  } finally {
+    btnText.textContent = T[currentLang].pwdBtn;
+    document.getElementById('pwd-btn').disabled = false;
   }
 }
 

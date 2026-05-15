@@ -687,12 +687,40 @@ body.ar .notif-panel { right:auto; left:1rem; }
           <label id="lbl-fullname">Nom complet</label>
           <input type="text" id="pref-name" value="<?= htmlspecialchars($full_name) ?>">
         </div>
+        <div class="form-group" style="margin-top:.9rem;">
+          <label id="lbl-zoom-url">Lien Zoom (cours en ligne)</label>
+          <input type="url" id="zoom-url-input" placeholder="https://zoom.us/j/..." style="width:100%;padding:.8rem 1rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          <div style="font-size:.72rem;color:var(--muted);margin-top:.3rem;" id="lbl-zoom-hint">Ce lien sera affiché dans le tableau de bord de vos étudiants.</div>
+        </div>
         <button class="btn-primary" onclick="saveProfile()" id="save-btn">Enregistrer</button>
       </div>
       <div class="card">
         <div class="card-title" id="pref-title">Préférences</div>
         <p style="color:var(--muted);font-size:.85rem;line-height:1.6;" id="pref-txt">Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Arabe.</p>
       </div>
+    </div>
+
+    <!-- Password change card -->
+    <div class="card" style="margin-top:1.25rem;">
+      <div class="card-title" id="pwd-card-title">Changer le mot de passe</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:.9rem;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label id="lbl-pwd-current">Mot de passe actuel</label>
+          <input type="password" id="pwd-current" autocomplete="current-password">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label id="lbl-pwd-new">Nouveau mot de passe</label>
+          <input type="password" id="pwd-new" autocomplete="new-password">
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label id="lbl-pwd-confirm">Confirmer le mot de passe</label>
+          <input type="password" id="pwd-confirm" autocomplete="new-password">
+        </div>
+      </div>
+      <div id="pwd-error" style="display:none;color:var(--red);font-size:.82rem;margin-bottom:.6rem;"></div>
+      <button class="btn-primary" onclick="changePassword()" id="pwd-btn">
+        <span id="pwd-btn-text">Changer le mot de passe</span>
+      </button>
     </div>
   </div>
 </main>
@@ -974,6 +1002,8 @@ const T = {
     notifEmpty:'Aucune notification',
     settingsTitle:'Paramètres', profileTitle:'Profil professeur', settingsRole:'Professeur · Anglais Général',
     lblFullname:'Nom complet', saveBtn:'Enregistrer', prefTitle:'Préférences', prefTxt:"Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Anglais.",
+    lblZoomUrl:'Lien Zoom (cours en ligne)', lblZoomHint:'Ce lien sera affiché dans le tableau de bord de vos étudiants.',
+    pwdCardTitle:'Changer le mot de passe', lblPwdCurrent:'Mot de passe actuel', lblPwdNew:'Nouveau mot de passe', lblPwdConfirm:'Confirmer le mot de passe', pwdBtn:'Changer le mot de passe', toastPwdChanged:'Mot de passe mis à jour !',
     modalAssignTitle:'Nouveau devoir', mlblTitle:'Titre du devoir', mlblDesc:'Description', mlblDue:'Date limite', mlblSubject:'Matière', modalCancel:'Annuler', modalSubmit:'Publier',
     modalQuizTitle:'Créer un quiz', qmlblTitle:'Titre du quiz', qmlblQs:'Nombre de questions', qmlblTime:'Durée (min)', quizCancel:'Annuler', quizSubmit:'Créer',
     toastAssignPublished:'Devoir publié avec succès !', toastQuizCreated:'Quiz créé avec succès !', toastSaved:'Profil mis à jour !',
@@ -1049,6 +1079,8 @@ const T = {
     notifEmpty:'No notifications',
     settingsTitle:'Settings', profileTitle:'Teacher profile', settingsRole:'Teacher · General English',
     lblFullname:'Full name', saveBtn:'Save', prefTitle:'Preferences', prefTxt:'Use the language selector in the sidebar to switch between French and English.',
+    lblZoomUrl:'Zoom link (online class)', lblZoomHint:"This link will appear in your students' dashboard.",
+    pwdCardTitle:'Change password', lblPwdCurrent:'Current password', lblPwdNew:'New password', lblPwdConfirm:'Confirm password', pwdBtn:'Change password', toastPwdChanged:'Password updated!',
     modalAssignTitle:'New assignment', mlblTitle:'Assignment title', mlblDesc:'Description', mlblDue:'Due date', mlblSubject:'Subject', modalCancel:'Cancel', modalSubmit:'Publish',
     modalQuizTitle:'Create quiz', qmlblTitle:'Quiz title', qmlblQs:'Number of questions', qmlblTime:'Duration (min)', quizCancel:'Cancel', quizSubmit:'Create',
     toastAssignPublished:'Assignment published!', toastQuizCreated:'Quiz created!', toastSaved:'Profile updated!',
@@ -1139,6 +1171,8 @@ function applyTranslations() {
   set('gth-student', tr.gthStudent); set('gth-assign', tr.gthAssign); set('gth-score', tr.gthScore); set('gth-date', tr.gthDate);
   set('settings-title', tr.settingsTitle); set('profile-title', tr.profileTitle); set('settings-role', tr.settingsRole);
   set('lbl-fullname', tr.lblFullname); set('save-btn', tr.saveBtn); set('pref-title', tr.prefTitle); set('pref-txt', tr.prefTxt);
+  set('lbl-zoom-url', tr.lblZoomUrl); set('lbl-zoom-hint', tr.lblZoomHint);
+  set('pwd-card-title', tr.pwdCardTitle); set('lbl-pwd-current', tr.lblPwdCurrent); set('lbl-pwd-new', tr.lblPwdNew); set('lbl-pwd-confirm', tr.lblPwdConfirm); set('pwd-btn-text', tr.pwdBtn);
   set('modal-assign-title', tr.modalAssignTitle); set('mlbl-title', tr.mlblTitle); set('mlbl-desc', tr.mlblDesc); set('mlbl-due', tr.mlblDue); set('mlbl-subject', tr.mlblSubject);
   const lbl = document.getElementById('mlbl-course');
   if (lbl) lbl.innerHTML = T[currentLang].classLabel + ' <span style="color:var(--red)">*</span>';
@@ -1683,25 +1717,70 @@ function submitNewQuiz() {
 }
 
 async function saveProfile() {
-  const name = document.getElementById('pref-name').value.trim();
-  const btn  = document.getElementById('save-btn');
+  const name    = document.getElementById('pref-name').value.trim();
+  const zoomUrl = (document.getElementById('zoom-url-input')?.value || '').trim();
+  const btn     = document.getElementById('save-btn');
   if (!name) return;
+  if (btn) btn.textContent = '…';
   if (btn) btn.disabled = true;
   try {
-    const res  = await fetch('api_update_profile.php', {
+    const nameRes = await fetch('api_update_profile.php', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
       body:    JSON.stringify({ action: 'update_name', name })
     });
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || T[currentLang].toastServerError);
+    const nameData = await nameRes.json();
+    if (!nameData.ok) throw new Error(nameData.error || T[currentLang].toastServerError);
+
+    // Save Zoom URL (ignore errors silently — teacher may have no courses yet)
+    if (zoomUrl !== undefined) {
+      const zoomRes = await fetch('api_update_profile.php', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
+        body:    JSON.stringify({ action: 'set_zoom_url', zoom_url: zoomUrl })
+      });
+      const zoomData = await zoomRes.json();
+      if (!zoomData.ok && zoomUrl !== '') throw new Error(zoomData.error || T[currentLang].toastServerError);
+    }
+
     document.getElementById('sidebar-name').textContent = name;
     document.getElementById('settings-name').textContent = name;
     showToast(T[currentLang].toastSaved);
   } catch(e) {
     showToast(T[currentLang].toastErrorPrefix + e.message);
   } finally {
-    if (btn) btn.disabled = false;
+    if (btn) { btn.textContent = T[currentLang].saveBtn; btn.disabled = false; }
+  }
+}
+
+async function changePassword() {
+  const cur     = document.getElementById('pwd-current').value;
+  const nw      = document.getElementById('pwd-new').value;
+  const conf    = document.getElementById('pwd-confirm').value;
+  const errEl   = document.getElementById('pwd-error');
+  const btnText = document.getElementById('pwd-btn-text');
+  errEl.style.display = 'none';
+  if (!cur || !nw || !conf) { errEl.textContent = T[currentLang].toastServerError; errEl.style.display=''; return; }
+  btnText.textContent = '…';
+  document.getElementById('pwd-btn').disabled = true;
+  try {
+    const res  = await fetch('api_update_profile.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
+      body: JSON.stringify({ action: 'change_password', current_password: cur, new_password: nw, confirm_password: conf })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || T[currentLang].toastServerError);
+    document.getElementById('pwd-current').value = '';
+    document.getElementById('pwd-new').value = '';
+    document.getElementById('pwd-confirm').value = '';
+    showToast(T[currentLang].toastPwdChanged);
+  } catch(err) {
+    errEl.textContent = err.message;
+    errEl.style.display = '';
+  } finally {
+    btnText.textContent = T[currentLang].pwdBtn;
+    document.getElementById('pwd-btn').disabled = false;
   }
 }
 
@@ -2505,15 +2584,50 @@ async function loadActivityFeed() {
 /* ── NOTIFICATIONS ── */
 let notifPanelOpen = false;
 
+/* ── FOCUS TRAP UTILITY ── */
+function getFocusable(container) {
+  return Array.from(container.querySelectorAll(
+    'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'
+  )).filter(el => !el.closest('[hidden]') && el.offsetParent !== null);
+}
+function makeTrapHandler(containerEl, closeFn) {
+  return function(e) {
+    if (e.key === 'Escape') { e.preventDefault(); closeFn(); return; }
+    if (e.key !== 'Tab') return;
+    const focusable = getFocusable(containerEl);
+    if (focusable.length === 0) return;
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (e.shiftKey) {
+      if (document.activeElement === first) { e.preventDefault(); last.focus(); }
+    } else {
+      if (document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  };
+}
+let _notifTrapHandler = null;
+let _profileTrapHandler = null;
+
 function toggleNotifPanel() {
   notifPanelOpen = !notifPanelOpen;
-  document.getElementById('notif-panel').classList.toggle('open', notifPanelOpen);
-  if (notifPanelOpen) loadNotifications();
+  const panel = document.getElementById('notif-panel');
+  panel.classList.toggle('open', notifPanelOpen);
+  if (notifPanelOpen) {
+    loadNotifications();
+    if (!_notifTrapHandler) _notifTrapHandler = makeTrapHandler(panel, closeNotifPanel);
+    panel.addEventListener('keydown', _notifTrapHandler);
+    setTimeout(() => { const f = getFocusable(panel); if (f.length) f[0].focus(); }, 50);
+  } else {
+    if (_notifTrapHandler) panel.removeEventListener('keydown', _notifTrapHandler);
+    document.getElementById('notif-btn')?.focus();
+  }
 }
 
 function closeNotifPanel() {
   notifPanelOpen = false;
-  document.getElementById('notif-panel').classList.remove('open');
+  const panel = document.getElementById('notif-panel');
+  panel.classList.remove('open');
+  if (_notifTrapHandler) panel.removeEventListener('keydown', _notifTrapHandler);
+  document.getElementById('notif-btn')?.focus();
 }
 
 async function loadNotifBadge() {
@@ -2572,8 +2686,22 @@ let profileMenuOpen = false;
 function toggleProfileMenu(e) {
   e.stopPropagation();
   profileMenuOpen = !profileMenuOpen;
-  document.getElementById('profile-menu').classList.toggle('open', profileMenuOpen);
-  if (profileMenuOpen) applyProfileMenuTranslations();
+  const menu = document.getElementById('profile-menu');
+  menu.classList.toggle('open', profileMenuOpen);
+  if (profileMenuOpen) {
+    applyProfileMenuTranslations();
+    if (!_profileTrapHandler) _profileTrapHandler = makeTrapHandler(menu, () => {
+      profileMenuOpen = false;
+      menu.classList.remove('open');
+      if (_profileTrapHandler) menu.removeEventListener('keydown', _profileTrapHandler);
+      document.getElementById('topbar-avatar')?.focus();
+    });
+    menu.addEventListener('keydown', _profileTrapHandler);
+    setTimeout(() => { const f = getFocusable(menu); if (f.length) f[0].focus(); }, 50);
+  } else {
+    if (_profileTrapHandler) menu.removeEventListener('keydown', _profileTrapHandler);
+    document.getElementById('topbar-avatar')?.focus();
+  }
 }
 
 function applyProfileMenuTranslations() {

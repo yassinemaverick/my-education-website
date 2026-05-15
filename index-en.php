@@ -281,7 +281,21 @@ $t = [
   <div class="stat"><div class="stat-num">599<span> Dh</span></div><div class="stat-label">Per session</div></div>
   <div class="stat"><div class="stat-num">29<span>h</span></div><div class="stat-label">Hours of instruction</div></div>
   <div class="stat"><div class="stat-num">9–12</div><div class="stat-label">Students per class</div></div>
+  <div class="stat"><div class="stat-num" id="stat-student-count">—</div><div class="stat-label">Enrolled learners</div></div>
 </div>
+<script>
+(function(){
+  fetch('https://study.upskill-edu.com/api_public_stats.php')
+    .then(r => r.json())
+    .then(d => {
+      if (d.ok && d.display_count > 0) {
+        var el = document.getElementById('stat-student-count');
+        if (el) el.innerHTML = d.display_count + '<span>+</span>';
+      }
+    })
+    .catch(function(){});
+})();
+</script>
 
 <div class="photo-strip">
   <div class="photo-strip-inner">

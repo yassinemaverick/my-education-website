@@ -62,10 +62,15 @@ function migrateSchema(PDO $pdo): void {
         "ALTER TABLE assignment_submissions ADD COLUMN score           TINYINT UNSIGNED DEFAULT NULL",
         "ALTER TABLE assignment_submissions ADD COLUMN teacher_comment TEXT DEFAULT NULL",
         "ALTER TABLE assignment_submissions ADD COLUMN graded_at       TIMESTAMP NULL DEFAULT NULL",
+        // L9: enforce score range at DB level
+        "ALTER TABLE assignment_submissions ADD CONSTRAINT chk_score CHECK (score BETWEEN 0 AND 100)",
     ];
     foreach ($submissionMigrations as $sql) {
         try { $pdo->exec($sql); } catch(Throwable $e) {}
     }
+
+    // H9: Zoom link per group
+    try { $pdo->exec("ALTER TABLE courses ADD COLUMN zoom_url VARCHAR(500) DEFAULT NULL"); } catch(Throwable $e) {}
 
     // activity_log
     try {
