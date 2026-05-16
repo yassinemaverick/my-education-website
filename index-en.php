@@ -128,7 +128,7 @@ $t = [
   <p>Expert-led English courses designed for real results — whether you're building a career, acing your Baccalaureate, or simply leveling up.</p>
   <div class="hero-actions">
     <a href="#courses" class="btn-primary">Explore Courses</a>
-    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com" class="btn-outline">Student Portal →</a>
+    <a target="_blank" rel="noopener noreferrer" href="https://wa.me/212702099967" class="btn-outline">Chat on WhatsApp →</a>
   </div>
 </div>
 
@@ -156,7 +156,7 @@ $t = [
 <div class="photo-strip">
   <div class="photo-strip-header">
     <span class="section-label">Learning Reimagined</span>
-    <div class="section-title">Your classroom, anywhere in the world.</div>
+    <h2 class="section-title">Your classroom, anywhere in the world.</h2>
   </div>
   <div class="photos-track">
     <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
@@ -175,7 +175,7 @@ $t = [
 <section id="courses">
   <div class="courses-header">
     <div class="section-label">Our Programs</div>
-    <div class="section-title">Find the right<br>course for you.</div>
+    <h2 class="section-title">Find the right<br>course for you.</h2>
     <p class="section-sub">Three focused programs, each built around a specific goal. Select the one that matches where you're headed.</p>
   </div>
   <div class="courses-grid">
@@ -191,13 +191,12 @@ $t = [
       <hr class="course-divider">
       <div class="features-label">What's included</div>
       <ul class="course-features">
+        <li>Professional vocabulary for emails, meetings &amp; negotiations</li>
+        <li>Presentation skills and workplace speaking confidence</li>
+        <li>Industry-specific language for your sector</li>
         <li>~29 hours of instruction (two 1.5-hour sessions per week)</li>
-        <li>Communication courses focused on speaking skills</li>
-        <li>Highly qualified teachers</li>
-        <li>9 to 12 students per class</li>
-        <li>Learn anywhere — no need to travel to a center</li>
+        <li>9 to 12 students per class — live Zoom sessions</li>
         <li>Exercises, homework, and tests</li>
-        <li>Competitions &amp; challenges</li>
         <li>Certificate upon completion</li>
       </ul>
       <div class="course-tags"><span class="tag">Corporate Communication</span><span class="tag">Presentations</span><span class="tag">Writing</span><span class="tag">Negotiation</span></div>
@@ -214,13 +213,12 @@ $t = [
       <hr class="course-divider">
       <div class="features-label">What's included</div>
       <ul class="course-features">
+        <li>All four skills: speaking, listening, reading &amp; writing</li>
+        <li>Grammar drills and practical vocabulary expansion</li>
+        <li>Conversational practice for everyday real-life situations</li>
         <li>~29 hours of instruction (two 1.5-hour sessions per week)</li>
-        <li>Communication courses focused on speaking skills</li>
-        <li>Highly qualified teachers</li>
-        <li>9 to 12 students per class</li>
-        <li>Learn anywhere — no need to travel to a center</li>
+        <li>9 to 12 students per class — live Zoom sessions</li>
         <li>Exercises, homework, and tests</li>
-        <li>Competitions &amp; challenges</li>
         <li>Certificate upon completion</li>
       </ul>
       <div class="course-tags"><span class="tag">All Levels</span><span class="tag">Speaking</span><span class="tag">Grammar</span><span class="tag">Vocabulary</span></div>
@@ -237,13 +235,12 @@ $t = [
       <hr class="course-divider">
       <div class="features-label">What's included</div>
       <ul class="course-features">
+        <li>Real past Bac papers with timed practice exams</li>
+        <li>Essay writing techniques for the national exam format</li>
+        <li>Oral comprehension and expression coaching</li>
         <li>~29 hours of instruction (two 1.5-hour sessions per week)</li>
-        <li>Communication courses focused on speaking skills</li>
-        <li>Highly qualified teachers</li>
-        <li>9 to 12 students per class</li>
-        <li>Learn anywhere — no need to travel to a center</li>
+        <li>9 to 12 students per class — live Zoom sessions</li>
         <li>Exercises, homework, and tests</li>
-        <li>Competitions &amp; challenges</li>
         <li>Certificate upon completion</li>
       </ul>
       <div class="course-tags"><span class="tag">Exam Prep</span><span class="tag">Past Papers</span><span class="tag">Oral Practice</span><span class="tag">Writing</span></div>
@@ -255,7 +252,7 @@ $t = [
 <section id="how" style="background: var(--navy-mid); max-width: 100%; padding: 6rem 2rem;">
   <div style="max-width: 1100px; margin: 0 auto;">
     <div class="section-label text-center" style="text-align:center;">The Process</div>
-    <div class="section-title text-center" style="text-align:center;">How it works</div>
+    <h2 class="section-title text-center" style="text-align:center;">How it works</h2>
     <p class="section-sub" style="margin: 0 auto; text-align:center;">From sign-up to fluency — here's your journey.</p>
     <div class="steps">
       <div class="step"><div class="step-num">01</div><h3>Choose your course</h3><p>Browse our three programs and select the one that fits your goals and current level.</p></div>
@@ -270,7 +267,7 @@ $t = [
 <div class="testimonials">
   <div class="testimonials-inner">
     <div class="section-label text-center" style="text-align:center;">What Our Students Say</div>
-    <div class="section-title text-center" style="text-align:center;">Real results, real people.</div>
+    <h2 class="section-title text-center" style="text-align:center;">Real results, real people.</h2>
     <div class="testimonials-grid">
       <div class="testimonial-card">
         <div class="testimonial-header">
@@ -315,7 +312,7 @@ $t = [
 <div class="enroll-section" id="enroll">
   <div class="enroll-inner">
     <div class="section-label text-center" style="text-align:center;">Enrollment</div>
-    <div class="section-title text-center" style="text-align:center;">Ready to start?</div>
+    <h2 class="section-title text-center" style="text-align:center;">Ready to start?</h2>
     <p class="section-sub" style="margin:0 auto;text-align:center;">Fill in your details and we'll be in touch within 24 hours to confirm your place.</p>
     <div class="form-card">
       <div id="form-area">
@@ -335,6 +332,16 @@ $t = [
         <div class="form-group">
           <label for="name">FULL NAME</label>
           <input type="text" id="name" placeholder="Your full name" required>
+        </div>
+        <div class="form-group">
+          <label for="level">CURRENT LEVEL</label>
+          <select id="level" required>
+            <option value="">— Select your level —</option>
+            <option value="Beginner">Beginner — little or no English</option>
+            <option value="Elementary">Elementary — basic phrases and vocabulary</option>
+            <option value="Intermediate">Intermediate — can hold simple conversations</option>
+            <option value="Advanced">Advanced — fluent but refining skills</option>
+          </select>
         </div>
         <div class="form-grid">
           <div class="form-group">
@@ -371,7 +378,7 @@ $t = [
       <div class="footer-links">
         <a href="#courses">Courses</a>
         <a href="#enroll">Enroll now</a>
-        <a href="#how-it-works">How it works</a>
+        <a href="#how">How it works</a>
         <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com">Student Portal</a>
         <a href="#" onclick="openContact();return false;">Contact us</a>
       </div>
@@ -399,8 +406,8 @@ $t = [
     <div class="footer-copy">&copy; 2026 Upskill Education &middot; upskill-edu.com &middot; All rights reserved.</div>
     <!-- TODO: add real social links -->
     <div class="footer-social">
-      <a href="#" aria-label="Facebook" title="Facebook">f</a>
-      <a href="#" aria-label="Instagram" title="Instagram">ig</a>
+      <a href="#" aria-label="Facebook" title="Facebook"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+      <a href="#" aria-label="Instagram" title="Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
       <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.656 1.438 5.168L2 22l4.975-1.395A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm5.093 13.677c-.22.616-1.287 1.174-1.762 1.214-.476.04-.923.214-3.1-.648-2.606-1.038-4.267-3.7-4.396-3.872-.128-.172-1.053-1.402-1.053-2.676 0-1.273.665-1.9.9-2.16.236-.258.516-.322.687-.322.172 0 .344.002.494.008.159.006.37-.06.58.458.215.518.731 1.79.795 1.921.064.13.107.282.021.452-.086.172-.13.28-.258.43-.13.15-.272.337-.386.45-.13.13-.264.27-.113.527.15.258.666 1.098 1.43 1.778.982.874 1.815 1.143 2.072 1.273.257.13.408.108.558-.065.15-.172.63-.737.797-.99.168-.257.336-.215.565-.13.23.086 1.452.685 1.702.81.25.128.416.192.479.3.063.107.063.579-.157 1.2z"/></svg>
       </a>
@@ -447,9 +454,11 @@ $t = [
     const email  = document.getElementById('email').value.trim();
     const phone  = document.getElementById('phone').value.trim();
     const course = document.getElementById('course-select').value;
+    const level  = document.getElementById('level').value;
 
     if (!course) { showToast('Please select a course first.'); return; }
     if (!name)   { showToast('Please enter your full name.'); return; }
+    if (!level)  { showToast('Please select your current level.'); return; }
     if (!email || !email.includes('@')) { showToast('Please enter a valid email address.'); return; }
     if (!phone)  { showToast('Please enter your phone number.'); return; }
 
@@ -458,7 +467,7 @@ $t = [
     btn.textContent = 'Sending…';
 
     try {
-      const body = new URLSearchParams({ csrf_token: CSRF_TOKEN, name, email, phone, course, lang: 'en' });
+      const body = new URLSearchParams({ csrf_token: CSRF_TOKEN, name, email, phone, course, level, lang: 'en' });
       const res  = await fetch('/enroll.php', { method: 'POST', body });
       const data = await res.json();
 

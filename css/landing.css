@@ -6,6 +6,7 @@
   --white: #ffffff; --muted: rgba(255,255,255,0.55);
   --border: rgba(255,255,255,0.1); --card-bg: rgba(255,255,255,0.04);
   --font: 'Sora', sans-serif; --font-body: 'DM Sans', sans-serif;
+  --muted2: rgba(255,255,255,0.4);
 }
 html { scroll-behavior: smooth; scroll-padding-top: 80px; overflow-x: hidden; }
 body { background: var(--navy); color: var(--white); font-family: var(--font-body); min-height: 100vh; }
@@ -35,10 +36,10 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 @keyframes heroPulse {
   0%   { opacity:1;    filter:brightness(1); }
-  18%  { opacity:0.45; filter:brightness(0.8); }
-  36%  { opacity:0.85; filter:brightness(1.1); }
-  55%  { opacity:0.38; filter:brightness(0.75); }
-  74%  { opacity:0.78; filter:brightness(1.05); }
+  18%  { opacity:0.92; filter:brightness(1.02); }
+  36%  { opacity:0.97; filter:brightness(1.04); }
+  55%  { opacity:0.88; filter:brightness(0.98); }
+  74%  { opacity:0.95; filter:brightness(1.02); }
   100% { opacity:1;    filter:brightness(1); }
 }
 .hero h1 { font-family: var(--font); font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; max-width: 800px; margin-bottom: 1.5rem; animation: heroPulse 4.5s ease-in-out infinite; }
@@ -176,3 +177,4 @@ footer { border-top: 1px solid var(--border); background: var(--navy-mid); paddi
 .testimonial-stars { color: #f59e0b; font-size: 0.85rem; letter-spacing: 2px; }
 .testimonial-quote { font-size: 2.4rem; color: #3ecf78; font-family: Georgia, serif; line-height: 0.85; margin-bottom: -0.3rem; opacity: 0.55; }
 .testimonial-text { color: #374151; font-size: 0.93rem; line-height: 1.75; font-style: italic; }
+@media (prefers-reduced-motion: reduce) { .hero h1 { animation: none; } }
