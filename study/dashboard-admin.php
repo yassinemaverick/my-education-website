@@ -284,6 +284,39 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 @media(max-width:480px){
   .grid-2,.grid-3,.grid-4 { grid-template-columns:1fr; }
 }
+
+/* ── PAGE-SECTION HELPERS ── */
+.page-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem; }
+.page-h2  { font-family:var(--font); font-size:1.4rem; font-weight:700; }
+.page-sub { color:var(--muted); font-size:.85rem; margin-top:.2rem; }
+
+/* ── TABLE HELPERS ── */
+.card-flush { padding:0 !important; overflow:hidden; }
+.tbl-scroll { overflow-x:auto; }
+.tbl-full   { width:100%; border-collapse:collapse; }
+.tr-sep     { border-bottom:1px solid var(--border); }
+.th-col    { padding:.9rem 1.2rem; text-align:left; font-family:var(--font); font-size:.72rem; font-weight:600; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; }
+.th-col-sm { padding:.75rem 1.2rem; text-align:left; font-family:var(--font); font-size:.7rem; font-weight:600; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; }
+.td-empty  { padding:2rem; text-align:center; color:var(--muted); }
+
+/* ── 2FA LINK ── */
+.totp-link   { display:flex; align-items:center; gap:.75rem; padding:.8rem 1rem; background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:12px; text-decoration:none; color:var(--white); transition:border-color .2s,background .2s; }
+.totp-link:hover { border-color:rgba(251,146,60,.4); background:rgba(251,146,60,.06); }
+.totp-icon   { width:36px; height:36px; border-radius:10px; background:rgba(251,146,60,.1); border:1px solid rgba(251,146,60,.25); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+.totp-chev   { margin-left:auto; flex-shrink:0; color:var(--muted); }
+.totp-title  { font-family:var(--font); font-size:.87rem; font-weight:600; }
+.totp-sub    { color:var(--muted); font-size:.75rem; margin-top:.1rem; }
+
+/* SEARCH BOX (standalone, outside .form-group) */
+.search-box  { width:100%; padding:.75rem 1rem; background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:10px; color:var(--white); font-family:var(--font-body); font-size:.88rem; outline:none; }
+.search-box:focus { border-color:var(--orange); }
+
+/* CARD HEADER ROW (assigning-table card tops) */
+.card-hdr { padding:1.25rem 1.4rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.6rem; }
+
+/* MODAL SIZE MODIFIERS */
+.modal.md { max-width:480px; }
+.modal.lg { max-width:600px; }
 </style>
 <style id="lang-hide">body{visibility:hidden}</style>
 </head>
@@ -396,10 +429,10 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 
   <!-- ── USERS PAGE ── -->
   <div class="page" id="page-users">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+    <div class="page-hdr">
       <div>
-        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="users-page-title">Gestion des utilisateurs</h2>
-        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="users-page-sub">Gérez les emails et mots de passe des étudiants et professeurs</p>
+        <h2 class="page-h2" id="users-page-title">Gestion des utilisateurs</h2>
+        <p class="page-sub" id="users-page-sub">Gérez les emails et mots de passe des étudiants et professeurs</p>
       </div>
       <button class="btn-primary" onclick="openAddUserModal()" id="btn-add-user">
         + <span id="btn-add-user-lbl">Nouvel utilisateur</span>
@@ -413,25 +446,24 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     </div>
     <!-- Search -->
     <div style="margin-bottom:1rem;">
-      <input type="text" id="users-search" placeholder="Rechercher par nom ou email…"
-        oninput="renderUsersTable()"
-        style="width:100%;max-width:380px;padding:.75rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;">
+      <input type="text" id="users-search" class="search-box" style="max-width:380px;"
+        placeholder="Rechercher par nom ou email…" oninput="renderUsersTable()">
     </div>
     <!-- Table -->
-    <div class="card" style="padding:0;overflow:hidden;">
-      <div style="overflow-x:auto;">
-        <table id="users-table" style="width:100%;border-collapse:collapse;">
+    <div class="card card-flush">
+      <div class="tbl-scroll">
+        <table id="users-table" class="tbl-full">
           <thead>
-            <tr style="border-bottom:1px solid var(--border);">
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="th-name">Nom</th>
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="th-user">Identifiant</th>
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="th-email">Email</th>
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="th-role">Rôle</th>
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="th-actions">Actions</th>
+            <tr class="tr-sep">
+              <th class="th-col" id="th-name">Nom</th>
+              <th class="th-col" id="th-user">Identifiant</th>
+              <th class="th-col" id="th-email">Email</th>
+              <th class="th-col" id="th-role">Rôle</th>
+              <th class="th-col" id="th-actions">Actions</th>
             </tr>
           </thead>
           <tbody id="users-tbody">
-            <tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--muted);">
+            <tr><td colspan="5" class="td-empty">
               <div class="spinner" style="margin:0 auto;"></div>
             </td></tr>
           </tbody>
@@ -442,10 +474,10 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 
   <!-- ── INSCRIPTIONS PAGE ── -->
   <div class="page" id="page-inscriptions">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+    <div class="page-hdr">
       <div>
-        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="inscriptions-title">Inscriptions</h2>
-        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="inscriptions-sub">Demandes reçues depuis le formulaire d'inscription</p>
+        <h2 class="page-h2" id="inscriptions-title">Inscriptions</h2>
+        <p class="page-sub" id="inscriptions-sub">Demandes reçues depuis le formulaire d'inscription</p>
       </div>
       <button class="btn-secondary btn-sm" onclick="exportEnrollmentsCSV()" id="btn-export-csv" style="display:flex;align-items:center;gap:.4rem;">
         ⬇ <span id="export-csv-lbl">Exporter CSV</span>
@@ -462,26 +494,26 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 
     <!-- Search -->
     <div style="margin-bottom:1rem;">
-      <input type="text" id="enroll-search" placeholder="Rechercher par nom, email, téléphone…" oninput="debounceEnrollSearch()"
-        style="width:100%;max-width:360px;padding:.65rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.85rem;outline:none;">
+      <input type="text" id="enroll-search" class="search-box" style="max-width:360px;"
+        placeholder="Rechercher par nom, email, téléphone…" oninput="debounceEnrollSearch()">
     </div>
 
     <!-- Table -->
-    <div class="card" style="padding:0;overflow:hidden;">
-      <div style="overflow-x:auto;">
-        <table style="width:100%;border-collapse:collapse;">
+    <div class="card card-flush">
+      <div class="tbl-scroll">
+        <table class="tbl-full">
           <thead>
-            <tr style="border-bottom:1px solid var(--border);">
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="eth-name">Nom</th>
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="eth-email">Email</th>
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="eth-phone">Téléphone</th>
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="eth-date">Date</th>
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="eth-status">Statut</th>
-              <th style="padding:.9rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;"></th>
+            <tr class="tr-sep">
+              <th class="th-col" id="eth-name">Nom</th>
+              <th class="th-col" id="eth-email">Email</th>
+              <th class="th-col" id="eth-phone">Téléphone</th>
+              <th class="th-col" id="eth-date">Date</th>
+              <th class="th-col" id="eth-status">Statut</th>
+              <th class="th-col"></th>
             </tr>
           </thead>
           <tbody id="enrollments-tbody">
-            <tr><td colspan="6" style="padding:2.5rem;text-align:center;color:var(--muted);">
+            <tr><td colspan="6" class="td-empty">
               <div class="spinner" style="margin:0 auto;"></div>
             </td></tr>
           </tbody>
@@ -496,10 +528,10 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     <div id="classes-breadcrumb" class="breadcrumb" style="display:none;"></div>
 
     <!-- Header -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+    <div class="page-hdr">
       <div>
-        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="classes-page-title">Classes</h2>
-        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="classes-page-sub">Sélectionnez un type de classe</p>
+        <h2 class="page-h2" id="classes-page-title">Classes</h2>
+        <p class="page-sub" id="classes-page-sub">Sélectionnez un type de classe</p>
       </div>
       <button class="btn-primary" id="btn-add-group" style="display:none;" onclick="openAddGroupModal()">
         + <span id="btn-add-group-lbl">Ajouter un groupe</span>
@@ -535,49 +567,49 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 
   <!-- ── ASSIGNING CLASSES PAGE ── -->
   <div class="page" id="page-assigning-classes">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+    <div class="page-hdr">
       <div>
-        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="assigning-page-title">Assignation des classes</h2>
-        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="assigning-page-sub">Aperçu des groupes assignés aux étudiants et professeurs</p>
+        <h2 class="page-h2" id="assigning-page-title">Assignation des classes</h2>
+        <p class="page-sub" id="assigning-page-sub">Aperçu des groupes assignés aux étudiants et professeurs</p>
       </div>
     </div>
     <div class="grid-2" style="gap:1.5rem;">
       <!-- Students -->
-      <div class="card" style="padding:0;overflow:hidden;">
-        <div style="padding:1.25rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem;">
+      <div class="card card-flush">
+        <div class="card-hdr">
           <span style="font-size:1.1rem;">🎓</span>
           <span class="card-title" style="margin-bottom:0;" id="assigning-students-title">Étudiants</span>
         </div>
-        <div style="overflow-x:auto;">
-          <table style="width:100%;border-collapse:collapse;" id="assigning-students-table">
+        <div class="tbl-scroll">
+          <table class="tbl-full" id="assigning-students-table">
             <thead>
-              <tr style="border-bottom:1px solid var(--border);">
-                <th style="padding:.75rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="ath-student">Étudiant</th>
-                <th style="padding:.75rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="ath-group">Groupe(s)</th>
+              <tr class="tr-sep">
+                <th class="th-col-sm" id="ath-student">Étudiant</th>
+                <th class="th-col-sm" id="ath-group">Groupe(s)</th>
               </tr>
             </thead>
             <tbody id="assigning-students-tbody">
-              <tr><td colspan="2" style="padding:2rem;text-align:center;color:var(--muted);"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+              <tr><td colspan="2" class="td-empty"><div class="spinner" style="margin:0 auto;"></div></td></tr>
             </tbody>
           </table>
         </div>
       </div>
       <!-- Teachers -->
-      <div class="card" style="padding:0;overflow:hidden;">
-        <div style="padding:1.25rem 1.4rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem;">
+      <div class="card card-flush">
+        <div class="card-hdr">
           <span style="font-size:1.1rem;">👨‍🏫</span>
           <span class="card-title" style="margin-bottom:0;" id="assigning-teachers-title">Professeurs</span>
         </div>
-        <div style="overflow-x:auto;">
-          <table style="width:100%;border-collapse:collapse;" id="assigning-teachers-table">
+        <div class="tbl-scroll">
+          <table class="tbl-full" id="assigning-teachers-table">
             <thead>
-              <tr style="border-bottom:1px solid var(--border);">
-                <th style="padding:.75rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="ath-teacher">Professeur</th>
-                <th style="padding:.75rem 1.2rem;text-align:left;font-family:var(--font);font-size:.7rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;" id="ath-teacher-group">Groupe(s)</th>
+              <tr class="tr-sep">
+                <th class="th-col-sm" id="ath-teacher">Professeur</th>
+                <th class="th-col-sm" id="ath-teacher-group">Groupe(s)</th>
               </tr>
             </thead>
             <tbody id="assigning-teachers-tbody">
-              <tr><td colspan="2" style="padding:2rem;text-align:center;color:var(--muted);"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+              <tr><td colspan="2" class="td-empty"><div class="spinner" style="margin:0 auto;"></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -587,10 +619,10 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 
   <!-- ── SCHEDULE PAGE ── -->
   <div class="page" id="page-schedule">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+    <div class="page-hdr">
       <div>
-        <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="schedule-page-title">Horaires des groupes</h2>
-        <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="schedule-page-sub">Définissez les jours et horaires de sessions pour chaque groupe</p>
+        <h2 class="page-h2" id="schedule-page-title">Horaires des groupes</h2>
+        <p class="page-sub" id="schedule-page-sub">Définissez les jours et horaires de sessions pour chaque groupe</p>
       </div>
     </div>
     <div id="schedule-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem;">
@@ -603,8 +635,8 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   <!-- ── ANNOUNCEMENTS PAGE ── -->
   <div class="page" id="page-announcements">
     <div style="margin-bottom:1.5rem;">
-      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="ann-page-title">Annonces</h2>
-      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="ann-page-sub">Envoyez des annonces à vos étudiants et professeurs</p>
+      <h2 class="page-h2" id="ann-page-title">Annonces</h2>
+      <p class="page-sub" id="ann-page-sub">Envoyez des annonces à vos étudiants et professeurs</p>
     </div>
     <div class="grid-2" style="align-items:start;">
       <!-- Compose -->
@@ -612,18 +644,15 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
         <div class="card-title" id="ann-compose-title">Nouvelle annonce</div>
         <div class="form-group" style="margin-top:1rem;">
           <label id="ann-lbl-title">Titre</label>
-          <input type="text" id="ann-title-input" placeholder="Ex: Rappel – pas de cours vendredi" maxlength="200"
-            style="width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;box-sizing:border-box;">
+          <input type="text" id="ann-title-input" placeholder="Ex: Rappel – pas de cours vendredi" maxlength="200">
         </div>
         <div class="form-group">
           <label id="ann-lbl-body">Message</label>
-          <textarea id="ann-body-input" rows="4" maxlength="2000" placeholder="Écrivez votre message…"
-            style="width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+          <textarea id="ann-body-input" rows="4" maxlength="2000" placeholder="Écrivez votre message…"></textarea>
         </div>
         <div class="form-group">
           <label id="ann-lbl-target">Destinataires</label>
-          <select id="ann-target-select"
-            style="width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;">
+          <select id="ann-target-select">
             <option value="all" id="ann-opt-all">Tout le monde</option>
             <option value="students" id="ann-opt-students">Étudiants seulement</option>
             <option value="teachers" id="ann-opt-teachers">Professeurs seulement</option>
@@ -647,7 +676,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   <!-- ── SETTINGS PAGE ── -->
   <div class="page" id="page-settings">
     <div style="margin-bottom:1.5rem;">
-      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="settings-title">Paramètres</h2>
+      <h2 class="page-h2" id="settings-title">Paramètres</h2>
     </div>
     <div class="grid-2">
       <div class="card">
@@ -669,14 +698,14 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
         <div class="card-title" id="pref-title">Préférences</div>
         <p style="color:var(--muted);font-size:.85rem;line-height:1.6;" id="pref-txt">Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Arabe.</p>
         <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border);">
-          <div style="font-family:var(--font);font-size:.78rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.75rem;" id="security-label">Sécurité</div>
-          <a href="totp_setup.php" style="display:flex;align-items:center;gap:.75rem;padding:.8rem 1rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--white);transition:.2s;" onmouseenter="this.style.borderColor='rgba(251,146,60,.4)';this.style.background='rgba(251,146,60,.06)'" onmouseleave="this.style.borderColor='var(--border)';this.style.background='rgba(255,255,255,.04)'">
-            <div style="width:36px;height:36px;border-radius:10px;background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.25);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">🔐</div>
+          <div class="card-title" style="margin-bottom:.75rem;" id="security-label">Sécurité</div>
+          <a href="totp_setup.php" class="totp-link">
+            <div class="totp-icon">🔐</div>
             <div>
-              <div style="font-family:var(--font);font-size:.87rem;font-weight:600;" id="2fa-link-title">Double authentification (2FA)</div>
-              <div style="color:var(--muted);font-size:.75rem;margin-top:.1rem;" id="2fa-link-sub">Configurer Google Authenticator ou Authy</div>
+              <div class="totp-title" id="2fa-link-title">Double authentification (2FA)</div>
+              <div class="totp-sub" id="2fa-link-sub">Configurer Google Authenticator ou Authy</div>
             </div>
-            <svg style="margin-left:auto;flex-shrink:0;color:var(--muted);" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            <svg class="totp-chev" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
           </a>
         </div>
       </div>
@@ -686,7 +715,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 
 <!-- ── MODAL: ADD USER ── -->
 <div class="modal-overlay" id="modal-add-user">
-  <div class="modal" style="max-width:480px;">
+  <div class="modal md">
     <div class="modal-header">
       <h3 id="modal-add-user-title">Nouvel utilisateur</h3>
       <button class="modal-close" onclick="closeModal('add-user')" aria-label="Close">✕</button>
@@ -706,7 +735,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
       </div>
       <div class="form-group">
         <label id="lbl-au-role">Rôle</label>
-        <select id="au-role" style="width:100%;padding:.8rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.9rem;outline:none;">
+        <select id="au-role">
           <option value="student" id="au-role-student">Étudiant</option>
           <option value="teacher" id="au-role-teacher">Professeur</option>
         </select>
@@ -727,7 +756,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 
 <!-- ── MODAL: RESET PASSWORD ── -->
 <div class="modal-overlay" id="modal-reset-pw">
-  <div class="modal" style="max-width:420px;">
+  <div class="modal md">
     <div class="modal-header">
       <h3 id="modal-reset-title">Réinitialiser le mot de passe</h3>
       <button class="modal-close" onclick="closeModal('reset-pw')" aria-label="Close">✕</button>
@@ -774,7 +803,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 
 <!-- ── MODAL: MANAGE GROUP MEMBERS ── -->
 <div class="modal-overlay" id="modal-group-members">
-  <div class="modal" style="max-width:600px;">
+  <div class="modal lg">
     <div class="modal-header">
       <h3 id="modal-members-title">Membres du groupe</h3>
       <button class="btn-close" onclick="closeModal('group-members')" aria-label="Close">✕</button>
@@ -1239,7 +1268,7 @@ async function loadUsers() {
   } catch(e) {
     const tbody = document.getElementById('users-tbody');
     const loadErrMsg = currentLang==='en'?'Loading error':currentLang==='ar'?'خطأ في التحميل':'Erreur de chargement';
-    if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--muted);">${loadErrMsg}</td></tr>`;
+    if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="td-empty">${loadErrMsg}</td></tr>`;
   }
 }
 
@@ -1266,7 +1295,7 @@ function renderUsersTable() {
   });
 
   if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--muted);">'
+    tbody.innerHTML = '<tr><td colspan="5" class="td-empty">'
       + (lang==='en' ? 'No users found' : lang==='ar' ? 'لا توجد نتائج' : 'Aucun utilisateur trouvé') + '</td></tr>';
     return;
   }
@@ -1518,7 +1547,7 @@ function renderEnrollmentsTable() {
   // All tabs now use enrollmentsData (enrollment form submissions)
   if (!enrollmentsData.length) {
     const noReqMsg = currentLang==='en' ? 'No requests found.' : currentLang==='ar' ? 'لم يُعثر على أي طلب.' : 'Aucune demande trouvée.';
-    tbody.innerHTML = `<tr><td colspan="6" style="padding:2.5rem;text-align:center;color:var(--muted);">${noReqMsg}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="td-empty">${noReqMsg}</td></tr>`;
     return;
   }
   const statusConfig = {
