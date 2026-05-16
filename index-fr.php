@@ -345,6 +345,7 @@ $t = [
             <option value="Elementary">Élémentaire — expressions et vocabulaire de base</option>
             <option value="Intermediate">Intermédiaire — conversations simples possibles</option>
             <option value="Advanced">Avancé — courant mais perfectionnement souhaité</option>
+            <option value="Baccalaureate Student">Étudiant(e) en Baccalauréat</option>
           </select>
         </div>
         <div class="form-grid">

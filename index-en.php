@@ -345,6 +345,7 @@ $t = [
             <option value="Elementary">Elementary — basic phrases and vocabulary</option>
             <option value="Intermediate">Intermediate — can hold simple conversations</option>
             <option value="Advanced">Advanced — fluent but refining skills</option>
+            <option value="Baccalaureate Student">Baccalaureate student</option>
           </select>
         </div>
         <div class="form-grid">
