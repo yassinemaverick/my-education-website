@@ -1067,6 +1067,13 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
           onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'"></textarea>
         <div style="text-align:right;font-size:.73rem;color:var(--muted);margin-top:.3rem;"><span id="submit-char-count">0</span>/2000</div>
       </div>
+      <div class="form-group" style="margin-top:1rem;">
+        <label for="submit-file" style="display:block;font-family:var(--font);font-size:.73rem;font-weight:600;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.45rem;" id="submit-file-lbl">File (optional)</label>
+        <input type="file" id="submit-file"
+          accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.jpg,.jpeg,.png,.gif,.zip,.mp3,.mp4"
+          style="width:100%;padding:.6rem .8rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--muted);font-family:var(--font-body);font-size:.84rem;outline:none;cursor:pointer;">
+        <div style="font-size:.72rem;color:var(--muted2);margin-top:.3rem;" id="submit-file-hint">Max 10 MB — PDF, Word, Excel, images, ZIP</div>
+      </div>
       <div id="submit-error" style="display:none;color:#f87171;font-size:.85rem;margin-bottom:.5rem;"></div>
       <input type="hidden" id="submit-assign-id">
     </div>
@@ -2116,6 +2123,10 @@ function openSubmitModal(assignId, title, due) {
   if (cancelBtn) cancelBtn.textContent = T[currentLang].cancelBtn;
   const commentInput = document.getElementById('submit-comment');
   if (commentInput) commentInput.placeholder = currentLang === 'fr' ? 'Décrivez votre travail, ajoutez des notes pour le professeur…' : currentLang === 'ar' ? 'صف عملك، أضف ملاحظات للأستاذ…' : 'Describe your work, add notes for the teacher…';
+  const fileLbl = document.getElementById('submit-file-lbl');
+  if (fileLbl) fileLbl.textContent = currentLang === 'fr' ? 'Fichier (optionnel)' : currentLang === 'ar' ? 'ملف (اختياري)' : 'File (optional)';
+  const fileInput = document.getElementById('submit-file');
+  if (fileInput) fileInput.value = '';
   document.getElementById('modal-submit').classList.add('open');
   document.getElementById('submit-comment').focus();
 }
@@ -2145,10 +2156,16 @@ async function confirmSubmit() {
   btn.disabled = true;
 
   try {
+    const fd = new FormData();
+    fd.append('assignment_id', aid);
+    fd.append('comment', comment);
+    const fileEl = document.getElementById('submit-file');
+    if (fileEl && fileEl.files[0]) fd.append('file', fileEl.files[0]);
+
     const res = await fetch('api_submit.php?action=submit', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrf },
-      body: JSON.stringify({ assignment_id: parseInt(aid), comment })
+      headers: { 'X-CSRF-Token': _csrf },
+      body: fd
     });
     const data = await res.json();
 

@@ -1521,11 +1521,14 @@ function renderSubmissions(submissions) {
     const date = new Date(s.submitted_at).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
     const scoreBadge = s.score!=null ? `<span style="background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:100px;font-family:var(--font);">📊 ${s.score}/100</span>` : '';
     const fbBlock = s.teacher_comment ? `<div style="margin-top:.4rem;padding:.5rem .75rem;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:8px;font-size:.8rem;"><strong style="color:var(--purple);font-size:.72rem;display:block;margin-bottom:.2rem;">${tr2.yourComment}</strong>${escHtml(s.teacher_comment)}</div>` : '';
+    const fileName = s.file_path ? s.file_path.split('/').pop() : '';
+    const fileLink = s.file_path ? `<div style="margin-top:.4rem;"><a href="${escHtml(s.file_path)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--blue);text-decoration:none;font-family:var(--font);font-weight:600;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">📎 ${escHtml(fileName)}</a></div>` : '';
     return `<div style="display:flex;align-items:flex-start;gap:.85rem;padding:1.1rem 0;border-bottom:1px solid var(--border2);" id="sub-row-${s.id}">
       <div style="width:32px;height:32px;border-radius:50%;background:rgba(167,139,250,.15);border:1.5px solid rgba(167,139,250,.35);display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);font-size:.72rem;font-weight:700;color:var(--purple);flex-shrink:0;">${escHtml(s.initials)}</div>
       <div style="flex:1;min-width:0;">
         <div style="font-family:var(--font);font-size:.9rem;font-weight:600;margin-bottom:.2rem;">${escHtml(s.student_name||s.username)} ${scoreBadge}</div>
         ${s.comment ? `<div style="font-size:.82rem;color:var(--muted);line-height:1.5;margin-bottom:.4rem;white-space:pre-wrap;">${escHtml(s.comment)}</div>` : `<div style="font-size:.82rem;color:var(--muted2);font-style:italic;margin-bottom:.4rem;">${tr2.noText}</div>`}
+        ${fileLink}
         <div style="font-size:.74rem;color:var(--muted2);">📅 ${date}</div>
         ${fbBlock}
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.65rem;align-items:center;">

@@ -36,10 +36,11 @@ require_once __DIR__ . '/db.php';
 $pdo       = db();
 $studentId = (int) $_SESSION['user_id'];
 
-// Ensure submissions table has comment column
+// Ensure submissions table has all columns
 try {
     $pdo->exec("ALTER TABLE assignment_submissions
         ADD COLUMN IF NOT EXISTS comment TEXT DEFAULT NULL,
+        ADD COLUMN IF NOT EXISTS file_path VARCHAR(500) DEFAULT NULL,
         ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMP NULL,
         ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ");
@@ -65,9 +66,8 @@ if ($action === 'get') {
 
 // ── POST: submit ─────────────────────────────────────────────────────────────
 if ($action === 'submit') {
-    $raw     = json_decode(file_get_contents('php://input'), true) ?? [];
-    $aid     = (int)($raw['assignment_id'] ?? 0);
-    $comment = trim($raw['comment'] ?? '');
+    $aid     = (int)($_POST['assignment_id'] ?? 0);
+    $comment = trim($_POST['comment'] ?? '');
 
     if (!$aid) { echo json_encode(['ok'=>false,'error'=>'Missing assignment_id']); exit; }
     if (mb_strlen($comment) > 2000) { echo json_encode(['ok'=>false,'error'=>'Comment too long (max 2000 chars)']); exit; }
@@ -84,17 +84,41 @@ if ($action === 'submit') {
         exit;
     }
 
-    // Upsert submission
+    // Handle optional file upload
+    $filePath = null;
+    if (!empty($_FILES['file']) && $_FILES['file']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $f = $_FILES['file'];
+        if ($f['error'] !== UPLOAD_ERR_OK) {
+            echo json_encode(['ok'=>false,'error'=>'Upload error (code '.$f['error'].').']); exit;
+        }
+        if ($f['size'] > 10 * 1024 * 1024) {
+            echo json_encode(['ok'=>false,'error'=>'File too large (max 10 MB)']); exit;
+        }
+        $ext     = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
+        $allowed = ['pdf','doc','docx','ppt','pptx','xls','xlsx','txt','jpg','jpeg','png','gif','zip','mp3','mp4'];
+        if (!in_array($ext, $allowed, true)) {
+            echo json_encode(['ok'=>false,'error'=>'File type not allowed']); exit;
+        }
+        $filename = uniqid('sub_', true) . '.' . $ext;
+        $dest     = __DIR__ . '/uploads/' . $filename;
+        if (!move_uploaded_file($f['tmp_name'], $dest)) {
+            echo json_encode(['ok'=>false,'error'=>'Failed to save uploaded file']); exit;
+        }
+        $filePath = 'uploads/' . $filename;
+    }
+
+    // Upsert submission (COALESCE keeps existing file if student resubmits without a new file)
     $pdo->prepare("
-        INSERT INTO assignment_submissions (assignment_id, student_id, status, comment, submitted_at)
-        VALUES (?, ?, 'submitted', ?, NOW())
+        INSERT INTO assignment_submissions (assignment_id, student_id, status, comment, file_path, submitted_at)
+        VALUES (?, ?, 'submitted', ?, ?, NOW())
         ON DUPLICATE KEY UPDATE
             status       = 'submitted',
             comment      = VALUES(comment),
+            file_path    = COALESCE(VALUES(file_path), file_path),
             submitted_at = NOW()
-    ")->execute([$aid, $studentId, $comment ?: null]);
+    ")->execute([$aid, $studentId, $comment ?: null, $filePath]);
 
-    echo json_encode(['ok' => true, 'submitted_at' => date('Y-m-d H:i:s')]);
+    echo json_encode(['ok' => true, 'submitted_at' => date('Y-m-d H:i:s'), 'file_path' => $filePath]);
     exit;
 }
 
