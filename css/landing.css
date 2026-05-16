@@ -7,6 +7,7 @@
   --border: rgba(255,255,255,0.1); --card-bg: rgba(255,255,255,0.04);
   --font: 'Sora', sans-serif; --font-body: 'DM Sans', sans-serif;
   --muted2: rgba(255,255,255,0.4);
+  --border2: rgba(255,255,255,0.08);
 }
 html { scroll-behavior: smooth; scroll-padding-top: 80px; overflow-x: hidden; }
 body { background: var(--navy); color: var(--white); font-family: var(--font-body); min-height: 100vh; }

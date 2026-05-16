@@ -31,12 +31,12 @@ $t = [
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Upskill Education – Cours d'anglais en ligne</title>
-<meta name="description" content="Apprenez l'anglais en ligne avec Upskill Education. Cours en direct sur Zoom, petits groupes, suivi personnalisé. 599 DH/session. Inscrivez-vous dès maintenant.">
+<meta name="description" content="Apprenez l'anglais en ligne avec Upskill Education. Cours en direct sur Zoom, petits groupes, suivi personnalisé. 599 DH pour 2,5 mois. Inscrivez-vous dès maintenant.">
 <link rel="canonical" href="https://upskill-edu.com/fr">
 <meta property="og:type"        content="website">
 <meta property="og:url"         content="https://upskill-edu.com/fr">
 <meta property="og:title"       content="Upskill Education – Cours d'anglais en ligne">
-<meta property="og:description" content="Cours d'anglais en direct sur Zoom, petits groupes, suivi personnalisé. 599 DH/session.">
+<meta property="og:description" content="Cours d'anglais en direct sur Zoom, petits groupes, suivi personnalisé. 599 DH pour 2,5 mois.">
 <meta property="og:image"       content="https://upskill-edu.com/assets/img/1.png">
 <meta property="og:image:width"  content="1200">
 <meta property="og:image:height" content="630">
@@ -46,7 +46,8 @@ $t = [
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"></noscript>
 <link rel="stylesheet" href="/css/landing.css">
 <script type="application/ld+json">
 {
@@ -74,7 +75,8 @@ $t = [
       "description": "Anglais conversationnel et écrit pour la communication quotidienne.",
       "provider": { "@type": "Organization", "name": "Upskill Education" },
       "educationalLevel": "Débutant à Intermédiaire",
-      "inLanguage": "fr"
+      "inLanguage": "fr",
+      "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
     },
     {
       "@type": "Course",
@@ -82,7 +84,8 @@ $t = [
       "description": "Préparation ciblée pour l'examen du Bac marocain — grammaire, lecture et rédaction.",
       "provider": { "@type": "Organization", "name": "Upskill Education" },
       "educationalLevel": "Lycée",
-      "inLanguage": "fr"
+      "inLanguage": "fr",
+      "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
     }
   ]
 }
@@ -122,8 +125,7 @@ $t = [
   </div>
 </nav>
 
-
-
+<main>
 <div class="hero" id="home">
   <div class="hero-badge"><span></span> Inscriptions ouvertes — 2026</div>
   <h1>Maîtrisez l'anglais.<br><span>Ouvrez toutes les portes.</span></h1>
@@ -189,7 +191,7 @@ $t = [
       </div>
       <div class="course-title">Anglais des affaires</div>
       <div class="course-desc">Communiquez avec assurance dans un cadre professionnel. Maîtrisez les e-mails, présentations, négociations et conversations en milieu de travail.</div>
-      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ session &nbsp;·&nbsp; ~2,5 mois</span></div>
+      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2,5 mois</span></div>
       <hr class="course-divider">
       <div class="features-label">Ce qui est inclus</div>
       <ul class="course-features">
@@ -211,7 +213,7 @@ $t = [
       </div>
       <div class="course-title">Anglais général</div>
       <div class="course-desc">Construisez de solides bases à l'oral, à l'écoute, en lecture et en écriture. Idéal pour gagner en aisance et en confiance au quotidien.</div>
-      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ session &nbsp;·&nbsp; ~2,5 mois</span></div>
+      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2,5 mois</span></div>
       <hr class="course-divider">
       <div class="features-label">Ce qui est inclus</div>
       <ul class="course-features">
@@ -233,7 +235,7 @@ $t = [
       </div>
       <div class="course-title">Anglais Baccalauréat</div>
       <div class="course-desc">Préparation ciblée à l'examen du Bac. Entraînez-vous sur de vrais sujets d'examens, rédactions chronométrées et techniques d'oral.</div>
-      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ session &nbsp;·&nbsp; ~2,5 mois</span></div>
+      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2,5 mois</span></div>
       <hr class="course-divider">
       <div class="features-label">Ce qui est inclus</div>
       <ul class="course-features">
@@ -362,13 +364,13 @@ $t = [
         <div class="success-icon">✓</div>
         <h3>Demande reçue !</h3>
         <p>Merci pour votre inscription. Notre équipe examinera votre demande et vous contactera sous 24 heures pour confirmer votre place et vous envoyer vos identifiants de connexion.</p>
+        <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:1.2rem;display:inline-block;">Nous écrire sur WhatsApp →</a>
       </div>
     </div>
   </div>
 </div>
 
-
-
+</main>
 <footer>
   <div class="footer-grid">
     <!-- Marque -->

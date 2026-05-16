@@ -31,12 +31,12 @@ $t = [
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Upskill Education – Online English Courses</title>
-<meta name="description" content="Learn English online with Upskill Education. Live Zoom classes, small groups, personalised progress tracking. 599 DH/session. Enroll now.">
+<meta name="description" content="Learn English online with Upskill Education. Live Zoom classes, small groups, personalised progress tracking. 599 DH per 2.5 months. Enroll now.">
 <link rel="canonical" href="https://upskill-edu.com/en">
 <meta property="og:type"        content="website">
 <meta property="og:url"         content="https://upskill-edu.com/en">
 <meta property="og:title"       content="Upskill Education – Online English Courses">
-<meta property="og:description" content="Live Zoom English classes, small groups, personalised tracking. 599 DH/session.">
+<meta property="og:description" content="Live Zoom English classes, small groups, personalised tracking. 599 DH per 2.5 months.">
 <meta property="og:image"       content="https://upskill-edu.com/assets/img/1.png">
 <meta property="og:image:width"  content="1200">
 <meta property="og:image:height" content="630">
@@ -46,7 +46,8 @@ $t = [
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"></noscript>
 <link rel="stylesheet" href="/css/landing.css">
 <script type="application/ld+json">
 {
@@ -74,7 +75,8 @@ $t = [
       "description": "Conversational and written English for everyday communication and confidence.",
       "provider": { "@type": "Organization", "name": "Upskill Education" },
       "educationalLevel": "Beginner to Intermediate",
-      "inLanguage": "en"
+      "inLanguage": "en",
+      "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
     },
     {
       "@type": "Course",
@@ -82,7 +84,8 @@ $t = [
       "description": "Targeted preparation for the Moroccan Bac exam — grammar, reading and writing.",
       "provider": { "@type": "Organization", "name": "Upskill Education" },
       "educationalLevel": "Secondary",
-      "inLanguage": "en"
+      "inLanguage": "en",
+      "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
     }
   ]
 }
@@ -122,6 +125,7 @@ $t = [
   </div>
 </nav>
 
+<main>
 <div class="hero" id="home">
   <div class="hero-badge"><span></span> Enrolling Now — 2026</div>
   <h1>Master English.<br><span>Unlock Every Door.</span></h1>
@@ -187,7 +191,7 @@ $t = [
       </div>
       <div class="course-title">Business English</div>
       <div class="course-desc">Communicate with confidence in professional settings. Master emails, presentations, negotiations, and workplace conversations.</div>
-      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ session &nbsp;·&nbsp; ~2.5 months</span></div>
+      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2.5 months</span></div>
       <hr class="course-divider">
       <div class="features-label">What's included</div>
       <ul class="course-features">
@@ -209,7 +213,7 @@ $t = [
       </div>
       <div class="course-title">General English</div>
       <div class="course-desc">Build a strong foundation in speaking, listening, reading, and writing. Ideal for everyday fluency and confidence at any level.</div>
-      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ session &nbsp;·&nbsp; ~2.5 months</span></div>
+      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2.5 months</span></div>
       <hr class="course-divider">
       <div class="features-label">What's included</div>
       <ul class="course-features">
@@ -231,7 +235,7 @@ $t = [
       </div>
       <div class="course-title">English for Baccalaureate</div>
       <div class="course-desc">Targeted exam preparation for Bac students. Practice with real past papers, timed essays, comprehension exercises and oral techniques.</div>
-      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ session &nbsp;·&nbsp; ~2.5 months</span></div>
+      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2.5 months</span></div>
       <hr class="course-divider">
       <div class="features-label">What's included</div>
       <ul class="course-features">
@@ -360,11 +364,13 @@ $t = [
         <div class="success-icon">✓</div>
         <h3>Request received!</h3>
         <p>Thank you for enrolling. Our team will review your request and contact you within 24 hours to confirm your place and send your login credentials.</p>
+        <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:1.2rem;display:inline-block;">Message us on WhatsApp →</a>
       </div>
     </div>
   </div>
 </div>
 
+</main>
 <footer>
   <div class="footer-grid">
     <!-- Brand -->
