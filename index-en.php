@@ -128,7 +128,7 @@ $t = [
   <p>Expert-led English courses designed for real results — whether you're building a career, acing your Baccalaureate, or simply leveling up.</p>
   <div class="hero-actions">
     <a href="#courses" class="btn-primary">Explore Courses</a>
-    <a target="_blank" rel="noopener noreferrer" href="https://wa.me/212702099967" class="btn-outline">Chat on WhatsApp →</a>
+    <a target="_blank" rel="noopener noreferrer" href="https://wa.me/212702099967" class="btn-outline">More Information →</a>
   </div>
 </div>
 
