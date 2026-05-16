@@ -233,7 +233,7 @@ try {
         $assignment = $meta->fetch();
 
         $stmt = $pdo->prepare("
-            SELECT s.id, s.student_id, s.comment, s.score, s.teacher_comment,
+            SELECT s.id, s.student_id, s.comment, s.file_path, s.score, s.teacher_comment,
                    s.submitted_at, s.graded_at, s.status,
                    u.full_name AS student_name, u.username
             FROM assignment_submissions s
