@@ -46,6 +46,39 @@ try {
     ");
 } catch (Throwable $e) {}
 
+// ── GET: list all assignments for this student (with fresh grades) ───────────
+if ($action === 'list') {
+    $stmt = $pdo->prepare("
+        SELECT a.id, a.title_fr, a.title_ar,
+               a.description_fr, a.description_ar,
+               a.subject_fr, a.subject_ar, a.due_date,
+               COALESCE(sub.status, 'pending') AS status,
+               sub.submitted_at, sub.comment AS my_comment,
+               sub.score, sub.teacher_comment, sub.graded_at, sub.file_path
+        FROM   assignments a
+        JOIN   student_courses sc ON sc.course_id = a.course_id AND sc.student_id = :sid
+        LEFT   JOIN assignment_submissions sub
+                 ON sub.assignment_id = a.id AND sub.student_id = :sid2
+        ORDER  BY FIELD(COALESCE(sub.status,'pending'),'overdue','pending','submitted'),
+                  a.due_date ASC
+    ");
+    $stmt->execute([':sid' => $studentId, ':sid2' => $studentId]);
+    $rows = $stmt->fetchAll();
+
+    $now = new DateTime();
+    foreach ($rows as &$row) {
+        if ($row['status'] === 'pending' && $row['due_date']) {
+            $due = new DateTime($row['due_date']);
+            if ($due < $now) $row['status'] = 'overdue';
+        }
+        $row['due_fmt'] = '';
+    }
+    unset($row);
+
+    echo json_encode(['ok' => true, 'assignments' => $rows]);
+    exit;
+}
+
 // ── GET: fetch submission details ────────────────────────────────────────────
 if ($action === 'get') {
     $aid = (int)($_GET['assignment_id'] ?? 0);

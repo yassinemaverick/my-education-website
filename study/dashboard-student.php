@@ -1377,7 +1377,7 @@ function navigate(page, el) {
   activePage = page;
   sessionStorage.setItem('upskill_page_s', page);
   st('topbar-title', T[currentLang].topbarTitle[page] || T[currentLang].topbarTitle.home);
-  if (page === 'assignments') renderAssignments();
+  if (page === 'assignments') refreshAssignments();
   if (page === 'quizzes')     renderQuizzes();
   if (page === 'myclass')     { renderMyClass(); loadMyGroup(); }
   if (page === 'feed')        loadFeed();
@@ -1597,6 +1597,20 @@ function renderMyClass() {
       }).join('');
     }
   }
+}
+
+async function refreshAssignments() {
+  try {
+    const res  = await fetch('api_submit.php?action=list');
+    const data = await res.json();
+    if (data.ok && Array.isArray(data.assignments)) {
+      LIVE.assignments     = data.assignments;
+      LIVE.pending_count   = data.assignments.filter(a => a.status === 'pending').length;
+      LIVE.overdue_count   = data.assignments.filter(a => a.status === 'overdue').length;
+      LIVE.submitted_count = data.assignments.filter(a => a.status === 'submitted').length;
+    }
+  } catch(e) {}
+  renderAssignments();
 }
 
 function renderAssignments() {
