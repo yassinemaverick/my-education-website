@@ -71,8 +71,9 @@ $t = [
   .lang-switch { position:relative; display:inline-flex; }
   .lang-current { display:inline-flex; align-items:center; gap:.3rem; background:var(--green-glow); border:1px solid rgba(62,207,120,.4); color:var(--green); font-weight:600; font-family:var(--font); font-size:.73rem; padding:.3rem .75rem; border-radius:100px; cursor:default; user-select:none; }
   .lang-current svg { opacity:.7; }
-  .lang-dropdown { display:none; position:absolute; top:calc(100% + 6px); left:0; background:rgba(15,29,46,.97); border:1px solid var(--border); border-radius:10px; padding:.3rem; min-width:90px; backdrop-filter:blur(12px); box-shadow:0 8px 24px rgba(0,0,0,.4); z-index:200; }
-  .lang-switch:hover .lang-dropdown { display:flex; flex-direction:column; }
+  .lang-dropdown { display:none; position:absolute; top:100%; left:0; padding-top:6px; min-width:90px; z-index:200; }
+  .lang-dropdown-inner { background:rgba(15,29,46,.97); border:1px solid var(--border); border-radius:10px; padding:.3rem; backdrop-filter:blur(12px); box-shadow:0 8px 24px rgba(0,0,0,.4); display:flex; flex-direction:column; }
+  .lang-switch:hover .lang-dropdown { display:block; }
   .lang-opt { display:flex; align-items:center; gap:.4rem; padding:.35rem .65rem; border-radius:7px; font-family:var(--font); font-size:.73rem; text-decoration:none; color:var(--muted); transition:all .15s; white-space:nowrap; }
   .lang-opt:hover { color:var(--white); background:rgba(255,255,255,.06); }
   .lang-opt.active { color:var(--green); font-weight:600; pointer-events:none; }
@@ -263,8 +264,10 @@ $t = [
     <div class="lang-switch">
       <div class="lang-current">&#127468;&#127463; EN <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
       <div class="lang-dropdown">
-        <a href="/en" class="lang-opt active">&#127468;&#127463; EN</a>
-        <a href="/fr" class="lang-opt">&#127467;&#127479; FR</a>
+        <div class="lang-dropdown-inner">
+          <a href="/en" class="lang-opt active">&#127468;&#127463; EN</a>
+          <a href="/fr" class="lang-opt">&#127467;&#127479; FR</a>
+        </div>
       </div>
     </div>
   </div>
