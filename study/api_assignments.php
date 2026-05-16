@@ -272,13 +272,13 @@ try {
         $courseId = (int)($bodyData['course_id']  ?? 0) ?: null;
 
         if (!$titleFr) { echo json_encode(['ok'=>false,'error'=>'Titre requis']); exit; }
+        if (!$courseId) { echo json_encode(['ok'=>false,'error'=>'Un cours doit être sélectionné.']); exit; }
         if ($due && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $due)) $due = null;
 
-        if ($courseId) {
-            $chk = $pdo->prepare("SELECT course_id FROM teacher_courses WHERE teacher_id=? AND course_id=?");
-            $chk->execute([$uid, $courseId]);
-            if (!$chk->fetch()) { echo json_encode(['ok'=>false,'error'=>'Cours non autorisé.']); exit; }
-        }
+        // Verify this teacher owns the selected course
+        $chk = $pdo->prepare("SELECT course_id FROM teacher_courses WHERE teacher_id=? AND course_id=?");
+        $chk->execute([$uid, $courseId]);
+        if (!$chk->fetch()) { echo json_encode(['ok'=>false,'error'=>'Cours non autorisé.']); exit; }
 
         $pdo->prepare("
             INSERT INTO assignments
@@ -414,10 +414,16 @@ try {
         $comment = trim($bodyData['comment'] ?? '');
         if (!$aId) { echo json_encode(['ok'=>false,'error'=>'Missing assignment_id']); exit; }
 
-        $chk = $pdo->prepare("SELECT id, title_fr, teacher_id FROM assignments WHERE id=?");
-        $chk->execute([$aId]);
+        // Verify assignment exists and student is enrolled in its course
+        $chk = $pdo->prepare("
+            SELECT a.id, a.title_fr, a.teacher_id
+            FROM assignments a
+            JOIN student_courses sc ON sc.course_id = a.course_id AND sc.student_id = ?
+            WHERE a.id = ?
+        ");
+        $chk->execute([$uid, $aId]);
         $assign = $chk->fetch();
-        if (!$assign) { echo json_encode(['ok'=>false,'error'=>'Assignment not found']); exit; }
+        if (!$assign) { echo json_encode(['ok'=>false,'error'=>'Assignment not found or not enrolled']); exit; }
 
         $pdo->prepare("
             INSERT INTO assignment_submissions (assignment_id, student_id, comment, status, submitted_at)
@@ -475,6 +481,7 @@ try {
        POST mark_notifications_read
     ══════════════════════════════════════ */
     if ($action === 'mark_notifications_read') {
+        csrf_verify();
         try {
             $pdo->prepare("UPDATE notifications SET is_read=1 WHERE user_id=?")->execute([$uid]);
         } catch(Throwable $e) {}
@@ -508,6 +515,7 @@ try {
     echo json_encode(['ok'=>false,'error'=>'Unknown action']);
 
 } catch (Throwable $e) {
+    error_log('api_assignments.php error: ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => $e->getMessage()]);
+    echo json_encode(['ok' => false, 'error' => 'Server error']);
 }

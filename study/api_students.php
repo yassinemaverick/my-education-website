@@ -19,6 +19,7 @@ ob_start(); // buffer all output — prevents PHP notices/warnings corrupting JS
  */
 
 require_once __DIR__ . '/session.php';
+require_once __DIR__ . '/csrf.php';
 header('Content-Type: application/json; charset=UTF-8');
 
 $role   = $_SESSION['role'] ?? '';
@@ -61,6 +62,7 @@ try {
         }
 
         if ($action === 'update_email') {
+            csrf_verify();
             $raw     = json_decode(file_get_contents('php://input'), true) ?? [];
             $uid     = (int)($raw['user_id'] ?? 0);
             $email   = trim($raw['email'] ?? '');
@@ -76,6 +78,7 @@ try {
         }
 
         if ($action === 'reset_password') {
+            csrf_verify();
             $raw  = json_decode(file_get_contents('php://input'), true) ?? [];
             $uid  = (int)($raw['user_id'] ?? 0);
             $pw   = $raw['password'] ?? '';
@@ -90,6 +93,7 @@ try {
         }
 
         if ($action === 'create_user') {
+            csrf_verify();
             $raw      = json_decode(file_get_contents('php://input'), true) ?? [];
             $fullname = trim($raw['full_name'] ?? '');
             $username = trim($raw['username']  ?? '');
@@ -188,6 +192,7 @@ try {
         }
 
         if ($action === 'update_enrollment_status') {
+            csrf_verify();
             $raw    = json_decode(file_get_contents('php://input'), true) ?? [];
             $id     = (int)($raw['id']     ?? 0);
             $status = trim($raw['status']  ?? '');
@@ -199,6 +204,7 @@ try {
         }
 
         if ($action === 'delete_enrollment') {
+            csrf_verify();
             $raw = json_decode(file_get_contents('php://input'), true) ?? [];
             $id  = (int)($raw['id'] ?? 0);
             if (!$id) { ob_clean(); echo json_encode(['ok'=>false,'error'=>'Invalid id']); exit; }
@@ -210,7 +216,7 @@ try {
 
     // Non-admin must be teacher for the following actions
     if (!$isTeacher) { http_response_code(403); ob_clean(); echo json_encode(['ok'=>false,'error'=>'Unauthorized']); exit; }
-    // Try student_courses join first; fall back to all students if table absent.
+    // Only return students enrolled in this teacher's own courses
     try {
         $stmt = $pdo->prepare("
             SELECT DISTINCT u.id, u.full_name, u.username
@@ -222,17 +228,12 @@ try {
         ");
         $stmt->execute([$teacherId]);
         $students = $stmt->fetchAll();
-        if (empty($students)) { throw new Exception('no_junction'); }
+        // Empty result is legitimate — teacher may have no enrolled students yet
     } catch (Throwable $e) {
-        // Fallback: all students visible to this teacher
-        $stmt = $pdo->prepare("
-            SELECT id, full_name, username
-            FROM users
-            WHERE role = 'student'
-            ORDER BY full_name
-        ");
-        $stmt->execute();
-        $students = $stmt->fetchAll();
+        error_log('api_students.php student query error: ' . $e->getMessage());
+        ob_clean(); http_response_code(500);
+        echo json_encode(['ok' => false, 'error' => 'Server error']);
+        exit;
     }
 
     // ── Attendance stats per student ─────────────────────────────────────────
@@ -298,7 +299,8 @@ try {
     echo json_encode(['ok' => true, 'students' => $result], JSON_UNESCAPED_UNICODE);
 
 } catch (Throwable $e) {
+    error_log('api_students.php error: ' . $e->getMessage());
     ob_clean();
     http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => $e->getMessage()]);
+    echo json_encode(['ok' => false, 'error' => 'Server error']);
 }

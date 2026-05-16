@@ -4,12 +4,8 @@
  * Returns notifications for the logged-in user (student or teacher).
  * Also handles marking notifications as read.
  */
-session_set_cookie_params([
-    'lifetime' => 0, 'path' => '/',
-    'secure'   => isset($_SERVER['HTTPS']),
-    'httponly' => true, 'samesite' => 'Lax',
-]);
-session_start();
+require_once __DIR__ . '/session.php';
+require_once __DIR__ . '/csrf.php';
 
 header('Content-Type: application/json; charset=UTF-8');
 
@@ -45,6 +41,9 @@ try {
             INDEX idx_read (user_id, is_read)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
+
+    // ── CSRF check for all mutating POST requests ────────────────────────────
+    if ($method === 'POST') csrf_verify();
 
     // ── Mark all as read ─────────────────────────────────────────────────────
     if ($method === 'POST' && $action === 'mark_read') {
@@ -183,9 +182,6 @@ try {
     $rows->execute([$uid]);
     $notifs = $rows->fetchAll();
 
-    $unread = (int) $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0")->execute([$uid])
-        ?: 0;
-    // Proper count
     $cntStmt = $pdo->prepare("SELECT COUNT(*) FROM notifications WHERE user_id = ? AND is_read = 0");
     $cntStmt->execute([$uid]);
     $unread = (int) $cntStmt->fetchColumn();

@@ -4,8 +4,8 @@ ini_set('display_errors', 0);
 error_reporting(0);
 ob_start();
 
-session_set_cookie_params(['lifetime'=>0,'path'=>'/','secure'=>isset($_SERVER['HTTPS']),'httponly'=>true,'samesite'=>'Lax']);
-session_start();
+require_once __DIR__ . '/session.php';
+require_once __DIR__ . '/csrf.php';
 require_once __DIR__ . '/db.php';
 
 function jsonOut(array $data): void {
@@ -21,11 +21,8 @@ $role   = $_SESSION['role']  ?? '';
 $userId = (int)($_SESSION['user_id'] ?? 0);
 if (!$userId) err('Non authentifié', 401);
 
-// CSRF for POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
-  if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) err('Token CSRF invalide', 403);
-}
+// CSRF for POST — delegates to the shared csrf.php implementation
+if ($_SERVER['REQUEST_METHOD'] === 'POST') csrf_verify();
 
 $pdo = db();
 
@@ -39,9 +36,11 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS class_groups (
   UNIQUE KEY uq_class_group (type_key, level_number, group_letter)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-// Add schedule_json and zoom_url columns if they don't exist yet
+// Add columns if they don't exist yet
 try { $pdo->exec("ALTER TABLE class_groups ADD COLUMN schedule_json TEXT DEFAULT NULL"); } catch(Throwable $e) {}
 try { $pdo->exec("ALTER TABLE class_groups ADD COLUMN zoom_url VARCHAR(500) DEFAULT NULL"); } catch(Throwable $e) {}
+// Sync bridge: optional link to old courses table so student/teacher_courses stay in sync
+try { $pdo->exec("ALTER TABLE class_groups ADD COLUMN course_id INT UNSIGNED NULL DEFAULT NULL"); } catch(Throwable $e) {}
 
 $pdo->exec("CREATE TABLE IF NOT EXISTS class_group_members (
   id          INT AUTO_INCREMENT PRIMARY KEY,
@@ -207,6 +206,26 @@ if ($action === 'add_member') {
 
   try {
     $pdo->prepare("INSERT INTO class_group_members (group_id, user_id) VALUES (?, ?)")->execute([$groupId, $uid]);
+
+    // Sync bridge: if this group is linked to a course, keep student_courses / teacher_courses in sync
+    $grp = $pdo->prepare("SELECT course_id FROM class_groups WHERE id = ?");
+    $grp->execute([$groupId]);
+    $courseId = (int)($grp->fetchColumn() ?: 0);
+    if ($courseId) {
+      $userRole = $pdo->prepare("SELECT role FROM users WHERE id = ?");
+      $userRole->execute([$uid]);
+      $memberRole = $userRole->fetchColumn();
+      if ($memberRole === 'student') {
+        try {
+          $pdo->prepare("INSERT IGNORE INTO student_courses (student_id, course_id) VALUES (?, ?)")->execute([$uid, $courseId]);
+        } catch(Throwable $e) {}
+      } elseif ($memberRole === 'teacher') {
+        try {
+          $pdo->prepare("INSERT IGNORE INTO teacher_courses (teacher_id, course_id) VALUES (?, ?)")->execute([$uid, $courseId]);
+        } catch(Throwable $e) {}
+      }
+    }
+
     jsonOut(['ok'=>true]);
   } catch (PDOException $e) {
     if ($e->getCode() === '23000') err('Déjà membre de ce groupe');
@@ -221,6 +240,22 @@ if ($action === 'remove_member') {
   $groupId = (int)($data['group_id'] ?? 0);
   $uid     = (int)($data['user_id']  ?? 0);
   if (!$groupId || !$uid) err('Données manquantes');
+
+  // Sync bridge: remove from student_courses / teacher_courses if group has a linked course
+  $grp = $pdo->prepare("SELECT course_id FROM class_groups WHERE id = ?");
+  $grp->execute([$groupId]);
+  $courseId = (int)($grp->fetchColumn() ?: 0);
+  if ($courseId) {
+    $userRole = $pdo->prepare("SELECT role FROM users WHERE id = ?");
+    $userRole->execute([$uid]);
+    $memberRole = $userRole->fetchColumn();
+    if ($memberRole === 'student') {
+      try { $pdo->prepare("DELETE FROM student_courses WHERE student_id=? AND course_id=?")->execute([$uid, $courseId]); } catch(Throwable $e) {}
+    } elseif ($memberRole === 'teacher') {
+      try { $pdo->prepare("DELETE FROM teacher_courses WHERE teacher_id=? AND course_id=?")->execute([$uid, $courseId]); } catch(Throwable $e) {}
+    }
+  }
+
   $pdo->prepare("DELETE FROM class_group_members WHERE group_id=? AND user_id=?")->execute([$groupId, $uid]);
   jsonOut(['ok'=>true]);
 }
