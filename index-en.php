@@ -159,16 +159,16 @@ $t = [
     <div class="section-title">Your classroom, anywhere in the world.</div>
   </div>
   <div class="photos-track">
-    <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
-    <div class="photo-item"><img src="assets/img/3.png" alt="Students studying together" loading="lazy"><span class="photo-item-caption">Learn anywhere</span></div>
-    <div class="photo-item"><img src="assets/img/1.png" alt="Individual student learning" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
-    <div class="photo-item"><img src="assets/img/4.png" alt="Online lesson on screen" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
-    <div class="photo-item"><img src="assets/img/2.png" alt="Students collaborating online" loading="lazy"><span class="photo-item-caption">Live sessions</span></div>
-    <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
-    <div class="photo-item"><img src="assets/img/3.png" alt="Students studying together" loading="lazy"><span class="photo-item-caption">Learn anywhere</span></div>
-    <div class="photo-item"><img src="assets/img/1.png" alt="Individual student learning" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
-    <div class="photo-item"><img src="assets/img/4.png" alt="Online lesson on screen" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
-    <div class="photo-item"><img src="assets/img/2.png" alt="Students collaborating online" loading="lazy"><span class="photo-item-caption">Live sessions</span></div>
+    <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
+    <div class="photo-item"><img src="assets/img/3.png" alt="Students studying together" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn anywhere</span></div>
+    <div class="photo-item"><img src="assets/img/1.png" alt="Individual student learning" width="300" height="220" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
+    <div class="photo-item"><img src="assets/img/4.png" alt="Online lesson on screen" width="300" height="220" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
+    <div class="photo-item"><img src="assets/img/2.png" alt="Students collaborating online" width="300" height="220" loading="lazy"><span class="photo-item-caption">Live sessions</span></div>
+    <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
+    <div class="photo-item"><img src="assets/img/3.png" alt="Students studying together" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn anywhere</span></div>
+    <div class="photo-item"><img src="assets/img/1.png" alt="Individual student learning" width="300" height="220" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
+    <div class="photo-item"><img src="assets/img/4.png" alt="Online lesson on screen" width="300" height="220" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
+    <div class="photo-item"><img src="assets/img/2.png" alt="Students collaborating online" width="300" height="220" loading="lazy"><span class="photo-item-caption">Live sessions</span></div>
   </div>
 </div>
 
@@ -359,14 +359,53 @@ $t = [
 </div>
 
 <footer>
-  <div class="footer-logo"><em>Up</em>skill Education</div>
-  <div class="footer-links">
-    <a href="#courses">Courses</a>
-    <a href="#enroll">Enroll</a>
-    <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com">Student Portal</a>
-    <a href="#" onclick="openContact();return false;">Contact</a>
+  <div class="footer-grid">
+    <!-- Brand -->
+    <div class="footer-brand">
+      <span class="footer-logo"><em>Up</em>skill Education</span>
+      <p>Professional English training for Moroccan learners. Live Zoom sessions, expert teachers, real results.</p>
+    </div>
+    <!-- Quick links -->
+    <div class="footer-col">
+      <h4>Quick links</h4>
+      <div class="footer-links">
+        <a href="#courses">Courses</a>
+        <a href="#enroll">Enroll now</a>
+        <a href="#how-it-works">How it works</a>
+        <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com">Student Portal</a>
+        <a href="#" onclick="openContact();return false;">Contact us</a>
+      </div>
+    </div>
+    <!-- Contact -->
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <!-- TODO: replace with real address -->
+      <div class="footer-contact-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>Casablanca, Maroc</span>
+      </div>
+      <div class="footer-contact-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 12 19.79 19.79 0 0 1 1 3.18 2 2 0 0 1 3 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer">+212 702 099 967</a>
+      </div>
+      <!-- TODO: replace with real email -->
+      <div class="footer-contact-item">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <a href="mailto:contact@upskill-edu.com">contact@upskill-edu.com</a>
+      </div>
+    </div>
   </div>
-  <div class="footer-copy">&copy; 2026 Upskill Education &middot; upskill-edu.com &middot; All rights reserved.</div>
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2026 Upskill Education &middot; upskill-edu.com &middot; All rights reserved.</div>
+    <!-- TODO: add real social links -->
+    <div class="footer-social">
+      <a href="#" aria-label="Facebook" title="Facebook">f</a>
+      <a href="#" aria-label="Instagram" title="Instagram">ig</a>
+      <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.656 1.438 5.168L2 22l4.975-1.395A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm5.093 13.677c-.22.616-1.287 1.174-1.762 1.214-.476.04-.923.214-3.1-.648-2.606-1.038-4.267-3.7-4.396-3.872-.128-.172-1.053-1.402-1.053-2.676 0-1.273.665-1.9.9-2.16.236-.258.516-.322.687-.322.172 0 .344.002.494.008.159.006.37-.06.58.458.215.518.731 1.79.795 1.921.064.13.107.282.021.452-.086.172-.13.28-.258.43-.13.15-.272.337-.386.45-.13.13-.264.27-.113.527.15.258.666 1.098 1.43 1.778.982.874 1.815 1.143 2.072 1.273.257.13.408.108.558-.065.15-.172.63-.737.797-.99.168-.257.336-.215.565-.13.23.086 1.452.685 1.702.81.25.128.416.192.479.3.063.107.063.579-.157 1.2z"/></svg>
+      </a>
+    </div>
+  </div>
 </footer>
 
 <div id="toast"></div>
@@ -548,8 +587,7 @@ document.addEventListener('click', e => {
 });
 </script>
 
-<!-- WhatsApp button — replace 212XXXXXXXXX with your real number (no + sign) -->
-<a href="https://wa.me/212XXXXXXXXX" target="_blank" rel="noopener noreferrer"
+<a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer"
    style="position:fixed;bottom:2rem;left:2rem;z-index:998;background:#25d366;color:white;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s;"
    onmouseenter="this.style.transform='scale(1.12)'" onmouseleave="this.style.transform=''"
    title="Chat on WhatsApp">
