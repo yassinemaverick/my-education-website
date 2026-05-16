@@ -185,20 +185,18 @@ $t = [
   }
   .hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(15,29,46,0.72) 0%, rgba(15,29,46,0.60) 50%, rgba(15,29,46,0.88) 100%); pointer-events: none; z-index: 0; }
   .hero > * { position: relative; z-index: 1; }
-  .photo-strip { padding: 4rem 2rem; background: var(--navy-mid); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .photo-strip-inner { max-width: 1100px; margin: 0 auto; }
-  .photo-strip-header { text-align: center; margin-bottom: 2rem; }
+  .photo-strip { padding: 4rem 0; background: var(--navy-mid); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; }
+  .photo-strip-header { text-align: center; margin-bottom: 2rem; padding: 0 2rem; max-width: 1100px; margin-left: auto; margin-right: auto; }
   .photo-strip-header .section-label { display: block; }
   .photo-strip-header .section-title { font-family: var(--font); font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; letter-spacing: -0.03em; margin-bottom: 0; }
-  .photos-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 220px 220px; gap: 1rem; }
-  .photo-item { border-radius: 16px; overflow: hidden; position: relative; background: var(--navy-light); }
-  .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease, filter 0.4s ease; filter: brightness(0.88) saturate(0.9); }
-  .photo-item:hover img { transform: scale(1.06); filter: brightness(1) saturate(1); }
+  @keyframes marqueeRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+  .photos-track { display: flex; gap: 1rem; width: max-content; animation: marqueeRight 28s linear infinite; padding: 0 0.5rem; }
+  .photos-track:hover { animation-play-state: paused; }
+  .photo-item { width: 300px; height: 220px; flex-shrink: 0; border-radius: 16px; overflow: hidden; position: relative; background: var(--navy-light); }
+  .photo-item img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.88) saturate(0.9); transition: filter 0.4s ease; }
+  .photo-item:hover img { filter: brightness(1) saturate(1); }
   .photo-item::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,29,46,0.45) 0%, transparent 50%); pointer-events: none; }
-  .photo-item.tall { grid-row: span 2; }
   .photo-item-caption { position: absolute; bottom: 0.75rem; left: 0.9rem; font-family: var(--font); font-size: 0.7rem; font-weight: 500; color: rgba(255,255,255,0.75); letter-spacing: 0.04em; text-transform: uppercase; z-index: 2; }
-  @media (max-width: 768px) { .photos-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; } .photo-item.tall { grid-row: span 1; height: 180px; } .photo-item { height: 180px; } }
-  @media (max-width: 500px) { .photos-grid { grid-template-columns: 1fr; } .photo-item, .photo-item.tall { height: 200px; } }
   /* ── TESTIMONIALS — section lumineuse ── */
   .testimonials { padding: 6rem 2rem; background: #eef6ff; }
   .testimonials-inner { max-width: 1100px; margin: 0 auto; }
@@ -324,33 +322,21 @@ $t = [
 </script>
 
 <div class="photo-strip">
-  <div class="photo-strip-inner">
-    <div class="photo-strip-header">
-      <span class="section-label">L'apprentissage réinventé</span>
-      <div class="section-title">Votre salle de classe, où que vous soyez.</div>
-    </div>
-    <div class="photos-grid">
-      <div class="photo-item tall">
-        <img src="assets/img/5.png" alt="Petit groupe en ligne" loading="lazy">
-        <span class="photo-item-caption">Petits groupes</span>
-      </div>
-      <div class="photo-item">
-        <img src="assets/img/3.png" alt="Groupe d'étudiants" loading="lazy">
-        <span class="photo-item-caption">Apprenez partout</span>
-      </div>
-      <div class="photo-item">
-        <img src="assets/img/1.png" alt="Étudiant avec ordinateur" loading="lazy">
-        <span class="photo-item-caption">Professeurs experts</span>
-      </div>
-      <div class="photo-item">
-        <img src="assets/img/4.png" alt="Cours en ligne sur écran" loading="lazy">
-        <span class="photo-item-caption">Étude ciblée</span>
-      </div>
-      <div class="photo-item">
-        <img src="assets/img/2.png" alt="Étudiants en cours en ligne" loading="lazy">
-        <span class="photo-item-caption">Séances en direct</span>
-      </div>
-    </div>
+  <div class="photo-strip-header">
+    <span class="section-label">L'apprentissage réinventé</span>
+    <div class="section-title">Votre salle de classe, où que vous soyez.</div>
+  </div>
+  <div class="photos-track">
+    <div class="photo-item"><img src="assets/img/5.png" alt="Petit groupe en ligne" loading="lazy"><span class="photo-item-caption">Petits groupes</span></div>
+    <div class="photo-item"><img src="assets/img/3.png" alt="Groupe d'étudiants" loading="lazy"><span class="photo-item-caption">Apprenez partout</span></div>
+    <div class="photo-item"><img src="assets/img/1.png" alt="Étudiant avec ordinateur" loading="lazy"><span class="photo-item-caption">Professeurs experts</span></div>
+    <div class="photo-item"><img src="assets/img/4.png" alt="Cours en ligne sur écran" loading="lazy"><span class="photo-item-caption">Étude ciblée</span></div>
+    <div class="photo-item"><img src="assets/img/2.png" alt="Étudiants en cours en ligne" loading="lazy"><span class="photo-item-caption">Séances en direct</span></div>
+    <div class="photo-item"><img src="assets/img/5.png" alt="Petit groupe en ligne" loading="lazy"><span class="photo-item-caption">Petits groupes</span></div>
+    <div class="photo-item"><img src="assets/img/3.png" alt="Groupe d'étudiants" loading="lazy"><span class="photo-item-caption">Apprenez partout</span></div>
+    <div class="photo-item"><img src="assets/img/1.png" alt="Étudiant avec ordinateur" loading="lazy"><span class="photo-item-caption">Professeurs experts</span></div>
+    <div class="photo-item"><img src="assets/img/4.png" alt="Cours en ligne sur écran" loading="lazy"><span class="photo-item-caption">Étude ciblée</span></div>
+    <div class="photo-item"><img src="assets/img/2.png" alt="Étudiants en cours en ligne" loading="lazy"><span class="photo-item-caption">Séances en direct</span></div>
   </div>
 </div>
 
