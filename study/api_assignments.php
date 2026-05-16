@@ -383,19 +383,15 @@ try {
             WHERE id=?
         ")->execute([$comment ?: null, $score, $subId]);
 
-        // Notify student
+        // Notify student (bilingual — uses title_fr/title_ar/body_fr/body_ar schema)
         try {
-            $pdo->exec("CREATE TABLE IF NOT EXISTS notifications (
-                id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-                user_id INT UNSIGNED NOT NULL, type VARCHAR(60) NOT NULL,
-                message TEXT NOT NULL, is_read TINYINT(1) DEFAULT 0,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX idx_user(user_id)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
             $scoreStr = $score !== null ? " — {$score}/100" : '';
-            $msg = "✅ Devoir corrigé / Assignment graded : «{$sub['title_fr']}»{$scoreStr}";
-            $pdo->prepare("INSERT INTO notifications (user_id,type,message) VALUES (?,?,?)")
-                ->execute([$sub['student_id'], 'assignment_graded', $msg]);
+            $titleFr  = '✅ Devoir corrigé';
+            $titleAr  = '✅ تم تصحيح الواجب';
+            $bodyFr   = '«' . $sub['title_fr'] . '»' . $scoreStr;
+            $bodyAr   = '«' . $sub['title_fr'] . '»' . $scoreStr;
+            $pdo->prepare("INSERT INTO notifications (user_id,type,title_fr,title_ar,body_fr,body_ar) VALUES (?,?,?,?,?,?)")
+                ->execute([$sub['student_id'], 'assignment_graded', $titleFr, $titleAr, $bodyFr, $bodyAr]);
         } catch(Throwable $e) {}
 
         logActivity($pdo, $uid, 'submission_graded', "Correction: {$sub['full_name']}" . ($score !== null ? " — {$score}/100" : ''));

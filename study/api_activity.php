@@ -13,6 +13,7 @@
 
 require_once __DIR__ . '/session.php';
 header('Content-Type: application/json; charset=UTF-8');
+header('Cache-Control: no-store');
 
 $role = $_SESSION['role'] ?? '';
 $uid  = (int)($_SESSION['user_id'] ?? 0);
@@ -113,7 +114,7 @@ try {
         $type = trim($raw['type']        ?? '');
         $desc = trim($raw['description'] ?? '');
         if (!$type || !$desc) { echo json_encode(['ok'=>false,'error'=>'type and description required']); exit; }
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? null;
+        $ip = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '')[0]) ?: ($_SERVER['REMOTE_ADDR'] ?? null);
         $pdo->prepare("INSERT INTO activity_log (user_id, type, description, ip) VALUES (?,?,?,?)")
             ->execute([$uid, $type, $desc, $ip]);
         echo json_encode(['ok'=>true,'id'=>(int)$pdo->lastInsertId()]);

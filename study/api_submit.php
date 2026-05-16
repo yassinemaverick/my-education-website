@@ -14,6 +14,7 @@ session_set_cookie_params([
 ]);
 session_start();
 header('Content-Type: application/json; charset=UTF-8');
+header('Cache-Control: no-store');
 
 // Auth: students only
 if (empty($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {

@@ -11,6 +11,7 @@ require_once __DIR__ . '/db.php';
 function jsonOut(array $data): void {
   ob_end_clean(); // discard any accidental output before JSON
   header('Content-Type: application/json; charset=utf-8');
+  header('Cache-Control: no-store');
   echo json_encode($data, JSON_UNESCAPED_UNICODE);
   exit;
 }
