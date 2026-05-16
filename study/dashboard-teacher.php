@@ -1191,7 +1191,7 @@ function applyTranslations() {
   set('class-prog-title', tr.classProgTitle); set('cp-label1', tr.cp1); set('cp-label2', tr.cp2); set('cp-label3', tr.cp3);
   set('attention-title', tr.attentionTitle); set('activity-title', tr.activityTitle);
   set('today-classes-title', tr.todayClassesTitle);
-  loadTodayClasses();
+  if (_cachedTodayGroups !== null) renderTodayClasses(); else loadTodayClasses();
   set('students-page-title', tr.studentsPageTitle); set('students-page-sub', tr.studentsPageSub);
   set('th-name', tr.thName); set('th-progress', tr.thProgress); set('th-assigns', tr.thAssigns); set('th-avg', tr.thAvg); set('th-status', tr.thStatus);
   set('assign-page-title', tr.assignPageTitle); set('assign-page-sub', tr.assignPageSub);
@@ -1234,7 +1234,8 @@ function applyTranslations() {
   set('att-th-student', tr.attThStudent); set('att-th-sessions', tr.attThSessions); set('att-th-total', tr.attThTotal);
   set('att-group-lbl', tr.attGroupLbl);
   renderAttention(); renderAssignments(); renderQuizzes(); renderGrades();
-  renderAttendance(); renderCourses();
+  renderAttendance(); renderCourses(); renderTeacherGroups(); renderTeacherSchedule();
+  if (_cachedPosts !== null) renderPostsList(_cachedPosts);
   loadActivityFeed();
   // Translate subject dropdown options
   document.querySelectorAll('#new-assign-subject option').forEach(opt => {
@@ -2260,6 +2261,8 @@ let teacherGroups    = [];
 let teacherClassView = 'types'; // 'types' | 'levels' | 'groups'
 let teacherSelType   = null;
 let teacherSelLevel  = null;
+let _cachedPosts     = null;   // cached for lang-switch re-render
+let _cachedTodayGroups = null; // cached for lang-switch re-render
 
 async function loadTeacherGroups() {
   teacherGroups = [];
@@ -2767,7 +2770,8 @@ async function loadPosts() {
     const res  = await fetch('api_lesson_posts.php?action=list');
     const data = await res.json();
     if (!data.ok) throw new Error(data.error);
-    renderPostsList(data.posts);
+    _cachedPosts = data.posts;
+    renderPostsList(_cachedPosts);
   } catch(e) {
     list.innerHTML = `<p style="color:var(--red);font-size:.85rem;"></p>`;
   }
@@ -2947,28 +2951,19 @@ const DAY_NAMES_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday
 
 async function loadTodayClasses() {
   const container = document.getElementById('today-classes-list');
-  const dateLbl   = document.getElementById('today-date-lbl');
   if (!container) return;
 
-  const lang    = currentLang;
-  const tr      = T[lang];
-  const today   = new Date();
-  const dow     = today.getDay(); // 0=Sun … 6=Sat
-  const todayFr = DAY_NAMES_FR[dow];
-  const todayEn = DAY_NAMES_EN[dow];
-
-  if (dateLbl) {
-    dateLbl.textContent = today.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { weekday:'long', day:'numeric', month:'long' });
-  }
-
+  const lang = currentLang;
+  const tr   = T[lang];
   container.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${tr.loading || (lang==='en'?'Loading…':'Chargement…')}</div>`;
+
+  const today   = new Date();
+  const todayFr = DAY_NAMES_FR[today.getDay()];
 
   let groups = [];
   try {
     const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
-    const res  = await fetch('api_classes.php?action=teacher_groups', {
-      headers: { 'X-CSRF-Token': csrf }
-    });
+    const res  = await fetch('api_classes.php?action=teacher_groups', { headers: { 'X-CSRF-Token': csrf } });
     const data = await res.json();
     groups = data.ok ? (data.groups || []) : [];
   } catch(e) {
@@ -2976,25 +2971,43 @@ async function loadTodayClasses() {
     return;
   }
 
-  // Filter: groups whose schedule_json includes today's day
-  const todayCourses = groups.filter(c => {
+  _cachedTodayGroups = groups.filter(c => {
     if (!c.schedule_json) return false;
     try {
       const sched = JSON.parse(c.schedule_json);
-      return Array.isArray(sched) && sched.some(s =>
-        s.day_fr && s.day_fr.toLowerCase() === todayFr.toLowerCase()
-      );
+      return Array.isArray(sched) && sched.some(s => s.day_fr && s.day_fr.toLowerCase() === todayFr.toLowerCase());
     } catch(e) { return false; }
   });
 
-  if (todayCourses.length === 0) {
+  renderTodayClasses();
+}
+
+/* Pure render from cached _cachedTodayGroups — re-called on lang switch */
+function renderTodayClasses() {
+  const container = document.getElementById('today-classes-list');
+  const dateLbl   = document.getElementById('today-date-lbl');
+  if (!container) return;
+
+  const lang         = currentLang;
+  const tr           = T[lang];
+  const today        = new Date();
+  const todayCourses = _cachedTodayGroups || [];
+
+  if (dateLbl) {
+    dateLbl.textContent = today.toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { weekday:'long', day:'numeric', month:'long' });
+  }
+
+  if (todayCourses.length === 0 && _cachedTodayGroups !== null) {
     container.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.75rem 0;text-align:center;">${tr.todayNoClasses}</div>`;
     return;
   }
+  if (!todayCourses.length) return; // still loading
+
+  const todayFr = DAY_NAMES_FR[today.getDay()];
 
   container.innerHTML = todayCourses.map((c, idx) => {
     const gid  = c.group_id;
-    const name = lang === 'en' ? (c.label_en || c.label_fr) : lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
+    const name = lang === 'en' ? (c.label_en || c.label_fr) : (c.label_fr || c.label_en);
 
     // Parse schedule for time/room of today's session
     let sessionInfo = '';
@@ -3027,7 +3040,7 @@ async function loadTodayClasses() {
           <div style="font-size:.78rem;color:var(--muted);margin-top:.2rem;">
             ${sessionInfo ? `<span>🕐 ${sessionInfo}</span>` : ''}
             <span style="${sessionInfo?'margin-left:.75rem':''}">👥 ${c.student_count || 0} ${tr.todayStudents}</span>
-            ${hasZoom ? `<span style="margin-left:.75rem;color:var(--green);font-size:.73rem;">● Zoom ✓</span>` : `<span style="margin-left:.75rem;color:var(--yellow);font-size:.73rem;">${lang==='en'?'● Zoom link missing':lang==='ar'?'● رابط Zoom مفقود':'● Zoom manquant'}</span>`}
+            ${hasZoom ? `<span style="margin-left:.75rem;color:var(--green);font-size:.73rem;">● Zoom ✓</span>` : `<span style="margin-left:.75rem;color:var(--yellow);font-size:.73rem;">${lang==='en'?'● Zoom link missing':'● Zoom manquant'}</span>`}
           </div>
         </div>
         <svg id="today-chevron-${gid}" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="flex-shrink:0;color:var(--muted);transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
@@ -3055,7 +3068,7 @@ async function loadTodayClasses() {
             style="display:inline-flex;align-items:center;gap:.4rem;font-size:.83rem;color:var(--blue);text-decoration:none;font-family:var(--font);font-weight:600;"
             onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-            ${lang==='en'?'Join class →':lang==='ar'?'الانضمام إلى الدرس ←':'Rejoindre le cours →'}
+            ${lang==='en'?'Join class →':'Rejoindre le cours →'}
           </a>
         </div>` : ''}
       </div>
