@@ -121,6 +121,7 @@ $t = [
     <a href="#courses">Cours</a>
     <a href="#how">Comment ça marche</a>
     <a href="#enroll">Inscription</a>
+    <a href="/placement-test.php">Test de placement</a>
     <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com" class="nav-cta">Espace étudiant →</a>
   </div>
 </nav>
@@ -132,6 +133,7 @@ $t = [
   <p>Des cours d'anglais animés par des experts, conçus pour des résultats concrets — que vous construisiez votre carrière, prépariez le Baccalauréat ou souhaitiez simplement progresser.</p>
   <div class="hero-actions">
     <a href="#courses" class="btn-primary">Découvrir les cours</a>
+    <a href="/placement-test.php" class="btn-outline">Faire le test de placement →</a>
     <a target="_blank" rel="noopener noreferrer" href="https://wa.me/212702099967" class="btn-outline">Plus d'informations →</a>
   </div>
 </div>
