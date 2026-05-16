@@ -147,6 +147,23 @@ if ($action === 'list_groups') {
   jsonOut(['ok'=>true, 'groups'=>$groups]);
 }
 
+// update_course: admin renames a course (group_name_fr / group_name_ar)
+if ($action === 'update_course') {
+  if ($role !== 'admin') err('Accès refusé', 403);
+  $courseId    = (int)($body['course_id']    ?? 0);
+  $nameFr      = trim($body['name_fr']       ?? '');
+  $nameAr      = trim($body['name_ar']       ?? '');
+  if (!$courseId || !$nameFr) err('course_id et name_fr requis');
+  if (mb_strlen($nameFr) > 120 || mb_strlen($nameAr) > 120) err('Nom trop long (max 120 caractères)');
+  $chk = $pdo->prepare("SELECT id FROM courses WHERE id = ?");
+  $chk->execute([$courseId]);
+  if (!$chk->fetch()) err('Cours introuvable', 404);
+  $pdo->prepare("UPDATE courses SET group_name_fr = ?, group_name_ar = ? WHERE id = ?")
+      ->execute([$nameFr, $nameAr ?: $nameFr, $courseId]);
+  // Invalidate cached course list on next load
+  jsonOut(['ok' => true]);
+}
+
 // list_courses: all courses for admin course-link dropdown
 if ($action === 'list_courses') {
   if ($role !== 'admin') err('Accès refusé', 403);

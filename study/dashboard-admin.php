@@ -141,6 +141,7 @@ body.ar .btn-primary { font-family:var(--font-ar); }
 body.ar .btn-secondary { font-family:var(--font-ar); }
 .btn-secondary:hover { border-color:rgba(255,255,255,.2); color:var(--white); }
 .btn-sm { padding:.4rem .9rem; font-size:.78rem; border-radius:8px; }
+.course-rename-row { display:flex; align-items:center; gap:.6rem; }
 
 /* TABLES */
 .data-table { width:100%; border-collapse:collapse; }
@@ -511,6 +512,19 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     <div id="classes-view-groups" style="display:none;">
       <div id="classes-group-cards" class="group-cards">
         <div class="loading-overlay"><div class="spinner"></div></div>
+      </div>
+    </div>
+
+    <!-- Manage Courses panel (visible only in types view) -->
+    <div id="courses-panel" style="display:none;margin-top:2.5rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:1rem;flex-wrap:wrap;">
+        <div>
+          <h3 style="font-family:var(--font);font-size:1.05rem;font-weight:700;" id="courses-panel-title">📚 Cours</h3>
+          <p style="color:var(--muted);font-size:.8rem;margin-top:.15rem;" id="courses-panel-sub">Renommer les cours disponibles pour les groupes</p>
+        </div>
+      </div>
+      <div id="courses-list-container">
+        <div class="loading-overlay" style="position:static;height:60px;border-radius:12px;"><div class="spinner"></div></div>
       </div>
     </div>
   </div>
@@ -1568,13 +1582,15 @@ async function renderClassesPage() {
   document.getElementById('classes-view-types' ).style.display = 'none';
   document.getElementById('classes-view-levels').style.display = 'none';
   document.getElementById('classes-view-groups').style.display = 'none';
+  document.getElementById('courses-panel').style.display = 'none';
   bc.style.display = 'none';
   if (btnAdd) btnAdd.style.display = 'none';
 
   if (classesView === 'types') {
     document.getElementById('classes-page-sub').textContent = tr().classesPageSub;
     document.getElementById('classes-view-types').style.display = '';
-    await renderTypesGrid();
+    document.getElementById('courses-panel').style.display = '';
+    await Promise.all([renderTypesGrid(), loadCoursesPanel()]);
 
   } else if (classesView === 'levels') {
     const typeNameL = currentLang==='en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
@@ -1865,6 +1881,81 @@ async function saveCourseLink() {
     // Refresh group cards to update badge
     await loadGroupChips();
   } catch(e) {
+    showToast(e.message || 'Error', 'error');
+  } finally { btn.disabled = false; }
+}
+
+/* ── COURSES PANEL (rename courses) ──────────────────────────────────────── */
+async function loadCoursesPanel() {
+  const container = document.getElementById('courses-list-container');
+  container.innerHTML = '<div class="loading-overlay" style="position:static;height:60px;border-radius:12px;"><div class="spinner"></div></div>';
+  // Always re-fetch to reflect any renames
+  try {
+    const d = await api('api_classes.php?action=list_courses');
+    _allCourses = d.courses || [];
+  } catch(e) {
+    container.innerHTML = `<p style="color:var(--red);font-size:.85rem;padding:.75rem 0;">${currentLang==='en'?'Failed to load courses':currentLang==='ar'?'فشل تحميل المقررات':'Erreur de chargement'}</p>`;
+    return;
+  }
+
+  if (_allCourses.length === 0) {
+    const emptyMsg = currentLang==='en' ? 'No courses found. Create courses first via Assignation des classes.'
+                   : currentLang==='ar' ? 'لا توجد مقررات. أنشئ مقررات أولاً.'
+                   : 'Aucun cours. Créez des cours via Assignation des classes.';
+    container.innerHTML = `<p style="color:var(--muted);font-size:.83rem;padding:.5rem 0;font-style:italic;">${emptyMsg}</p>`;
+    return;
+  }
+
+  const saveLabel = currentLang==='en' ? 'Save' : currentLang==='ar' ? 'حفظ' : 'Enregistrer';
+  const namePlaceholder = currentLang==='en' ? 'Course name' : currentLang==='ar' ? 'اسم المقرر' : 'Nom du cours';
+
+  container.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:.6rem;">
+      ${_allCourses.map(c => `
+        <div class="course-rename-row" data-id="${c.id}">
+          <div style="flex:1;min-width:0;">
+            <input type="text" class="course-name-fr" value="${(c.group_name_fr||'').replace(/"/g,'&quot;')}"
+              placeholder="${namePlaceholder} (FR / EN)"
+              style="width:100%;padding:.6rem .9rem;background:rgba(255,255,255,.05);border:1px solid var(--border);
+                     border-radius:9px;color:var(--white);font-family:var(--font-body);font-size:.86rem;outline:none;box-sizing:border-box;">
+          </div>
+          <div style="flex:1;min-width:0;">
+            <input type="text" class="course-name-ar" value="${(c.group_name_ar||'').replace(/"/g,'&quot;')}"
+              placeholder="اسم المقرر (عربي)"
+              dir="rtl"
+              style="width:100%;padding:.6rem .9rem;background:rgba(255,255,255,.05);border:1px solid var(--border);
+                     border-radius:9px;color:var(--white);font-family:var(--font-body);font-size:.86rem;outline:none;box-sizing:border-box;">
+          </div>
+          <button class="btn-primary btn-sm" onclick="saveCourseRename(${c.id}, this)">${saveLabel}</button>
+          <span class="course-save-status" style="font-size:.75rem;min-width:3rem;"></span>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+async function saveCourseRename(courseId, btn) {
+  const row    = btn.closest('.course-rename-row');
+  const nameFr = row.querySelector('.course-name-fr').value.trim();
+  const nameAr = row.querySelector('.course-name-ar').value.trim();
+  const status = row.querySelector('.course-save-status');
+  if (!nameFr) { status.style.color='var(--red)'; status.textContent='⚠'; return; }
+  btn.disabled = true;
+  status.textContent = '…';
+  try {
+    await api('api_classes.php', 'POST', {action:'update_course', course_id:courseId, name_fr:nameFr, name_ar:nameAr});
+    status.style.color = 'var(--green)';
+    status.textContent = '✅';
+    // Update cache so group cards pick up new name immediately
+    if (_allCourses) {
+      const c = _allCourses.find(x => x.id == courseId);
+      if (c) { c.group_name_fr = nameFr; c.group_name_ar = nameAr || nameFr; }
+    }
+    // Refresh group chips if currently visible
+    if (classesView === 'groups') loadGroupChips();
+    setTimeout(() => { status.textContent = ''; }, 2500);
+  } catch(e) {
+    status.style.color = 'var(--red)';
+    status.textContent = '✗';
     showToast(e.message || 'Error', 'error');
   } finally { btn.disabled = false; }
 }
