@@ -1533,9 +1533,9 @@ function renderSubmissions(submissions) {
         ${fbBlock}
         <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.65rem;align-items:center;">
           <input type="number" min="0" max="100" id="score-${s.id}" placeholder="${tr2.scorePlaceholder}" value="${s.score!=null?s.score:''}"
-            style="width:80px;padding:.4rem .6rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font);font-size:.85rem;text-align:center;outline:none;">
+            style="width:80px;padding:.4rem .6rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.85rem;text-align:center;outline:none;">
           <input type="text" id="comment-${s.id}" placeholder="${tr2.commentPlaceholder}" value="${escHtml(s.teacher_comment||'')}"
-            style="flex:1;min-width:160px;padding:.4rem .7rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;">
+            style="flex:1;min-width:160px;padding:.4rem .7rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:.83rem;outline:none;">
           <button class="btn-primary btn-sm" onclick="gradeSubmission(${s.id})">${tr2.saveGrade}</button>
         </div>
       </div>
