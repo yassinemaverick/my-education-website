@@ -1076,7 +1076,7 @@ const T = {
     loading:'Chargement…', errorLoading:'Erreur de chargement',
     subBack:'← Retour aux devoirs', dueLbl2:'Échéance : ', noText:'(Pas de texte)',
     scorePlaceholder:'Note /100', commentPlaceholder:"Commentaire pour l'étudiant…",
-    yourComment:'Votre commentaire :', saveGrade:'Enregistrer',
+    yourComment:'Feedback enregistré :', saveGrade:'Enregistrer', gradeSectionLbl:'Corriger :',
     toastGraded:'✅ Correction enregistrée', noSubmissions:'Aucune soumission pour le moment.',
     noClassAssigned:'— Aucune classe assignée —', chooseClass:'— Choisir la classe —',
     classLabel:'Classe', validateChooseClass:'Veuillez choisir une classe.',
@@ -1158,7 +1158,7 @@ const T = {
     loading:'Loading…', errorLoading:'Error loading',
     subBack:'← Back to assignments', dueLbl2:'Due: ', noText:'(No text)',
     scorePlaceholder:'Score /100', commentPlaceholder:'Comment for student…',
-    yourComment:'Your comment:', saveGrade:'Save',
+    yourComment:'Saved feedback:', saveGrade:'Save', gradeSectionLbl:'Grade:',
     toastGraded:'✅ Grade saved', noSubmissions:'No submissions yet.',
     noClassAssigned:'— No class assigned —', chooseClass:'— Choose a class —',
     classLabel:'Class', validateChooseClass:'Please choose a class.',
@@ -1531,12 +1531,15 @@ function renderSubmissions(submissions) {
         ${fileLink}
         <div style="font-size:.74rem;color:var(--muted2);">📅 ${date}</div>
         ${fbBlock}
-        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.65rem;align-items:center;">
-          <input type="number" min="0" max="100" id="score-${s.id}" placeholder="${tr2.scorePlaceholder}" value="${s.score!=null?s.score:''}"
-            style="width:80px;padding:.4rem .6rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.85rem;text-align:center;outline:none;">
-          <input type="text" id="comment-${s.id}" placeholder="${tr2.commentPlaceholder}" value="${escHtml(s.teacher_comment||'')}"
-            style="flex:1;min-width:160px;padding:.4rem .7rem;background:rgba(30,27,75,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:.83rem;outline:none;">
-          <button class="btn-primary btn-sm" onclick="gradeSubmission(${s.id})">${tr2.saveGrade}</button>
+        <div style="margin-top:.75rem;padding:.7rem .85rem;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.15);border-radius:10px;">
+          <div style="font-size:.7rem;font-weight:700;color:var(--blue);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.55rem;">${tr2.gradeSectionLbl}</div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+            <input type="number" min="0" max="100" id="score-${s.id}" placeholder="${tr2.scorePlaceholder}" value="${s.score!=null?s.score:''}"
+              style="width:95px;padding:.4rem .6rem;background:#fff;border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font);font-size:.85rem;text-align:center;outline:none;">
+            <input type="text" id="comment-${s.id}" placeholder="${tr2.commentPlaceholder}" value="${escHtml(s.teacher_comment||'')}"
+              style="flex:1;min-width:160px;padding:.4rem .7rem;background:#fff;border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:.83rem;outline:none;">
+            <button class="btn-primary btn-sm" onclick="gradeSubmission(${s.id})">${tr2.saveGrade}</button>
+          </div>
         </div>
       </div>
     </div>`;
