@@ -108,9 +108,11 @@ if ($action === 'list_groups') {
 
   if (!$typeKey) err('type_key manquant');
 
-  $sql = "SELECT g.id, g.group_letter, g.created_at,
+  $sql = "SELECT g.id, g.group_letter, g.created_at, g.course_id,
+            c.group_name_fr AS course_name_fr, c.group_name_ar AS course_name_ar,
             (SELECT COUNT(*) FROM class_group_members m WHERE m.group_id = g.id) AS member_count
           FROM class_groups g
+          LEFT JOIN courses c ON c.id = g.course_id
           WHERE g.type_key = ?
             AND g.level_number " . ($level === null ? "IS NULL" : "= ?") . "
           ORDER BY g.group_letter";
@@ -143,6 +145,62 @@ if ($action === 'list_groups') {
   }
 
   jsonOut(['ok'=>true, 'groups'=>$groups]);
+}
+
+// list_courses: all courses for admin course-link dropdown
+if ($action === 'list_courses') {
+  if ($role !== 'admin') err('Accès refusé', 403);
+  try {
+    $stmt = $pdo->query("SELECT id, group_name_fr, group_name_ar, subject_fr, subject_ar, level
+                         FROM courses ORDER BY group_name_fr");
+    jsonOut(['ok'=>true, 'courses'=>$stmt->fetchAll(PDO::FETCH_ASSOC)]);
+  } catch (Throwable $e) {
+    error_log('list_courses error: ' . $e->getMessage());
+    err('Erreur serveur', 500);
+  }
+}
+
+// link_course: admin links (or unlinks) a class_group to a course
+// Also retroactively syncs all existing group members into student_courses / teacher_courses
+if ($action === 'link_course') {
+  if ($role !== 'admin') err('Accès refusé', 403);
+  $groupId  = (int)($body['group_id']  ?? 0);
+  $courseId = isset($body['course_id']) && $body['course_id'] !== '' && $body['course_id'] !== null
+              ? (int)$body['course_id'] : null;
+  if (!$groupId) err('group_id manquant');
+
+  // Verify group exists
+  $chk = $pdo->prepare("SELECT id FROM class_groups WHERE id = ?");
+  $chk->execute([$groupId]);
+  if (!$chk->fetch()) err('Groupe introuvable', 404);
+
+  // If linking to a specific course, verify it exists
+  if ($courseId) {
+    $cchk = $pdo->prepare("SELECT id FROM courses WHERE id = ?");
+    $cchk->execute([$courseId]);
+    if (!$cchk->fetch()) err('Cours introuvable', 404);
+  }
+
+  // Save the link
+  $pdo->prepare("UPDATE class_groups SET course_id = ? WHERE id = ?")->execute([$courseId, $groupId]);
+
+  // Retroactively sync all existing members into student_courses / teacher_courses
+  if ($courseId) {
+    $members = $pdo->prepare(
+      "SELECT cgm.user_id, u.role FROM class_group_members cgm
+       JOIN users u ON u.id = cgm.user_id WHERE cgm.group_id = ?"
+    );
+    $members->execute([$groupId]);
+    foreach ($members->fetchAll(PDO::FETCH_ASSOC) as $m) {
+      if ($m['role'] === 'student') {
+        try { $pdo->prepare("INSERT IGNORE INTO student_courses (student_id, course_id) VALUES (?, ?)")->execute([$m['user_id'], $courseId]); } catch(Throwable $e) {}
+      } elseif ($m['role'] === 'teacher') {
+        try { $pdo->prepare("INSERT IGNORE INTO teacher_courses (teacher_id, course_id) VALUES (?, ?)")->execute([$m['user_id'], $courseId]); } catch(Throwable $e) {}
+      }
+    }
+  }
+
+  jsonOut(['ok'=>true]);
 }
 
 // create_group

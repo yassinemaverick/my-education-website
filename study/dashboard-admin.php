@@ -248,6 +248,9 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 .group-card .gc-students.gc-empty { font-style:italic; }
 .group-card .gc-del { position:absolute; top:.55rem; right:.6rem; background:none; border:none; color:var(--muted); cursor:pointer; font-size:.85rem; line-height:1; padding:.2rem; border-radius:6px; transition:color .15s,background .15s; }
 .group-card .gc-del:hover { color:var(--red); background:rgba(232,93,117,.1); }
+.group-card .gc-course { font-size:.7rem; margin-top:.55rem; padding:.2rem .5rem; border-radius:100px; display:inline-block; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.group-card .gc-course.linked { background:rgba(62,207,120,.1); color:var(--green); border:1px solid rgba(62,207,120,.25); }
+.group-card .gc-course.unlinked { background:rgba(255,255,255,.04); color:var(--muted); border:1px solid var(--border); font-style:italic; }
 .breadcrumb { display:flex; align-items:center; gap:.5rem; font-size:.82rem; color:var(--muted); margin-bottom:1.5rem; flex-wrap:wrap; }
 .breadcrumb span.bc-link { cursor:pointer; transition:color .15s; }
 .breadcrumb span.bc-link:hover { color:var(--orange); }
@@ -715,6 +718,16 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
       <button class="btn-close" onclick="closeModal('group-members')" aria-label="Close">✕</button>
     </div>
 
+    <!-- Course link section -->
+    <div class="card-title" style="margin-bottom:.5rem;" id="course-link-lbl">Cours lié</div>
+    <div style="display:flex;gap:.6rem;align-items:center;margin-bottom:.4rem;">
+      <select id="course-link-select" style="flex:1;padding:.65rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.85rem;outline:none;">
+        <option value="">— Aucun cours —</option>
+      </select>
+      <button class="btn-primary btn-sm" onclick="saveCourseLink()" id="btn-save-course">Enregistrer</button>
+    </div>
+    <div id="course-link-status" style="font-size:.76rem;color:var(--muted);margin-bottom:1.25rem;min-height:1rem;"></div>
+
     <!-- Current members list -->
     <div class="card-title" style="margin-bottom:.5rem;" id="members-current-lbl">Membres actuels</div>
     <div id="members-list" style="margin-bottom:1.25rem;max-height:220px;overflow-y:auto;">
@@ -792,6 +805,7 @@ const T = {
     ath_student:'Étudiant', ath_group:'Groupe(s)', ath_teacher:'Professeur', ath_teacher_group:'Groupe(s)',
     classesGroupsOf:'Groupes de', noGroups:'Aucun groupe. Cliquez sur + pour en créer un.',
     btnAddGroup:'Ajouter un groupe', modalAddGroupTitle:'Nouveau groupe', lblGroupLetter:'Lettre du groupe',
+    courseLinkLbl:'Cours lié', btnSaveCourse:'Enregistrer',
     membersCurrentLbl:'Membres actuels', membersAddLbl:'Ajouter un membre',
     noMembers:'Aucun membre dans ce groupe.',
     toastGroupCreated:'Groupe créé !', toastGroupDeleted:'Groupe supprimé.', toastMemberAdded:'Membre ajouté !', toastMemberRemoved:'Membre retiré.',
@@ -862,6 +876,7 @@ const T = {
     ath_student:'الطالب', ath_group:'المجموعة(ات)', ath_teacher:'الأستاذ', ath_teacher_group:'المجموعة(ات)',
     classesGroupsOf:'مجموعات', noGroups:'لا توجد مجموعات. انقر على + لإنشاء واحدة.',
     btnAddGroup:'إضافة مجموعة', modalAddGroupTitle:'مجموعة جديدة', lblGroupLetter:'حرف المجموعة',
+    courseLinkLbl:'المقرر المرتبط', btnSaveCourse:'حفظ',
     membersCurrentLbl:'الأعضاء الحاليون', membersAddLbl:'إضافة عضو',
     noMembers:'لا يوجد أعضاء في هذه المجموعة.',
     toastGroupCreated:'تم إنشاء المجموعة!', toastGroupDeleted:'تم حذف المجموعة.', toastMemberAdded:'تمت إضافة العضو!', toastMemberRemoved:'تم إزالة العضو.',
@@ -932,6 +947,7 @@ const T = {
     ath_student:'Student', ath_group:'Group(s)', ath_teacher:'Teacher', ath_teacher_group:'Group(s)',
     classesGroupsOf:'Groups of', noGroups:'No groups. Click + to create one.',
     btnAddGroup:'Add group', modalAddGroupTitle:'New group', lblGroupLetter:'Group letter',
+    courseLinkLbl:'Linked course', btnSaveCourse:'Save',
     membersCurrentLbl:'Current members', membersAddLbl:'Add a member',
     noMembers:'No members in this group.',
     toastGroupCreated:'Group created!', toastGroupDeleted:'Group deleted.', toastMemberAdded:'Member added!', toastMemberRemoved:'Member removed.',
@@ -1016,6 +1032,7 @@ function applyTranslations() {
   set('ath-teacher', t.ath_teacher); set('ath-teacher-group', t.ath_teacher_group);
   set('btn-add-group-lbl', t.btnAddGroup);
   set('modal-add-group-title', t.modalAddGroupTitle); set('lbl-group-letter', t.lblGroupLetter);
+  set('course-link-lbl', t.courseLinkLbl); set('btn-save-course', t.btnSaveCourse);
   set('members-current-lbl', t.membersCurrentLbl); set('members-add-lbl', t.membersAddLbl);
   set('members-close-btn', t.membersCloseBtn); set('btn-add-member', t.btnAddMember);
   set('add-group-cancel', t.addGroupCancel); set('add-group-submit', t.addGroupSubmit);
@@ -1672,6 +1689,7 @@ async function loadGroupChips() {
   const groupWord   = currentLang==='en' ? 'Group' : currentLang==='ar' ? 'مجموعة' : 'Groupe';
   const noStudents  = currentLang==='en' ? 'No students' : currentLang==='ar' ? 'لا طلاب' : 'Aucun élève';
   const deleteTitle = currentLang==='en' ? 'Delete' : currentLang==='ar' ? 'حذف' : 'Supprimer';
+  const noCourse    = currentLang==='en' ? 'No course linked' : currentLang==='ar' ? 'بدون مقرر' : 'Aucun cours lié';
   container.innerHTML = groups.map(g => {
     const members  = g.members || [];
     const teachers = members.filter(m => m.role === 'teacher');
@@ -1682,11 +1700,16 @@ async function loadGroupChips() {
     const studentHtml = students.length
       ? `<div class="gc-students">${students.map(s => s.name).join(' · ')}</div>`
       : `<div class="gc-students gc-empty">${noStudents}</div>`;
-    return `<div class="group-card" onclick="openManageGroupModal(${g.id}, '${g.group_letter}')">
+    const courseName = currentLang==='ar' ? (g.course_name_ar || g.course_name_fr) : g.course_name_fr;
+    const courseHtml = g.course_id
+      ? `<div class="gc-course linked" title="${courseName||''}">📚 ${(courseName||'').split(' ').slice(0,4).join(' ')}</div>`
+      : `<div class="gc-course unlinked">📚 ${noCourse}</div>`;
+    return `<div class="group-card" onclick="openManageGroupModal(${g.id}, '${g.group_letter}', ${g.course_id||'null'})">
       <button class="gc-del" title="${deleteTitle}" onclick="event.stopPropagation();deleteGroup(${g.id})">✕</button>
       <div class="gc-letter">${groupWord} ${g.group_letter}</div>
       ${teacherHtml}
       ${studentHtml}
+      ${courseHtml}
     </div>`;
   }).join('');
 }
@@ -1769,15 +1792,81 @@ async function deleteGroup(groupId) {
   } catch(e) { showToast(e.message, 'error'); }
 }
 
+// Cache for courses list (loaded once per session)
+let _allCourses = null;
+
 // Manage members modal
-async function openManageGroupModal(groupId, groupLetter) {
+async function openManageGroupModal(groupId, groupLetter, currentCourseId) {
   classesGroupId = groupId;
   const gWord = currentLang==='en' ? 'Group' : currentLang==='ar' ? 'مجموعة' : 'Groupe';
   const mWord = currentLang==='en' ? 'Members' : currentLang==='ar' ? 'الأعضاء' : 'Membres';
   document.getElementById('modal-members-title').textContent = gWord + ' ' + groupLetter + ' – ' + mWord;
   document.getElementById('member-add-error').style.display = 'none';
+  document.getElementById('course-link-status').textContent = '';
   document.getElementById('modal-group-members').classList.add('open');
-  await Promise.all([loadMembersList(), loadUsersForSelect()]);
+  await Promise.all([loadMembersList(), loadUsersForSelect(), loadCourseSelect(currentCourseId)]);
+}
+
+async function loadCourseSelect(currentCourseId) {
+  const sel    = document.getElementById('course-link-select');
+  const status = document.getElementById('course-link-status');
+  sel.disabled = true;
+
+  // Load courses list once and cache
+  if (!_allCourses) {
+    try {
+      const d = await api('api_classes.php?action=list_courses');
+      _allCourses = d.courses || [];
+    } catch(e) { _allCourses = []; }
+  }
+
+  const noneLabel = currentLang==='en' ? '— No course —' : currentLang==='ar' ? '— بدون مقرر —' : '— Aucun cours —';
+  sel.innerHTML = `<option value="">${noneLabel}</option>` +
+    _allCourses.map(c => {
+      const name = currentLang==='ar' ? (c.group_name_ar || c.group_name_fr) : c.group_name_fr;
+      const sub  = c.subject_fr ? ` · ${c.subject_fr}` : '';
+      return `<option value="${c.id}">${name}${sub}</option>`;
+    }).join('');
+
+  sel.value = currentCourseId || '';
+
+  if (currentCourseId) {
+    const linked = _allCourses.find(c => c.id == currentCourseId);
+    const name   = linked ? (currentLang==='ar' ? (linked.group_name_ar || linked.group_name_fr) : linked.group_name_fr) : '—';
+    status.style.color = 'var(--green)';
+    status.textContent = '✅ ' + name;
+  } else {
+    status.style.color = 'var(--muted)';
+    status.textContent = currentLang==='en' ? 'No course linked yet — assignments won\'t reach students until linked.'
+                       : currentLang==='ar' ? 'لا يوجد مقرر مرتبط — لن تصل الواجبات للطلاب.'
+                       : 'Aucun cours lié — les devoirs n\'atteindront pas les élèves.';
+  }
+  sel.disabled = false;
+}
+
+async function saveCourseLink() {
+  const courseId = document.getElementById('course-link-select').value || null;
+  const btn      = document.getElementById('btn-save-course');
+  const status   = document.getElementById('course-link-status');
+  btn.disabled   = true;
+  try {
+    await api('api_classes.php', 'POST', {action:'link_course', group_id:classesGroupId, course_id:courseId ? parseInt(courseId) : null});
+    const successMsg = currentLang==='en' ? 'Saved! Existing members synced.' : currentLang==='ar' ? 'تم الحفظ! تمت مزامنة الأعضاء.' : 'Enregistré ! Membres synchronisés.';
+    showToast(successMsg, 'success');
+    if (courseId) {
+      const linked = (_allCourses||[]).find(c=>c.id==courseId);
+      const name   = linked ? (currentLang==='ar' ? (linked.group_name_ar || linked.group_name_fr) : linked.group_name_fr) : '—';
+      status.style.color = 'var(--green)';
+      status.textContent = '✅ ' + name;
+    } else {
+      status.style.color = 'var(--muted)';
+      status.textContent = currentLang==='en' ? 'Unlinked.' : currentLang==='ar' ? 'تم إلغاء الربط.' : 'Dissocié.';
+    }
+    // Refresh group cards to update badge
+    await loadGroupChips();
+  } catch(e) {
+    showToast(e.message || 'Error', 'error');
+  } finally { btn.disabled = false; }
 }
 
 async function loadMembersList() {
