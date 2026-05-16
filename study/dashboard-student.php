@@ -1334,6 +1334,12 @@ function setLang(lang) {
   document.getElementById('pill-en').className = 'lang-pill' + (lang === 'en' ? ' active' : '');
   applyTranslations();
   updateEmailPopupLang();
+  // Re-render dynamic content that doesn't use data-t attributes
+  if (activePage === 'myclass') {
+    renderMyClass();
+    renderGroupSection();
+    renderGroupMates();
+  }
   // Refresh notification panel if open
   if (notifData.length) renderNotifList();
 }
@@ -1527,77 +1533,85 @@ async function loadMyGroup() {
   if (!section) return;
   section.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
 
-  let groupData, membersData = null;
+  let groupData;
   try {
     groupData = await fetch('api_classes.php?action=my_group').then(r => r.json());
   } catch(e) { section.innerHTML = ''; return; }
 
-  const lang   = currentLang;
-  const groups = (groupData.ok && groupData.groups) ? groupData.groups : [];
+  LIVE.myGroups = (groupData.ok && groupData.groups) ? groupData.groups : [];
 
-  if (groups.length === 0) {
-    section.innerHTML = '';
-    return;
-  }
+  if (LIVE.myGroups.length === 0) { section.innerHTML = ''; return; }
 
-  // Show group badge(s)
-  const badges = groups.map(g => {
-    const label = lang==='en' ? (g.label_en || g.label_fr) : lang==='ar' ? g.label_ar : g.label_fr;
+  renderGroupSection();
+
+  const matesEl = document.getElementById('myclass-mates');
+  if (!matesEl) return;
+  const lang = currentLang;
+  matesEl.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem;">${lang==='en'?'Loading…':'Chargement…'}</div>`;
+
+  try {
+    const mdata = await fetch(`api_classes.php?action=group_classmates&group_id=${LIVE.myGroups[0].group_id}`).then(r => r.json());
+    LIVE.myGroupMembers = (mdata.ok && mdata.members) ? mdata.members : [];
+  } catch(e) { LIVE.myGroupMembers = []; }
+
+  renderGroupMates();
+}
+
+/* Pure render from cached LIVE.myGroups — re-called on lang change */
+function renderGroupSection() {
+  const section = document.getElementById('myclass-group-section');
+  if (!section || !LIVE.myGroups || !LIVE.myGroups.length) return;
+  const lang = currentLang;
+  const badges = LIVE.myGroups.map(g => {
+    const label = lang === 'en' ? (g.label_en || g.label_fr) : g.label_fr;
     return `<span style="display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;background:rgba(62,207,120,.1);border:1px solid rgba(62,207,120,.3);border-radius:100px;font-family:var(--font);font-size:.85rem;font-weight:700;color:var(--green);">
       🏫 ${label}
     </span>`;
   }).join('');
-
   section.innerHTML = `<div class="card" style="padding:1rem 1.25rem;background:linear-gradient(135deg,rgba(62,207,120,.05),rgba(91,156,246,.03));border-color:rgba(62,207,120,.2);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
     <div>
-      <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">${lang==='en'?'Your group':lang==='ar'?'مجموعتك':'Votre groupe'}</div>
+      <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">${lang==='en'?'Your group':'Votre groupe'}</div>
       <div style="display:flex;gap:.5rem;flex-wrap:wrap;">${badges}</div>
     </div>
   </div>`;
+}
 
-  // Load classmates from first group (or all groups)
+/* Pure render from cached LIVE.myGroupMembers — re-called on lang change */
+function renderGroupMates() {
   const matesEl = document.getElementById('myclass-mates');
   if (!matesEl) return;
+  const members = LIVE.myGroupMembers || [];
+  const lang = currentLang;
+  const students = members.filter(m => m.role === 'student');
 
-  // Use first group for classmates
-  const primaryGroupId = groups[0].group_id;
-  matesEl.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem;">${lang==='en'?'Loading…':lang==='ar'?'جارٍ التحميل…':'Chargement…'}</div>`;
+  if (students.length === 0) {
+    matesEl.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;">${lang==='en'?'No classmates in this group yet.':'Aucun camarade dans ce groupe pour l\'instant.'}</div>`;
+    return;
+  }
+  matesEl.innerHTML = students.map(s => {
+    const parts = (s.name||s.username||'').trim().split(/\s+/);
+    const init  = ((parts[0]?.[0]??'') + (parts[1]?.[0]??'')).toUpperCase() || '?';
+    return `<div style="display:flex;align-items:center;gap:.7rem;padding:.65rem 0;border-bottom:1px solid var(--border2);">
+      <div style="width:34px;height:34px;border-radius:50%;background:rgba(91,156,246,.15);border:1px solid rgba(91,156,246,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.75rem;color:var(--blue);flex-shrink:0;">${init}</div>
+      <div style="font-size:.88rem;">${s.name||s.username}</div>
+    </div>`;
+  }).join('').replace(/border-bottom[^;]+;(?=[^<]*<\/div>\s*$)/,'');
 
-  try {
-    const mdata = await fetch(`api_classes.php?action=group_classmates&group_id=${primaryGroupId}`).then(r => r.json());
-    const members = (mdata.ok && mdata.members) ? mdata.members : [];
-    const students = members.filter(m => m.role === 'student');
-
-    if (students.length === 0) {
-      matesEl.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;">${lang==='en'?'No classmates in this group yet.':lang==='ar'?'لا يوجد زملاء في هذه المجموعة بعد.':'Aucun camarade dans ce groupe pour l\'instant.'}</div>`;
-      return;
-    }
-    matesEl.innerHTML = students.map(s => {
-      const parts = (s.name||s.username||'').trim().split(/\s+/);
+  const teachers = members.filter(m => m.role === 'teacher');
+  if (teachers.length > 0) {
+    const teacherHtml = teachers.map(t => {
+      const parts = (t.name||t.username||'').trim().split(/\s+/);
       const init  = ((parts[0]?.[0]??'') + (parts[1]?.[0]??'')).toUpperCase() || '?';
       return `<div style="display:flex;align-items:center;gap:.7rem;padding:.65rem 0;border-bottom:1px solid var(--border2);">
-        <div style="width:34px;height:34px;border-radius:50%;background:rgba(91,156,246,.15);border:1px solid rgba(91,156,246,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.75rem;color:var(--blue);flex-shrink:0;">${init}</div>
-        <div style="font-size:.88rem;">${s.name||s.username}</div>
+        <div style="width:34px;height:34px;border-radius:50%;background:rgba(62,207,120,.12);border:1px solid rgba(62,207,120,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.75rem;color:var(--green);flex-shrink:0;">${init}</div>
+        <div>
+          <div style="font-size:.88rem;">${t.name||t.username}</div>
+          <div style="font-size:.72rem;color:var(--green);">${T[lang].teacherLbl}</div>
+        </div>
       </div>`;
-    }).join('').replace(/border-bottom[^;]+;(?=[^<]*<\/div>\s*$)/,'');
-
-    // Also show teacher(s)
-    const teachers = members.filter(m => m.role === 'teacher');
-    if (teachers.length > 0) {
-      const teacherHtml = teachers.map(t => {
-        const parts = (t.name||t.username||'').trim().split(/\s+/);
-        const init  = ((parts[0]?.[0]??'') + (parts[1]?.[0]??'')).toUpperCase() || '?';
-        return `<div style="display:flex;align-items:center;gap:.7rem;padding:.65rem 0;border-bottom:1px solid var(--border2);">
-          <div style="width:34px;height:34px;border-radius:50%;background:rgba(62,207,120,.12);border:1px solid rgba(62,207,120,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.75rem;color:var(--green);flex-shrink:0;">${init}</div>
-          <div>
-            <div style="font-size:.88rem;">${t.name||t.username}</div>
-            <div style="font-size:.72rem;color:var(--green);">${T[lang].teacherLbl}</div>
-          </div>
-        </div>`;
-      }).join('');
-      matesEl.innerHTML = `<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;">${T[lang].teacherLbl}</div>${teacherHtml}<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:.75rem 0 .5rem;">${T[lang].classmatesLbl}</div>` + matesEl.innerHTML;
-    }
-  } catch(e) {}
+    }).join('');
+    matesEl.innerHTML = `<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;">${T[lang].teacherLbl}</div>${teacherHtml}<div style="font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:.75rem 0 .5rem;">${T[lang].classmatesLbl}</div>` + matesEl.innerHTML;
+  }
 }
 
 function renderMyClass() {
@@ -1610,16 +1624,16 @@ function renderMyClass() {
   if (c) {
     if (assignedEl) assignedEl.style.display = '';
     if (emptyEl)    emptyEl.style.display    = 'none';
-    const name = lang === 'en' ? (c.label_en || c.label_fr) : lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
+    const name = lang === 'en' ? (c.label_en || c.label_fr) : c.label_fr;
     st('myclass-course-name', name || '—');
-    st('myclass-teacher', (c.teacher_name ? ((lang === 'en' ? '' : lang === 'ar' ? 'أ. ' : 'Prof. ') + c.teacher_name) : '—'));
+    st('myclass-teacher', (c.teacher_name ? ((lang === 'en' ? '' : 'Prof. ') + c.teacher_name) : '—'));
     if (c.schedule_json) {
       try {
         const sched = JSON.parse(c.schedule_json);
         if (Array.isArray(sched) && sched.length) {
           const DAY_EN = {Lundi:'Monday',Mardi:'Tuesday',Mercredi:'Wednesday',Jeudi:'Thursday',Vendredi:'Friday',Samedi:'Saturday',Dimanche:'Sunday'};
           st('myclass-schedule', sched.map(s => {
-            const day = lang === 'en' ? (DAY_EN[s.day_fr] || s.day_fr) : lang === 'ar' ? (s.day_ar || s.day_fr) : s.day_fr;
+            const day = lang === 'en' ? (DAY_EN[s.day_fr] || s.day_fr) : s.day_fr;
             const timeStr = s.time ? (s.time_end ? s.time + ' – ' + s.time_end : s.time) : '';
             return timeStr ? day + ' ' + timeStr : day;
           }).join(' · '));
@@ -1634,9 +1648,7 @@ function renderMyClass() {
       const det = document.getElementById('myclass-att-detail');
       if (det) det.textContent = lang === 'en'
         ? `${LIVE.att_present} / ${LIVE.att_total} sessions`
-        : lang === 'ar'
-          ? `${LIVE.att_present} / ${LIVE.att_total} جلسة`
-          : `${LIVE.att_present} / ${LIVE.att_total} séances`;
+        : `${LIVE.att_present} / ${LIVE.att_total} séances`;
     }
     // H9: Zoom link
     const zoomWrap = document.getElementById('myclass-zoom-wrap');
