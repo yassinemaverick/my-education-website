@@ -262,11 +262,11 @@ $t = [
       <span><em>Up</em>skill Education</span>
     </a>
     <div class="lang-switch">
-      <div class="lang-current">&#127467;&#127479; FR <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+      <div class="lang-current">FR <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></div>
       <div class="lang-dropdown">
         <div class="lang-dropdown-inner">
-          <a href="/en" class="lang-opt">&#127468;&#127463; EN</a>
-          <a href="/fr" class="lang-opt active">&#127467;&#127479; FR</a>
+          <a href="/en" class="lang-opt">EN</a>
+          <a href="/fr" class="lang-opt active">FR</a>
         </div>
       </div>
     </div>
