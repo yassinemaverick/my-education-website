@@ -9,6 +9,45 @@ if (empty($_SESSION['user_id']) || !in_array($_SESSION['role'], ['student','teac
     exit;
 }
 
+// ── Avatar upload (multipart/form-data) ────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['avatar'])) {
+    $token = $_POST['csrf_token'] ?? '';
+    if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+        echo json_encode(['ok'=>false,'error'=>'Token invalide']);
+        exit;
+    }
+    require_once __DIR__ . '/db.php';
+    $uid  = (int)$_SESSION['user_id'];
+    $file = $_FILES['avatar'];
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        echo json_encode(['ok'=>false,'error'=>'Upload error']);
+        exit;
+    }
+    if ($file['size'] > 2 * 1024 * 1024) {
+        echo json_encode(['ok'=>false,'error'=>'Max 2 MB']);
+        exit;
+    }
+    $allowed = ['image/jpeg','image/png','image/webp','image/gif'];
+    $mime = mime_content_type($file['tmp_name']);
+    if (!in_array($mime, $allowed)) {
+        echo json_encode(['ok'=>false,'error'=>'Invalid image type']);
+        exit;
+    }
+    $extMap = ['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp','image/gif'=>'gif'];
+    $ext = $extMap[$mime];
+    $dir = __DIR__ . '/uploads/avatars/';
+    if (!is_dir($dir)) { mkdir($dir, 0755, true); }
+    foreach (glob($dir . $uid . '.*') ?: [] as $old) { @unlink($old); }
+    $dest = $dir . $uid . '.' . $ext;
+    if (!move_uploaded_file($file['tmp_name'], $dest)) {
+        echo json_encode(['ok'=>false,'error'=>'Could not save file']);
+        exit;
+    }
+    $url = '/study/uploads/avatars/' . $uid . '.' . $ext . '?v=' . time();
+    echo json_encode(['ok'=>true,'url'=>$url]);
+    exit;
+}
+
 // CSRF check
 $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
 if (!hash_equals($_SESSION['csrf_token'] ?? '', $token)) {

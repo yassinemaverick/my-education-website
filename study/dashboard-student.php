@@ -23,6 +23,17 @@ require_once __DIR__ . '/db.php';
 
 $studentId = (int) $_SESSION['user_id'];
 
+// ── Check for server-stored avatar ──────────────────────────────────────────
+$avatarUrl = null;
+foreach (['jpg','png','webp','gif'] as $_ext) {
+    $_path = __DIR__ . '/uploads/avatars/' . $studentId . '.' . $_ext;
+    if (file_exists($_path)) {
+        $avatarUrl = '/study/uploads/avatars/' . $studentId . '.' . $_ext . '?v=' . filemtime($_path);
+        break;
+    }
+}
+unset($_ext, $_path);
+
 // Fetch student email (to show collection popup if missing)
 try {
     $eStmt = db()->prepare("SELECT email FROM users WHERE id = ? LIMIT 1");
@@ -527,6 +538,10 @@ body.ar .btn-primary { font-family:var(--font-ar); }
 body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 .toast.show { transform:translateY(0); opacity:1; }
 .toast-dot { width:8px; height:8px; border-radius:50%; background:var(--green); }
+.toast.error { border-color:var(--red); }
+.toast.error .toast-dot { background:var(--red); }
+.toast.warn  { border-color:var(--yellow); }
+.toast.warn  .toast-dot  { background:var(--yellow); }
 
 .sidebar-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:199; pointer-events:none; }
 .sidebar-backdrop.open { display:block; pointer-events:auto; }
@@ -623,6 +638,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
   <div class="lang-toggle">
     <div class="lang-pill active" id="pill-fr" onclick="setLang('fr')">🇫🇷 FR</div>
     <div class="lang-pill" id="pill-en" onclick="setLang('en')">🇬🇧 EN</div>
+    <div class="lang-pill" id="pill-ar" onclick="setLang('ar')">🇲🇦 AR</div>
   </div>
   <div class="sidebar-user">
     <div class="avatar" id="sidebar-avatar"><?= str_replace(['%ID%','%IMGID%'], ['sidebar-dino-svg','sidebar-av-img'], $dinoAvatarSvg) ?></div>
@@ -666,6 +682,10 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
     <div class="nav-item" role="button" tabindex="0" onclick="navigate('settings',this)" id="nav-set">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span id="nav-set-lbl">Settings</span>
+    </div>
+    <div class="nav-item" role="button" tabindex="0" onclick="navigate('announcements',this)" id="nav-announcements">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M11 5.882V19.24a1.76 1.76 0 0 1-3.417.592l-2.147-6.15M18 13a3 3 0 1 0 0-6M5.436 13.683A4.001 4.001 0 0 1 7 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 0 1-1.564-.317z"/></svg>
+      <span id="nav-ann-lbl">Announcements</span>
     </div>
   </nav>
   <div class="sidebar-bottom">
@@ -850,6 +870,7 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
     <div class="tabs">
       <div class="tab active" onclick="filterTab(this,'all','assign')" id="tab-all-assign">All</div>
       <div class="tab" onclick="filterTab(this,'pending','assign')" id="tab-pending-assign">Pending</div>
+      <div class="tab" onclick="filterTab(this,'overdue','assign')" id="tab-overdue-assign">Overdue</div>
       <div class="tab" onclick="filterTab(this,'submitted','assign')" id="tab-done-assign">Submitted</div>
     </div>
     <div id="assign-list"></div>
@@ -1003,6 +1024,14 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
       </button>
     </div>
   </div>
+  <!-- ANNOUNCEMENTS PAGE -->
+  <div class="page" id="page-announcements">
+    <div style="margin-bottom:1.5rem;">
+      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="ann-page-title">Announcements</h2>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="ann-page-sub">Messages from the school</p>
+    </div>
+    <div id="ann-list"></div>
+  </div>
 </main>
 
 <!-- TOAST -->
@@ -1052,7 +1081,8 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
 const LIVE      = <?= $jsData ?>;
 const STARS     = <?= $jsStars ?>;
 const CLASS_ACT = <?= $jsClassAct ?>;
-const HAS_EMAIL = <?= json_encode(!empty($studentEmail)) ?>;
+const HAS_EMAIL     = <?= json_encode(!empty($studentEmail)) ?>;
+const SERVER_AVATAR = <?= json_encode($avatarUrl) ?>;
 
 /* ── HTML escape helper ── */
 function e(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') : ''; }
@@ -1154,6 +1184,11 @@ const T = {
     feedLoading:'Chargement…',
     gradeLbl:'Note :', teacherFeedback:'Commentaire du professeur :',
     activityTitle:'Activité récente',
+    tabOverdue:'En retard',
+    navAnn:'Annonces',
+    annPageTitle:'Annonces', annPageSub:'Messages de l\'école',
+    annEmpty:'Aucune annonce pour l\'instant.', annLoading:'Chargement…',
+    annBy:'Par', annTarget:{ all:'Tout le monde', students:'Étudiants', teachers:'Professeurs' },
   },
   en: {
     topbarTitle: { home:'Dashboard', myclass:'My Class', assignments:'Assignments', feed:'Lesson Notes', quizzes:'Challenge', progress:'Progress', howto:'How-to', settings:'Settings' },
@@ -1206,10 +1241,15 @@ const T = {
     feedLoading:'Loading…',
     gradeLbl:'Grade:', teacherFeedback:'Teacher feedback:',
     activityTitle:'Recent activity',
+    tabOverdue:'Overdue',
+    navAnn:'Announcements',
+    annPageTitle:'Announcements', annPageSub:'Messages from the school',
+    annEmpty:'No announcements yet.', annLoading:'Loading…',
+    annBy:'By', annTarget:{ all:'Everyone', students:'Students', teachers:'Teachers' },
   }
 };
 
-function t(key) { return T[currentLang][key] || key; }
+function t(key) { return (T[currentLang] || T.fr)[key] || T.fr[key] || key; }
 
 function setLang(lang) {
   currentLang = lang;
@@ -1217,10 +1257,15 @@ function setLang(lang) {
   document.documentElement.setAttribute('lang', lang);
   document.getElementById('pill-fr').className = 'lang-pill' + (lang === 'fr' ? ' active' : '');
   document.getElementById('pill-en').className = 'lang-pill' + (lang === 'en' ? ' active' : '');
+  const pillAr = document.getElementById('pill-ar');
+  if (pillAr) pillAr.className = 'lang-pill' + (lang === 'ar' ? ' active' : '');
+  // RTL support for Arabic
+  if (lang === 'ar') { document.body.classList.add('ar'); }
+  else               { document.body.classList.remove('ar'); }
   applyTranslations();
   updateEmailPopupLang();
-  renderStars();
-  renderLeaderboard();
+  // Refresh notification panel if open
+  if (notifData.length) renderNotifList();
 }
 
 function toggleSidebar() {
@@ -1275,9 +1320,13 @@ function applyTranslations() {
 
   document.getElementById('assign-page-title').textContent = tr.assignPageTitle;
   updateAssignSubtitle();
-  document.getElementById('tab-all-assign').textContent = tr.tabAll;
+  document.getElementById('tab-all-assign').textContent    = tr.tabAll;
   document.getElementById('tab-pending-assign').textContent = tr.tabPending;
-  document.getElementById('tab-done-assign').textContent = tr.tabDone;
+  document.getElementById('tab-overdue-assign').textContent = tr.tabOverdue;
+  document.getElementById('tab-done-assign').textContent   = tr.tabDone;
+  st('nav-ann-lbl',    tr.navAnn);
+  st('ann-page-title', tr.annPageTitle);
+  st('ann-page-sub',   tr.annPageSub);
   document.getElementById('quiz-page-title').textContent = tr.quizPageTitle;
   document.getElementById('quiz-page-sub').textContent = tr.quizPageSub;
   document.getElementById('tab-all-quiz').textContent = tr.tabAllQ;
@@ -1325,7 +1374,7 @@ function navigate(page, el) {
   if (pg) pg.classList.add('active');
   if (el) el.classList.add('active');
   else {
-    const navIdMap = {assignments:'nav-assign',quizzes:'nav-quiz',settings:'nav-set',myclass:'nav-myclass',feed:'nav-feed',home:'nav-home',howto:'nav-howto'};
+    const navIdMap = {assignments:'nav-assign',quizzes:'nav-quiz',settings:'nav-set',myclass:'nav-myclass',feed:'nav-feed',home:'nav-home',howto:'nav-howto',progress:'nav-progress',announcements:'nav-announcements'};
     const navEl = document.getElementById(navIdMap[page] || 'nav-' + page);
     if (navEl) navEl.classList.add('active');
   }
@@ -1335,8 +1384,9 @@ function navigate(page, el) {
   if (page === 'assignments') refreshAssignments();
   if (page === 'quizzes')     renderQuizzes();
   if (page === 'myclass')     { renderMyClass(); loadMyGroup(); }
-  if (page === 'feed')        loadFeed();
-  if (page === 'progress')    updateProgress();
+  if (page === 'feed')          loadFeed();
+  if (page === 'progress')      updateProgress();
+  if (page === 'announcements') loadAnnouncements();
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-backdrop').classList.remove('open');
@@ -1570,7 +1620,8 @@ function renderAssignments() {
 
   const items = rows.filter(a => {
     if (currentAssignFilter === 'all') return true;
-    if (currentAssignFilter === 'pending') return a.status === 'pending' || a.status === 'overdue';
+    if (currentAssignFilter === 'pending')  return a.status === 'pending';
+    if (currentAssignFilter === 'overdue')  return a.status === 'overdue';
     if (currentAssignFilter === 'submitted') return a.status === 'submitted';
     return true;
   });
@@ -2042,15 +2093,33 @@ function handleAvatarUpload(input) {
   const file = input.files[0];
   if (!file) return;
   if (file.size > 2 * 1024 * 1024) {
-    showToast(currentLang === 'en' ? 'Image too large (max 2 MB)' : currentLang === 'ar' ? 'الصورة أكبر من 2 ميغا' : 'Image trop grande (max 2 Mo)');
+    showToast(currentLang === 'en' ? 'Image too large (max 2 MB)' : 'Image trop grande (max 2 Mo)', 'error');
     return;
   }
   const reader = new FileReader();
-  reader.onload = function(e) {
-    const dataUrl = e.target.result;
-    applyAvatarEverywhere(dataUrl);
-    try { localStorage.setItem('upskill_avatar', dataUrl); } catch(e) {}
-    showToast(currentLang === 'en' ? 'Photo updated ✓' : currentLang === 'ar' ? 'تم تحديث الصورة ✓' : 'Photo mise à jour ✓');
+  reader.onload = function(ev) {
+    const dataUrl = ev.target.result;
+    applyAvatarEverywhere(dataUrl); // instant local preview
+    // Upload to server
+    const fd = new FormData();
+    fd.append('avatar', file);
+    fd.append('csrf_token', _csrf);
+    fetch('api_update_profile.php', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(d => {
+        if (d.ok) {
+          applyAvatarEverywhere(d.url);
+          try { localStorage.removeItem('upskill_avatar'); } catch(e2) {}
+          showToast(currentLang === 'en' ? 'Photo updated ✓' : 'Photo mise à jour ✓');
+        } else {
+          try { localStorage.setItem('upskill_avatar', dataUrl); } catch(e2) {}
+          showToast(currentLang === 'en' ? 'Photo saved locally' : 'Photo sauvegardée localement', 'warn');
+        }
+      })
+      .catch(() => {
+        try { localStorage.setItem('upskill_avatar', dataUrl); } catch(e2) {}
+        showToast(currentLang === 'en' ? 'Photo saved locally (offline)' : 'Photo sauvegardée localement (hors ligne)', 'warn');
+      });
   };
   reader.readAsDataURL(file);
 }
@@ -2072,6 +2141,12 @@ function applyAvatarEverywhere(dataUrl) {
 }
 
 function loadSavedAvatar() {
+  // Prefer server-stored avatar (persists across devices/browsers)
+  if (typeof SERVER_AVATAR === 'string' && SERVER_AVATAR) {
+    applyAvatarEverywhere(SERVER_AVATAR);
+    return;
+  }
+  // Fall back to localStorage (legacy / offline)
   try {
     const dataUrl = localStorage.getItem('upskill_avatar');
     if (!dataUrl) return;
@@ -2108,11 +2183,11 @@ function playHowTo(idx) {
   showToast(currentLang === 'en' ? 'Coming soon — videos are being prepared!' : currentLang === 'ar' ? 'قريباً — ستُضاف الفيديوهات قريباً!' : 'Bientôt disponible — vidéos en cours de préparation !');
 }
 
-function showToast(msg) {
+function showToast(msg, type) {
   const toast = document.getElementById('toast');
   document.getElementById('toast-msg').textContent = msg;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2800);
+  toast.className = 'toast show' + (type === 'error' ? ' error' : type === 'warn' ? ' warn' : '');
+  setTimeout(() => { toast.className = 'toast'; }, 2800);
 }
 
 function logout() {
@@ -2127,14 +2202,10 @@ document.addEventListener('DOMContentLoaded', () => {
   setLang(savedLang);
   hydrateLiveData();
   updateProgress();
-  renderStars();
-  renderLeaderboard();
-  renderActivityFeed();
   renderAssignments();
-  renderQuizzes();
   renderHowTo();
   loadSavedAvatar();
-  const validPages = ['home','myclass','assignments','feed','quizzes','progress','howto','settings'];
+  const validPages = ['home','myclass','assignments','feed','quizzes','progress','howto','settings','announcements'];
   const savedPage = sessionStorage.getItem('upskill_page_s');
   if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
     navigate(savedPage);
@@ -2288,6 +2359,44 @@ async function confirmSubmit() {
   } finally {
     btnText.textContent = T[currentLang].submitBtn;
     btn.disabled = false;
+  }
+}
+
+/* ── ANNOUNCEMENTS ── */
+async function loadAnnouncements() {
+  const list = document.getElementById('ann-list');
+  if (!list) return;
+  const tr = T[currentLang] || T.fr;
+  list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${tr.annLoading}</p>`;
+  try {
+    const res  = await fetch('api_announcements.php?action=list');
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Error');
+    const items = (data.announcements || []).filter(a => a.target === 'all' || a.target === 'students');
+    if (!items.length) {
+      list.innerHTML = `<div style="text-align:center;padding:3rem 1rem;color:var(--muted);">
+        <div style="font-size:2rem;margin-bottom:.75rem;">📢</div>
+        <div style="font-family:var(--font);font-size:.95rem;">${tr.annEmpty}</div>
+      </div>`;
+      return;
+    }
+    list.innerHTML = items.map(a => {
+      const date = a.created_at ? new Date(a.created_at.replace(' ','T')).toLocaleDateString(
+        currentLang === 'ar' ? 'ar-MA' : currentLang === 'en' ? 'en-GB' : 'fr-FR',
+        { day:'numeric', month:'long', year:'numeric' }) : '';
+      const targetLabel = (tr.annTarget || {})[a.target] || a.target;
+      return `<div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(30,27,75,.05);">
+        <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem;">
+          <span style="font-size:.72rem;font-weight:700;background:rgba(249,115,22,.1);color:#f97316;border:1px solid rgba(249,115,22,.25);padding:.15rem .6rem;border-radius:100px;font-family:var(--font);">📢 ${e(targetLabel)}</span>
+          <span style="font-size:.78rem;color:var(--muted);">📅 ${date}</span>
+          <span style="font-size:.78rem;color:var(--muted2);">${tr.annBy || 'By'}: ${e(a.author_name)}</span>
+        </div>
+        <div style="font-family:var(--font);font-weight:700;font-size:1rem;color:var(--white);margin-bottom:.5rem;">${e(a.title)}</div>
+        <div style="font-size:.88rem;color:var(--muted);line-height:1.65;white-space:pre-wrap;">${e(a.body)}</div>
+      </div>`;
+    }).join('');
+  } catch(err) {
+    list.innerHTML = `<p style="color:var(--red);font-size:.85rem;">${e(err.message)}</p>`;
   }
 }
 
