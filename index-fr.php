@@ -327,12 +327,12 @@ $t = [
     <div class="section-title">Votre salle de classe, où que vous soyez.</div>
   </div>
   <div class="photos-track">
-    <div class="photo-item"><img src="assets/img/5.png" alt="Petit groupe en ligne" loading="lazy"><span class="photo-item-caption">Petits groupes</span></div>
+    <div class="photo-item"><img src="assets/img/5.png" alt="Petit groupe en ligne" loading="lazy"><span class="photo-item-caption">Apprenez chez vous</span></div>
     <div class="photo-item"><img src="assets/img/3.png" alt="Groupe d'étudiants" loading="lazy"><span class="photo-item-caption">Apprenez partout</span></div>
     <div class="photo-item"><img src="assets/img/1.png" alt="Étudiant avec ordinateur" loading="lazy"><span class="photo-item-caption">Professeurs experts</span></div>
     <div class="photo-item"><img src="assets/img/4.png" alt="Cours en ligne sur écran" loading="lazy"><span class="photo-item-caption">Étude ciblée</span></div>
     <div class="photo-item"><img src="assets/img/2.png" alt="Étudiants en cours en ligne" loading="lazy"><span class="photo-item-caption">Séances en direct</span></div>
-    <div class="photo-item"><img src="assets/img/5.png" alt="Petit groupe en ligne" loading="lazy"><span class="photo-item-caption">Petits groupes</span></div>
+    <div class="photo-item"><img src="assets/img/5.png" alt="Petit groupe en ligne" loading="lazy"><span class="photo-item-caption">Apprenez chez vous</span></div>
     <div class="photo-item"><img src="assets/img/3.png" alt="Groupe d'étudiants" loading="lazy"><span class="photo-item-caption">Apprenez partout</span></div>
     <div class="photo-item"><img src="assets/img/1.png" alt="Étudiant avec ordinateur" loading="lazy"><span class="photo-item-caption">Professeurs experts</span></div>
     <div class="photo-item"><img src="assets/img/4.png" alt="Cours en ligne sur écran" loading="lazy"><span class="photo-item-caption">Étude ciblée</span></div>

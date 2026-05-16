@@ -325,12 +325,12 @@ $t = [
     <div class="section-title">Your classroom, anywhere in the world.</div>
   </div>
   <div class="photos-track">
-    <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" loading="lazy"><span class="photo-item-caption">Small groups</span></div>
+    <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
     <div class="photo-item"><img src="assets/img/3.png" alt="Students studying together" loading="lazy"><span class="photo-item-caption">Learn anywhere</span></div>
     <div class="photo-item"><img src="assets/img/1.png" alt="Individual student learning" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
     <div class="photo-item"><img src="assets/img/4.png" alt="Online lesson on screen" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
     <div class="photo-item"><img src="assets/img/2.png" alt="Students collaborating online" loading="lazy"><span class="photo-item-caption">Live sessions</span></div>
-    <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" loading="lazy"><span class="photo-item-caption">Small groups</span></div>
+    <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
     <div class="photo-item"><img src="assets/img/3.png" alt="Students studying together" loading="lazy"><span class="photo-item-caption">Learn anywhere</span></div>
     <div class="photo-item"><img src="assets/img/1.png" alt="Individual student learning" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
     <div class="photo-item"><img src="assets/img/4.png" alt="Online lesson on screen" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
