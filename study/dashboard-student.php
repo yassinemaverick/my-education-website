@@ -783,6 +783,14 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
         <div id="leaderboard-list"><div class="lb-empty">Loading…</div></div>
       </div>
     </div>
+
+    <!-- RECENT ACTIVITY -->
+    <div style="max-width:860px;margin:1.5rem auto 0;">
+      <div class="card">
+        <div class="card-title" id="activity-feed-title">Recent activity</div>
+        <div id="activity-feed"></div>
+      </div>
+    </div>
   </div>
 
   <!-- MY CLASS PAGE -->
@@ -1152,6 +1160,7 @@ const T = {
     networkError:'❌ Erreur réseau', toastErrorPrefix:'Erreur : ',
     feedLoading:'Chargement…',
     gradeLbl:'Note :', teacherFeedback:'Commentaire du professeur :',
+    activityTitle:'Activité récente',
   },
   en: {
     topbarTitle: { home:'Dashboard', myclass:'My Class', assignments:'Assignments', feed:'Lesson Notes', quizzes:'Challenge', progress:'Progress', howto:'How-to', settings:'Settings' },
@@ -1203,6 +1212,7 @@ const T = {
     networkError:'❌ Network error', toastErrorPrefix:'Error: ',
     feedLoading:'Loading…',
     gradeLbl:'Grade:', teacherFeedback:'Teacher feedback:',
+    activityTitle:'Recent activity',
   }
 };
 
@@ -1245,6 +1255,7 @@ function applyTranslations() {
   // Feed page
   st('feed-title', tr.feedTitle); st('feed-sub', tr.feedSub);
   // Home page
+  st('activity-feed-title', tr.activityTitle);
   st('welcome-sub', tr.welcomeSub);
   st('stars-title', tr.starsTitle);
   st('stars-month', tr.starsMonth);
@@ -1315,6 +1326,7 @@ function applyTranslations() {
   renderQuizzes();
   renderStars();
   renderLeaderboard();
+  renderActivityFeed();
   const _lh = document.getElementById('lang-hide'); if (_lh) _lh.remove();
 }
 
@@ -1532,25 +1544,11 @@ function renderMyClass() {
     if (emptyEl)    emptyEl.style.display    = '';
   }
 
-  // Render classmates from STARS data (same course)
+  // Classmates are loaded exclusively by loadMyGroup() (async).
+  // Set a loading placeholder here so loadMyGroup() always wins with real data.
   const matesEl = document.getElementById('myclass-mates');
   if (matesEl) {
-    if (!STARS || STARS.length === 0) {
-      matesEl.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--muted);font-size:.85rem;">${e(tr.myclassNoMates)}</div>`;
-    } else {
-      matesEl.innerHTML = STARS.map(s => {
-        const parts = (s.full_name || '').trim().split(/\s+/);
-        const init  = ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase() || '?';
-        const total = parseInt(s.total_sessions) || 0;
-        const pres  = parseInt(s.present_sessions) || 0;
-        const pct   = total > 0 ? Math.round(pres / total * 100) + '%' : '–';
-        return `<div class="classmate-item">
-          <div class="cm-av">${e(init)}</div>
-          <div class="cm-name">${e(s.full_name)}</div>
-          <div class="cm-pct">${pct}</div>
-        </div>`;
-      }).join('');
-    }
+    matesEl.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem;">${e(tr.loading)}</div>`;
   }
 }
 
@@ -2111,6 +2109,7 @@ document.addEventListener('DOMContentLoaded', () => {
   hydrateLiveData();
   renderStars();
   renderLeaderboard();
+  renderActivityFeed();
   renderAssignments();
   renderQuizzes();
   renderHowTo();
@@ -2271,11 +2270,12 @@ async function confirmSubmit() {
     // Update local LIVE data
     const a = LIVE.assignments.find(x => x.id == aid);
     if (a) {
+      const prevStatus = a.status;
       a.status       = 'submitted';
       a.submitted_at = data.submitted_at;
       LIVE.submitted_count = (LIVE.submitted_count || 0) + 1;
-      if (a.status === 'pending')  LIVE.pending_count  = Math.max(0, (LIVE.pending_count  || 1) - 1);
-      if (a.status === 'overdue')  LIVE.overdue_count  = Math.max(0, (LIVE.overdue_count  || 1) - 1);
+      if (prevStatus === 'pending') LIVE.pending_count = Math.max(0, (LIVE.pending_count || 1) - 1);
+      if (prevStatus === 'overdue') LIVE.overdue_count = Math.max(0, (LIVE.overdue_count || 1) - 1);
     }
 
     closeSubmitModal();
