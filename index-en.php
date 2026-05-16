@@ -134,7 +134,7 @@ $t = [
 
 <div class="stats">
   <div class="stat"><div class="stat-num">3<span>+</span></div><div class="stat-label">Specialized programs</div></div>
-  <div class="stat"><div class="stat-num">599<span> Dh</span></div><div class="stat-label">Per session</div></div>
+  <div class="stat"><div class="stat-num">599<span> Dh</span></div><div class="stat-label">Per 2.5 months</div></div>
   <div class="stat"><div class="stat-num">29<span>h</span></div><div class="stat-label">Hours of instruction</div></div>
   <div class="stat"><div class="stat-num">9–12</div><div class="stat-label">Students per class</div></div>
   <div class="stat"><div class="stat-num" id="stat-student-count">—</div><div class="stat-label">Enrolled learners</div></div>
