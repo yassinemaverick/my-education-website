@@ -374,6 +374,11 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       <span id="nav-announcements-lbl">Annonces</span>
     </div>
+    <div class="nav-item" onclick="navigate('placement',this)" id="nav-placement">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      <span id="nav-placement-lbl">Tests de placement</span>
+      <span class="nav-badge" id="nav-placement-badge" style="display:none"></span>
+    </div>
     <div class="nav-section-label" id="nav-account-label">Compte</div>
     <div class="nav-item" onclick="navigate('settings',this)" id="nav-settings">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -673,6 +678,70 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     </div>
   </div>
 
+  <!-- ── PLACEMENT RESULTS PAGE ── -->
+  <div class="page" id="page-placement">
+    <div class="page-hdr">
+      <div>
+        <h2 class="page-h2" id="placement-title">Tests de placement</h2>
+        <p class="page-sub" id="placement-sub">Résultats reçus depuis la page de test de placement</p>
+      </div>
+      <div style="display:flex;gap:.6rem;align-items:center;">
+        <a href="/placement-test.php" target="_blank" rel="noopener noreferrer"
+           style="display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--green);text-decoration:none;font-family:var(--font);border:1px solid rgba(62,207,120,.3);padding:.4rem .9rem;border-radius:8px;background:rgba(62,207,120,.06);transition:background .2s;"
+           id="btn-open-test">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          <span id="lbl-open-test">Ouvrir le test</span>
+        </a>
+        <button class="btn-secondary btn-sm" onclick="exportPlacementCSV()" style="display:flex;align-items:center;gap:.4rem;" id="btn-export-placement">
+          ⬇ <span id="lbl-export-placement">Exporter CSV</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div style="display:flex;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap;" id="placement-stats-row">
+      <div class="card" style="flex:1;min-width:120px;padding:1rem 1.25rem;">
+        <div style="font-size:.72rem;font-family:var(--font);font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;" id="pstat-total-lbl">Total</div>
+        <div style="font-family:var(--font);font-size:1.6rem;font-weight:700;" id="pstat-total">—</div>
+      </div>
+      <div class="card" style="flex:1;min-width:120px;padding:1rem 1.25rem;">
+        <div style="font-size:.72rem;font-family:var(--font);font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;" id="pstat-avg-lbl">Score moyen</div>
+        <div style="font-family:var(--font);font-size:1.6rem;font-weight:700;color:var(--green);" id="pstat-avg">—</div>
+      </div>
+      <div class="card" style="flex:1;min-width:160px;padding:1rem 1.25rem;">
+        <div style="font-size:.72rem;font-family:var(--font);font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.3rem;" id="pstat-top-lbl">Niveau le plus fréquent</div>
+        <div style="font-family:var(--font);font-size:1rem;font-weight:700;" id="pstat-top">—</div>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div style="margin-bottom:1rem;">
+      <input type="text" id="placement-search" class="search-box" style="max-width:360px;"
+        placeholder="Rechercher par nom, email, niveau…" oninput="filterPlacement()">
+    </div>
+
+    <!-- Table -->
+    <div class="card card-flush">
+      <div class="tbl-scroll">
+        <table class="tbl-full">
+          <thead>
+            <tr class="tr-sep">
+              <th class="th-col" id="pth-name">Nom</th>
+              <th class="th-col" id="pth-contact">Contact</th>
+              <th class="th-col" id="pth-score">Score</th>
+              <th class="th-col" id="pth-level">Niveau</th>
+              <th class="th-col" id="pth-date">Date</th>
+              <th class="th-col"></th>
+            </tr>
+          </thead>
+          <tbody id="placement-tbody">
+            <tr><td colspan="6" class="td-empty"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- ── SETTINGS PAGE ── -->
   <div class="page" id="page-settings">
     <div style="margin-bottom:1.5rem;">
@@ -850,7 +919,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
    PAGE PERSISTENCE — runs synchronously before first paint
 ══════════════════════════════════════════════════════ */
 (function() {
-  const _validPages = ['home','users','inscriptions','classes','assigning-classes','schedule','settings'];
+  const _validPages = ['home','users','inscriptions','classes','assigning-classes','schedule','settings','placement','announcements'];
   const _saved = sessionStorage.getItem('upskill_admin_page');
   if (_saved && _validPages.includes(_saved) && _saved !== 'home') {
     const _home   = document.getElementById('page-home');
@@ -891,7 +960,7 @@ const T = {
       {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
       {fr:'Jeudi',en:'Thursday',ar:'الخميس'},{fr:'Vendredi',en:'Friday',ar:'الجمعة'},{fr:'Samedi',en:'Saturday',ar:'السبت'}
     ],
-    topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes', schedule:'Horaires des groupes', announcements:'Annonces' },
+    topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes', schedule:'Horaires des groupes', announcements:'Annonces', placement:'Tests de placement' },
     assigningStudentsTitle:'Étudiants', assigningTeachersTitle:'Professeurs',
     ath_student:'Étudiant', ath_group:'Groupe(s)', ath_teacher:'Professeur', ath_teacher_group:'Groupe(s)',
     classesGroupsOf:'Groupes de', noGroups:'Aucun groupe. Cliquez sur + pour en créer un.',
@@ -951,6 +1020,14 @@ const T = {
     annSendBtn:'📢 Envoyer', annListTitle:'Annonces récentes', annEmpty:'Aucune annonce pour l\'instant.',
     annDeleteConfirm:'Supprimer cette annonce ?', annTargetAll:'Tout le monde', annTargetStudents:'Étudiants', annTargetTeachers:'Professeurs',
     annSent:'Annonce envoyée !', annDeleted:'Annonce supprimée.',
+    navPlacement:'Tests de placement', placementTitle:'Tests de placement', placementSub:'Résultats reçus depuis la page de test de placement',
+    pstatTotal:'Total', pstatAvg:'Score moyen', pstatTop:'Niveau le plus fréquent',
+    pthName:'Nom', pthContact:'Contact', pthScore:'Score', pthLevel:'Niveau', pthDate:'Date',
+    placementSearchPlaceholder:'Rechercher par nom, email, niveau…',
+    lblOpenTest:'Ouvrir le test', lblExportPlacement:'Exporter CSV',
+    placementEmpty:'Aucun test de placement pour l\'instant.',
+    confirmDeletePlacement:'Supprimer ce résultat ?',
+    placementDeleted:'Résultat supprimé.',
   },
   ar: {
     adminChip:'مسؤول', roleLabel:'مسؤول النظام',
@@ -1049,7 +1126,7 @@ const T = {
       {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
       {fr:'Jeudi',en:'Thursday',ar:'الخميس'},{fr:'Vendredi',en:'Friday',ar:'الجمعة'},{fr:'Samedi',en:'Saturday',ar:'السبت'}
     ],
-    topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments', schedule:'Allocate dates & times', announcements:'Announcements' },
+    topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments', schedule:'Allocate dates & times', announcements:'Announcements', placement:'Placement Tests' },
     assigningStudentsTitle:'Students', assigningTeachersTitle:'Teachers',
     ath_student:'Student', ath_group:'Group(s)', ath_teacher:'Teacher', ath_teacher_group:'Group(s)',
     classesGroupsOf:'Groups of', noGroups:'No groups. Click + to create one.',
@@ -1109,6 +1186,14 @@ const T = {
     annSendBtn:'📢 Send', annListTitle:'Recent announcements', annEmpty:'No announcements yet.',
     annDeleteConfirm:'Delete this announcement?', annTargetAll:'Everyone', annTargetStudents:'Students', annTargetTeachers:'Teachers',
     annSent:'Announcement sent!', annDeleted:'Announcement deleted.',
+    navPlacement:'Placement Tests', placementTitle:'Placement Tests', placementSub:'Results received from the placement test page',
+    pstatTotal:'Total', pstatAvg:'Average score', pstatTop:'Most common level',
+    pthName:'Name', pthContact:'Contact', pthScore:'Score', pthLevel:'Level', pthDate:'Date',
+    placementSearchPlaceholder:'Search by name, email, level…',
+    lblOpenTest:'Open test page', lblExportPlacement:'Export CSV',
+    placementEmpty:'No placement tests yet.',
+    confirmDeletePlacement:'Delete this result?',
+    placementDeleted:'Result deleted.',
   }
 };
 const tr = () => T[currentLang] || T.fr;
@@ -1227,6 +1312,7 @@ function navigate(page, el) {
   if (page === 'assigning-classes') loadAssigningClasses();
   if (page === 'schedule') loadSchedulePage();
   if (page === 'announcements') loadAnnouncements();
+  if (page === 'placement') loadPlacement();
   if (window.innerWidth <= 768) toggleSidebar();
 }
 
@@ -2277,6 +2363,131 @@ async function deleteAnnouncement(id, btn) {
 function logout() {
   sessionStorage.clear();
   window.location.href = 'logout.php';
+}
+
+/* ══════════════════════════════════════════════════════
+   PLACEMENT TESTS PAGE
+══════════════════════════════════════════════════════ */
+let _placementData = [];
+
+async function loadPlacement() {
+  const tbody = document.getElementById('placement-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="6" class="td-empty"><div class="spinner" style="margin:0 auto;"></div></td></tr>';
+  try {
+    const data = await api('api_placement.php');
+    _placementData = data.results || [];
+    renderPlacement(_placementData);
+    updatePlacementStats(_placementData);
+    // Badge
+    const badge = document.getElementById('nav-placement-badge');
+    if (badge) {
+      if (_placementData.length > 0) { badge.textContent = _placementData.length; badge.style.display = ''; }
+      else badge.style.display = 'none';
+    }
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="6" class="td-empty">${e.message}</td></tr>`;
+  }
+}
+
+function updatePlacementStats(data) {
+  document.getElementById('pstat-total').textContent = data.length;
+  if (data.length === 0) {
+    document.getElementById('pstat-avg').textContent = '—';
+    document.getElementById('pstat-top').textContent = '—';
+    return;
+  }
+  const avg = (data.reduce((s, r) => s + parseInt(r.score), 0) / data.length).toFixed(1);
+  document.getElementById('pstat-avg').textContent = avg + ' / 60';
+  // Most common placement
+  const freq = {};
+  data.forEach(r => { freq[r.placement] = (freq[r.placement] || 0) + 1; });
+  const top = Object.entries(freq).sort((a,b) => b[1]-a[1])[0];
+  document.getElementById('pstat-top').textContent = top ? top[0] : '—';
+}
+
+function renderPlacement(data) {
+  const tbody = document.getElementById('placement-tbody');
+  if (!data.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="td-empty">${tr().placementEmpty || 'No results yet.'}</td></tr>`;
+    return;
+  }
+  const levelColor = (p) => {
+    if (p.startsWith('Beginner'))          return 'color:var(--yellow)';
+    if (p.startsWith('Pre-Intermediate'))  return 'color:var(--blue)';
+    if (p.startsWith('Intermediate'))      return 'color:var(--green)';
+    if (p.startsWith('Upper'))             return 'color:var(--orange)';
+    if (p.startsWith('Advanced'))          return 'color:var(--red)';
+    return '';
+  };
+  tbody.innerHTML = data.map(r => {
+    const dt   = new Date(r.created_at).toLocaleDateString(currentLang === 'ar' ? 'ar-MA' : currentLang === 'en' ? 'en-GB' : 'fr-FR', { day:'2-digit', month:'short', year:'numeric' });
+    const contact = [r.email, r.phone].filter(Boolean).join(' / ') || '—';
+    const pct  = Math.round(parseInt(r.score) / 60 * 100);
+    const barColor = pct >= 75 ? 'var(--green)' : pct >= 45 ? 'var(--blue)' : pct >= 25 ? 'var(--yellow)' : 'var(--red)';
+    return `<tr class="tr-sep">
+      <td style="padding:.85rem 1.2rem;font-family:var(--font);font-size:.87rem;font-weight:600;">${escHtml(r.name)}</td>
+      <td style="padding:.85rem 1.2rem;font-size:.83rem;color:var(--muted);">${escHtml(contact)}</td>
+      <td style="padding:.85rem 1.2rem;">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+          <div style="width:60px;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;">
+            <div style="width:${pct}%;height:100%;background:${barColor};border-radius:3px;"></div>
+          </div>
+          <span style="font-family:var(--font);font-size:.82rem;font-weight:700;">${r.score}<span style="color:var(--muted);font-weight:400;">/60</span></span>
+        </div>
+      </td>
+      <td style="padding:.85rem 1.2rem;font-family:var(--font);font-size:.85rem;font-weight:700;${levelColor(r.placement)}">${escHtml(r.placement)}</td>
+      <td style="padding:.85rem 1.2rem;font-size:.82rem;color:var(--muted);">${dt}</td>
+      <td style="padding:.85rem 1.2rem;text-align:right;">
+        <button onclick="deletePlacement(${r.id},this)" style="background:none;border:none;cursor:pointer;color:var(--red);opacity:.7;transition:opacity .2s;" title="Delete">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterPlacement() {
+  const q = document.getElementById('placement-search').value.toLowerCase();
+  if (!q) { renderPlacement(_placementData); return; }
+  const filtered = _placementData.filter(r =>
+    r.name.toLowerCase().includes(q) ||
+    (r.email || '').toLowerCase().includes(q) ||
+    (r.phone || '').toLowerCase().includes(q) ||
+    r.placement.toLowerCase().includes(q)
+  );
+  renderPlacement(filtered);
+}
+
+async function deletePlacement(id, btn) {
+  if (!confirm(tr().confirmDeletePlacement || 'Delete this result?')) return;
+  btn.disabled = true;
+  try {
+    await api('api_placement.php', 'DELETE', { id });
+    showToast(tr().placementDeleted || 'Deleted.', 'success');
+    await loadPlacement();
+  } catch(e) {
+    showToast(e.message, 'error');
+    btn.disabled = false;
+  }
+}
+
+function exportPlacementCSV() {
+  if (!_placementData.length) return;
+  const cols = ['Name','Email','Phone','Score','Placement','Date'];
+  const rows = _placementData.map(r => [
+    r.name, r.email||'', r.phone||'', r.score, r.placement,
+    new Date(r.created_at).toLocaleDateString('fr-FR')
+  ].map(v => '"' + String(v).replace(/"/g,'""') + '"').join(','));
+  const csv  = [cols.join(','), ...rows].join('\n');
+  const a    = document.createElement('a');
+  a.href     = 'data:text/csv;charset=utf-8,' + encodeURIComponent('﻿' + csv);
+  a.download = 'placement_results_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 /* ══════════════════════════════════════════════════════
