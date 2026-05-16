@@ -364,6 +364,9 @@ $dinoAvatarSvg = '<svg class="av-dino" id="%ID%" xmlns="http://www.w3.org/2000/s
 }
 body { background:var(--navy); color:var(--white); font-family:var(--font-body); min-height:100vh; display:flex; overflow-x:hidden; }
 body.ar .main { margin-left:0; margin-right:var(--sidebar-w); }
+/* PAGE VISIBILITY — inline so it works even if shared.css 404s */
+.page { display:none; }
+.page.active { display:block; }
 
 /* SIDEBAR — deep purple, overrides vars locally */
 .sidebar {
