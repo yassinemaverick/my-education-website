@@ -267,7 +267,7 @@ $t = [
 <div class="testimonials">
   <div class="testimonials-inner">
     <div class="section-label text-center" style="text-align:center;">What Our Students Say</div>
-    <h2 class="section-title text-center" style="text-align:center;">Real results, real people.</h2>
+    <h2 class="section-title text-center" style="text-align:center;">Real results, wonderful experiences.</h2>
     <div class="testimonials-grid">
       <div class="testimonial-card">
         <div class="testimonial-header">
