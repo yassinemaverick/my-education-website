@@ -528,7 +528,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
     <div class="welcome-banner">
       <div class="welcome-text">
         <h2 id="welcome-msg">Bonjour, <span id="welcome-name"><?= htmlspecialchars(explode(" ", $full_name)[0]) ?></span> 👋</h2>
-        <p id="welcome-sub">8 devoirs à corriger · 3 étudiants en difficulté · Moyenne de classe : 74%</p>
+        <p id="welcome-sub"></p>
       </div>
       <div style="font-size:3rem;">👨‍🏫</div>
     </div>
@@ -1027,10 +1027,10 @@ const T = {
     postsEmptyTxt:'Publiez votre premier résumé de cours ci-dessus.',
     postsDeleteConfirm:'Supprimer cette note ?', toastPostPublished:'Note publiée !', toastPostDeleted:'Note supprimée.', editPost:'Mettre à jour',
     teacherChip:'Prof', roleLabel:'Professeur', logout:'Déconnexion',
-    welcomeMsg:'Bonjour, ', welcomeSub:"8 devoirs à corriger · 3 étudiants en difficulté · Moyenne de classe : 74%",
+    welcomeMsg:'Bonjour, ', welcomeSub:'',
     stat1:'Étudiants actifs', stat2:'Devoirs à corriger', stat3:'Moyenne de la classe', stat4:'Devoirs publiés',
     btnNewAssign:'+ Nouveau devoir', btnNewQuiz:'+ Créer un quiz',
-    classProgTitle:'Progression de la classe', cp1:'Progression générale', cp2:'Taux de soumission devoirs', cp3:'Moyenne quiz',
+    classProgTitle:'Progression de la classe', cp1:'Taux de soumission', cp2:'Taux de correction', cp3:'Score moyen',
     attentionTitle:'Étudiants à surveiller ⚠️',
     activityTitle:'Activité récente', activityEmpty:'Aucune activité récente.',
     todayClassesTitle:"📅 Cours d'aujourd'hui", todayNoClasses:'Aucun cours prévu aujourd\'hui.', todayZoomPlaceholder:'https://zoom.us/j/...', todayZoomLbl:'Lien Zoom', todayZoomHint:'Ce lien sera visible par vos étudiants dans "Ma classe".', todayZoomSave:'Enregistrer', todaySaving:'…', todayZoomSaved:'✔ Enregistré', todayStudents:'étudiant(s)',
@@ -1109,10 +1109,10 @@ const T = {
     postsEmptyTxt:'Publish your first lesson summary above.',
     postsDeleteConfirm:'Delete this note?', toastPostPublished:'Note published!', toastPostDeleted:'Note deleted.', editPost:'Update note',
     teacherChip:'Teacher', roleLabel:'Teacher', logout:'Log out',
-    welcomeMsg:'Hello, ', welcomeSub:'8 assignments to grade · 3 students struggling · Class average: 74%',
+    welcomeMsg:'Hello, ', welcomeSub:'',
     stat1:'Active students', stat2:'Assignments to grade', stat3:'Class average', stat4:'Assignments posted',
     btnNewAssign:'+ New assignment', btnNewQuiz:'+ Create quiz',
-    classProgTitle:'Class progress', cp1:'Overall progress', cp2:'Assignment submission rate', cp3:'Quiz average',
+    classProgTitle:'Class progress', cp1:'Submission rate', cp2:'Grading rate', cp3:'Average score',
     attentionTitle:'Students to watch ⚠️',
     activityTitle:'Recent activity', activityEmpty:'No recent activity.',
     todayClassesTitle:'📅 Classes Today', todayNoClasses:'No classes scheduled for today.', todayZoomPlaceholder:'https://zoom.us/j/...', todayZoomLbl:'Zoom link', todayZoomHint:"This link will be visible to your students in 'My Class'.", todayZoomSave:'Save', todaySaving:'…', todayZoomSaved:'✔ Saved', todayStudents:'student(s)',
@@ -1393,7 +1393,11 @@ function updateHomeStats() {
   const subEl = document.getElementById('welcome-sub');
   if (subEl) {
     const classes = teacherGroups.length;
-    subEl.textContent = `${pendingReview} ${tr.stat2.toLowerCase()} · ${classes} ${currentLang==='fr'?'groupes actifs':'active groups'}`;
+    const scoredGrades = (GRADES_LIVE || []).filter(g => g.score !== null && g.score !== undefined);
+    const avgScore = scoredGrades.length ? Math.round(scoredGrades.reduce((s,g) => s + parseInt(g.score), 0) / scoredGrades.length) : null;
+    const avgPart = avgScore !== null ? ` · ${currentLang==='fr'?'Moyenne classe':'Class avg'}: ${avgScore}%` : '';
+    const groupsPart = currentLang === 'fr' ? `${classes} groupe${classes!==1?'s':''} actif${classes!==1?'s':''}` : `${classes} active group${classes!==1?'s':''}`;
+    subEl.textContent = `${pendingReview} ${tr.stat2.toLowerCase()} · ${groupsPart}${avgPart}`;
   }
 
   // Update class progress bars from real assignment data
@@ -1410,8 +1414,10 @@ function updateHomeStats() {
 
   if (v1) v1.textContent = subRate   + '%'; if (b1) b1.style.width = subRate   + '%';
   if (v2) v2.textContent = gradeRate + '%'; if (b2) b2.style.width = gradeRate + '%';
-  // cp-val3 (quiz avg) stays — until quiz system is live
-  if (v3) v3.textContent = '—'; if (b3) b3.style.width = '0%';
+  const scoredG = (GRADES_LIVE || []).filter(g => g.score !== null && g.score !== undefined);
+  const avgG = scoredG.length ? Math.round(scoredG.reduce((s,g) => s + parseInt(g.score), 0) / scoredG.length) : null;
+  if (v3) v3.textContent = avgG !== null ? avgG + '%' : '—';
+  if (b3) b3.style.width = avgG !== null ? avgG + '%' : '0%';
 }
 
 function renderAssignments() {
