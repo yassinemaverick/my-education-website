@@ -164,6 +164,19 @@ if ($action === 'update_course') {
   jsonOut(['ok' => true]);
 }
 
+// create_course: admin adds a new course row
+if ($action === 'create_course') {
+  if ($role !== 'admin') err('Accès refusé', 403);
+  $nameFr = trim($body['name_fr'] ?? '');
+  $nameAr = trim($body['name_ar'] ?? '');
+  if (!$nameFr) err('name_fr requis');
+  if (mb_strlen($nameFr) > 120 || mb_strlen($nameAr) > 120) err('Nom trop long (max 120 caractères)');
+  $stmt = $pdo->prepare("INSERT INTO courses (group_name_fr, group_name_ar, subject_fr, subject_ar, level)
+                         VALUES (?, ?, ?, ?, 'A1')");
+  $stmt->execute([$nameFr, $nameAr ?: $nameFr, $nameFr, $nameAr ?: $nameFr]);
+  jsonOut(['ok' => true, 'id' => (int)$pdo->lastInsertId()]);
+}
+
 // list_courses: all courses for admin course-link dropdown
 if ($action === 'list_courses') {
   if ($role !== 'admin') err('Accès refusé', 403);

@@ -1898,38 +1898,40 @@ async function loadCoursesPanel() {
     return;
   }
 
-  if (_allCourses.length === 0) {
-    const emptyMsg = currentLang==='en' ? 'No courses found. Create courses first via Assignation des classes.'
-                   : currentLang==='ar' ? 'لا توجد مقررات. أنشئ مقررات أولاً.'
-                   : 'Aucun cours. Créez des cours via Assignation des classes.';
-    container.innerHTML = `<p style="color:var(--muted);font-size:.83rem;padding:.5rem 0;font-style:italic;">${emptyMsg}</p>`;
-    return;
-  }
+  const saveLabel  = currentLang==='en' ? 'Save'   : currentLang==='ar' ? 'حفظ'         : 'Enregistrer';
+  const addLabel   = currentLang==='en' ? '+ Add'  : currentLang==='ar' ? '+ إضافة'     : '+ Ajouter';
+  const namePh     = currentLang==='en' ? 'Course name (EN / FR)' : currentLang==='ar' ? 'اسم المقرر' : 'Nom du cours (FR / EN)';
+  const inputStyle = `width:100%;padding:.6rem .9rem;background:rgba(255,255,255,.05);border:1px solid var(--border);
+                      border-radius:9px;color:var(--white);font-family:var(--font-body);font-size:.86rem;outline:none;box-sizing:border-box;`;
 
-  const saveLabel = currentLang==='en' ? 'Save' : currentLang==='ar' ? 'حفظ' : 'Enregistrer';
-  const namePlaceholder = currentLang==='en' ? 'Course name' : currentLang==='ar' ? 'اسم المقرر' : 'Nom du cours';
+  const existingRows = _allCourses.map(c => `
+    <div class="course-rename-row" data-id="${c.id}">
+      <div style="flex:1;min-width:0;">
+        <input type="text" class="course-name-fr" value="${(c.group_name_fr||'').replace(/"/g,'&quot;')}"
+          placeholder="${namePh}" style="${inputStyle}">
+      </div>
+      <div style="flex:1;min-width:0;">
+        <input type="text" class="course-name-ar" value="${(c.group_name_ar||'').replace(/"/g,'&quot;')}"
+          placeholder="اسم المقرر (عربي)" dir="rtl" style="${inputStyle}">
+      </div>
+      <button class="btn-primary btn-sm" onclick="saveCourseRename(${c.id}, this)">${saveLabel}</button>
+      <span class="course-save-status" style="font-size:.75rem;min-width:3rem;"></span>
+    </div>`).join('');
 
   container.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:.6rem;">
-      ${_allCourses.map(c => `
-        <div class="course-rename-row" data-id="${c.id}">
-          <div style="flex:1;min-width:0;">
-            <input type="text" class="course-name-fr" value="${(c.group_name_fr||'').replace(/"/g,'&quot;')}"
-              placeholder="${namePlaceholder} (FR / EN)"
-              style="width:100%;padding:.6rem .9rem;background:rgba(255,255,255,.05);border:1px solid var(--border);
-                     border-radius:9px;color:var(--white);font-family:var(--font-body);font-size:.86rem;outline:none;box-sizing:border-box;">
-          </div>
-          <div style="flex:1;min-width:0;">
-            <input type="text" class="course-name-ar" value="${(c.group_name_ar||'').replace(/"/g,'&quot;')}"
-              placeholder="اسم المقرر (عربي)"
-              dir="rtl"
-              style="width:100%;padding:.6rem .9rem;background:rgba(255,255,255,.05);border:1px solid var(--border);
-                     border-radius:9px;color:var(--white);font-family:var(--font-body);font-size:.86rem;outline:none;box-sizing:border-box;">
-          </div>
-          <button class="btn-primary btn-sm" onclick="saveCourseRename(${c.id}, this)">${saveLabel}</button>
-          <span class="course-save-status" style="font-size:.75rem;min-width:3rem;"></span>
+      ${existingRows}
+      <!-- Add new course row -->
+      <div class="course-rename-row" id="course-add-row" style="margin-top:.4rem;padding-top:.8rem;border-top:1px solid var(--border);">
+        <div style="flex:1;min-width:0;">
+          <input type="text" id="new-course-fr" placeholder="${namePh}" style="${inputStyle}">
         </div>
-      `).join('')}
+        <div style="flex:1;min-width:0;">
+          <input type="text" id="new-course-ar" placeholder="اسم المقرر (عربي)" dir="rtl" style="${inputStyle}">
+        </div>
+        <button class="btn-secondary btn-sm" onclick="addNewCourse(this)">${addLabel}</button>
+        <span id="course-add-status" style="font-size:.75rem;min-width:3rem;"></span>
+      </div>
     </div>`;
 }
 
@@ -1958,6 +1960,26 @@ async function saveCourseRename(courseId, btn) {
     status.textContent = '✗';
     showToast(e.message || 'Error', 'error');
   } finally { btn.disabled = false; }
+}
+
+async function addNewCourse(btn) {
+  const nameFr = document.getElementById('new-course-fr').value.trim();
+  const nameAr = document.getElementById('new-course-ar').value.trim();
+  const status = document.getElementById('course-add-status');
+  if (!nameFr) { status.style.color='var(--red)'; status.textContent='⚠'; return; }
+  btn.disabled = true;
+  status.textContent = '…';
+  try {
+    const d = await api('api_classes.php', 'POST', {action:'create_course', name_fr:nameFr, name_ar:nameAr});
+    // Reload the whole panel so the new course appears as an editable row
+    await loadCoursesPanel();
+    showToast(currentLang==='en'?'Course added':currentLang==='ar'?'تمت إضافة المقرر':'Cours ajouté', 'success');
+  } catch(e) {
+    status.style.color = 'var(--red)';
+    status.textContent = '✗';
+    showToast(e.message || 'Error', 'error');
+    btn.disabled = false;
+  }
 }
 
 async function loadMembersList() {
