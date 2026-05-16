@@ -43,6 +43,6 @@ function _csrf_fail(): void {
         json_err('Requête invalide.', 'طلب غير صالح.', 403);
     }
     http_response_code(403);
-    echo json_encode(['ok' => false, 'error' => 'Forbidden']);
+    echo json_encode(['ok' => false, 'error' => 'session_expired']);
     exit;
 }

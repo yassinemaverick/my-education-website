@@ -1566,6 +1566,8 @@ async function gradeSubmission(subId) {
       // Update badge inline
       const row = document.getElementById('sub-row-'+subId);
       if (row && score!=='') { let b=row.querySelector('span[style*="var(--purple)"]'); if(!b){b=document.createElement('span');b.style.cssText='background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:100px;';row.querySelector('div[style*="font-weight:600"]').appendChild(b);} b.textContent='📊 '+score+'/100'; }
+    } else if (data.error === 'session_expired') {
+      showToast(currentLang==='fr' ? '⚠️ Session expirée — rechargez la page.' : '⚠️ Session expired — please refresh the page.');
     } else showToast('❌ '+(data.error||T[currentLang].toastServerError));
   } catch(e) { showToast(T[currentLang].toastNetError); }
   finally { btn.textContent=orig; btn.disabled=false; }
