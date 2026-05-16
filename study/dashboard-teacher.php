@@ -82,6 +82,7 @@ body.ar .nav-badge { margin-left:0; margin-right:auto; }
   --border:rgba(255,255,255,0.1); --border2:rgba(255,255,255,0.06);
   width:var(--sidebar-w); background:var(--navy-mid); border-right:1px solid var(--border);
   display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:200; transition:transform .3s;
+  flex:0 0 0; min-width:0;
 }
 .sidebar-logo { display:flex; align-items:center; gap:.6rem; padding:1.5rem 1.4rem; border-bottom:1px solid var(--border); }
 .sidebar-logo span { font-family:var(--font); font-weight:600; font-size:1rem; }
@@ -116,7 +117,7 @@ body.ar .btn-logout { flex-direction:row-reverse; font-family:var(--font-ar); }
 .btn-logout:hover { border-color:var(--red); color:var(--red); background:rgba(232,93,117,.08); }
 
 /* MAIN */
-.main { flex:1; min-height:100vh; display:flex; flex-direction:column; background:var(--navy); }
+.main { flex:1; margin-left:var(--sidebar-w); min-height:100vh; display:flex; flex-direction:column; background:var(--navy); }
 .topbar { background:rgba(214,238,255,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
 body.ar .topbar { flex-direction:row-reverse; }
 .topbar-title { font-family:var(--font); font-size:1rem; font-weight:600; }
