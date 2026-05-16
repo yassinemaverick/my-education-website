@@ -714,7 +714,6 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
   <div class="lang-toggle">
     <div class="lang-pill active" id="pill-fr" onclick="setLang('fr')">🇫🇷 FR</div>
     <div class="lang-pill" id="pill-en" onclick="setLang('en')">🇬🇧 EN</div>
-    <div class="lang-pill" id="pill-ar" onclick="setLang('ar')">🇲🇦 AR</div>
   </div>
   <div class="sidebar-user">
     <div class="avatar" id="sidebar-avatar"><?= str_replace(['%ID%','%IMGID%'], ['sidebar-dino-svg','sidebar-av-img'], $dinoAvatarSvg) ?></div>
@@ -1325,7 +1324,7 @@ const T = {
   }
 };
 
-function t(key) { return (T[currentLang] || T.fr)[key] || T.fr[key] || key; }
+function t(key) { return T[currentLang][key] || T.fr[key] || key; }
 
 function setLang(lang) {
   currentLang = lang;
@@ -1333,11 +1332,6 @@ function setLang(lang) {
   document.documentElement.setAttribute('lang', lang);
   document.getElementById('pill-fr').className = 'lang-pill' + (lang === 'fr' ? ' active' : '');
   document.getElementById('pill-en').className = 'lang-pill' + (lang === 'en' ? ' active' : '');
-  const pillAr = document.getElementById('pill-ar');
-  if (pillAr) pillAr.className = 'lang-pill' + (lang === 'ar' ? ' active' : '');
-  // RTL support for Arabic
-  if (lang === 'ar') { document.body.classList.add('ar'); }
-  else               { document.body.classList.remove('ar'); }
   applyTranslations();
   updateEmailPopupLang();
   // Refresh notification panel if open
