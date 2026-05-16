@@ -45,6 +45,28 @@ try {
     // ── CSRF check for all mutating POST requests ────────────────────────────
     if ($method === 'POST') csrf_verify();
 
+    // ── Send message (teacher → student) ─────────────────────────────────────
+    if ($method === 'POST' && $action === 'send_message') {
+        if (!in_array($role, ['teacher','admin'])) {
+            http_response_code(403); echo json_encode(['ok'=>false,'error'=>'Unauthorized']); exit;
+        }
+        $mb       = json_decode(file_get_contents('php://input'), true) ?? [];
+        $targetId = (int)($mb['user_id'] ?? 0);
+        $msgText  = trim($mb['message'] ?? '');
+        $sender   = $_SESSION['full_name'] ?? $_SESSION['username'] ?? 'Professeur';
+        if (!$targetId || !$msgText) {
+            http_response_code(400); echo json_encode(['ok'=>false,'error'=>'user_id and message required']); exit;
+        }
+        if (mb_strlen($msgText) > 500) {
+            http_response_code(400); echo json_encode(['ok'=>false,'error'=>'Message too long (max 500 chars)']); exit;
+        }
+        $pdo->prepare("INSERT INTO notifications (user_id,type,title_fr,title_ar,body_fr,body_ar)
+                       VALUES (?,'message',?,?,?,?)")
+            ->execute([$targetId, '💬 Message de '.$sender, '💬 رسالة من '.$sender, $msgText, $msgText]);
+        echo json_encode(['ok'=>true]);
+        exit;
+    }
+
     // ── Mark all as read ─────────────────────────────────────────────────────
     if ($method === 'POST' && $action === 'mark_read') {
         $pdo->prepare("UPDATE notifications SET is_read = 1 WHERE user_id = ?")->execute([$uid]);

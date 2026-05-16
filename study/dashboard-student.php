@@ -1116,11 +1116,12 @@ function st(id, val) { const el = document.getElementById(id); if (el) el.textCo
 
 /* ── DATA ── */
 // Assignments come from LIVE.assignments (PHP → DB)
-// QUIZZES stays static until quiz table is built
+// QUIZZES loaded dynamically from api_quiz.php
+let _studentQuizzes = [];
 const QUIZZES = [
   { id:1, title_fr:'Quiz Grammaire Unité 1', title_ar:'اختبار القواعد – الوحدة 1', desc_fr:'Testez vos connaissances en grammaire de base.', desc_ar:'اختبر معرفتك في القواعد الأساسية.', qs:15, min:20, status:'available' },
   { id:2, title_fr:'Vocabulaire Unité 3', title_ar:'المفردات – الوحدة 3', desc_fr:'50 mots essentiels du quotidien.', desc_ar:'50 كلمة أساسية يومية.', qs:20, min:25, status:'available' },
-  { id:3, title_fr:'Compréhension écrite #2', title_ar:'الفهم القرائي #2', desc_fr:'Quiz basé sur un texte.', desc_ar:'اختبار مبني على نص.', qs:10, min:15, status:'done', score:72 },
+  { id:3, title_fr:'Compréhension écrite #2', title_ar:'الفهم القرائي #2', desc_fr:'Quiz basé sur un texte.', desc_ar:'اختبار مبني على nص.', qs:10, min:15, status:'done', score:72 },
   { id:4, title_fr:'Grammaire – Temps passés', title_ar:'القواعد – الأزمنة الماضية', desc_fr:'Maîtriser le passé simple et composé.', desc_ar:'إتقان الأزمنة الماضية.', qs:12, min:18, status:'done', score:85 },
 ];
 
@@ -1751,32 +1752,160 @@ function formatRelativeTime(ts, lang) {
   return lang === 'en' ? `${days} days ago` : lang === 'ar' ? `منذ ${days} أيام` : `Il y a ${days} jours`;
 }
 
-function renderQuizzes() {
+async function renderQuizzes() {
   const list = document.getElementById('quiz-list');
   if (!list) return;
   const tr = T[currentLang];
-  const items = QUIZZES.filter(q => {
+  list.innerHTML = '<div class="loading-overlay" style="position:static;height:100px;border-radius:16px;grid-column:1/-1;"><div class="spinner"></div></div>';
+  try {
+    const d = await fetch('api_quiz.php?action=list_quizzes').then(r=>r.json());
+    _studentQuizzes = d.quizzes || [];
+  } catch(e) {
+    list.innerHTML = `<p style="color:var(--red);font-size:.85rem;grid-column:1/-1;">Error loading quizzes</p>`;
+    return;
+  }
+  const items = _studentQuizzes.filter(q => {
     if (currentQuizFilter === 'all') return true;
-    if (currentQuizFilter === 'available') return q.status === 'available';
-    if (currentQuizFilter === 'done') return q.status === 'done';
+    if (currentQuizFilter === 'available') return !q.attempted_at;
+    if (currentQuizFilter === 'done') return !!q.attempted_at;
     return true;
   });
-  list.innerHTML = items.map(q => `
-    <div class="quiz-card">
-      <div class="quiz-icon">${q.status === 'done' ? '✅' : '🧠'}</div>
-      <div class="quiz-title">${currentLang === 'ar' ? q.title_ar : q.title_fr}</div>
-      <div class="quiz-desc">${currentLang === 'ar' ? q.desc_ar : q.desc_fr}</div>
+  if (!items.length) {
+    const msg = currentQuizFilter==='done' ? (tr.noQuizDone||'No completed quizzes yet.') : (tr.noQuizAvail||'No quizzes available yet.');
+    list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;grid-column:1/-1;">${msg}</p>`;
+    return;
+  }
+  list.innerHTML = items.map(q => {
+    const done = !!q.attempted_at;
+    const pct  = done && q.total > 0 ? Math.round(q.score / q.total * 100) : (q.score != null ? q.score : 0);
+    return `<div class="quiz-card">
+      <div class="quiz-icon">${done ? '✅' : '🧠'}</div>
+      <div class="quiz-title">${escHtmlS(q.title)}</div>
+      <div class="quiz-desc">${q.description ? escHtmlS(q.description) : ''}</div>
       <div class="quiz-meta">
-        <span>📝 ${q.qs} ${tr.qsLabel}</span>
-        <span>⏱ ${q.min} ${tr.minLabel}</span>
+        <span>📝 ${q.question_count||0} ${tr.qsLabel||'q'}</span>
+        ${q.time_limit_min>0?`<span>⏱ ${q.time_limit_min} ${tr.minLabel||'min'}</span>`:''}
       </div>
-      ${q.status === 'done'
-        ? `<div style="display:flex;align-items:center;gap:.5rem;margin-top:auto;"><div style="width:44px;height:44px;border-radius:50%;border:3px solid var(--green);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:.75rem;font-weight:700;color:var(--green)">${q.score}%</div><span style="font-size:.83rem;color:var(--muted)">${tr.doneLabel}</span></div>`
-        : `<button class="btn-primary" style="margin-top:auto;" onclick="showToast('${tr.startQuiz} – ${currentLang === 'ar' ? q.title_ar : q.title_fr}')">${tr.startQuiz}</button>`
+      ${done
+        ? `<div style="display:flex;align-items:center;gap:.75rem;margin-top:auto;">
+            <div style="width:48px;height:48px;border-radius:50%;border:3px solid ${pct>=60?'var(--green)':'var(--red)'};display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:.78rem;font-weight:700;color:${pct>=60?'var(--green)':'var(--red)'};">${pct}%</div>
+            <div><div style="font-size:.83rem;color:var(--muted);">${tr.doneLabel||'Completed'}</div><div style="font-size:.78rem;color:var(--muted2);">${q.score}/${q.total}</div></div>
+           </div>`
+        : `<button class="btn-primary" style="margin-top:auto;" onclick="startQuiz(${q.id},'${escHtmlS(q.title).replace(/'/g,"&#39;")}')">${tr.startQuiz||'Start'}</button>`
       }
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
+
+/* ── Quiz taking ─────────────────────────────────────────────────────── */
+let _activeQuizId = null;
+let _quizTimer    = null;
+
+async function startQuiz(quizId, title) {
+  const lang = currentLang; const tr = T[lang];
+  let d;
+  try { d = await fetch(`api_quiz.php?action=get_quiz&id=${quizId}`).then(r=>r.json()); } catch(e) { showToast('Error loading quiz'); return; }
+  if (d.already_done) { showToast(lang==='en'?'You already completed this quiz':lang==='ar'?'لقد أكملت هذا الاختبار بالفعل':'Vous avez déjà complété ce quiz'); return; }
+  if (!d.ok) { showToast(d.error||'Error'); return; }
+  _activeQuizId = quizId;
+  const questions = d.questions || [];
+  const timeLimit = parseInt(d.quiz?.time_limit_min) || 0;
+  const overlay = document.createElement('div');
+  overlay.id = 'quiz-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:var(--navy);z-index:10000;overflow-y:auto;padding:2rem 1rem;';
+  const optStyle = `display:block;width:100%;text-align:left;padding:.75rem 1rem;margin-bottom:.4rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;cursor:pointer;color:var(--white);font-family:var(--font-body);font-size:.88rem;transition:all .2s;`;
+  overlay.innerHTML = `
+    <div style="max-width:640px;margin:0 auto;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem;">
+        <div>
+          <h2 style="font-family:var(--font);font-size:1.25rem;font-weight:700;">🧠 ${escHtmlS(title)}</h2>
+          <p style="color:var(--muted);font-size:.85rem;">${questions.length} ${tr.qsLabel||'questions'}</p>
+        </div>
+        ${timeLimit>0?`<div id="quiz-timer" style="font-family:var(--font);font-size:1.1rem;font-weight:700;color:var(--yellow);">⏱ ${timeLimit}:00</div>`:''}
+      </div>
+      <form id="quiz-form">
+        ${questions.map((q,i)=>`
+          <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1rem;">
+            <div style="font-family:var(--font);font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:.5rem;">${lang==='en'?'Q':'Q'}${i+1}</div>
+            <div style="font-size:.95rem;font-weight:600;margin-bottom:.9rem;line-height:1.5;">${escHtmlS(q.question)}</div>
+            ${q.options.map(opt=>`
+              <label style="${optStyle}">
+                <input type="radio" name="q_${q.id}" value="${opt.id}" style="accent-color:var(--green);margin-right:.65rem;">
+                ${escHtmlS(opt.option_text)}
+              </label>`).join('')}
+          </div>`).join('')}
+        <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;flex-wrap:wrap;">
+          <button type="button" onclick="closeQuizOverlay()" style="padding:.7rem 1.4rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--muted);cursor:pointer;font-family:var(--font);">${lang==='en'?'Cancel':lang==='ar'?'إلغاء':'Annuler'}</button>
+          <button type="button" onclick="submitStudentQuiz()" style="padding:.7rem 1.6rem;background:var(--green);border:none;border-radius:10px;color:var(--navy);font-family:var(--font);font-weight:700;cursor:pointer;">${lang==='en'?'Submit':lang==='ar'?'إرسال':'Soumettre'}</button>
+        </div>
+        <div id="quiz-submit-error" style="color:var(--red);font-size:.82rem;text-align:right;min-height:1rem;margin-top:.5rem;"></div>
+      </form>
+    </div>`;
+  document.body.appendChild(overlay);
+  // Radio option style on select
+  overlay.querySelectorAll('input[type=radio]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const name = radio.name;
+      overlay.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+        r.closest('label').style.background = r.checked ? 'rgba(62,207,120,.1)' : 'rgba(255,255,255,.04)';
+        r.closest('label').style.borderColor = r.checked ? 'rgba(62,207,120,.4)' : 'var(--border)';
+      });
+    });
+  });
+  // Timer
+  if (timeLimit > 0) {
+    let remaining = timeLimit * 60;
+    const timerEl = overlay.querySelector('#quiz-timer');
+    _quizTimer = setInterval(() => {
+      remaining--;
+      if (remaining <= 0) { clearInterval(_quizTimer); submitStudentQuiz(); return; }
+      const m = Math.floor(remaining/60), s = remaining%60;
+      if (timerEl) { timerEl.textContent = `⏱ ${m}:${String(s).padStart(2,'0')}`; timerEl.style.color = remaining<60?'var(--red)':'var(--yellow)'; }
+    }, 1000);
+  }
+}
+
+function closeQuizOverlay() {
+  if (_quizTimer) { clearInterval(_quizTimer); _quizTimer = null; }
+  document.getElementById('quiz-overlay')?.remove();
+  _activeQuizId = null;
+}
+
+async function submitStudentQuiz() {
+  const lang = currentLang;
+  const form = document.getElementById('quiz-form');
+  const errEl = document.getElementById('quiz-submit-error');
+  if (!form || !_activeQuizId) return;
+  const answers = {};
+  form.querySelectorAll('input[type=radio]:checked').forEach(r => {
+    const qid = r.name.replace('q_','');
+    answers[qid] = parseInt(r.value);
+  });
+  if (_quizTimer) { clearInterval(_quizTimer); _quizTimer = null; }
+  try {
+    const d = await fetch('api_quiz.php', {
+      method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrf},
+      body: JSON.stringify({action:'submit_quiz', quiz_id:_activeQuizId, answers})
+    }).then(r=>r.json());
+    if (!d.ok) throw new Error(d.error||'Error');
+    closeQuizOverlay();
+    // Show score dialog
+    const dlg = document.createElement('div');
+    dlg.className = 'modal-overlay'; dlg.style.zIndex='10001';
+    const color = d.pct>=60?'var(--green)':'var(--red)';
+    dlg.innerHTML = `<div class="modal" style="text-align:center;padding:2.5rem 2rem;max-width:360px;">
+      <div style="font-size:3.5rem;margin-bottom:.75rem;">${d.pct>=60?'🎉':'💪'}</div>
+      <h3 style="font-family:var(--font);font-size:1.3rem;margin-bottom:.5rem;">${lang==='en'?'Quiz Complete!':lang==='ar'?'اكتمل الاختبار!':'Quiz terminé !'}</h3>
+      <div style="font-size:3rem;font-weight:800;font-family:var(--font);color:${color};margin:1rem 0;">${d.pct}%</div>
+      <div style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem;">${d.score} / ${d.total} ${lang==='en'?'correct':lang==='ar'?'إجابة صحيحة':'correct(s)'}</div>
+      <button class="btn-primary" onclick="this.closest('.modal-overlay').remove();renderQuizzes();" style="width:100%;">${lang==='en'?'Done':lang==='ar'?'تم':'Terminer'}</button>
+    </div>`;
+    dlg.addEventListener('click', e=>{ if(e.target===dlg){ dlg.remove(); renderQuizzes(); }});
+    document.body.appendChild(dlg); dlg.classList.add('open');
+  } catch(e) { if(errEl) errEl.textContent = e.message; }
+}
+
+function escHtmlS(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 async function saveProfile() {
   const name    = document.getElementById('pref-name').value.trim();

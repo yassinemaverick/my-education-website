@@ -337,6 +337,10 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
       <span id="nav-schedule-lbl">Horaires des groupes</span>
     </div>
+    <div class="nav-item" onclick="navigate('announcements',this)" id="nav-announcements">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span id="nav-announcements-lbl">Annonces</span>
+    </div>
     <div class="nav-section-label" id="nav-account-label">Compte</div>
     <div class="nav-item" onclick="navigate('settings',this)" id="nav-settings">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -596,6 +600,50 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
     </div>
   </div>
 
+  <!-- ── ANNOUNCEMENTS PAGE ── -->
+  <div class="page" id="page-announcements">
+    <div style="margin-bottom:1.5rem;">
+      <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="ann-page-title">Annonces</h2>
+      <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="ann-page-sub">Envoyez des annonces à vos étudiants et professeurs</p>
+    </div>
+    <div class="grid-2" style="align-items:start;">
+      <!-- Compose -->
+      <div class="card">
+        <div class="card-title" id="ann-compose-title">Nouvelle annonce</div>
+        <div class="form-group" style="margin-top:1rem;">
+          <label id="ann-lbl-title">Titre</label>
+          <input type="text" id="ann-title-input" placeholder="Ex: Rappel – pas de cours vendredi" maxlength="200"
+            style="width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;box-sizing:border-box;">
+        </div>
+        <div class="form-group">
+          <label id="ann-lbl-body">Message</label>
+          <textarea id="ann-body-input" rows="4" maxlength="2000" placeholder="Écrivez votre message…"
+            style="width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+        </div>
+        <div class="form-group">
+          <label id="ann-lbl-target">Destinataires</label>
+          <select id="ann-target-select"
+            style="width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;">
+            <option value="all" id="ann-opt-all">Tout le monde</option>
+            <option value="students" id="ann-opt-students">Étudiants seulement</option>
+            <option value="teachers" id="ann-opt-teachers">Professeurs seulement</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:center;gap:.75rem;margin-top:.5rem;">
+          <button class="btn-primary" onclick="createAnnouncement()" id="btn-send-ann">📢 Envoyer</button>
+          <span id="ann-send-status" style="font-size:.8rem;"></span>
+        </div>
+      </div>
+      <!-- List -->
+      <div>
+        <div class="card-title" style="margin-bottom:.75rem;" id="ann-list-title">Annonces récentes</div>
+        <div id="ann-list">
+          <div class="loading-overlay" style="position:static;height:80px;border-radius:12px;"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── SETTINGS PAGE ── -->
   <div class="page" id="page-settings">
     <div style="margin-bottom:1.5rem;">
@@ -814,7 +862,7 @@ const T = {
       {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
       {fr:'Jeudi',en:'Thursday',ar:'الخميس'},{fr:'Vendredi',en:'Friday',ar:'الجمعة'},{fr:'Samedi',en:'Saturday',ar:'السبت'}
     ],
-    topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes', schedule:'Horaires des groupes' },
+    topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes', schedule:'Horaires des groupes', announcements:'Annonces' },
     assigningStudentsTitle:'Étudiants', assigningTeachersTitle:'Professeurs',
     ath_student:'Étudiant', ath_group:'Groupe(s)', ath_teacher:'Professeur', ath_teacher_group:'Groupe(s)',
     classesGroupsOf:'Groupes de', noGroups:'Aucun groupe. Cliquez sur + pour en créer un.',
@@ -866,6 +914,14 @@ const T = {
     usersSearchPlaceholder:'Rechercher par nom ou email…',
     usersPageTitle:'Gestion des utilisateurs', usersPageSub:'Gérez les emails et mots de passe des étudiants et professeurs',
     classesPageSub2:'Sélectionnez un type de classe',
+    navAnnouncements:'Annonces',
+    topbarAnnouncements:'Annonces',
+    annPageTitle:'Annonces', annPageSub:'Envoyez des annonces à vos étudiants et professeurs',
+    annComposeTitle:'Nouvelle annonce', annLblTitle:'Titre', annLblBody:'Message', annLblTarget:'Destinataires',
+    annOptAll:'Tout le monde', annOptStudents:'Étudiants seulement', annOptTeachers:'Professeurs seulement',
+    annSendBtn:'📢 Envoyer', annListTitle:'Annonces récentes', annEmpty:'Aucune annonce pour l\'instant.',
+    annDeleteConfirm:'Supprimer cette annonce ?', annTargetAll:'Tout le monde', annTargetStudents:'Étudiants', annTargetTeachers:'Professeurs',
+    annSent:'Annonce envoyée !', annDeleted:'Annonce supprimée.',
   },
   ar: {
     adminChip:'مسؤول', roleLabel:'مسؤول النظام',
@@ -885,7 +941,7 @@ const T = {
       {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
       {fr:'Jeudi',en:'Thursday',ar:'الخميس'},{fr:'Vendredi',en:'Friday',ar:'الجمعة'},{fr:'Samedi',en:'Saturday',ar:'السبت'}
     ],
-    topbar:{ home:'لوحة تحكم المسؤول', users:'المستخدمون', inscriptions:'التسجيلات', settings:'الإعدادات', classes:'الفصول', 'assigning-classes':'تعيين الفصول', schedule:'جداول المجموعات' },
+    topbar:{ home:'لوحة تحكم المسؤول', users:'المستخدمون', inscriptions:'التسجيلات', settings:'الإعدادات', classes:'الفصول', 'assigning-classes':'تعيين الفصول', schedule:'جداول المجموعات', announcements:'الإعلانات' },
     assigningStudentsTitle:'الطلاب', assigningTeachersTitle:'الأساتذة',
     ath_student:'الطالب', ath_group:'المجموعة(ات)', ath_teacher:'الأستاذ', ath_teacher_group:'المجموعة(ات)',
     classesGroupsOf:'مجموعات', noGroups:'لا توجد مجموعات. انقر على + لإنشاء واحدة.',
@@ -937,6 +993,14 @@ const T = {
     usersSearchPlaceholder:'البحث بالاسم أو البريد…',
     usersPageTitle:'إدارة المستخدمين', usersPageSub:'أدر بريد الطلاب والأساتذة وكلمات مرورهم',
     classesPageSub2:'اختر نوع الفصل',
+    navAnnouncements:'الإعلانات',
+    topbarAnnouncements:'الإعلانات',
+    annPageTitle:'الإعلانات', annPageSub:'أرسل إعلانات لطلابك وأساتذتك',
+    annComposeTitle:'إعلان جديد', annLblTitle:'العنوان', annLblBody:'الرسالة', annLblTarget:'المستلمون',
+    annOptAll:'الجميع', annOptStudents:'الطلاب فقط', annOptTeachers:'الأساتذة فقط',
+    annSendBtn:'📢 إرسال', annListTitle:'الإعلانات الأخيرة', annEmpty:'لا توجد إعلانات حتى الآن.',
+    annDeleteConfirm:'حذف هذا الإعلان؟', annTargetAll:'الجميع', annTargetStudents:'الطلاب', annTargetTeachers:'الأساتذة',
+    annSent:'تم إرسال الإعلان!', annDeleted:'تم حذف الإعلان.',
   },
   en: {
     adminChip:'Admin', roleLabel:'Administrator',
@@ -956,7 +1020,7 @@ const T = {
       {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
       {fr:'Jeudi',en:'Thursday',ar:'الخميس'},{fr:'Vendredi',en:'Friday',ar:'الجمعة'},{fr:'Samedi',en:'Saturday',ar:'السبت'}
     ],
-    topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments', schedule:'Allocate dates & times' },
+    topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments', schedule:'Allocate dates & times', announcements:'Announcements' },
     assigningStudentsTitle:'Students', assigningTeachersTitle:'Teachers',
     ath_student:'Student', ath_group:'Group(s)', ath_teacher:'Teacher', ath_teacher_group:'Group(s)',
     classesGroupsOf:'Groups of', noGroups:'No groups. Click + to create one.',
@@ -1008,6 +1072,14 @@ const T = {
     usersSearchPlaceholder:'Search by name or email…',
     usersPageTitle:'User management', usersPageSub:'Manage student and teacher emails and passwords',
     classesPageSub2:'Select a class type',
+    navAnnouncements:'Announcements',
+    topbarAnnouncements:'Announcements',
+    annPageTitle:'Announcements', annPageSub:'Send announcements to your students and teachers',
+    annComposeTitle:'New announcement', annLblTitle:'Title', annLblBody:'Message', annLblTarget:'Recipients',
+    annOptAll:'Everyone', annOptStudents:'Students only', annOptTeachers:'Teachers only',
+    annSendBtn:'📢 Send', annListTitle:'Recent announcements', annEmpty:'No announcements yet.',
+    annDeleteConfirm:'Delete this announcement?', annTargetAll:'Everyone', annTargetStudents:'Students', annTargetTeachers:'Teachers',
+    annSent:'Announcement sent!', annDeleted:'Announcement deleted.',
   }
 };
 const tr = () => T[currentLang] || T.fr;
@@ -1038,6 +1110,11 @@ function applyTranslations() {
   set('nav-home-lbl', t.navHome); set('nav-settings-lbl', t.navSettings);
   set('nav-users-lbl', t.navUsers); set('nav-inscriptions-lbl', t.navInscriptions);
   set('nav-classes-lbl', t.navClasses); set('nav-assigning-classes-lbl', t.navAssigningClasses); set('nav-schedule-lbl', t.navSchedule);
+  set('nav-announcements-lbl', t.navAnnouncements);
+  set('ann-page-title', t.annPageTitle); set('ann-page-sub', t.annPageSub);
+  set('ann-compose-title', t.annComposeTitle); set('ann-lbl-title', t.annLblTitle); set('ann-lbl-body', t.annLblBody); set('ann-lbl-target', t.annLblTarget);
+  set('ann-opt-all', t.annOptAll); set('ann-opt-students', t.annOptStudents); set('ann-opt-teachers', t.annOptTeachers);
+  set('btn-send-ann', t.annSendBtn); set('ann-list-title', t.annListTitle);
   set('classes-page-title', t.classesPageTitle);
   set('schedule-page-title', t.schedulePageTitle); set('schedule-page-sub', t.schedulePageSub);
   set('assigning-page-title', t.assigningPageTitle); set('assigning-page-sub', t.assigningPageSub);
@@ -1120,6 +1197,7 @@ function navigate(page, el) {
   if (page === 'classes') { classesView = 'types'; classesTypeKey = null; classesLevel = null; classesGroupId = null; renderClassesPage(); }
   if (page === 'assigning-classes') loadAssigningClasses();
   if (page === 'schedule') loadSchedulePage();
+  if (page === 'announcements') loadAnnouncements();
   if (window.innerWidth <= 768) toggleSidebar();
 }
 
@@ -2100,6 +2178,71 @@ function saveProfile() {
   document.getElementById('sidebar-name').textContent  = name;
   document.getElementById('settings-name').textContent = name;
   showToast(tr().toastProfileSaved, 'success');
+}
+
+/* ── ANNOUNCEMENTS ───────────────────────────────────────────────────────── */
+async function loadAnnouncements() {
+  const list = document.getElementById('ann-list');
+  list.innerHTML = '<div class="loading-overlay" style="position:static;height:80px;border-radius:12px;"><div class="spinner"></div></div>';
+  try {
+    const d = await api('api_announcements.php?action=list');
+    const anns = d.announcements || [];
+    const t = tr();
+    if (!anns.length) {
+      list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;font-style:italic;">${t.annEmpty}</p>`;
+      return;
+    }
+    const targetLabel = id => ({all:t.annTargetAll,students:t.annTargetStudents,teachers:t.annTargetTeachers}[id]||id);
+    list.innerHTML = anns.map(a => `
+      <div class="card" style="margin-bottom:.75rem;padding:1rem 1.25rem;">
+        <div style="display:flex;align-items:flex-start;gap:.75rem;">
+          <div style="flex:1;min-width:0;">
+            <div style="font-family:var(--font);font-weight:700;font-size:.9rem;margin-bottom:.25rem;">${escHtmlA(a.title)}</div>
+            <div style="font-size:.82rem;color:var(--muted);margin-bottom:.5rem;line-height:1.5;">${escHtmlA(a.body)}</div>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+              <span style="font-size:.72rem;background:rgba(59,130,246,.12);color:var(--blue);border:1px solid rgba(59,130,246,.25);padding:.15rem .55rem;border-radius:100px;">📢 ${targetLabel(a.target)}</span>
+              <span style="font-size:.72rem;color:var(--muted2);">${new Date(a.created_at).toLocaleDateString(currentLang==='en'?'en-GB':'fr-FR')} · ${escHtmlA(a.author_name)}</span>
+            </div>
+          </div>
+          <button onclick="deleteAnnouncement(${a.id},this)" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:.25rem;line-height:1;" title="Delete">🗑</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('ann-list').innerHTML = `<p style="color:var(--red);font-size:.85rem;">${e.message}</p>`;
+  }
+}
+
+async function createAnnouncement() {
+  const title  = document.getElementById('ann-title-input').value.trim();
+  const body   = document.getElementById('ann-body-input').value.trim();
+  const target = document.getElementById('ann-target-select').value;
+  const status = document.getElementById('ann-send-status');
+  const btn    = document.getElementById('btn-send-ann');
+  if (!title || !body) { status.style.color='var(--red)'; status.textContent='⚠ ' + (currentLang==='en'?'Title and message required':currentLang==='ar'?'العنوان والرسالة مطلوبان':'Titre et message requis'); return; }
+  btn.disabled = true; status.textContent = '…';
+  try {
+    await api('api_announcements.php', 'POST', {action:'create', title, body, target});
+    document.getElementById('ann-title-input').value = '';
+    document.getElementById('ann-body-input').value  = '';
+    status.style.color = 'var(--green)'; status.textContent = '✅ ' + tr().annSent;
+    await loadAnnouncements();
+    setTimeout(() => { status.textContent = ''; }, 3000);
+  } catch(e) {
+    status.style.color = 'var(--red)'; status.textContent = '✗ ' + e.message;
+  } finally { btn.disabled = false; }
+}
+
+async function deleteAnnouncement(id, btn) {
+  if (!confirm(tr().annDeleteConfirm)) return;
+  btn.disabled = true;
+  try {
+    await api('api_announcements.php', 'POST', {action:'delete', id});
+    showToast(tr().annDeleted, 'success');
+    await loadAnnouncements();
+  } catch(e) {
+    showToast(e.message, 'error');
+    btn.disabled = false;
+  }
 }
 
 function logout() {

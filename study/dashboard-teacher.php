@@ -666,7 +666,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
         <h2 style="font-family:var(--font);font-size:1.4rem;font-weight:700;" id="quiz-page-title">Quiz</h2>
         <p style="color:var(--muted);font-size:.85rem;margin-top:.2rem;" id="quiz-page-sub">Gérez et créez des quiz pour vos étudiants</p>
       </div>
-      <button class="btn-primary" onclick="openModal('quiz')" id="btn-new-quiz">+ <span id="new-quiz-lbl">Créer un quiz</span></button>
+      <button class="btn-primary" onclick="openQuizModal()" id="btn-new-quiz">+ <span id="new-quiz-lbl">Créer un quiz</span></button>
     </div>
     <div class="grid-3" id="quiz-teacher-list"></div>
   </div>
@@ -804,28 +804,57 @@ body.ar .notif-panel { right:auto; left:1rem; }
 
 <!-- MODAL: NEW QUIZ -->
 <div class="modal-overlay" id="modal-quiz">
-  <div class="modal">
+  <div class="modal" style="max-width:680px;max-height:90vh;overflow-y:auto;">
     <div class="modal-header">
       <h3 id="modal-quiz-title">Créer un quiz</h3>
       <button class="btn-close" onclick="closeModal('quiz')" aria-label="Close">✕</button>
     </div>
-    <div class="form-group">
-      <label id="qmlbl-title">Titre du quiz</label>
-      <input type="text" id="new-quiz-title" placeholder="Ex: Grammaire – Unité 5">
-    </div>
-    <div class="grid-2" style="gap:1rem;">
-      <div class="form-group">
-        <label id="qmlbl-qs">Nombre de questions</label>
-        <input type="number" id="new-quiz-qs" value="10" min="1" max="50">
+    <!-- Quiz info -->
+    <div class="grid-2" style="gap:1rem;margin-bottom:.75rem;">
+      <div class="form-group" style="grid-column:1/-1;">
+        <label id="qmlbl-title">Titre du quiz</label>
+        <input type="text" id="new-quiz-title" placeholder="Ex: Grammaire – Unité 5">
       </div>
       <div class="form-group">
-        <label id="qmlbl-time">Durée (min)</label>
-        <input type="number" id="new-quiz-time" value="15" min="5" max="120">
+        <label id="qmlbl-group">Groupe</label>
+        <select id="new-quiz-group" style="width:100%;padding:.65rem 1rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.85rem;outline:none;"></select>
+      </div>
+      <div class="form-group">
+        <label id="qmlbl-time">Durée (min, 0 = illimité)</label>
+        <input type="number" id="new-quiz-time" value="0" min="0" max="120">
       </div>
     </div>
+    <!-- Questions builder -->
+    <div style="border-top:1px solid var(--border);padding-top:.75rem;margin-bottom:.75rem;">
+      <div style="font-family:var(--font);font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.65rem;" id="qmlbl-questions">Questions</div>
+      <div id="quiz-questions-builder" style="display:flex;flex-direction:column;gap:1rem;"></div>
+      <button onclick="addQuizQuestion()" style="margin-top:.75rem;background:rgba(255,255,255,.05);border:1px dashed var(--border);border-radius:10px;color:var(--muted);cursor:pointer;width:100%;padding:.65rem;font-family:var(--font-body);font-size:.85rem;transition:all .2s;" id="btn-add-question">+ Ajouter une question</button>
+    </div>
+    <div style="color:var(--red);font-size:.8rem;min-height:1.2rem;" id="quiz-create-error"></div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('quiz')" id="quiz-modal-cancel">Annuler</button>
       <button class="btn-primary" onclick="submitNewQuiz()" id="quiz-modal-submit">Créer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MESSAGE MODAL -->
+<div class="modal-overlay" id="modal-message">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <h3 id="msg-modal-title">Message</h3>
+      <button class="btn-close" onclick="closeModal('message')" aria-label="Close">✕</button>
+    </div>
+    <p style="color:var(--muted);font-size:.83rem;margin-bottom:.75rem;" id="msg-modal-to"></p>
+    <div class="form-group">
+      <label id="msg-lbl">Message</label>
+      <textarea id="msg-text" rows="4" maxlength="500" placeholder="Écrivez votre message…"
+        style="width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+    </div>
+    <div style="color:var(--red);font-size:.8rem;min-height:1rem;" id="msg-error"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('message')" id="msg-cancel">Annuler</button>
+      <button class="btn-primary" onclick="sendMessage()" id="msg-submit">Envoyer</button>
     </div>
   </div>
 </div>
@@ -1573,22 +1602,197 @@ async function gradeSubmission(subId) {
   finally { btn.textContent=orig; btn.disabled=false; }
 }
 
-function renderQuizzes() {
+let _teacherQuizzes = [];
+
+async function renderQuizzes() {
   const list = document.getElementById('quiz-teacher-list');
-  if(!list) return;
+  if (!list) return;
+  list.innerHTML = '<div class="loading-overlay" style="position:static;height:100px;border-radius:16px;"><div class="spinner"></div></div>';
+  try {
+    const d = await fetch('api_quiz.php?action=list_quizzes').then(r=>r.json());
+    _teacherQuizzes = d.quizzes || [];
+  } catch(e) {
+    list.innerHTML = `<p style="color:var(--red);font-size:.85rem;grid-column:1/-1;">${T[currentLang].errorLoading||'Error'}</p>`;
+    return;
+  }
   const tr = T[currentLang];
-  list.innerHTML = QUIZZES_T.map(q => `
-    <div class="card" style="display:flex;flex-direction:column;">
-      <div style="font-size:2rem;margin-bottom:.8rem;">🧠</div>
-      <div style="font-family:var(--font);font-size:1rem;font-weight:700;margin-bottom:.4rem;">${currentLang === 'ar' ? q.title_ar : currentLang === 'en' ? (q.title_en || q.title_fr) : q.title_fr}</div>
-      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1rem;">
-        <span style="font-size:.75rem;background:rgba(30,27,75,.06);border:1px solid var(--border);padding:.2rem .6rem;border-radius:100px;color:var(--muted);">📝 ${q.qs} q</span>
-        <span style="font-size:.75rem;background:rgba(30,27,75,.06);border:1px solid var(--border);padding:.2rem .6rem;border-radius:100px;color:var(--muted);">⏱ ${q.min} min</span>
+  if (!_teacherQuizzes.length) {
+    list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;grid-column:1/-1;">${currentLang==='en'?'No quizzes yet. Click + Create quiz to start.':currentLang==='ar'?'لا توجد اختبارات بعد.':'Aucun quiz. Cliquez sur + Créer un quiz.'}</p>`;
+    return;
+  }
+  list.innerHTML = _teacherQuizzes.map(q => {
+    const avg  = q.avg_score != null ? parseInt(q.avg_score) : 0;
+    const acts = q.is_active == 1;
+    return `<div class="card" style="display:flex;flex-direction:column;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem;">
+        <div style="font-size:2rem;">🧠</div>
+        <div style="display:flex;gap:.4rem;">
+          <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:100px;border:1px solid ${acts?'rgba(62,207,120,.3)':'var(--border)'};color:${acts?'var(--green)':'var(--muted)'};">${acts?(currentLang==='en'?'Active':currentLang==='ar'?'نشط':'Actif'):(currentLang==='en'?'Off':currentLang==='ar'?'غير نشط':'Désactivé')}</span>
+          <button onclick="toggleQuiz(${q.id},this)" style="font-size:.7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.15rem .5rem;cursor:pointer;color:var(--muted);">${acts?(currentLang==='en'?'Disable':currentLang==='ar'?'إيقاف':'Désactiver'):(currentLang==='en'?'Enable':currentLang==='ar'?'تفعيل':'Activer')}</button>
+          <button onclick="deleteQuiz(${q.id},this)" style="font-size:.7rem;background:rgba(232,93,117,.08);border:1px solid rgba(232,93,117,.2);border-radius:8px;padding:.15rem .5rem;cursor:pointer;color:var(--red);">🗑</button>
+        </div>
       </div>
-      <div style="font-size:.83rem;color:var(--muted);margin-bottom:.4rem;">${q.attempts} ${tr.attemptsLbl} · ${tr.avgLbl} <strong style="color:var(--purple)">${q.avg}%</strong></div>
-      <div class="progress-bar"><div class="progress-fill purple" style="width:${q.avg}%"></div></div>
-    </div>
-  `).join('');
+      <div style="font-family:var(--font);font-size:.95rem;font-weight:700;margin-bottom:.5rem;">${escHtml(q.title)}</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-bottom:.5rem;">${escHtml((q.type_key||'')+(q.group_letter?' · Gr.'+q.group_letter:''))}</div>
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.75rem;">
+        <span style="font-size:.72rem;background:rgba(30,27,75,.06);border:1px solid var(--border);padding:.2rem .6rem;border-radius:100px;color:var(--muted);">📝 ${q.question_count||0} q</span>
+        ${q.time_limit_min>0?`<span style="font-size:.72rem;background:rgba(30,27,75,.06);border:1px solid var(--border);padding:.2rem .6rem;border-radius:100px;color:var(--muted);">⏱ ${q.time_limit_min} min</span>`:''}
+        <span style="font-size:.72rem;background:rgba(30,27,75,.06);border:1px solid var(--border);padding:.2rem .6rem;border-radius:100px;color:var(--muted);">👥 ${q.attempt_count||0}</span>
+      </div>
+      ${q.attempt_count>0?`<div style="font-size:.82rem;color:var(--muted);margin-bottom:.4rem;">${tr.avgLbl||'Avg'} <strong style="color:var(--purple)">${avg}%</strong></div>
+      <div class="progress-bar"><div class="progress-fill purple" style="width:${avg}%"></div></div>`:''}
+      <button onclick="viewQuizResults(${q.id},'${escHtml(q.title).replace(/'/g,"&#39;")}')" style="margin-top:auto;padding-top:.75rem;font-size:.78rem;color:var(--blue);background:none;border:none;cursor:pointer;text-align:left;font-family:var(--font);">${currentLang==='en'?'View results →':currentLang==='ar'?'عرض النتائج ←':'Voir les résultats →'}</button>
+    </div>`;
+  }).join('');
+}
+
+/* ── Quiz create helpers ───────────────────────────────────────────────── */
+let _quizQuestionCount = 0;
+
+function addQuizQuestion() {
+  _quizQuestionCount++;
+  const n = _quizQuestionCount;
+  const lang = currentLang;
+  const qLabel = lang==='en'?'Question':lang==='ar'?'السؤال':'Question';
+  const optLabel = lang==='en'?'Option':lang==='ar'?'خيار':'Option';
+  const correctLabel = lang==='en'?'Correct answer':lang==='ar'?'الجواب الصحيح':'Bonne réponse';
+  const div = document.createElement('div');
+  div.className = 'quiz-q-block';
+  div.dataset.n = n;
+  div.style.cssText = 'background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:1rem;position:relative;';
+  div.innerHTML = `
+    <button onclick="this.closest('.quiz-q-block').remove()" style="position:absolute;top:.6rem;right:.6rem;background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;">✕</button>
+    <div style="font-family:var(--font);font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem;">${qLabel} ${n}</div>
+    <input type="text" class="q-text" placeholder="${qLabel}…" maxlength="400"
+      style="width:100%;padding:.6rem .9rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:9px;color:var(--white);font-family:var(--font-body);font-size:.86rem;outline:none;box-sizing:border-box;margin-bottom:.75rem;">
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:.4rem;font-family:var(--font);">${correctLabel}</div>
+    ${[0,1,2,3].map(i=>`
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;">
+        <input type="radio" name="correct-${n}" value="${i}" ${i===0?'checked':''} style="accent-color:var(--green);cursor:pointer;">
+        <input type="text" class="q-opt" data-opt="${i}" placeholder="${optLabel} ${i+1}" maxlength="200"
+          style="flex:1;padding:.5rem .8rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;">
+      </div>`).join('')}`;
+  document.getElementById('quiz-questions-builder').appendChild(div);
+}
+
+async function submitNewQuiz() {
+  const title   = document.getElementById('new-quiz-title').value.trim();
+  const groupId = parseInt(document.getElementById('new-quiz-group').value);
+  const time    = parseInt(document.getElementById('new-quiz-time').value) || 0;
+  const errEl   = document.getElementById('quiz-create-error');
+  const btn     = document.getElementById('quiz-modal-submit');
+  errEl.textContent = '';
+  if (!title)   { errEl.textContent = currentLang==='en'?'Title required':currentLang==='ar'?'العنوان مطلوب':'Titre requis'; return; }
+  if (!groupId) { errEl.textContent = currentLang==='en'?'Select a group':currentLang==='ar'?'اختر مجموعة':'Sélectionnez un groupe'; return; }
+  const blocks = document.querySelectorAll('.quiz-q-block');
+  if (!blocks.length) { errEl.textContent = currentLang==='en'?'Add at least 1 question':currentLang==='ar'?'أضف سؤالاً واحداً على الأقل':'Ajoutez au moins 1 question'; return; }
+  const questions = [];
+  for (const b of blocks) {
+    const qText = b.querySelector('.q-text').value.trim();
+    if (!qText) { errEl.textContent = currentLang==='en'?'Fill all question texts':currentLang==='ar'?'أكمل نصوص الأسئلة':'Remplissez tous les textes de question'; return; }
+    const selected = b.querySelector('input[type=radio]:checked')?.value ?? '0';
+    const opts = [...b.querySelectorAll('.q-opt')].map((inp, i) => ({ text: inp.value.trim(), correct: String(i) === selected }));
+    if (opts.some(o => !o.text)) { errEl.textContent = currentLang==='en'?'Fill all option fields':currentLang==='ar'?'أكمل حقول الخيارات':'Remplissez tous les champs de réponse'; return; }
+    questions.push({ question: qText, options: opts });
+  }
+  btn.disabled = true;
+  try {
+    await fetch('api_quiz.php', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken}, body:JSON.stringify({action:'create_quiz',title,group_id:groupId,time_limit_min:time,questions}) }).then(r=>r.json()).then(d=>{ if(!d.ok) throw new Error(d.error||'Error'); });
+    closeModal('quiz');
+    await renderQuizzes();
+    showToast(currentLang==='en'?'Quiz created!':currentLang==='ar'?'تم إنشاء الاختبار!':'Quiz créé !');
+  } catch(e) { errEl.textContent = e.message; }
+  finally { btn.disabled = false; }
+}
+
+async function toggleQuiz(id, btn) {
+  btn.disabled = true;
+  try {
+    await fetch('api_quiz.php', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},body:JSON.stringify({action:'toggle_quiz',id})}).then(r=>r.json());
+    await renderQuizzes();
+  } catch(e) { showToast(e.message); } finally { btn.disabled = false; }
+}
+
+async function deleteQuiz(id, btn) {
+  const lang = currentLang;
+  if (!confirm(lang==='en'?'Delete this quiz and all its attempts?':lang==='ar'?'حذف هذا الاختبار وجميع إجاباته؟':'Supprimer ce quiz et toutes ses tentatives ?')) return;
+  btn.disabled = true;
+  try {
+    await fetch('api_quiz.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},body:JSON.stringify({action:'delete_quiz',id})}).then(r=>r.json());
+    await renderQuizzes();
+    showToast(lang==='en'?'Quiz deleted':lang==='ar'?'تم حذف الاختبار':'Quiz supprimé');
+  } catch(e) { showToast(e.message); } finally { btn.disabled = false; }
+}
+
+async function viewQuizResults(quizId, title) {
+  const lang = currentLang;
+  let d;
+  try { d = await fetch(`api_quiz.php?action=quiz_results&id=${quizId}`).then(r=>r.json()); } catch(e) { showToast(e.message); return; }
+  const results = d.results || [];
+  if (!results.length) { showToast(lang==='en'?'No attempts yet':lang==='ar'?'لا توجد محاولات بعد':'Aucune tentative'); return; }
+  const rows = results.map(r=>`<tr><td style="padding:.6rem 1rem;">${escHtml(r.full_name||r.username)}</td><td style="padding:.6rem 1rem;text-align:center;">${r.score}/${r.total}</td><td style="padding:.6rem 1rem;text-align:center;"><strong style="color:${r.pct>=60?'var(--green)':'var(--red)'};">${r.pct}%</strong></td><td style="padding:.6rem 1rem;color:var(--muted);font-size:.78rem;">${new Date(r.finished_at).toLocaleDateString()}</td></tr>`).join('');
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay'; overlay.style.zIndex = '9999';
+  overlay.innerHTML = `<div class="modal" style="max-width:560px;max-height:80vh;overflow-y:auto;">
+    <div class="modal-header"><h3>📊 ${escHtml(title)}</h3><button class="btn-close" onclick="this.closest('.modal-overlay').remove()">✕</button></div>
+    <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
+      <thead><tr style="border-bottom:1px solid var(--border);"><th style="padding:.6rem 1rem;text-align:left;color:var(--muted);">${lang==='en'?'Student':lang==='ar'?'الطالب':'Étudiant'}</th><th style="padding:.6rem 1rem;color:var(--muted);">${lang==='en'?'Score':lang==='ar'?'النتيجة':'Score'}</th><th style="padding:.6rem 1rem;color:var(--muted);">%</th><th style="padding:.6rem 1rem;color:var(--muted);">${lang==='en'?'Date':lang==='ar'?'التاريخ':'Date'}</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+  overlay.classList.add('open');
+}
+
+/* ── Open quiz modal ───────────────────────────────────────────────────── */
+async function openQuizModal() {
+  // Populate group select
+  const sel = document.getElementById('new-quiz-group');
+  sel.innerHTML = '';
+  try {
+    const d = await fetch('api_classes.php?action=teacher_groups').then(r=>r.json());
+    const groups = d.groups || [];
+    if (!groups.length) { sel.innerHTML = `<option value="">${currentLang==='en'?'No groups':'Aucun groupe'}</option>`; }
+    else { sel.innerHTML = groups.map(g=>`<option value="${g.id}">${escHtml(g.type_key||'')} Gr.${escHtml(g.group_letter||'')} ${g.student_count?'('+g.student_count+' st.)':''}</option>`).join(''); }
+  } catch(e) { sel.innerHTML = '<option value="">Error</option>'; }
+  // Reset builder
+  document.getElementById('quiz-questions-builder').innerHTML = '';
+  document.getElementById('new-quiz-title').value = '';
+  document.getElementById('new-quiz-time').value  = '0';
+  document.getElementById('quiz-create-error').textContent = '';
+  _quizQuestionCount = 0;
+  addQuizQuestion(); // start with 1
+  openModal('quiz');
+}
+
+/* ── MESSAGING ─────────────────────────────────────────────────────────── */
+let _msgTargetId = null;
+
+function openMessageModal(userId, userName) {
+  _msgTargetId = userId;
+  document.getElementById('msg-modal-to').textContent = (currentLang==='en'?'To: ':currentLang==='ar'?'إلى: ':'À : ') + userName;
+  document.getElementById('msg-text').value = '';
+  document.getElementById('msg-error').textContent = '';
+  openModal('message');
+}
+
+async function sendMessage() {
+  const text = document.getElementById('msg-text').value.trim();
+  const errEl = document.getElementById('msg-error');
+  const btn   = document.getElementById('msg-submit');
+  if (!text) { errEl.textContent = currentLang==='en'?'Write a message first':currentLang==='ar'?'اكتب رسالة أولاً':'Écrivez un message'; return; }
+  btn.disabled = true;
+  try {
+    const res = await fetch('api_notifications.php?action=send_message', {
+      method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},
+      body: JSON.stringify({action:'send_message', user_id:_msgTargetId, message:text})
+    }).then(r=>r.json());
+    if (!res.ok) throw new Error(res.error||'Error');
+    closeModal('message');
+    showToast(currentLang==='en'?'Message sent!':currentLang==='ar'?'تم إرسال الرسالة!':'Message envoyé !');
+  } catch(e) { errEl.textContent = e.message; }
+  finally { btn.disabled = false; }
 }
 
 let GRADES_LIVE = [];
@@ -2557,6 +2761,9 @@ async function openGroupDetail(groupId) {
           <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${escHtml(s.name || s.username)}</div>
           <div style="font-size:.75rem;color:var(--muted);">@${escHtml(s.username)}</div>
         </div>
+        <button onclick="openMessageModal(${s.id},'${escHtml(s.name||s.username).replace(/'/g,"&#39;")}')"
+          style="background:rgba(91,156,246,.12);border:1px solid rgba(91,156,246,.25);color:var(--blue);border-radius:8px;padding:.3rem .65rem;cursor:pointer;font-size:.75rem;font-family:var(--font);white-space:nowrap;"
+          title="Send message">✉️</button>
       </div>`;
     }).join('');
     document.getElementById('course-detail-meta').textContent = students.length + T[lang].studentSuffix;
