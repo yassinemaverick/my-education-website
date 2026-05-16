@@ -85,7 +85,11 @@ if ($action === 'submit') {
     }
 
     // Handle optional file upload
-    $filePath = null;
+    $filePath    = null;
+    $uploadsDir  = __DIR__ . '/uploads';
+    if (!is_dir($uploadsDir)) {
+        @mkdir($uploadsDir, 0755, true);
+    }
     if (!empty($_FILES['file']) && $_FILES['file']['error'] !== UPLOAD_ERR_NO_FILE) {
         $f = $_FILES['file'];
         if ($f['error'] !== UPLOAD_ERR_OK) {
@@ -99,8 +103,11 @@ if ($action === 'submit') {
         if (!in_array($ext, $allowed, true)) {
             echo json_encode(['ok'=>false,'error'=>'File type not allowed']); exit;
         }
+        if (!is_writable($uploadsDir)) {
+            echo json_encode(['ok'=>false,'error'=>'Upload directory not writable — contact admin']); exit;
+        }
         $filename = uniqid('sub_', true) . '.' . $ext;
-        $dest     = __DIR__ . '/uploads/' . $filename;
+        $dest     = $uploadsDir . '/' . $filename;
         if (!move_uploaded_file($f['tmp_name'], $dest)) {
             echo json_encode(['ok'=>false,'error'=>'Failed to save uploaded file']); exit;
         }
