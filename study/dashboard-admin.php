@@ -1840,8 +1840,7 @@ async function loadCourseSelect(currentCourseId) {
   sel.innerHTML = `<option value="">${noneLabel}</option>` +
     _allCourses.map(c => {
       const name = currentLang==='ar' ? (c.group_name_ar || c.group_name_fr) : c.group_name_fr;
-      const sub  = c.subject_fr ? ` · ${c.subject_fr}` : '';
-      return `<option value="${c.id}">${name}${sub}</option>`;
+      return `<option value="${c.id}">${name}</option>`;
     }).join('');
 
   sel.value = currentCourseId || '';
