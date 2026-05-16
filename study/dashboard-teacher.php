@@ -786,11 +786,11 @@ body.ar .notif-panel { right:auto; left:1rem; }
       <div class="form-group">
         <label id="mlbl-subject">Matière</label>
         <select id="new-assign-subject">
-          <option data-fr="Écriture"       data-en="Writing">Écriture</option>
-          <option data-fr="Grammaire"      data-en="Grammar">Grammaire</option>
-          <option data-fr="Vocabulaire"    data-en="Vocabulary">Vocabulaire</option>
-          <option data-fr="Expression orale" data-en="Speaking">Expression orale</option>
-          <option data-fr="Écoute"         data-en="Listening">Écoute</option>
+          <option data-fr="Écriture"         data-en="Writing"   data-ar="الكتابة">Écriture</option>
+          <option data-fr="Grammaire"        data-en="Grammar"   data-ar="القواعد">Grammaire</option>
+          <option data-fr="Vocabulaire"      data-en="Vocabulary" data-ar="المفردات">Vocabulaire</option>
+          <option data-fr="Expression orale" data-en="Speaking"  data-ar="التعبير الشفهي">Expression orale</option>
+          <option data-fr="Écoute"           data-en="Listening" data-ar="الاستماع">Écoute</option>
         </select>
       </div>
     </div>
@@ -3257,30 +3257,35 @@ function closeNotifPanel() {
 
 async function loadNotifBadge() {
   try {
-    const res  = await fetch('api_assignments.php?action=notifications');
+    const res  = await fetch('api_notifications.php?action=list');
     const data = await res.json();
     if (!data.ok) return;
     const badge = document.getElementById('notif-badge');
     if (badge) {
-      const n = data.unread_count || 0;
+      const n = data.unread || 0;
       badge.textContent = n > 9 ? '9+' : (n > 0 ? n : '');
       badge.classList.toggle('show', n > 0);
     }
   } catch(e) {}
 }
 
+const TEACHER_NOTIF_ICONS = {
+  new_assignment:'📚', overdue:'⚠️', submission:'✅', info:'🔔',
+  announcement:'📢', quiz:'🧠', message:'💬',
+};
+
 async function loadNotifications() {
   const list = document.getElementById('notif-list');
   if (!list) return;
   list.innerHTML = `<div style="padding:1.5rem;text-align:center;color:var(--muted);font-size:.85rem;">${T[currentLang].loading}</div>`;
   try {
-    const res  = await fetch('api_assignments.php?action=notifications');
+    const res  = await fetch('api_notifications.php?action=list');
     const data = await res.json();
     if (!data.ok) return;
 
     // Mark all as read
-    if (data.unread_count > 0) {
-      fetch('api_assignments.php', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken}, body:JSON.stringify({action:'mark_notifications_read'}) });
+    if (data.unread > 0) {
+      fetch('api_notifications.php', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken}, body:JSON.stringify({action:'mark_read'}) });
       const badge = document.getElementById('notif-badge');
       if (badge) { badge.textContent = ''; badge.classList.remove('show'); }
     }
@@ -3290,19 +3295,34 @@ async function loadNotifications() {
       return;
     }
 
+    const lang = currentLang;
     list.innerHTML = data.notifications.map(n => {
-      const date = new Date(n.created_at + 'Z').toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-      return `<div class="notif-item${n.is_read ? '' : ' unread'}">
-        ${!parseInt(n.is_read) ? '<div class="notif-dot"></div>' : '<div class="notif-dot-placeholder"></div>'}
-        <div>
-          <div>${escHtml(n.message)}</div>
-          <div class="notif-time">${date}</div>
+      const title = lang === 'ar' ? (n.title_ar || n.title_fr) : n.title_fr;
+      const body  = lang === 'ar' ? (n.body_ar  || n.body_fr)  : n.body_fr;
+      const icon  = TEACHER_NOTIF_ICONS[n.type] || '🔔';
+      const age   = parseInt(n.age_min) || 0;
+      const timeStr = age < 1 ? (lang==='en'?'Just now':lang==='ar'?'الآن':'À l\'instant')
+                    : age < 60 ? `${age} min`
+                    : age < 1440 ? `${Math.floor(age/60)}h`
+                    : `${Math.floor(age/1440)}j`;
+      return `<div class="notif-item${parseInt(n.is_read) ? '' : ' unread'}" style="display:flex;gap:.65rem;padding:.85rem 1rem;border-bottom:1px solid rgba(0,0,0,.05);cursor:pointer;" onclick="markOneRead(${n.id},this)">
+        <div style="width:34px;height:34px;border-radius:10px;background:rgba(30,27,75,.06);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;">${icon}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:var(--font);font-size:.8rem;font-weight:600;margin-bottom:.1rem;">${escHtml(title)}</div>
+          ${body ? `<div style="font-size:.77rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px;">${escHtml(body)}</div>` : ''}
+          <div style="font-size:.7rem;color:var(--muted2);margin-top:.15rem;">${timeStr}</div>
         </div>
       </div>`;
     }).join('');
   } catch(e) {
     if (list) list.innerHTML = `<div style="padding:1rem;color:var(--red);font-size:.83rem;">${T[currentLang].toastNetError}</div>`;
   }
+}
+
+async function markOneRead(id, el) {
+  el.style.background = '';
+  el.classList.remove('unread');
+  try { await fetch('api_notifications.php', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},body:JSON.stringify({action:'mark_one',id})}); } catch(e) {}
 }
 
 /* ── PROFILE DROPDOWN ── */

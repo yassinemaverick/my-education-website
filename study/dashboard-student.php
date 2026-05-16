@@ -601,6 +601,9 @@ body.ar .notif-panel { right:auto; left:1rem; }
 .notif-icon.overdue { background:rgba(245,158,11,.1); }
 .notif-icon.submission { background:rgba(16,185,129,.1); }
 .notif-icon.info { background:rgba(30,27,75,.06); }
+.notif-icon.announcement { background:rgba(251,146,60,.1); }
+.notif-icon.quiz { background:rgba(167,139,250,.1); }
+.notif-icon.message { background:rgba(62,207,120,.1); }
 .notif-content { flex:1; min-width:0; }
 .notif-title { font-family:var(--font); font-size:.8rem; font-weight:600; margin-bottom:.15rem; color:var(--white); }
 .notif-body { font-size:.78rem; color:var(--muted); line-height:1.4; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px; }
@@ -2551,6 +2554,9 @@ const NOTIF_ICONS = {
   overdue: '⚠️',
   submission: '✅',
   info: '🔔',
+  announcement: '📢',
+  quiz: '🧠',
+  message: '💬',
 };
 const NOTIF_T = {
   fr: { title:'Notifications', markAll:'Tout lire', empty:'Aucune notification', justNow:'À l\'instant', minAgo:'min', hrsAgo:'h', daysAgo:'j' },
