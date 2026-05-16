@@ -293,8 +293,41 @@ try {
             $due ?: null
         ]);
 
+        $newId = (int)$pdo->lastInsertId();
         logActivity($pdo, $uid, 'assignment_created', "Nouveau devoir: «{$titleFr}»");
-        echo json_encode(['ok'=>true,'id'=>(int)$pdo->lastInsertId()], JSON_UNESCAPED_UNICODE);
+
+        // Email enrolled students
+        if ($courseId) {
+            try {
+                require_once __DIR__ . '/mail_helper.php';
+                $students = $pdo->prepare("
+                    SELECT u.email, u.full_name, u.username
+                    FROM   student_courses sc
+                    JOIN   users u ON u.id = sc.student_id
+                    WHERE  sc.course_id = ? AND u.email IS NOT NULL AND u.email != ''
+                ");
+                $students->execute([$courseId]);
+                $dueStr = $due ? date('D, d M Y', strtotime($due)) : 'No deadline';
+                $rows   = array_filter([
+                    ['label' => 'Assignment', 'value' => $titleFr],
+                    $subjectFr ? ['label' => 'Subject',    'value' => $subjectFr] : null,
+                    ['label' => 'Due date',  'value' => $dueStr],
+                    $descFr    ? ['label' => 'Details',    'value' => $descFr]    : null,
+                ]);
+                foreach ($students->fetchAll() as $s) {
+                    $name = $s['full_name'] ?: $s['username'];
+                    $body = upskill_email_body(
+                        "Hi {$name},",
+                        "Your teacher has posted a new assignment.",
+                        array_values($rows),
+                        'View assignment →'
+                    );
+                    upskill_send_email($s['email'], "New assignment: {$titleFr}", $body);
+                }
+            } catch (Throwable $e) {}
+        }
+
+        echo json_encode(['ok'=>true,'id'=>$newId], JSON_UNESCAPED_UNICODE);
         exit;
     }
 
