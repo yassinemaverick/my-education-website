@@ -270,7 +270,10 @@ if (!empty($liveData['course'])) {
                    COALESCE(SUM(a.present), 0) AS present_sessions
             FROM   student_courses sc
             JOIN   users u ON u.id = sc.student_id
-            LEFT   JOIN attendance a ON a.student_id = sc.student_id
+            LEFT   JOIN attendance a
+                     ON a.student_id = sc.student_id
+                    AND YEAR(a.updated_at)  = YEAR(CURDATE())
+                    AND MONTH(a.updated_at) = MONTH(CURDATE())
             WHERE  sc.course_id = ?
             GROUP  BY u.id, u.full_name
             ORDER  BY (COALESCE(SUM(a.present),0) / GREATEST(COUNT(a.id),1)) DESC,
@@ -921,12 +924,8 @@ body.ar .howto-card-desc { font-family:var(--font-ar); text-align:right; }
       </div>
     </div>
     <div class="card">
-      <div class="card-title" id="modules-title">Progress by module</div>
-      <div class="module-row"><div class="module-name" id="m1">Module 1 – Introduction</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div></div><div class="module-pct">100%</div></div>
-      <div class="module-row"><div class="module-name" id="m2">Module 2 – Grammar</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div></div><div class="module-pct">85%</div></div>
-      <div class="module-row"><div class="module-name" id="m3">Module 3 – Vocabulary</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:70%"></div></div></div><div class="module-pct">70%</div></div>
-      <div class="module-row"><div class="module-name" id="m4">Module 4 – Speaking</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill yellow" style="width:40%"></div></div></div><div class="module-pct" style="color:var(--yellow)">40%</div></div>
-      <div class="module-row"><div class="module-name" id="m5">Module 5 – Comprehension</div><div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div></div><div class="module-pct">20%</div></div>
+      <div class="card-title" id="modules-title">Progress by subject</div>
+      <div id="modules-by-subject"></div>
     </div>
   </div>
 
@@ -1078,14 +1077,8 @@ function st(id, val) { const el = document.getElementById(id); if (el) el.textCo
 
 /* ── DATA ── */
 // Assignments come from LIVE.assignments (PHP → DB)
-// QUIZZES loaded dynamically from api_quiz.php
+// Quizzes loaded dynamically from api_quiz.php
 let _studentQuizzes = [];
-const QUIZZES = [
-  { id:1, title_fr:'Quiz Grammaire Unité 1', title_ar:'اختبار القواعد – الوحدة 1', desc_fr:'Testez vos connaissances en grammaire de base.', desc_ar:'اختبر معرفتك في القواعد الأساسية.', qs:15, min:20, status:'available' },
-  { id:2, title_fr:'Vocabulaire Unité 3', title_ar:'المفردات – الوحدة 3', desc_fr:'50 mots essentiels du quotidien.', desc_ar:'50 كلمة أساسية يومية.', qs:20, min:25, status:'available' },
-  { id:3, title_fr:'Compréhension écrite #2', title_ar:'الفهم القرائي #2', desc_fr:'Quiz basé sur un texte.', desc_ar:'اختبار مبني على nص.', qs:10, min:15, status:'done', score:72 },
-  { id:4, title_fr:'Grammaire – Temps passés', title_ar:'القواعد – الأزمنة الماضية', desc_fr:'Maîtriser le passé simple et composé.', desc_ar:'إتقان الأزمنة الماضية.', qs:12, min:18, status:'done', score:85 },
-];
 
 /* ── PAGE PERSISTENCE — synchronous, runs before first paint ── */
 (function() {
@@ -1133,7 +1126,7 @@ const T = {
     progPageTitle:'Progression', progPageSub:'Suivez votre parcours module par module',
     overallTitle:'Progression globale', doneLbl:'fait', hrsOf:'/ 29 hrs', courseSession:'Anglais Général · Session 2', onTrack:'En bonne voie 🎯',
     scoresTitle:'Performance des devoirs', progSubmitted:'devoirs soumis', progGraded:'corrigé(s)', progAvgScore:'Score moyen', progNoData:'Aucun devoir pour l\'instant.',
-    modulesTitle:'Progression par module', m1:'Module 1 – Introduction', m2:'Module 2 – Grammaire', m3:'Module 3 – Vocabulaire', m4:'Module 4 – Expression orale', m5:'Module 5 – Compréhension',
+    modulesTitle:'Progression par matière', noSubjects:'Aucun devoir avec matière pour l\'instant.',
     howtoTitle:'Comment utiliser la plateforme ?', howtoSub:'Regardez ces courtes vidéos pour découvrir chaque fonctionnalité.',
     howtoCards:[
       { icon:'🏠', from:'#3b82f6', to:'#7c3aed', title:'Tableau de bord', desc:'Découvrez le leaderboard, les étudiants du mois et la vue d\'accueil.', btn:'Voir la vidéo' },
@@ -1186,7 +1179,7 @@ const T = {
     progPageTitle:'Progress', progPageSub:'Track your learning journey module by module',
     overallTitle:'Overall progress', doneLbl:'done', hrsOf:'/ 29 hrs', courseSession:'General English · Session 2', onTrack:'On track 🎯',
     scoresTitle:'Assignment performance', progSubmitted:'assignments submitted', progGraded:'graded', progAvgScore:'Average score', progNoData:'No assignments yet.',
-    modulesTitle:'Progress by module', m1:'Module 1 – Introduction', m2:'Module 2 – Grammar', m3:'Module 3 – Vocabulary', m4:'Module 4 – Speaking', m5:'Module 5 – Comprehension',
+    modulesTitle:'Progress by subject', noSubjects:'No assignments with subjects yet.',
     howtoTitle:'How to use the platform?', howtoSub:'Watch these short videos to discover each feature.',
     howtoCards:[
       { icon:'🏠', from:'#3b82f6', to:'#7c3aed', title:'Dashboard', desc:'Discover the leaderboard, students of the month and the home view.', btn:'Watch video' },
@@ -1281,7 +1274,7 @@ function applyTranslations() {
 
 
   document.getElementById('assign-page-title').textContent = tr.assignPageTitle;
-  document.getElementById('assign-page-sub').textContent = tr.assignPageSub;
+  updateAssignSubtitle();
   document.getElementById('tab-all-assign').textContent = tr.tabAll;
   document.getElementById('tab-pending-assign').textContent = tr.tabPending;
   document.getElementById('tab-done-assign').textContent = tr.tabDone;
@@ -1299,11 +1292,6 @@ function applyTranslations() {
   document.getElementById('on-track').textContent = tr.onTrack;
   document.getElementById('scores-title').textContent = tr.scoresTitle;
   document.getElementById('modules-title').textContent = tr.modulesTitle;
-  document.getElementById('m1').textContent = tr.m1;
-  document.getElementById('m2').textContent = tr.m2;
-  document.getElementById('m3').textContent = tr.m3;
-  document.getElementById('m4').textContent = tr.m4;
-  document.getElementById('m5').textContent = tr.m5;
   // How-to page
   st('howto-title', tr.howtoTitle);
   st('howto-sub', tr.howtoSub);
@@ -1940,6 +1928,34 @@ function updateProgress() {
     </div>
     ${graded.length > 0 ? `<div style="font-size:.75rem;color:var(--muted);margin:.4rem 0 0;">${graded.length} ${tr.progGraded}</div>` : ''}
     ${avgHtml}`;
+
+  // ── Subject breakdown ────────────────────────────────────────────────────
+  const subjEl = document.getElementById('modules-by-subject');
+  if (!subjEl) return;
+  const lang = currentLang;
+  // Group assignments by subject
+  const bySubject = {};
+  assignments.forEach(a => {
+    const subj = (lang === 'ar' ? (a.subject_ar || a.subject_fr) : (a.subject_fr || a.subject_ar) || '').trim();
+    if (!subj) return;
+    if (!bySubject[subj]) bySubject[subj] = { total: 0, submitted: 0 };
+    bySubject[subj].total++;
+    if (a.status === 'submitted' || a.score !== null) bySubject[subj].submitted++;
+  });
+  const subjects = Object.entries(bySubject);
+  if (subjects.length === 0) {
+    subjEl.innerHTML = `<p style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${tr.noSubjects}</p>`;
+    return;
+  }
+  subjEl.innerHTML = subjects.map(([subj, d]) => {
+    const pct   = d.total > 0 ? Math.round(d.submitted / d.total * 100) : 0;
+    const color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+    return `<div class="module-row">
+      <div class="module-name">${e(subj)}</div>
+      <div class="module-bar"><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color};"></div></div></div>
+      <div class="module-pct" style="color:${color};">${pct}%</div>
+    </div>`;
+  }).join('');
 }
 
 async function changePassword() {
@@ -1949,7 +1965,10 @@ async function changePassword() {
   const errEl   = document.getElementById('pwd-error');
   const btnText = document.getElementById('pwd-btn-text');
   errEl.style.display = 'none';
-  if (!cur || !nw || !conf) { errEl.textContent = T[currentLang].serverError; errEl.style.display=''; return; }
+  if (!cur || !nw || !conf) {
+    errEl.textContent = currentLang === 'fr' ? 'Veuillez remplir tous les champs.' : 'Please fill in all fields.';
+    errEl.style.display = ''; return;
+  }
   btnText.textContent = '…';
   document.getElementById('pwd-btn').disabled = true;
   try {
@@ -2107,6 +2126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedLang = (_sl === 'fr' || _sl === 'en') ? _sl : 'en';
   setLang(savedLang);
   hydrateLiveData();
+  updateProgress();
   renderStars();
   renderLeaderboard();
   renderActivityFeed();
@@ -2125,6 +2145,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+/* ── ASSIGN SUBTITLE (always computed from live counts, never from static T string) ── */
+function updateAssignSubtitle() {
+  const sub = document.getElementById('assign-page-sub');
+  if (!sub) return;
+  const tr  = T[currentLang];
+  const p   = LIVE.pending_count   || 0;
+  const o   = LIVE.overdue_count   || 0;
+  const s   = LIVE.submitted_count || 0;
+  sub.textContent = `${p} ${tr.tabPending.toLowerCase()} · ${o} ${tr.badgeOverdue.toLowerCase()} · ${s} ${tr.badgeSubmitted.toLowerCase()}`;
+}
+
 /* ── LIVE DATA HYDRATION ── */
 function hydrateLiveData() {
   const c    = LIVE.course;
@@ -2141,33 +2172,8 @@ function hydrateLiveData() {
   }
 
   // ── 2. Attendance ────────────────────────────────────────────────────────
-  const attRate = LIVE.att_rate;
-
-  // ── 3. Progress page — circle & labels ──────────────────────────────────
-  if (attRate !== null) {
-    // SVG circle: circumference = 2π×38 ≈ 238.76; dashoffset = circ × (1 - pct/100)
-    const circ = 238.76;
-    const offset = circ * (1 - attRate / 100);
-    const circle = document.getElementById('prog-circle');
-    if (circle) circle.setAttribute('stroke-dashoffset', offset.toFixed(1));
-    const pct = document.getElementById('prog-circle-pct');
-    if (pct) pct.textContent = attRate + '%';
-    // hrs label on progress page
-    const hrs = document.getElementById('hrs-of');
-    if (hrs) hrs.textContent = lang === 'en'
-      ? `/ ${LIVE.att_total} sessions`
-      : lang === 'ar'
-        ? `/ ${LIVE.att_total} جلسة`
-        : `/ ${LIVE.att_total} séances`;
-    const hrsVal = hrs?.previousSibling;
-    const hrsParent = document.getElementById('hrs-of')?.parentElement;
-    if (hrsParent) {
-      const firstText = hrsParent.childNodes[0];
-      if (firstText && firstText.nodeType === 3) {
-        firstText.textContent = LIVE.att_present + ' ';
-      }
-    }
-  }
+  // (attendance rate is shown on My Class page; progress circle is driven
+  //  by updateProgress() which uses real assignment completion data)
 
   // ── 5. Course name on progress page ─────────────────────────────────────
   if (c) {
@@ -2183,14 +2189,7 @@ function hydrateLiveData() {
   }
 
   // ── 6. Assignment page subtitle ──────────────────────────────────────────
-  const sub = document.getElementById('assign-page-sub');
-  if (sub) {
-    const p = LIVE.pending_count || 0;
-    const o = LIVE.overdue_count || 0;
-    const s = LIVE.submitted_count || 0;
-    const tr3 = T[lang];
-    sub.textContent = `${p} ${tr3.tabPending.toLowerCase()} · ${o} ${tr3.badgeOverdue.toLowerCase()} · ${s} ${tr3.badgeSubmitted.toLowerCase()}`;
-  }
+  updateAssignSubtitle();
 
   // ── 7. Nav badge on assignments ──────────────────────────────────────────
   const pending = (LIVE.pending_count || 0) + (LIVE.overdue_count || 0);
