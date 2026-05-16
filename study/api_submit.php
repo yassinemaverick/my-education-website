@@ -104,12 +104,17 @@ if ($action === 'unsubmit') {
     $aid = (int)($raw['assignment_id'] ?? 0);
     if (!$aid) { echo json_encode(['ok'=>false,'error'=>'Missing assignment_id']); exit; }
 
-    // Only allow retraction if not yet reviewed (status = submitted)
-    $pdo->prepare("
+    // Only allow retraction if not yet graded (score must be NULL)
+    $stmt = $pdo->prepare("
         UPDATE assignment_submissions
         SET    status = 'pending', comment = NULL, submitted_at = NULL
-        WHERE  assignment_id = ? AND student_id = ? AND status = 'submitted'
-    ")->execute([$aid, $studentId]);
+        WHERE  assignment_id = ? AND student_id = ? AND status = 'submitted' AND score IS NULL
+    ");
+    $stmt->execute([$aid, $studentId]);
+    if ($stmt->rowCount() === 0) {
+        echo json_encode(['ok'=>false,'error'=>'Cannot retract a graded submission']);
+        exit;
+    }
 
     // Notify teacher that student retracted their submission
     try {

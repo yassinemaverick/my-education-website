@@ -150,7 +150,8 @@ try {
                    a.description_fr, a.description_ar,
                    a.subject_fr, a.subject_ar, a.due_date,
                    COALESCE(sub.status, 'pending') AS status,
-                   sub.submitted_at
+                   sub.submitted_at, sub.comment AS my_comment,
+                   sub.score, sub.teacher_comment, sub.graded_at
             FROM   assignments a
             JOIN   student_courses sc ON sc.course_id = a.course_id AND sc.student_id = :sid
             LEFT   JOIN assignment_submissions sub
