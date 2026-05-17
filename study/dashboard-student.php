@@ -1183,6 +1183,7 @@ const T = {
     assignPageTitle:'Devoirs', assignPageSub:'3 en attente · 1 en retard · 2 soumis',
     tabAll:'Tous', tabPending:'En attente', tabDone:'Soumis',
     tabAllQ:'Tous', tabAvailQ:'Disponibles', tabDoneQ:'Complétés',
+    noQuizAvail:'Aucun quiz disponible pour l\'instant.', noQuizDone:'Aucun quiz complété pour l\'instant.',
     quizPageTitle:'Quiz', quizPageSub:'Testez vos connaissances avec des quiz chronométrés',
     progPageTitle:'Progression', progPageSub:'Suivez votre parcours module par module',
     overallTitle:'Progression globale', doneLbl:'fait', hrsOf:'/ 29 hrs', courseSession:'Anglais Général · Session 2', onTrack:'En bonne voie 🎯',
@@ -1241,6 +1242,7 @@ const T = {
     assignPageTitle:'Assignments', assignPageSub:'3 pending · 1 overdue · 2 submitted',
     tabAll:'All', tabPending:'Pending', tabDone:'Submitted',
     tabAllQ:'All', tabAvailQ:'Available', tabDoneQ:'Completed',
+    noQuizAvail:'No quizzes available yet.', noQuizDone:'No completed quizzes yet.',
     quizPageTitle:'Quizzes', quizPageSub:'Test your knowledge with timed quizzes',
     progPageTitle:'Progress', progPageSub:'Track your learning journey module by module',
     overallTitle:'Overall progress', doneLbl:'done', hrsOf:'/ 29 hrs', courseSession:'General English · Session 2', onTrack:'On track 🎯',
@@ -1800,7 +1802,7 @@ async function renderQuizzes() {
     return true;
   });
   if (!items.length) {
-    const msg = currentQuizFilter==='done' ? (tr.noQuizDone||'No completed quizzes yet.') : (tr.noQuizAvail||'No quizzes available yet.');
+    const msg = currentQuizFilter==='done' ? tr.noQuizDone : tr.noQuizAvail;
     list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;grid-column:1/-1;">${msg}</p>`;
     return;
   }
