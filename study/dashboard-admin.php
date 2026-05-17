@@ -1411,26 +1411,26 @@ function renderUsersTable() {
 
   tbody.innerHTML = rows.map(u => {
     const initials = ((u.full_name||u.username||'?').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2)).toUpperCase();
-    const emailHtml = `<span class="email-cell" data-uid="${u.id}" data-email="${e(u.email||'')}"
+    const emailHtml = `<span class="email-cell" data-uid="${u.id}" data-email="${escHtml(u.email||'')}"
       onclick="editEmailInline(this)"
       style="cursor:pointer;color:${u.email ? 'var(--white)' : 'var(--muted)'};border-bottom:1px dashed var(--border);padding-bottom:1px;"
       title="${lang==='en'?'Click to edit':lang==='ar'?'انقر للتعديل':'Cliquer pour modifier'}">
-      ${u.email ? e(u.email) : (lang==='en'?'+ Add email':lang==='ar'?'+ إضافة بريد':'+ Ajouter email')}
+      ${u.email ? escHtml(u.email) : (lang==='en'?'+ Add email':lang==='ar'?'+ إضافة بريد':'+ Ajouter email')}
     </span>`;
     return `<tr style="border-bottom:1px solid var(--border2);transition:background .15s;" onmouseenter="this.style.background='rgba(255,255,255,.03)'" onmouseleave="this.style.background=''">
       <td style="padding:.85rem 1.2rem;">
         <div style="display:flex;align-items:center;gap:.75rem;">
           <div style="width:34px;height:34px;border-radius:50%;background:rgba(91,156,246,.15);border:1px solid rgba(91,156,246,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:.72rem;font-weight:700;color:var(--blue);flex-shrink:0;">${initials}</div>
-          <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${e(u.full_name||'—')}</div>
+          <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${escHtml(u.full_name||'—')}</div>
         </div>
       </td>
-      <td style="padding:.85rem 1.2rem;color:var(--muted);font-size:.85rem;font-family:monospace;">${e(u.username)}</td>
+      <td style="padding:.85rem 1.2rem;color:var(--muted);font-size:.85rem;font-family:monospace;">${escHtml(u.username)}</td>
       <td style="padding:.85rem 1.2rem;font-size:.85rem;">${emailHtml}</td>
       <td style="padding:.85rem 1.2rem;">
         <span style="font-size:.75rem;font-family:var(--font);font-weight:600;padding:.2rem .6rem;border-radius:100px;background:${roleColor[u.role]||'var(--muted)'}22;color:${roleColor[u.role]||'var(--muted)'};">${roleLabel[u.role]||u.role}</span>
       </td>
       <td style="padding:.85rem 1.2rem;">
-        <button onclick="openResetPw(${u.id},'${e(u.full_name||u.username)}')"
+        <button onclick="openResetPw(${u.id},'${escHtml(u.full_name||u.username)}')"
           style="font-size:.78rem;font-family:var(--font);font-weight:600;padding:.3rem .7rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:.2s;"
           onmouseenter="this.style.color='var(--white)';this.style.borderColor='rgba(255,255,255,.3)'"
           onmouseleave="this.style.color='var(--muted)';this.style.borderColor='var(--border)'"
@@ -1440,10 +1440,6 @@ function renderUsersTable() {
       </td>
     </tr>`;
   }).join('');
-}
-
-function e(s) { // HTML escape helper
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 function editEmailInline(span) {
@@ -1692,15 +1688,15 @@ function renderEnrollmentsTable() {
         <div style="display:flex;align-items:center;gap:.75rem;">
           <div style="width:34px;height:34px;border-radius:50%;background:rgba(167,139,250,.12);border:1.5px solid rgba(167,139,250,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:.72rem;font-weight:700;color:var(--purple);flex-shrink:0;">${initials}</div>
           <div>
-            <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${escE(row.name)}</div>
-            ${row.course?`<div style="font-size:.74rem;color:var(--muted2);">📚 ${escE(row.course)}</div>`:''}
+            <div style="font-family:var(--font);font-size:.88rem;font-weight:600;">${escHtml(row.name)}</div>
+            ${row.course?`<div style="font-size:.74rem;color:var(--muted2);">📚 ${escHtml(row.course)}</div>`:''}
           </div>
         </div>
       </td>
       <td style="padding:.85rem 1.2rem;font-size:.84rem;">
-        ${row.email?`<a href="mailto:${escE(row.email)}" style="color:var(--blue);text-decoration:none;">${escE(row.email)}</a>`:'<span style="color:var(--muted2);">—</span>'}
+        ${row.email?`<a href="mailto:${escHtml(row.email)}" style="color:var(--blue);text-decoration:none;">${escHtml(row.email)}</a>`:'<span style="color:var(--muted2);">—</span>'}
       </td>
-      <td style="padding:.85rem 1.2rem;font-size:.84rem;color:var(--muted);">${escE(row.phone||'—')}</td>
+      <td style="padding:.85rem 1.2rem;font-size:.84rem;color:var(--muted);">${escHtml(row.phone||'—')}</td>
       <td style="padding:.85rem 1.2rem;font-size:.82rem;color:var(--muted2);white-space:nowrap;">${dt}</td>
       <td style="padding:.85rem 1.2rem;">
         ${row.status === 'accepted'
@@ -1783,8 +1779,6 @@ function exportEnrollmentsCSV() {
   const a    = document.createElement('a'); a.href=url; a.download='inscriptions.csv'; a.click();
   URL.revokeObjectURL(url);
 }
-
-function escE(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 /* ══════════════════════════════════════════════════════
    CLASSES PAGE
@@ -2354,11 +2348,11 @@ async function loadAnnouncements() {
       <div class="card" style="margin-bottom:.75rem;padding:1rem 1.25rem;">
         <div style="display:flex;align-items:flex-start;gap:.75rem;">
           <div style="flex:1;min-width:0;">
-            <div style="font-family:var(--font);font-weight:700;font-size:.9rem;margin-bottom:.25rem;">${escHtmlA(a.title)}</div>
-            <div style="font-size:.82rem;color:var(--muted);margin-bottom:.5rem;line-height:1.5;">${escHtmlA(a.body)}</div>
+            <div style="font-family:var(--font);font-weight:700;font-size:.9rem;margin-bottom:.25rem;">${escHtml(a.title)}</div>
+            <div style="font-size:.82rem;color:var(--muted);margin-bottom:.5rem;line-height:1.5;">${escHtml(a.body)}</div>
             <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
               <span style="font-size:.72rem;background:rgba(59,130,246,.12);color:var(--blue);border:1px solid rgba(59,130,246,.25);padding:.15rem .55rem;border-radius:100px;">📢 ${targetLabel(a.target)}</span>
-              <span style="font-size:.72rem;color:var(--muted2);">${new Date(a.created_at).toLocaleDateString(currentLang==='en'?'en-GB':'fr-FR')} · ${escHtmlA(a.author_name)}</span>
+              <span style="font-size:.72rem;color:var(--muted2);">${new Date(a.created_at).toLocaleDateString(currentLang==='en'?'en-GB':'fr-FR')} · ${escHtml(a.author_name)}</span>
             </div>
           </div>
           <button onclick="deleteAnnouncement(${a.id},this)" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:.25rem;line-height:1;" title="Delete">🗑</button>
@@ -2531,7 +2525,7 @@ function exportPlacementCSV() {
 }
 
 function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 /* ══════════════════════════════════════════════════════
@@ -2585,10 +2579,10 @@ function renderScheduleCards() {
       <!-- Card header -->
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:1rem;">
         <div>
-          <div style="font-family:var(--font);font-weight:700;font-size:1rem;color:var(--white);margin-bottom:.2rem;">${escHtmlA(name)}</div>
+          <div style="font-family:var(--font);font-weight:700;font-size:1rem;color:var(--white);margin-bottom:.2rem;">${escHtml(name)}</div>
           <div style="font-size:.78rem;color:var(--muted);">
             <span>${c.student_count || 0} ${t.schStudents}</span>
-            ${c.teacher_name ? `<span style="margin-left:.5rem;">· ${t.schTeacher} ${escHtmlA(c.teacher_name)}</span>` : ''}
+            ${c.teacher_name ? `<span style="margin-left:.5rem;">· ${t.schTeacher} ${escHtml(c.teacher_name)}</span>` : ''}
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0;">
@@ -2632,10 +2626,10 @@ function schedSlotRow(courseId, idx, slot, t) {
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
       <option value="">—</option>${days}
     </select>
-    <input type="time" id="slot-time-${courseId}-${idx}" value="${escHtmlA(slot.time||'')}"
+    <input type="time" id="slot-time-${courseId}-${idx}" value="${escHtml(slot.time||'')}"
       style="${timeStyle}" title="${currentLang==='en'?'From':currentLang==='ar'?'من':'De'}"
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
-    <input type="time" id="slot-time-end-${courseId}-${idx}" value="${escHtmlA(slot.time_end||'')}"
+    <input type="time" id="slot-time-end-${courseId}-${idx}" value="${escHtml(slot.time_end||'')}"
       style="${timeStyle}" title="${currentLang==='en'?'To':currentLang==='ar'?'إلى':'À'}"
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
     <button onclick="removeScheduleSlot(${courseId},${idx})"
@@ -2731,10 +2725,6 @@ async function saveSchedule(courseId) {
   } finally {
     if (btn) { btn.textContent = t.schSave; btn.disabled = false; }
   }
-}
-
-function escHtmlA(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 /* ══════════════════════════════════════════════════════
