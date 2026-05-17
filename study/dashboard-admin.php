@@ -1768,8 +1768,7 @@ async function submitAcceptEnrollment() {
   submitBtn.textContent = '…';
 
   try {
-    await api('api_students.php', 'POST', {
-      action:        'accept_enrollment_with_user',
+    await api('api_students.php?action=accept_enrollment_with_user', 'POST', {
       enrollment_id: _aeEnrollmentId,
       full_name:     _aeFullName,
       username,
