@@ -65,9 +65,9 @@ try {
         if (mb_strlen($msgText) > 500) {
             http_response_code(400); echo json_encode(['ok'=>false,'error'=>'Message too long (max 500 chars)']); exit;
         }
-        $pdo->prepare("INSERT INTO notifications (user_id,type,title_fr,title_ar,body_fr,body_ar)
-                       VALUES (?,'message',?,?,?,?)")
-            ->execute([$targetId, '💬 Message de '.$sender, '💬 رسالة من '.$sender, $msgText, $msgText]);
+        $pdo->prepare("INSERT INTO notifications (user_id,type,title_fr,title_ar,title_en,body_fr,body_ar,body_en)
+                       VALUES (?,'message',?,?,?,?,?,?)")
+            ->execute([$targetId, '💬 Message de '.$sender, '💬 رسالة من '.$sender, '💬 Message from '.$sender, $msgText, $msgText, $msgText]);
         echo json_encode(['ok'=>true]);
         exit;
     }
@@ -93,7 +93,7 @@ try {
         // New assignments in student's course (posted in last 7 days, not yet notified)
         try {
             $rows = $pdo->prepare("
-                SELECT a.id, a.title_fr, a.title_ar, a.due_date, a.created_at
+                SELECT DISTINCT a.id, a.title_fr, a.title_ar, a.due_date, a.created_at
                 FROM assignments a
                 JOIN student_courses sc ON sc.course_id = a.course_id AND sc.student_id = ?
                 WHERE a.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
@@ -108,14 +108,16 @@ try {
             foreach ($rows->fetchAll() as $r) {
                 $due = $r['due_date'] ? date('d/m/Y', strtotime($r['due_date'])) : '';
                 $pdo->prepare("
-                    INSERT IGNORE INTO notifications (user_id, type, title_fr, title_ar, body_fr, body_ar)
-                    VALUES (?, 'new_assignment', ?, ?, ?, ?)
+                    INSERT IGNORE INTO notifications (user_id, type, title_fr, title_ar, title_en, body_fr, body_ar, body_en)
+                    VALUES (?, 'new_assignment', ?, ?, ?, ?, ?, ?)
                 ")->execute([
                     $uid,
                     'Nouveau devoir',
                     'واجب جديد',
+                    'New assignment',
                     ($r['title_fr'] ?: $r['title_ar']) . ($due ? " · Dû le {$due}" : '') . " #" . $r['id'],
                     ($r['title_ar'] ?: $r['title_fr']) . ($due ? " · تسليم {$due}" : '') . " #" . $r['id'],
+                    ($r['title_fr'] ?: $r['title_ar']) . ($due ? " · Due on {$due}" : '') . " #" . $r['id'],
                 ]);
             }
         } catch (Throwable $e) {}
@@ -123,7 +125,7 @@ try {
         // Overdue assignments
         try {
             $rows = $pdo->prepare("
-                SELECT a.id, a.title_fr, a.title_ar, a.due_date
+                SELECT DISTINCT a.id, a.title_fr, a.title_ar, a.due_date
                 FROM assignments a
                 JOIN student_courses sc ON sc.course_id = a.course_id AND sc.student_id = ?
                 JOIN assignment_submissions sub ON sub.assignment_id = a.id AND sub.student_id = ?
@@ -139,14 +141,16 @@ try {
             foreach ($rows->fetchAll() as $r) {
                 $due = $r['due_date'] ? date('d/m/Y', strtotime($r['due_date'])) : '';
                 $pdo->prepare("
-                    INSERT IGNORE INTO notifications (user_id, type, title_fr, title_ar, body_fr, body_ar)
-                    VALUES (?, 'overdue', ?, ?, ?, ?)
+                    INSERT IGNORE INTO notifications (user_id, type, title_fr, title_ar, title_en, body_fr, body_ar, body_en)
+                    VALUES (?, 'overdue', ?, ?, ?, ?, ?, ?)
                 ")->execute([
                     $uid,
                     '⚠️ Devoir en retard',
                     '⚠️ واجب متأخر',
+                    '⚠️ Overdue assignment',
                     ($r['title_fr'] ?: $r['title_ar']) . ($due ? " · était dû le {$due}" : '') . " #" . $r['id'],
                     ($r['title_ar'] ?: $r['title_fr']) . ($due ? " · كان موعده {$due}" : '') . " #" . $r['id'],
+                    ($r['title_fr'] ?: $r['title_ar']) . ($due ? " · was due on {$due}" : '') . " #" . $r['id'],
                 ]);
             }
         } catch (Throwable $e) {}
@@ -182,23 +186,36 @@ try {
                 $subs->execute($params);
                 foreach ($subs->fetchAll() as $r) {
                     $pdo->prepare("
-                        INSERT IGNORE INTO notifications (user_id, type, title_fr, title_ar, body_fr, body_ar)
-                        VALUES (?, 'submission', ?, ?, ?, ?)
+                        INSERT IGNORE INTO notifications (user_id, type, title_fr, title_ar, title_en, body_fr, body_ar, body_en)
+                        VALUES (?, 'submission', ?, ?, ?, ?, ?, ?)
                     ")->execute([
                         $uid,
                         'Devoir soumis',
                         'تم تسليم واجب',
+                        'Assignment submitted',
                         $r['full_name'] . ' a soumis : ' . ($r['title_fr'] ?: $r['title_ar']) . " #" . $r['id'],
                         $r['full_name'] . ' سلّم : ' . ($r['title_ar'] ?: $r['title_fr']) . " #" . $r['id'],
+                        $r['full_name'] . ' submitted: ' . ($r['title_fr'] ?: $r['title_ar']) . " #" . $r['id'],
                     ]);
                 }
             }
         } catch (Throwable $e) {}
     }
 
+    // ── Remove exact duplicates (same user + type + body_fr), keep oldest ────
+    $pdo->prepare("
+        DELETE n1 FROM notifications n1
+        INNER JOIN notifications n2
+          ON n1.user_id = n2.user_id
+         AND n1.type    = n2.type
+         AND n1.body_fr = n2.body_fr
+         AND n1.id      > n2.id
+        WHERE n1.user_id = ?
+    ")->execute([$uid]);
+
     // ── Fetch notifications ───────────────────────────────────────────────────
     $rows = $pdo->prepare("
-        SELECT id, type, title_fr, title_ar, body_fr, body_ar, is_read,
+        SELECT id, type, title_fr, title_ar, title_en, body_fr, body_ar, body_en, is_read,
                created_at,
                TIMESTAMPDIFF(MINUTE, created_at, NOW()) AS age_min
         FROM notifications
