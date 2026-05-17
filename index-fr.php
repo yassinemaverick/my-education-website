@@ -268,31 +268,31 @@ $t = [
 </section>
 
 <!-- NOTRE APPROCHE -->
-<div class="approach-section">
-  <div class="approach-inner">
-    <div class="section-label text-center" style="text-align:center;">Notre approche</div>
-    <h2 class="section-title text-center" style="text-align:center;">On n'enseigne pas l'anglais.<br>On aide les étudiants à le vivre.</h2>
-    <p class="approach-intro">Notre pédagogie est centrée sur l'étudiant à chaque étape — parce que nous croyons que les vrais progrès ne se font que quand l'étudiant se sent impliqué, compris et challengé de la bonne façon.</p>
-    <div class="approach-grid">
-      <div class="approach-card">
-        <div class="approach-icon">🎯</div>
-        <h3>Centré sur l'étudiant dès le premier jour</h3>
-        <p>Chaque étudiant arrive avec un objectif différent — un meilleur résultat au Bac, un entretien d'embauche, une promotion, un rêve d'étudier à l'étranger. Nous partons de là. Nos professeurs adaptent le cours à l'étudiant, et non l'inverse.</p>
+<div style="padding:6rem 2rem;background:#eef6ff;">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-label" style="text-align:center;color:#1a9a52;">Notre approche</div>
+    <h2 class="section-title" style="text-align:center;color:#0f1d2e;">On n'enseigne pas l'anglais.<br>On aide les étudiants à le vivre.</h2>
+    <p style="color:#4b5563;font-size:1rem;line-height:1.75;max-width:580px;margin:.75rem auto 3rem;text-align:center;font-weight:300;">Notre pédagogie est centrée sur l'étudiant à chaque étape — parce que nous croyons que les vrais progrès ne se font que quand l'étudiant se sent impliqué, compris et challengé de la bonne façon.</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;">
+      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 28px rgba(15,29,46,0.08);display:flex;flex-direction:column;gap:.75rem;">
+        <div style="font-size:1.75rem;line-height:1;">🎯</div>
+        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:#0f1d2e;line-height:1.3;margin:0;">Centré sur l'étudiant dès le premier jour</h3>
+        <p style="color:#4b5563;font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Chaque étudiant arrive avec un objectif différent — un meilleur résultat au Bac, un entretien d'embauche, une promotion, un rêve d'étudier à l'étranger. Nous partons de là. Nos professeurs adaptent le cours à l'étudiant, et non l'inverse.</p>
       </div>
-      <div class="approach-card">
-        <div class="approach-icon">💬</div>
-        <h3>L'anglais en contexte, pas en isolation</h3>
-        <p>Les règles de grammaire s'oublient facilement. Les vraies conversations, non. Nous construisons les cours autour de situations réelles — présenter en réunion, rédiger des emails, parler de ses passions — pour que la langue reste gravée parce qu'elle a du sens.</p>
+      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 28px rgba(15,29,46,0.08);display:flex;flex-direction:column;gap:.75rem;">
+        <div style="font-size:1.75rem;line-height:1;">💬</div>
+        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:#0f1d2e;line-height:1.3;margin:0;">L'anglais en contexte, pas en isolation</h3>
+        <p style="color:#4b5563;font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Les règles de grammaire s'oublient facilement. Les vraies conversations, non. Nous construisons les cours autour de situations réelles — présenter en réunion, rédiger des emails, parler de ses passions — pour que la langue reste gravée parce qu'elle a du sens.</p>
       </div>
-      <div class="approach-card">
-        <div class="approach-icon">👥</div>
-        <h3>Petits groupes, vraies voix</h3>
-        <p>Avec 9 à 12 étudiants par groupe, personne ne se cache au fond. Tout le monde parle. Tout le monde est entendu. Ce format crée un environnement sans pression où les étudiants osent utiliser la langue — et c'est là que les vrais progrès se font.</p>
+      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 28px rgba(15,29,46,0.08);display:flex;flex-direction:column;gap:.75rem;">
+        <div style="font-size:1.75rem;line-height:1;">👥</div>
+        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:#0f1d2e;line-height:1.3;margin:0;">Petits groupes, vraies voix</h3>
+        <p style="color:#4b5563;font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Avec 9 à 12 étudiants par groupe, personne ne se cache au fond. Tout le monde parle. Tout le monde est entendu. Ce format crée un environnement sans pression où les étudiants osent utiliser la langue — et c'est là que les vrais progrès se font.</p>
       </div>
-      <div class="approach-card">
-        <div class="approach-icon">📈</div>
-        <h3>Des progrès visibles</h3>
-        <p>Les étudiants suivent leurs présences, leurs notes et leurs résumés de cours directement sur leur tableau de bord après chaque séance. L'apprentissage ressemble moins à un cours et plus à un parcours avec une direction claire.</p>
+      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 28px rgba(15,29,46,0.08);display:flex;flex-direction:column;gap:.75rem;">
+        <div style="font-size:1.75rem;line-height:1;">📈</div>
+        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:#0f1d2e;line-height:1.3;margin:0;">Des progrès visibles</h3>
+        <p style="color:#4b5563;font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Les étudiants suivent leurs présences, leurs notes et leurs résumés de cours directement sur leur tableau de bord après chaque séance. L'apprentissage ressemble moins à un cours et plus à un parcours avec une direction claire.</p>
       </div>
     </div>
   </div>
