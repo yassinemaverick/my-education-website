@@ -3400,7 +3400,7 @@ async function loadNotifications() {
 
     // Mark all as read
     if (data.unread > 0) {
-      fetch('api_notifications.php', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken}, body:JSON.stringify({action:'mark_read'}) });
+      fetch('api_notifications.php?action=mark_read', { method:'POST', headers:{'X-CSRF-Token':_csrfToken} });
       const badge = document.getElementById('notif-badge');
       if (badge) { badge.textContent = ''; badge.classList.remove('show'); }
     }
@@ -3439,10 +3439,10 @@ function markOneRead(id, el) {
   el.classList.remove('unread');
   el.style.borderLeft = '';
   // Fire-and-forget server sync
-  fetch('api_notifications.php', {
+  fetch('api_notifications.php?action=mark_one', {
     method:'POST',
-    headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},
-    body:JSON.stringify({action:'mark_one', id})
+    headers:{'X-CSRF-Token':_csrfToken},
+    body: new URLSearchParams({ id })
   }).catch(() => {});
   // Close panel and navigate to relevant page
   closeNotifPanel(false);
