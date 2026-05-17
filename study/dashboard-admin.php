@@ -734,7 +734,7 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
       </div>
       <div class="card">
         <div class="card-title" id="pref-title">Préférences</div>
-        <p style="color:var(--muted);font-size:.85rem;line-height:1.6;" id="pref-txt">Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Arabe.</p>
+        <p style="color:var(--muted);font-size:.85rem;line-height:1.6;" id="pref-txt">Utilisez le sélecteur de langue dans la barre latérale pour basculer entre le Français et l'Anglais.</p>
         <div style="margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border);">
           <div class="card-title" style="margin-bottom:.75rem;" id="security-label">Sécurité</div>
           <a href="totp_setup.php" class="totp-link">
@@ -968,7 +968,7 @@ const T = {
     settingsTitle:'Paramètres', profileTitle:'Profil administrateur',
     settingsRole:'Administrateur · Upskill',
     lblFullname:'Nom complet', saveBtn:'Enregistrer',
-    prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue pour basculer entre le Français et l\'Arabe.',
+    prefTitle:'Préférences', prefTxt:'Utilisez le sélecteur de langue pour basculer entre le Français et l\'Anglais.',
     cancelBtn:'Annuler', saveEnregistrer:'Enregistrer', deleteBtn:'Supprimer',
     errNetwork:'Erreur réseau. Vérifiez votre connexion.',
     toastProfileSaved:'Profil mis à jour !',
