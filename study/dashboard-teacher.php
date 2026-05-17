@@ -1989,24 +1989,45 @@ async function loadTeacherCourses() {
 function populateCourseSelect() {
   const sel = document.getElementById('new-assign-course');
   if (!sel) return;
-  const lang = typeof currentLang !== 'undefined' ? currentLang : 'fr';
-  sel.innerHTML = TEACHER_COURSES.length === 0
-    ? `<option value="">${T[lang].noClassAssigned}</option>`
-    : `<option value="">${T[lang].chooseClass}</option>`
-      + TEACHER_COURSES.map(c => {
-          const name = lang === 'en'
-            ? (c.group_name_en || c.group_name_fr)
-            : c.group_name_fr;
-          const subject = lang === 'en'
-            ? (c.subject_en || c.subject_fr)
-            : c.subject_fr;
-          return `<option value="${c.id}">${name}${subject ? ' – ' + subject : ''}${c.level ? ' ('+c.level+')' : ''}</option>`;
-        }).join('');
+  const lang = currentLang;
+  const tr   = T[lang];
+
+  if (!teacherGroups.length) {
+    sel.innerHTML = `<option value="">${tr.noClassAssigned}</option>`;
+    return;
+  }
+
+  const byType = {};
+  const typeOrder = [];
+  teacherGroups.forEach(g => {
+    if (!byType[g.type_key]) { byType[g.type_key] = []; typeOrder.push(g.type_key); }
+    byType[g.type_key].push(g);
+  });
+
+  let html = `<option value="">${tr.chooseClass}</option>`;
+  typeOrder.forEach(typeKey => {
+    const labels   = TYPE_LABELS[typeKey] || {fr: typeKey, en: typeKey};
+    const typeName = lang === 'en' ? (labels.en || labels.fr) : labels.fr;
+    const icon     = TYPE_ICONS[typeKey] || '🏫';
+    html += `<optgroup label="${icon} ${typeName}">`;
+    byType[typeKey].forEach(g => {
+      const parts = [];
+      if (g.level_number) parts.push(`${tr.levelWord} ${g.level_number}`);
+      parts.push(`${tr.groupWord} ${g.group_letter}`);
+      const lbl = parts.join(' · ') + (g.student_count ? ` (${g.student_count} ${tr.studentUnit})` : '');
+      if (g.course_id) {
+        html += `<option value="${g.course_id}">${lbl}</option>`;
+      } else {
+        html += `<option value="" disabled>${lbl} — ${lang==='en'?'no course linked':'sans cours lié'}</option>`;
+      }
+    });
+    html += `</optgroup>`;
+  });
+  sel.innerHTML = html;
 }
 
 async function openAssignModal() {
-  // Reload courses each time in case assignments changed
-  if (TEACHER_COURSES.length === 0) await loadTeacherCourses();
+  if (teacherGroups.length === 0) await loadTeacherGroups();
   populateCourseSelect();
   // Update label language
   const lang = typeof currentLang !== 'undefined' ? currentLang : 'fr';
