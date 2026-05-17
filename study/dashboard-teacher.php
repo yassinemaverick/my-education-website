@@ -737,21 +737,19 @@ body.ar .notif-panel { right:auto; left:1rem; }
     </div>
 
     <!-- Password change card -->
-    <div class="card" style="margin-top:1.25rem;">
+    <div class="card" style="margin-top:1.25rem;max-width:480px;">
       <div class="card-title" id="pwd-card-title">Changer le mot de passe</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:.9rem;">
-        <div class="form-group" style="margin-bottom:0;">
-          <label id="lbl-pwd-current">Mot de passe actuel</label>
-          <input type="password" id="pwd-current" autocomplete="current-password">
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label id="lbl-pwd-new">Nouveau mot de passe</label>
-          <input type="password" id="pwd-new" autocomplete="new-password">
-        </div>
-        <div class="form-group" style="margin-bottom:0;">
-          <label id="lbl-pwd-confirm">Confirmer le mot de passe</label>
-          <input type="password" id="pwd-confirm" autocomplete="new-password">
-        </div>
+      <div class="form-group">
+        <label id="lbl-pwd-current">Mot de passe actuel</label>
+        <input type="password" id="pwd-current" autocomplete="current-password">
+      </div>
+      <div class="form-group">
+        <label id="lbl-pwd-new">Nouveau mot de passe</label>
+        <input type="password" id="pwd-new" autocomplete="new-password">
+      </div>
+      <div class="form-group">
+        <label id="lbl-pwd-confirm">Confirmer le mot de passe</label>
+        <input type="password" id="pwd-confirm" autocomplete="new-password">
       </div>
       <div id="pwd-error" style="display:none;color:var(--red);font-size:.82rem;margin-bottom:.6rem;"></div>
       <button class="btn-primary" onclick="changePassword()" id="pwd-btn">
@@ -1311,7 +1309,7 @@ function applyTranslations() {
 
 function navigate(page, el) {
   // Close any open overlays so they don't obscure the destination page
-  closeNotifPanel();
+  closeNotifPanel(false);
   profileMenuOpen = false;
   document.getElementById('profile-menu').classList.remove('open');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -2271,15 +2269,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Keyboard accessibility for sidebar nav items
   document.querySelectorAll('.nav-item').forEach(el => {
     el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
-  });
-  // Close overlays when clicking anywhere in settings page so panels never block the password form.
-  // NOTE: do NOT call closeNotifPanel() here — it calls .focus() on notif-btn which steals focus
-  // from whatever input the user just clicked. Manipulate classes directly instead.
-  document.getElementById('page-settings').addEventListener('click', () => {
-    notifPanelOpen = false;
-    document.getElementById('notif-panel').classList.remove('open');
-    profileMenuOpen = false;
-    document.getElementById('profile-menu').classList.remove('open');
   });
 });
 
@@ -3270,7 +3259,7 @@ function toggleNotifPanel() {
   panel.classList.toggle('open', notifPanelOpen);
   if (notifPanelOpen) {
     loadNotifications();
-    if (!_notifTrapHandler) _notifTrapHandler = makeTrapHandler(panel, closeNotifPanel);
+    if (!_notifTrapHandler) _notifTrapHandler = makeTrapHandler(panel, () => closeNotifPanel(true));
     panel.addEventListener('keydown', _notifTrapHandler);
     setTimeout(() => { const f = getFocusable(panel); if (f.length) f[0].focus(); }, 50);
   } else {
@@ -3279,12 +3268,14 @@ function toggleNotifPanel() {
   }
 }
 
-function closeNotifPanel() {
+function closeNotifPanel(returnFocus = false) {
   notifPanelOpen = false;
   const panel = document.getElementById('notif-panel');
   panel.classList.remove('open');
   if (_notifTrapHandler) panel.removeEventListener('keydown', _notifTrapHandler);
-  document.getElementById('notif-btn')?.focus();
+  // Only return focus to the trigger button when the user explicitly closed the panel
+  // (e.g. via Escape key). Never steal focus when closing programmatically from navigate().
+  if (returnFocus) document.getElementById('notif-btn')?.focus();
 }
 
 async function loadNotifBadge() {
