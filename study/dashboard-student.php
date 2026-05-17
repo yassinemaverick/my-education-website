@@ -1298,6 +1298,7 @@ function setLang(lang) {
     renderGroupSection();
     renderGroupMates();
   }
+  if (activePage === 'announcements') loadAnnouncements();
   // Refresh notification panel if open
   if (notifData.length) renderNotifList();
 }
