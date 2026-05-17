@@ -128,14 +128,12 @@ html { scroll-behavior:smooth; }
   --white:#1e1b4b; --muted:rgba(30,27,75,0.55); --muted2:rgba(30,27,75,0.40);
   --border:rgba(0,0,0,0.09); --border2:rgba(0,0,0,0.05);
   --yellow:#f59e0b; --red:#ef4444; --blue:#3b82f6; --purple:#a78bfa; --orange:#f59e0b;
-  --font:'Sora',sans-serif; --font-body:'DM Sans',sans-serif; --font-ar:'Cairo',sans-serif;
+  --font:'Sora',sans-serif; --font-body:'DM Sans',sans-serif;
   --sidebar-w:270px;
 }
 html { scroll-behavior:smooth; }
 .skip-link:focus { top:0 !important; outline:3px solid var(--green); }
 body { background:var(--navy); color:var(--white); font-family:var(--font-body); min-height:100vh; display:flex; overflow-x:hidden; }
-body.ar .sidebar { left:auto; right:0; border-right:none; border-left:1px solid var(--border); }
-body.ar .main { margin-left:0; margin-right:0; }
 
 /* SIDEBAR */
 .sidebar {
@@ -148,26 +146,20 @@ body.ar .main { margin-left:0; margin-right:0; }
 }
 .sidebar-logo { display:flex; align-items:center; gap:.6rem; padding:1.5rem 1.4rem; border-bottom:1px solid var(--border); }
 .sidebar-logo span { font-family:var(--font); font-weight:600; font-size:1rem; }
-body.ar .sidebar-logo span { font-family:var(--font-ar); }
 .sidebar-logo em { color:var(--green); font-style:normal; }
 .sidebar-logo .teacher-chip { margin-left:auto; background:rgba(167,139,250,.15); color:var(--purple); border:1px solid rgba(167,139,250,.3); font-family:var(--font); font-size:.65rem; font-weight:700; padding:.2rem .55rem; border-radius:100px; }
-body.ar .sidebar-logo .teacher-chip { margin-left:0; margin-right:auto; }
 .lang-toggle { display:flex; gap:.4rem; padding:.6rem 1.4rem; border-bottom:1px solid var(--border); }
 .lang-pill { font-size:.7rem; font-family:var(--font); font-weight:600; padding:.25rem .65rem; border-radius:100px; border:1px solid var(--border); color:var(--muted); cursor:pointer; transition:all .2s; }
 .lang-pill.active { background:rgba(245,158,11,.2); border-color:rgba(245,158,11,.5); color:#f59e0b; }
 .sidebar-user { padding:1.2rem 1.4rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.8rem; }
-body.ar .sidebar-user { flex-direction:row-reverse; }
 .avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,#bfdbfe,#ddd6fe); border:2px solid rgba(245,158,11,.4); display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; position:relative; }
 .av-dino { width:100%; height:100%; display:block; }
 .av-photo { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:50%; display:none; }
 .user-info .name { font-family:var(--font); font-size:.85rem; font-weight:600; line-height:1.2; }
-body.ar .user-info .name { font-family:var(--font-ar); }
 .user-info .role-tag { font-size:.72rem; color:var(--purple); background:rgba(167,139,250,.15); padding:.1rem .5rem; border-radius:100px; margin-top:.2rem; display:inline-block; }
 .sidebar-nav { flex:1; padding:1rem .8rem; overflow-y:auto; }
 .nav-section-label { font-family:var(--font); font-size:.65rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted2); padding:.5rem .6rem .3rem; margin-top:.5rem; }
-body.ar .nav-section-label { letter-spacing:0; text-align:right; font-family:var(--font-ar); }
 .nav-item { display:flex; align-items:center; gap:.75rem; padding:.65rem .9rem; border-radius:10px; cursor:pointer; color:var(--muted); font-size:.88rem; font-family:var(--font); font-weight:500; transition:all .2s; margin-bottom:.1rem; }
-body.ar .nav-item { flex-direction:row-reverse; font-family:var(--font-ar); }
 .nav-item svg { flex-shrink:0; opacity:.7; }
 .nav-item:hover { background:rgba(255,255,255,.05); color:var(--white); }
 .nav-item.active { background:rgba(245,158,11,.18); color:#f59e0b; border:1px solid rgba(245,158,11,.3); }
@@ -175,15 +167,12 @@ body.ar .nav-item { flex-direction:row-reverse; font-family:var(--font-ar); }
 .nav-badge { margin-left:auto; background:var(--yellow); color:var(--navy); font-size:.65rem; font-weight:700; padding:.15rem .45rem; border-radius:100px; font-family:var(--font); }
 .sidebar-bottom { padding:1rem; border-top:1px solid var(--border); }
 .btn-logout { display:flex; align-items:center; gap:.6rem; width:100%; padding:.65rem .9rem; border-radius:10px; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:var(--font); font-size:.85rem; cursor:pointer; transition:all .2s; }
-body.ar .btn-logout { flex-direction:row-reverse; font-family:var(--font-ar); }
 .btn-logout:hover { border-color:var(--red); color:var(--red); background:rgba(232,93,117,.08); }
 
 /* MAIN */
 .main { flex:1; margin-left:var(--sidebar-w); min-height:100vh; display:flex; flex-direction:column; background:var(--navy); }
 .topbar { background:rgba(214,238,255,0.92); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
-body.ar .topbar { flex-direction:row-reverse; }
 .topbar-title { font-family:var(--font); font-size:1rem; font-weight:600; }
-body.ar .topbar-title { font-family:var(--font-ar); }
 .topbar-actions { display:flex; align-items:center; gap:.75rem; }
 .btn-icon { width:36px; height:36px; border-radius:9px; background:rgba(30,27,75,.06); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:all .2s; }
 .btn-icon:hover { border-color:var(--blue); color:var(--blue); background:rgba(59,130,246,.08); }
@@ -208,20 +197,15 @@ body.ar .topbar-title { font-family:var(--font-ar); }
 
 /* WELCOME BANNER */
 .welcome-banner { background:linear-gradient(135deg,#2e2a7a,#4a4499); border:1px solid rgba(255,255,255,.12); border-radius:20px; padding:2rem 2.5rem; margin-bottom:2rem; display:flex; align-items:center; justify-content:space-between; gap:1rem; position:relative; overflow:hidden; color:#fff; }
-body.ar .welcome-banner { flex-direction:row-reverse; }
 .welcome-banner::before { content:''; position:absolute; top:-60px; right:-60px; width:200px; height:200px; background:radial-gradient(circle,rgba(245,158,11,.15),transparent 70%); }
 .welcome-text h2 { font-family:var(--font); font-size:1.6rem; font-weight:700; letter-spacing:-.03em; margin-bottom:.4rem; color:#fff; }
-body.ar .welcome-text h2 { font-family:var(--font-ar); letter-spacing:0; text-align:right; }
 .welcome-text h2 span { color:#f59e0b; }
 .welcome-text p { color:rgba(255,255,255,.7); font-size:.9rem; }
-body.ar .welcome-text p { text-align:right; font-family:var(--font-ar); }
 
 /* STUDENT TABLE */
 .student-table { width:100%; border-collapse:collapse; }
 .student-table th { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted2); padding:.75rem 1rem; text-align:left; border-bottom:1px solid var(--border); }
-body.ar .student-table th { text-align:right; font-family:var(--font-ar); letter-spacing:0; }
 .student-table td { padding:.85rem 1rem; border-bottom:1px solid var(--border2); font-size:.88rem; vertical-align:middle; }
-body.ar .student-table td { text-align:right; font-family:var(--font-ar); }
 .student-table tr:last-child td { border-bottom:none; }
 .student-table tr:hover td { background:rgba(59,130,246,.04); }
 .student-avatar-sm { width:32px; height:32px; border-radius:50%; background:rgba(59,130,246,.1); border:1.5px solid rgba(59,130,246,.2); display:inline-flex; align-items:center; justify-content:center; font-family:var(--font); font-size:.72rem; font-weight:700; color:var(--blue); }
@@ -231,21 +215,16 @@ body.ar .student-table td { text-align:right; font-family:var(--font-ar); }
 
 /* ASSIGN TEACHER */
 .assign-row { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem 0; border-bottom:1px solid var(--border2); }
-body.ar .assign-row { flex-direction:row-reverse; }
 .assign-row:last-child { border-bottom:none; }
 .assign-info { flex:1; }
 .assign-title-t { font-family:var(--font); font-size:.92rem; font-weight:600; margin-bottom:.2rem; }
-body.ar .assign-title-t { font-family:var(--font-ar); text-align:right; }
 .assign-meta-t { font-size:.78rem; color:var(--muted2); display:flex; gap:1rem; }
-body.ar .assign-meta-t { flex-direction:row-reverse; }
 .assign-actions { display:flex; gap:.5rem; flex-shrink:0; }
 
 /* BUTTONS */
 .btn-primary { background:linear-gradient(135deg,#3b82f6,#7c3aed); color:#fff; font-family:var(--font); font-weight:700; font-size:.88rem; padding:.65rem 1.3rem; border:none; border-radius:10px; cursor:pointer; transition:opacity .2s,transform .15s; display:inline-flex; align-items:center; gap:.4rem; }
-body.ar .btn-primary { font-family:var(--font-ar); }
 .btn-primary:hover { opacity:.9; transform:translateY(-1px); }
 .btn-secondary { background:rgba(30,27,75,.06); color:var(--muted); font-family:var(--font); font-weight:500; font-size:.88rem; padding:.65rem 1.3rem; border:1px solid var(--border); border-radius:10px; cursor:pointer; transition:all .2s; }
-body.ar .btn-secondary { font-family:var(--font-ar); }
 .btn-secondary:hover { border-color:rgba(30,27,75,.25); color:var(--white); }
 
 /* ACTIVITY */
@@ -266,21 +245,16 @@ body.ar .btn-secondary { font-family:var(--font-ar); }
   border-radius:10px; color:var(--white); font-family:var(--font-body); font-size:.9rem;
   outline:none; transition:border-color .2s; resize:vertical;
 }
-body.ar .form-group input, body.ar .form-group textarea, body.ar .form-group select { font-family:var(--font-ar); text-align:right; }
 
 /* TOAST */
 .toast { position:fixed; bottom:2rem; right:2rem; background:#fff; border:1px solid var(--border); border-radius:12px; padding:.9rem 1.4rem; font-family:var(--font); font-size:.85rem; color:var(--white); z-index:9999; transform:translateY(100px); opacity:0; transition:all .3s; display:flex; align-items:center; gap:.6rem; }
-body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 .toast.show { transform:translateY(0); opacity:1; }
 .toast-dot { width:8px; height:8px; border-radius:50%; background:#f59e0b; }
 
 /* ── ATTENDANCE ── */
 .att-toolbar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem; }
-body.ar .att-toolbar { flex-direction:row-reverse; }
 .att-toolbar-left h2 { font-family:var(--font); font-size:1.4rem; font-weight:700; letter-spacing:-.02em; }
-body.ar .att-toolbar-left h2 { font-family:var(--font-ar); }
 .att-toolbar-left p  { color:var(--muted); font-size:.85rem; margin-top:.2rem; }
-body.ar .att-toolbar-left p { font-family:var(--font-ar); }
 .att-actions { display:flex; gap:.6rem; flex-wrap:wrap; }
 
 .att-summary-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
@@ -292,7 +266,6 @@ body.ar .att-toolbar-left p { font-family:var(--font-ar); }
 .att-stat-icon.blue   { background:rgba(91,156,246,.1); }
 .att-stat-val { font-family:var(--font); font-size:1.4rem; font-weight:700; letter-spacing:-.02em; line-height:1; }
 .att-stat-lbl { font-size:.75rem; color:var(--muted); margin-top:.15rem; }
-body.ar .att-stat-lbl { font-family:var(--font-ar); }
 
 /* Group selector */
 #att-group-selector-wrap { background:var(--navy-card); border:1px solid var(--border); border-radius:12px; padding:.75rem 1rem; }
@@ -308,10 +281,8 @@ body.ar .att-stat-lbl { font-family:var(--font-ar); }
 .att-table thead tr:last-child th  { background:rgba(245,158,11,.03); border-bottom:2px solid rgba(245,158,11,.18); }
 
 .att-th-name { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted2); padding:.75rem 1.2rem; text-align:left; white-space:nowrap; min-width:180px; position:sticky; left:0; z-index:2; background:rgba(245,158,11,.06); }
-body.ar .att-th-name { text-align:right; font-family:var(--font-ar); letter-spacing:0; }
 .att-th-sess { font-family:var(--font); font-size:.68rem; font-weight:700; color:var(--muted2); padding:.5rem .35rem; text-align:center; white-space:nowrap; min-width:34px; }
 .att-th-total { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted2); padding:.5rem 1rem; text-align:center; white-space:nowrap; position:sticky; right:0; z-index:2; background:rgba(245,158,11,.06); }
-body.ar .att-th-total { font-family:var(--font-ar); letter-spacing:0; }
 
 /* Group-of-5 visual separators */
 .att-th-sess.grp-start, .att-td-box.grp-start { border-left:2px solid rgba(91,156,246,.2); }
@@ -322,12 +293,9 @@ body.ar .att-th-total { font-family:var(--font-ar); letter-spacing:0; }
 .att-table tbody tr:hover { background:rgba(59,130,246,.04); }
 
 .att-td-name { padding:.85rem 1.2rem; white-space:nowrap; position:sticky; left:0; z-index:1; background:var(--navy-card); border-right:1px solid var(--border2); }
-body.ar .att-td-name { text-align:right; }
 .att-student { display:flex; align-items:center; gap:.7rem; }
-body.ar .att-student { flex-direction:row-reverse; }
 .att-avatar { width:32px; height:32px; border-radius:50%; background:rgba(59,130,246,.1); border:1.5px solid rgba(59,130,246,.2); display:flex; align-items:center; justify-content:center; font-family:var(--font); font-size:.7rem; font-weight:700; color:var(--blue); flex-shrink:0; }
 .att-name { font-family:var(--font); font-size:.88rem; font-weight:600; }
-body.ar .att-name { font-family:var(--font-ar); }
 
 .att-td-box { padding:.55rem .35rem; text-align:center; vertical-align:middle; }
 .att-box { width:22px; height:22px; border-radius:5px; border:1.5px solid rgba(30,27,75,.22); background:rgba(30,27,75,.03); cursor:pointer; appearance:none; -webkit-appearance:none; display:inline-block; vertical-align:middle; transition:background .15s, border-color .15s, transform .1s; flex-shrink:0; }
@@ -352,10 +320,8 @@ body.ar .att-name { font-family:var(--font-ar); }
 
 /* Save banner */
 .att-save-banner { display:none; align-items:center; justify-content:space-between; background:rgba(62,207,120,.08); border:1px solid rgba(62,207,120,.25); border-radius:12px; padding:.8rem 1.2rem; margin-bottom:1rem; }
-body.ar .att-save-banner { flex-direction:row-reverse; }
 .att-save-banner.visible { display:flex; }
 .att-save-txt { font-size:.85rem; color:var(--green); font-family:var(--font); }
-body.ar .att-save-txt { font-family:var(--font-ar); }
 
 @media(max-width:768px){
   .att-summary-bar { grid-template-columns:1fr 1fr; }
@@ -372,7 +338,6 @@ body.ar .att-save-txt { font-family:var(--font-ar); }
 @media(max-width:768px){
   .hamburger { display:flex; }
   .sidebar{transform:translateX(-100%);}
-  body.ar .sidebar{transform:translateX(100%);}
   .sidebar.open{transform:translateX(0)!important;}
   .main{margin-left:0!important;margin-right:0!important;}
   .grid-2,.grid-3,.grid-4{grid-template-columns:1fr 1fr;}
@@ -386,17 +351,14 @@ body.ar .att-save-txt { font-family:var(--font-ar); }
 .course-card { background:var(--navy-card); border:1px solid var(--border); border-radius:18px; padding:1.5rem; cursor:pointer; transition:border-color .2s, transform .15s; display:flex; flex-direction:column; gap:.75rem; }
 .course-card:hover { border-color:rgba(245,158,11,.4); transform:translateY(-2px); }
 .course-card-header { display:flex; align-items:center; gap:.85rem; }
-body.ar .course-card-header { flex-direction:row-reverse; }
 .course-icon { width:46px; height:46px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0; }
 .course-icon.c1 { background:rgba(245,158,11,.1); }
 .course-icon.c2 { background:var(--green-dim); }
 .course-icon.c3 { background:rgba(245,197,66,.1); }
 .course-icon.c4 { background:rgba(91,156,246,.1); }
 .course-group-name { font-family:var(--font); font-size:1rem; font-weight:700; line-height:1.2; }
-body.ar .course-group-name { font-family:var(--font-ar); }
 .course-level-tag { display:inline-block; font-size:.68rem; font-weight:700; padding:.15rem .55rem; border-radius:100px; background:rgba(245,158,11,.1); color:#f59e0b; border:1px solid rgba(245,158,11,.25); margin-top:.2rem; }
 .course-meta-row { display:flex; flex-wrap:wrap; gap:.5rem 1rem; font-size:.78rem; color:var(--muted); }
-body.ar .course-meta-row { flex-direction:row-reverse; }
 .course-schedule-chips { display:flex; flex-wrap:wrap; gap:.4rem; }
 .schedule-chip { font-size:.72rem; background:rgba(62,207,120,.08); border:1px solid rgba(62,207,120,.2); color:var(--green); padding:.2rem .6rem; border-radius:100px; font-family:var(--font); }
 .tc-breadcrumb { display:flex; align-items:center; gap:.35rem; margin-bottom:1.1rem; flex-wrap:wrap; }
@@ -405,16 +367,12 @@ body.ar .course-meta-row { flex-direction:row-reverse; }
 .tc-sep { color:var(--muted); font-size:.72rem; }
 .tc-crumb-cur { font-size:.82rem; color:var(--muted); font-family:var(--font); }
 .cd-student-row { display:flex; align-items:center; gap:.75rem; padding:.7rem 0; border-bottom:1px solid var(--border2); }
-body.ar .cd-student-row { flex-direction:row-reverse; }
 .cd-student-row:last-child { border-bottom:none; }
 .cd-sched-row { display:flex; align-items:center; gap:.75rem; padding:.6rem 0; border-bottom:1px solid var(--border2); }
-body.ar .cd-sched-row { flex-direction:row-reverse; }
 .cd-sched-row:last-child { border-bottom:none; }
 .sched-day { font-family:var(--font); font-size:.82rem; font-weight:700; min-width:90px; }
-body.ar .sched-day { font-family:var(--font-ar); }
 .sched-time { font-size:.8rem; color:var(--muted); }
 .sched-room { font-size:.72rem; background:rgba(91,156,246,.1); border:1px solid rgba(91,156,246,.25); color:var(--blue); padding:.15rem .5rem; border-radius:100px; margin-left:auto; }
-body.ar .sched-room { margin-left:0; margin-right:auto; }
 
 /* PROFILE MENU */
 /* AVATAR UPLOAD */
@@ -425,7 +383,6 @@ body.ar .sched-room { margin-left:0; margin-right:auto; }
 
 /* NOTIFICATION PANEL */
 .notif-panel { position:fixed; top:64px; right:1rem; width:340px; max-height:460px; overflow-y:auto; background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:0 8px 32px rgba(30,27,75,.16); z-index:9001; display:none; animation:fadeIn .15s ease; }
-body.ar .notif-panel { right:auto; left:1rem; }
 .notif-panel.open { display:block; }
 .notif-header { display:flex; align-items:center; justify-content:space-between; padding:.9rem 1.25rem .7rem; border-bottom:1px solid var(--border); }
 .notif-header h4 { font-family:var(--font); font-size:.9rem; font-weight:700; }
@@ -790,11 +747,11 @@ body.ar .notif-panel { right:auto; left:1rem; }
       <div class="form-group">
         <label id="mlbl-subject">Matière</label>
         <select id="new-assign-subject">
-          <option data-fr="Écriture"         data-en="Writing"   data-ar="الكتابة">Écriture</option>
-          <option data-fr="Grammaire"        data-en="Grammar"   data-ar="القواعد">Grammaire</option>
-          <option data-fr="Vocabulaire"      data-en="Vocabulary" data-ar="المفردات">Vocabulaire</option>
-          <option data-fr="Expression orale" data-en="Speaking"  data-ar="التعبير الشفهي">Expression orale</option>
-          <option data-fr="Écoute"           data-en="Listening" data-ar="الاستماع">Écoute</option>
+          <option data-fr="Écriture"         data-en="Writing">Écriture</option>
+          <option data-fr="Grammaire"        data-en="Grammar">Grammaire</option>
+          <option data-fr="Vocabulaire"      data-en="Vocabulary">Vocabulaire</option>
+          <option data-fr="Expression orale" data-en="Speaking">Expression orale</option>
+          <option data-fr="Écoute"           data-en="Listening">Écoute</option>
         </select>
       </div>
     </div>
@@ -1014,18 +971,18 @@ body.ar .notif-panel { right:auto; left:1rem; }
 /* ── DATA ── */
 let STUDENTS = []; // populated from api_students.php on load
 const ASSIGNS_T = [
-  { id:1, title_fr:'Dissertation : Mes objectifs professionnels', title_en:'Essay: My Career Goals', title_ar:'مقال: أهدافي المهنية', due_fr:'9 mai', due_ar:'9 مايو', submitted:18, total:24, subject_fr:'Écriture', subject_en:'Writing', subject_ar:'الكتابة' },
-  { id:2, title_fr:'Exercice de compréhension orale #3', title_en:'Listening Exercise #3', title_ar:'تمرين الاستماع #3', due_fr:'12 mai', due_ar:'12 مايو', submitted:10, total:24, subject_fr:'Écoute', subject_en:'Listening', subject_ar:'الاستماع' },
-  { id:3, title_fr:'Présentation orale – Sujet libre', title_en:'Oral Presentation – Free Topic', title_ar:'عرض شفهي – موضوع حر', due_fr:'15 mai', due_ar:'15 مايو', submitted:5, total:24, subject_fr:'Expression', subject_en:'Speaking', subject_ar:'التعبير' },
-  { id:4, title_fr:'Rédaction Email professionnel', title_en:'Professional Email Writing', title_ar:'كتابة بريد إلكتروني مهني', due_fr:'1 mai', due_ar:'1 مايو', submitted:22, total:24, subject_fr:'Écriture', subject_en:'Writing', subject_ar:'الكتابة' },
-  { id:5, title_fr:'Quiz de grammaire de base', title_en:'Basic Grammar Quiz', title_ar:'اختبار القواعد الأساسية', due_fr:'28 avril', due_ar:'28 أبريل', submitted:24, total:24, subject_fr:'Grammaire', subject_en:'Grammar', subject_ar:'القواعد' },
+  { id:1, title_fr:'Dissertation : Mes objectifs professionnels', title_en:'Essay: My Career Goals', due_fr:'9 mai', submitted:18, total:24, subject_fr:'Écriture', subject_en:'Writing' },
+  { id:2, title_fr:'Exercice de compréhension orale #3', title_en:'Listening Exercise #3', due_fr:'12 mai', submitted:10, total:24, subject_fr:'Écoute', subject_en:'Listening' },
+  { id:3, title_fr:'Présentation orale – Sujet libre', title_en:'Oral Presentation – Free Topic', due_fr:'15 mai', submitted:5, total:24, subject_fr:'Expression', subject_en:'Speaking' },
+  { id:4, title_fr:'Rédaction Email professionnel', title_en:'Professional Email Writing', due_fr:'1 mai', submitted:22, total:24, subject_fr:'Écriture', subject_en:'Writing' },
+  { id:5, title_fr:'Quiz de grammaire de base', title_en:'Basic Grammar Quiz', due_fr:'28 avril', submitted:24, total:24, subject_fr:'Grammaire', subject_en:'Grammar' },
 ];
 const QUIZZES_T = [
-  { id:1, title_fr:'Quiz Grammaire Unité 1', title_en:'Grammar Quiz Unit 1', title_ar:'اختبار القواعد – الوحدة 1', qs:15, min:20, attempts:22, avg:78 },
-  { id:2, title_fr:'Vocabulaire Unité 3', title_en:'Vocabulary Unit 3', title_ar:'المفردات – الوحدة 3', qs:20, min:25, attempts:18, avg:74 },
-  { id:3, title_fr:'Compréhension écrite #2', title_en:'Reading Comprehension #2', title_ar:'الفهم القرائي #2', qs:10, min:15, attempts:24, avg:82 },
-  { id:4, title_fr:'Grammaire – Temps passés', title_en:'Grammar – Past Tenses', title_ar:'القواعد – الأزمنة الماضية', qs:12, min:18, attempts:20, avg:71 },
-  { id:5, title_fr:'Expression orale – Évaluation', title_en:'Speaking – Assessment', title_ar:'التعبير الشفهي – تقييم', qs:8, min:12, attempts:16, avg:68 },
+  { id:1, title_fr:'Quiz Grammaire Unité 1', title_en:'Grammar Quiz Unit 1', qs:15, min:20, attempts:22, avg:78 },
+  { id:2, title_fr:'Vocabulaire Unité 3', title_en:'Vocabulary Unit 3', qs:20, min:25, attempts:18, avg:74 },
+  { id:3, title_fr:'Compréhension écrite #2', title_en:'Reading Comprehension #2', qs:10, min:15, attempts:24, avg:82 },
+  { id:4, title_fr:'Grammaire – Temps passés', title_en:'Grammar – Past Tenses', qs:12, min:18, attempts:20, avg:71 },
+  { id:5, title_fr:'Expression orale – Évaluation', title_en:'Speaking – Assessment', qs:8, min:12, attempts:16, avg:68 },
 ];
 
 /* ── PAGE PERSISTENCE — synchronous, runs before first paint ── */
@@ -1236,7 +1193,7 @@ function applyTranslations() {
   const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
   // Update skip link text
   const skipLink = document.getElementById('skip-link');
-  if (skipLink) skipLink.textContent = currentLang==='en'?'Skip to content':currentLang==='ar'?'انتقل إلى المحتوى':'Aller au contenu';
+  if (skipLink) skipLink.textContent = currentLang==='en'?'Skip to content':'Aller au contenu';
   set('topbar-title', tr.topbarTitle[activePage] || tr.topbarTitle.home);
   set('teacher-chip-lbl', tr.teacherChip);
   set('nav-main-label', tr.navMain); set('nav-account-label', tr.navAccount);
@@ -1476,9 +1433,9 @@ function renderAssignments() {
   const s2 = document.getElementById('stat2-val'); if (s2) s2.textContent = pending;
 
   list.innerHTML = ASSIGNMENTS_LIVE.map(a => {
-    const title     = lang==='ar' ? (a.title_ar||a.title_fr) : lang==='en' ? (a.title_en||a.title_fr||a.title_ar) : (a.title_fr||a.title_ar);
-    const subject   = lang==='ar' ? (a.subject_ar||a.subject_fr||'') : lang==='en' ? (a.subject_en||a.subject_fr||a.subject_ar||'') : (a.subject_fr||a.subject_ar||'');
-    const className = lang==='ar' ? (a.group_name_ar||a.group_name_fr||'') : lang==='en' ? (a.group_name_en||a.group_name_fr||a.group_name_ar||'') : (a.group_name_fr||a.group_name_ar||'');
+    const title     = lang==='en' ? (a.title_en||a.title_fr) : a.title_fr;
+    const subject   = lang==='en' ? (a.subject_en||a.subject_fr||'') : (a.subject_fr||'');
+    const className = lang==='en' ? (a.group_name_en||a.group_name_fr||'') : (a.group_name_fr||'');
     const submitted = parseInt(a.submitted_count)||0;
     const total     = parseInt(a.total_students)||0;
     const graded    = parseInt(a.graded_count)||0;
@@ -1522,7 +1479,7 @@ async function deleteAssignment(id) {
 async function openSubmissions(assignId) {
   const listView = document.getElementById('assign-list-view');
   const subView  = document.getElementById('assign-sub-view');
-  if (!subView) { showToast(currentLang==='en'?'Sub-view not found':currentLang==='ar'?'العرض الفرعي غير موجود':'Sous-vue introuvable'); return; }
+  if (!subView) { showToast(currentLang==='en'?'Sub-view not found':'Sous-vue introuvable'); return; }
   if (listView) listView.style.display = 'none';
   subView.style.display = 'block';
   const titleEl = document.getElementById('sub-view-title');
@@ -1536,8 +1493,8 @@ async function openSubmissions(assignId) {
     if (!data.ok) { if(subList) subList.innerHTML = `<div style="color:var(--red);">${T[currentLang].errorLoading}</div>`; return; }
     const a    = data.assignment;
     const lang = currentLang;
-    const title = lang==='ar' ? (a.title_ar||a.title_fr) : (a.title_fr||a.title_ar);
-    const cn    = lang==='ar' ? (a.group_name_ar||a.group_name_fr||'') : (a.group_name_fr||a.group_name_ar||'');
+    const title = a.title_fr;
+    const cn    = (a.group_name_fr||'');
     if (titleEl) titleEl.textContent = title;
     if (metaEl)  metaEl.textContent  = cn + (a.due_date ? ' · ' + T[lang].dueLbl2 + new Date(a.due_date).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'long',year:'numeric'}) : '');
     const backLbl = document.getElementById('back-assign-lbl');
@@ -1626,7 +1583,7 @@ async function renderQuizzes() {
   }
   const tr = T[currentLang];
   if (!_teacherQuizzes.length) {
-    list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;grid-column:1/-1;">${currentLang==='en'?'No quizzes yet. Click + Create quiz to start.':currentLang==='ar'?'لا توجد اختبارات بعد.':'Aucun quiz. Cliquez sur + Créer un quiz.'}</p>`;
+    list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;grid-column:1/-1;">${currentLang==='en'?'No quizzes yet. Click + Create quiz to start.':'Aucun quiz. Cliquez sur + Créer un quiz.'}</p>`;
     return;
   }
   list.innerHTML = _teacherQuizzes.map(q => {
@@ -1636,8 +1593,8 @@ async function renderQuizzes() {
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem;">
         <div style="font-size:2rem;">🧠</div>
         <div style="display:flex;gap:.4rem;">
-          <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:100px;border:1px solid ${acts?'rgba(62,207,120,.3)':'var(--border)'};color:${acts?'var(--green)':'var(--muted)'};">${acts?(currentLang==='en'?'Active':currentLang==='ar'?'نشط':'Actif'):(currentLang==='en'?'Off':currentLang==='ar'?'غير نشط':'Désactivé')}</span>
-          <button onclick="toggleQuiz(${q.id},this)" style="font-size:.7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.15rem .5rem;cursor:pointer;color:var(--muted);">${acts?(currentLang==='en'?'Disable':currentLang==='ar'?'إيقاف':'Désactiver'):(currentLang==='en'?'Enable':currentLang==='ar'?'تفعيل':'Activer')}</button>
+          <span style="font-size:.7rem;padding:.15rem .5rem;border-radius:100px;border:1px solid ${acts?'rgba(62,207,120,.3)':'var(--border)'};color:${acts?'var(--green)':'var(--muted)'};">${acts?(currentLang==='en'?'Active':'Actif'):(currentLang==='en'?'Off':'Désactivé')}</span>
+          <button onclick="toggleQuiz(${q.id},this)" style="font-size:.7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;padding:.15rem .5rem;cursor:pointer;color:var(--muted);">${acts?(currentLang==='en'?'Disable':'Désactiver'):(currentLang==='en'?'Enable':'Activer')}</button>
           <button onclick="deleteQuiz(${q.id},this)" style="font-size:.7rem;background:rgba(232,93,117,.08);border:1px solid rgba(232,93,117,.2);border-radius:8px;padding:.15rem .5rem;cursor:pointer;color:var(--red);">🗑</button>
         </div>
       </div>
@@ -1650,7 +1607,7 @@ async function renderQuizzes() {
       </div>
       ${q.attempt_count>0?`<div style="font-size:.82rem;color:var(--muted);margin-bottom:.4rem;">${tr.avgLbl||'Avg'} <strong style="color:var(--purple)">${avg}%</strong></div>
       <div class="progress-bar"><div class="progress-fill purple" style="width:${avg}%"></div></div>`:''}
-      <button onclick="viewQuizResults(${q.id},'${escHtml(q.title).replace(/'/g,"&#39;")}')" style="margin-top:auto;padding-top:.75rem;font-size:.78rem;color:var(--blue);background:none;border:none;cursor:pointer;text-align:left;font-family:var(--font);">${currentLang==='en'?'View results →':currentLang==='ar'?'عرض النتائج ←':'Voir les résultats →'}</button>
+      <button onclick="viewQuizResults(${q.id},'${escHtml(q.title).replace(/'/g,"&#39;")}')" style="margin-top:auto;padding-top:.75rem;font-size:.78rem;color:var(--blue);background:none;border:none;cursor:pointer;text-align:left;font-family:var(--font);">${currentLang==='en'?'View results →':'Voir les résultats →'}</button>
     </div>`;
   }).join('');
 }
@@ -1662,9 +1619,9 @@ function addQuizQuestion() {
   _quizQuestionCount++;
   const n = _quizQuestionCount;
   const lang = currentLang;
-  const qLabel = lang==='en'?'Question':lang==='ar'?'السؤال':'Question';
-  const optLabel = lang==='en'?'Option':lang==='ar'?'خيار':'Option';
-  const correctLabel = lang==='en'?'Correct answer':lang==='ar'?'الجواب الصحيح':'Bonne réponse';
+  const qLabel = lang==='en'?'Question':'Question';
+  const optLabel = lang==='en'?'Option':'Option';
+  const correctLabel = lang==='en'?'Correct answer':'Bonne réponse';
   const div = document.createElement('div');
   div.className = 'quiz-q-block';
   div.dataset.n = n;
@@ -1691,17 +1648,17 @@ async function submitNewQuiz() {
   const errEl   = document.getElementById('quiz-create-error');
   const btn     = document.getElementById('quiz-modal-submit');
   errEl.textContent = '';
-  if (!title)   { errEl.textContent = currentLang==='en'?'Title required':currentLang==='ar'?'العنوان مطلوب':'Titre requis'; return; }
-  if (!groupId) { errEl.textContent = currentLang==='en'?'Select a group':currentLang==='ar'?'اختر مجموعة':'Sélectionnez un groupe'; return; }
+  if (!title)   { errEl.textContent = currentLang==='en'?'Title required':'Titre requis'; return; }
+  if (!groupId) { errEl.textContent = currentLang==='en'?'Select a group':'Sélectionnez un groupe'; return; }
   const blocks = document.querySelectorAll('.quiz-q-block');
-  if (!blocks.length) { errEl.textContent = currentLang==='en'?'Add at least 1 question':currentLang==='ar'?'أضف سؤالاً واحداً على الأقل':'Ajoutez au moins 1 question'; return; }
+  if (!blocks.length) { errEl.textContent = currentLang==='en'?'Add at least 1 question':'Ajoutez au moins 1 question'; return; }
   const questions = [];
   for (const b of blocks) {
     const qText = b.querySelector('.q-text').value.trim();
-    if (!qText) { errEl.textContent = currentLang==='en'?'Fill all question texts':currentLang==='ar'?'أكمل نصوص الأسئلة':'Remplissez tous les textes de question'; return; }
+    if (!qText) { errEl.textContent = currentLang==='en'?'Fill all question texts':'Remplissez tous les textes de question'; return; }
     const selected = b.querySelector('input[type=radio]:checked')?.value ?? '0';
     const opts = [...b.querySelectorAll('.q-opt')].map((inp, i) => ({ text: inp.value.trim(), correct: String(i) === selected }));
-    if (opts.some(o => !o.text)) { errEl.textContent = currentLang==='en'?'Fill all option fields':currentLang==='ar'?'أكمل حقول الخيارات':'Remplissez tous les champs de réponse'; return; }
+    if (opts.some(o => !o.text)) { errEl.textContent = currentLang==='en'?'Fill all option fields':'Remplissez tous les champs de réponse'; return; }
     questions.push({ question: qText, options: opts });
   }
   btn.disabled = true;
@@ -1709,7 +1666,7 @@ async function submitNewQuiz() {
     await fetch('api_quiz.php', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken}, body:JSON.stringify({action:'create_quiz',title,group_id:groupId,time_limit_min:time,questions}) }).then(r=>r.json()).then(d=>{ if(!d.ok) throw new Error(d.error||'Error'); });
     closeModal('quiz');
     await renderQuizzes();
-    showToast(currentLang==='en'?'Quiz created!':currentLang==='ar'?'تم إنشاء الاختبار!':'Quiz créé !');
+    showToast(currentLang==='en'?'Quiz created!':'Quiz créé !');
   } catch(e) { errEl.textContent = e.message; }
   finally { btn.disabled = false; }
 }
@@ -1724,12 +1681,12 @@ async function toggleQuiz(id, btn) {
 
 async function deleteQuiz(id, btn) {
   const lang = currentLang;
-  if (!confirm(lang==='en'?'Delete this quiz and all its attempts?':lang==='ar'?'حذف هذا الاختبار وجميع إجاباته؟':'Supprimer ce quiz et toutes ses tentatives ?')) return;
+  if (!confirm(lang==='en'?'Delete this quiz and all its attempts?':'Supprimer ce quiz et toutes ses tentatives ?')) return;
   btn.disabled = true;
   try {
     await fetch('api_quiz.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},body:JSON.stringify({action:'delete_quiz',id})}).then(r=>r.json());
     await renderQuizzes();
-    showToast(lang==='en'?'Quiz deleted':lang==='ar'?'تم حذف الاختبار':'Quiz supprimé');
+    showToast(lang==='en'?'Quiz deleted':'Quiz supprimé');
   } catch(e) { showToast(e.message); } finally { btn.disabled = false; }
 }
 
@@ -1738,14 +1695,14 @@ async function viewQuizResults(quizId, title) {
   let d;
   try { d = await fetch(`api_quiz.php?action=quiz_results&id=${quizId}`).then(r=>r.json()); } catch(e) { showToast(e.message); return; }
   const results = d.results || [];
-  if (!results.length) { showToast(lang==='en'?'No attempts yet':lang==='ar'?'لا توجد محاولات بعد':'Aucune tentative'); return; }
+  if (!results.length) { showToast(lang==='en'?'No attempts yet':'Aucune tentative'); return; }
   const rows = results.map(r=>`<tr><td style="padding:.6rem 1rem;">${escHtml(r.full_name||r.username)}</td><td style="padding:.6rem 1rem;text-align:center;">${r.score}/${r.total}</td><td style="padding:.6rem 1rem;text-align:center;"><strong style="color:${r.pct>=60?'var(--green)':'var(--red)'};">${r.pct}%</strong></td><td style="padding:.6rem 1rem;color:var(--muted);font-size:.78rem;">${new Date(r.finished_at).toLocaleDateString()}</td></tr>`).join('');
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay'; overlay.style.zIndex = '9999';
   overlay.innerHTML = `<div class="modal" style="max-width:560px;max-height:80vh;overflow-y:auto;">
     <div class="modal-header"><h3>📊 ${escHtml(title)}</h3><button class="btn-close" onclick="this.closest('.modal-overlay').remove()">✕</button></div>
     <table style="width:100%;border-collapse:collapse;font-size:.85rem;">
-      <thead><tr style="border-bottom:1px solid var(--border);"><th style="padding:.6rem 1rem;text-align:left;color:var(--muted);">${lang==='en'?'Student':lang==='ar'?'الطالب':'Étudiant'}</th><th style="padding:.6rem 1rem;color:var(--muted);">${lang==='en'?'Score':lang==='ar'?'النتيجة':'Score'}</th><th style="padding:.6rem 1rem;color:var(--muted);">%</th><th style="padding:.6rem 1rem;color:var(--muted);">${lang==='en'?'Date':lang==='ar'?'التاريخ':'Date'}</th></tr></thead>
+      <thead><tr style="border-bottom:1px solid var(--border);"><th style="padding:.6rem 1rem;text-align:left;color:var(--muted);">${lang==='en'?'Student':'Étudiant'}</th><th style="padding:.6rem 1rem;color:var(--muted);">${lang==='en'?'Score':'Score'}</th><th style="padding:.6rem 1rem;color:var(--muted);">%</th><th style="padding:.6rem 1rem;color:var(--muted);">${lang==='en'?'Date':'Date'}</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
   </div>`;
@@ -1780,7 +1737,7 @@ let _msgTargetId = null;
 
 function openMessageModal(userId, userName) {
   _msgTargetId = userId;
-  document.getElementById('msg-modal-to').textContent = (currentLang==='en'?'To: ':currentLang==='ar'?'إلى: ':'À : ') + userName;
+  document.getElementById('msg-modal-to').textContent = (currentLang==='en'?'To: ':'À : ') + userName;
   document.getElementById('msg-text').value = '';
   document.getElementById('msg-error').textContent = '';
   openModal('message');
@@ -1790,7 +1747,7 @@ async function sendMessage() {
   const text = document.getElementById('msg-text').value.trim();
   const errEl = document.getElementById('msg-error');
   const btn   = document.getElementById('msg-submit');
-  if (!text) { errEl.textContent = currentLang==='en'?'Write a message first':currentLang==='ar'?'اكتب رسالة أولاً':'Écrivez un message'; return; }
+  if (!text) { errEl.textContent = currentLang==='en'?'Write a message first':'Écrivez un message'; return; }
   btn.disabled = true;
   try {
     const res = await fetch('api_notifications.php?action=send_message', {
@@ -1799,7 +1756,7 @@ async function sendMessage() {
     }).then(r=>r.json());
     if (!res.ok) throw new Error(res.error||'Error');
     closeModal('message');
-    showToast(currentLang==='en'?'Message sent!':currentLang==='ar'?'تم إرسال الرسالة!':'Message envoyé !');
+    showToast(currentLang==='en'?'Message sent!':'Message envoyé !');
   } catch(e) { errEl.textContent = e.message; }
   finally { btn.disabled = false; }
 }
@@ -1836,8 +1793,8 @@ function renderGrades() {
   } else {
     tbody.innerHTML = GRADES_LIVE.map(g => {
       const name  = g.student_name || g.username || '?';
-      const title = lang === 'ar' ? (g.title_ar || g.title_fr) : (g.title_fr || g.title_ar);
-      const cn    = lang === 'ar' ? (g.group_name_ar || g.group_name_fr || '') : (g.group_name_fr || g.group_name_ar || '');
+      const title = lang === 'en' ? (g.title_en || g.title_fr) : g.title_fr;
+      const cn    = (g.group_name_fr || '');
       const score = parseInt(g.score);
       const color = score >= 75 ? 'var(--green)' : score >= 50 ? 'var(--yellow)' : 'var(--red)';
       const date  = g.graded_at ? new Date(g.graded_at).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {day:'numeric', month:'short'}) : '—';
@@ -1925,16 +1882,12 @@ function populateCourseSelect() {
     ? `<option value="">${T[lang].noClassAssigned}</option>`
     : `<option value="">${T[lang].chooseClass}</option>`
       + TEACHER_COURSES.map(c => {
-          const name = lang === 'ar'
-            ? (c.group_name_ar || c.group_name_fr)
-            : lang === 'en'
-              ? (c.group_name_en || c.group_name_fr || c.group_name_ar)
-              : (c.group_name_fr || c.group_name_ar);
-          const subject = lang === 'ar'
-            ? (c.subject_ar || c.subject_fr)
-            : lang === 'en'
-              ? (c.subject_en || c.subject_fr || c.subject_ar)
-              : (c.subject_fr || c.subject_ar);
+          const name = lang === 'en'
+            ? (c.group_name_en || c.group_name_fr)
+            : c.group_name_fr;
+          const subject = lang === 'en'
+            ? (c.subject_en || c.subject_fr)
+            : c.subject_fr;
           return `<option value="${c.id}">${name}${subject ? ' – ' + subject : ''}${c.level ? ' ('+c.level+')' : ''}</option>`;
         }).join('');
 }
@@ -2309,7 +2262,7 @@ const CT = {
   fr:{ coursesPageTitle:'Classes',
        coursesPageSub:(n)=>n+' groupes assignés · Année 2024-2025',
        studentsLabel:'étudiants', backCourses:'← Retour aux cours',
-       cdStudentsTitle:'Étudiants du groupe', cdScheduleTitle:'Emploi du temps / الجدول',
+       cdStudentsTitle:'Étudiants du groupe', cdScheduleTitle:'Emploi du temps',
        cdProgTitle:'Progression du groupe',
        cdStatStudentsLbl:'Étudiants', cdStatAvgLbl:'Moyenne',
        cdStatAssignsLbl:'Devoirs actifs', cdStatAttLbl:'Taux de présence',
@@ -2518,9 +2471,7 @@ function _tcRenderGroups() {
 
     // Build day + time line
     const schedLines = schedSlots.map(s => {
-      const day = lang === 'en' ? (DAY_EN_GC[s.day_fr] || s.day_fr)
-                : lang === 'ar' ? (s.day_ar || s.day_fr)
-                : s.day_fr;
+      const day = lang === 'en' ? (DAY_EN_GC[s.day_fr] || s.day_fr) : s.day_fr;
       const timeStr = s.time ? (s.time_end ? `${s.time} – ${s.time_end}` : s.time) : '';
       return timeStr ? `${day} · ${timeStr}` : day;
     });
@@ -2530,7 +2481,7 @@ function _tcRenderGroups() {
       : '';
 
     const sessionsHtml = slotCount
-      ? `<div style="font-size:.72rem;color:var(--muted);margin-top:.25rem;">🔁 ${slotCount} ${lang==='en'?(slotCount===1?'session/week':'sessions/week'):lang==='ar'?(slotCount===1?'جلسة/أسبوع':'جلسات/أسبوع'):(slotCount===1?'séance/semaine':'séances/semaine')}</div>`
+      ? `<div style="font-size:.72rem;color:var(--muted);margin-top:.25rem;">🔁 ${slotCount} ${lang==='en'?(slotCount===1?'session/week':'sessions/week'):(slotCount===1?'séance/semaine':'séances/semaine')}</div>`
       : '';
 
     return `<div class="course-card" onclick="openGroupDetail(${g.group_id})">
@@ -2570,9 +2521,7 @@ function populateAttGroupSelect() {
   sel.innerHTML = `<option value="">${noGroup}</option>`
     + teacherGroups.map(g => {
         let label;
-        if (lang === 'ar') {
-          label = g.label_ar || g.label_fr;
-        } else if (lang === 'en') {
+        if (lang === 'en') {
           const tl = TYPE_LABELS[g.type_key] || {en: g.type_key, fr: g.type_key};
           label = (tl.en || tl.fr) + (g.level_number ? ' ' + g.level_number : '') + (g.group_letter ? ' ' + g.group_letter : '');
         } else {
@@ -2623,8 +2572,8 @@ function renderCourses(){
   const lang = currentLang;
   const gBtn = document.getElementById('tab-btn-groups');
   const sBtn = document.getElementById('tab-btn-schedule');
-  if (gBtn) gBtn.textContent = lang==='en'?'Groups':lang==='ar'?'المجموعات':'Groupes';
-  if (sBtn) sBtn.textContent = lang==='en'?'Schedule':lang==='ar'?'الجدول':'Horaires';
+  if (gBtn) gBtn.textContent = lang==='en'?'Groups':'Groupes';
+  if (sBtn) sBtn.textContent = lang==='en'?'Schedule':'Horaires';
 }
 
 /* ── Courses tab switcher ── */
@@ -2659,8 +2608,7 @@ function renderTeacherSchedule() {
   const DAY_ORDER = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
   const DAY_LABELS = {
     fr: {Lundi:'Lundi',Mardi:'Mardi',Mercredi:'Mercredi',Jeudi:'Jeudi',Vendredi:'Vendredi',Samedi:'Samedi'},
-    en: {Lundi:'Monday',Mardi:'Tuesday',Mercredi:'Wednesday',Jeudi:'Thursday',Vendredi:'Friday',Samedi:'Saturday'},
-    ar: {Lundi:'الاثنين',Mardi:'الثلاثاء',Mercredi:'الأربعاء',Jeudi:'الخميس',Vendredi:'الجمعة',Samedi:'السبت'}
+    en: {Lundi:'Monday',Mardi:'Tuesday',Mercredi:'Wednesday',Jeudi:'Thursday',Vendredi:'Friday',Samedi:'Saturday'}
   };
 
   /* Collect all slots grouped by day_fr */
@@ -2678,16 +2626,16 @@ function renderTeacherSchedule() {
 
   const hasAny = DAY_ORDER.some(d => byDay[d].length > 0);
   if (!hasAny) {
-    el.innerHTML = `<div style="text-align:center;padding:3rem 1rem;color:var(--muted);font-size:.9rem;">${lang==='en'?'No schedule configured yet.':lang==='ar'?'لم يتم تكوين الجدول بعد.':'Aucun horaire configuré pour l\'instant.'}</div>`;
+    el.innerHTML = `<div style="text-align:center;padding:3rem 1rem;color:var(--muted);font-size:.9rem;">${lang==='en'?'No schedule configured yet.':'Aucun horaire configuré pour l\'instant.'}</div>`;
     return;
   }
 
   const dayLabels = DAY_LABELS[lang] || DAY_LABELS.fr;
-  const studentWord = lang==='en'?'student(s)':lang==='ar'?'طالب':'étudiant(s)';
+  const studentWord = lang==='en'?'student(s)':'étudiant(s)';
 
   el.innerHTML = DAY_ORDER.filter(d => byDay[d].length > 0).map(d => {
     const rows = byDay[d].map(({g, s}) => {
-      const name = lang==='en' ? (g.label_en||g.label_fr) : lang==='ar' ? (g.label_ar||g.label_fr) : g.label_fr;
+      const name = lang==='en' ? (g.label_en||g.label_fr) : g.label_fr;
       const timeStr = s.time ? (s.time_end ? `${s.time} – ${s.time_end}` : s.time) : '—';
       const icon    = TYPE_ICONS[g.type_key]      || '🏫';
       const iconCls = TYPE_ICON_CLASS[g.type_key] || 'c1';
@@ -2708,7 +2656,7 @@ function renderTeacherSchedule() {
       <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.7rem;">
         <span style="font-family:var(--font);font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--primary);">${escHtml(dayLabels[d]||d)}</span>
         <span style="flex:1;height:2px;background:linear-gradient(to right,var(--primary),transparent);border-radius:2px;"></span>
-        <span style="font-size:.72rem;color:var(--muted);font-weight:600;">${byDay[d].length} ${lang==='en'?(byDay[d].length===1?'class':'classes'):lang==='ar'?'مجموعة':(byDay[d].length===1?'groupe':'groupes')}</span>
+        <span style="font-size:.72rem;color:var(--muted);font-weight:600;">${byDay[d].length} ${lang==='en'?(byDay[d].length===1?'class':'classes'):(byDay[d].length===1?'groupe':'groupes')}</span>
       </div>
       ${rows}
     </div>`;
@@ -2722,7 +2670,7 @@ async function openGroupDetail(groupId) {
   const typeKey = g.type_key;
   const typeLabels = TYPE_LABELS[typeKey] || {fr: typeKey, en: typeKey};
   const labelEn = (typeLabels.en || typeLabels.fr) + (g.level_number ? ' ' + g.level_number : '') + (g.group_letter ? ' ' + g.group_letter : '');
-  const label = lang === 'en' ? labelEn : (lang === 'ar' ? (g.label_ar || g.label_fr) : g.label_fr);
+  const label = lang === 'en' ? labelEn : g.label_fr;
 
   document.getElementById('courses-list-view').style.display = 'none';
   document.getElementById('courses-detail-view').style.display = 'block';
@@ -2739,7 +2687,7 @@ async function openGroupDetail(groupId) {
       const sched = JSON.parse(g.schedule_json);
       if (Array.isArray(sched) && sched.length) {
         schedHtml = sched.map(s => {
-          const day = lang === 'en' ? (DAY_EN_T[s.day_fr] || s.day_fr) : lang === 'ar' ? (s.day_ar || s.day_fr) : s.day_fr;
+          const day = lang === 'en' ? (DAY_EN_T[s.day_fr] || s.day_fr) : s.day_fr;
           const timeStr = s.time ? (s.time_end ? s.time + ' – ' + s.time_end : s.time) : '';
           return `<span style="display:inline-flex;align-items:center;gap:.3rem;background:var(--tag-bg,#f0f4ff);color:var(--primary);border-radius:6px;padding:.25rem .6rem;font-size:.8rem;font-weight:600;">🕐 ${escHtml(day)}${timeStr ? ' · ' + timeStr : ''}</span>`;
         }).join(' ');
@@ -2763,7 +2711,7 @@ async function openGroupDetail(groupId) {
     const data = await fetch(`api_classes.php?action=group_students&group_id=${groupId}`).then(r => r.json());
     const students = data.students || [];
     if (students.length === 0) {
-      listEl.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${lang==='en'?'No students in this group':lang==='ar'?'لا يوجد طلاب في هذه المجموعة':'Aucun étudiant dans ce groupe'}</p>`;
+      listEl.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${lang==='en'?'No students in this group':'Aucun étudiant dans ce groupe'}</p>`;
       return;
     }
     listEl.innerHTML = students.map((s, i) => {
@@ -2892,7 +2840,7 @@ function renderPostsList(posts) {
         courseName = (p.type_key || '') + lvl + ' – ' + grpWord + ' ' + (p.group_letter || '');
       }
     } else {
-      courseName = lang === 'en' ? (p.group_name_fr || p.group_name_ar) : (p.group_name_fr || p.group_name_ar);
+      courseName = p.group_name_fr;
     }
     const dateStr = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { day:'numeric', month:'long', year:'numeric' }) : '';
     const linkBtn = p.link ? `<a href="${escHtml(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--blue);text-decoration:none;font-weight:500;margin-top:.5rem;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> ${T[lang].openLink}</a>` : '';
@@ -2972,7 +2920,7 @@ async function deletePost(id) {
     if (!data.ok) throw new Error(data.error);
     showToast(T[currentLang].toastPostDeleted);
     loadPosts();
-  } catch(e) { showToast((currentLang==='en'?'Error: ':currentLang==='ar'?'خطأ: ':'Erreur : ') + e.message); }
+  } catch(e) { showToast((currentLang==='en'?'Error: ':'Erreur : ') + e.message); }
 }
 
 let _editPostId = null;
@@ -2999,7 +2947,7 @@ async function updatePost() {
   const btnLbl = document.getElementById('post-submit-lbl');
   errEl.style.display = 'none';
   if (!title || !date) {
-    errEl.textContent = currentLang==='en'?'Please fill in the required fields.':currentLang==='ar'?'يرجى ملء الحقول المطلوبة':'Veuillez remplir les champs requis.';
+    errEl.textContent = currentLang==='en'?'Please fill in the required fields.':'Veuillez remplir les champs requis.';
     errEl.style.display = ''; return;
   }
   btnLbl.textContent = '…';
@@ -3014,7 +2962,7 @@ async function updatePost() {
     if (!data.ok) throw new Error(data.error);
     _editPostId = null;
     ['post-title','post-link','post-notes'].forEach(id => { document.getElementById(id).value = ''; });
-    showToast(currentLang === 'en' ? 'Note updated!' : currentLang === 'ar' ? 'تم تحديث الملاحظة!' : 'Note mise à jour !');
+    showToast(currentLang === 'en' ? 'Note updated!' : 'Note mise à jour !');
     loadPosts();
   } catch(e) { errEl.textContent = e.message; errEl.style.display = ''; }
   finally {
@@ -3338,12 +3286,8 @@ async function loadNotifications() {
 
     const lang = currentLang;
     list.innerHTML = data.notifications.map(n => {
-      const title = lang === 'en' ? (n.title_en || n.title_fr)
-                  : lang === 'ar' ? (n.title_ar || n.title_fr)
-                  : n.title_fr;
-      const body  = lang === 'en' ? (n.body_en  || n.body_fr)
-                  : lang === 'ar' ? (n.body_ar  || n.body_fr)
-                  : n.body_fr;
+      const title = lang === 'en' ? (n.title_en || n.title_fr) : n.title_fr;
+      const body  = lang === 'en' ? (n.body_en  || n.body_fr)  : n.body_fr;
       const icon  = TEACHER_NOTIF_ICONS[n.type] || '🔔';
       const age   = parseInt(n.age_min) || 0;
       const timeStr = age < 1 ? (lang==='en'?'Just now':'À l\'instant')
@@ -3414,7 +3358,6 @@ function applyProfileMenuTranslations() {
   const PM = {
     fr: { name:"Changer le prénom", avatar:"Changer l'avatar", logout:"Déconnexion" },
     en: { name:"Change first name",  avatar:"Change avatar",    logout:"Log out" },
-    ar: { name:"تغيير الاسم",       avatar:"تغيير الصورة",      logout:"تسجيل الخروج" },
   };
   const t = PM[currentLang] || PM.en;
   const s = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
