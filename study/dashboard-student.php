@@ -2517,7 +2517,10 @@ async function retractSubmission(aid) {
 <div class="notif-panel" id="notif-panel" onclick="event.stopPropagation()" style="position:fixed;top:64px;right:1rem;z-index:9000;">
   <div class="notif-panel-header">
     <span class="notif-panel-title" id="notif-panel-title">Notifications</span>
-    <button class="notif-mark-all" onclick="markAllRead()" id="notif-mark-all-btn">Mark all read</button>
+    <div style="display:flex;align-items:center;gap:.5rem;">
+      <button class="notif-mark-all" onclick="markAllRead()" id="notif-mark-all-btn">Mark all read</button>
+      <button onclick="closeNotifPanel()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:0 .2rem;line-height:1;" title="Close">✕</button>
+    </div>
   </div>
   <div class="notif-list" id="notif-list">
     <div class="notif-empty" id="notif-loading">Loading…</div>
@@ -2709,6 +2712,11 @@ const NOTIF_T = {
 let notifOpen = false;
 let notifData = [];
 
+function closeNotifPanel() {
+  notifOpen = false;
+  document.getElementById('notif-panel').classList.remove('open');
+}
+
 function toggleNotifPanel() {
   notifOpen = !notifOpen;
   const panel = document.getElementById('notif-panel');
@@ -2731,8 +2739,7 @@ function toggleNotifPanel() {
 let profileMenuOpen = false;
 document.addEventListener('click', function(e) {
   if (notifOpen && !document.getElementById('notif-btn').contains(e.target)) {
-    notifOpen = false;
-    document.getElementById('notif-panel').classList.remove('open');
+    closeNotifPanel();
   }
   if (profileMenuOpen && !document.getElementById('topbar-avatar').contains(e.target)) {
     profileMenuOpen = false;
@@ -2746,8 +2753,7 @@ function toggleProfileMenu(e) {
   document.getElementById('profile-menu').classList.toggle('open', profileMenuOpen);
   // Close notif panel if open
   if (profileMenuOpen && notifOpen) {
-    notifOpen = false;
-    document.getElementById('notif-panel').classList.remove('open');
+    closeNotifPanel();
   }
   applyProfileMenuTranslations();
 }
