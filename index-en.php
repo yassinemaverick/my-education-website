@@ -268,31 +268,31 @@ $t = [
 </section>
 
 <!-- OUR APPROACH -->
-<div style="padding:6rem 2rem;background:#eef6ff;">
+<div style="padding:6rem 2rem;background:#162436;border-top:1px solid rgba(255,255,255,0.1);border-bottom:1px solid rgba(255,255,255,0.1);">
   <div style="max-width:1100px;margin:0 auto;">
-    <div class="section-label" style="text-align:center;color:#1a9a52;">Our Approach</div>
-    <h2 class="section-title" style="text-align:center;color:#0f1d2e;">We don't teach English.<br>We help students live it.</h2>
-    <p style="color:#4b5563;font-size:1rem;line-height:1.75;max-width:580px;margin:.75rem auto 3rem;text-align:center;font-weight:300;">Our teaching is student-centered at every step — because we believe real progress only happens when students feel involved, understood, and challenged in the right way.</p>
+    <div class="section-label" style="text-align:center;">Our Approach</div>
+    <h2 class="section-title" style="text-align:center;">We don't teach English.<br>We help students live it.</h2>
+    <p style="color:rgba(255,255,255,0.55);font-size:1rem;line-height:1.75;max-width:580px;margin:.75rem auto 3rem;text-align:center;font-weight:300;">Our teaching is student-centered at every step — because we believe real progress only happens when students feel involved, understood, and challenged in the right way.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;">
-      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 28px rgba(15,29,46,0.08);display:flex;flex-direction:column;gap:.75rem;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
         <div style="font-size:1.75rem;line-height:1;">🎯</div>
-        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:#0f1d2e;line-height:1.3;margin:0;">Student-centered from day one</h3>
-        <p style="color:#4b5563;font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Every student arrives with a different goal — a better Bac grade, a job interview, a promotion, a dream of studying abroad. We start there. Our teachers adapt the lesson to the student, not the other way around.</p>
+        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;line-height:1.3;margin:0;">Student-centered from day one</h3>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Every student arrives with a different goal — a better Bac grade, a job interview, a promotion, a dream of studying abroad. We start there. Our teachers adapt the lesson to the student, not the other way around.</p>
       </div>
-      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 28px rgba(15,29,46,0.08);display:flex;flex-direction:column;gap:.75rem;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
         <div style="font-size:1.75rem;line-height:1;">💬</div>
-        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:#0f1d2e;line-height:1.3;margin:0;">English in context, not in isolation</h3>
-        <p style="color:#4b5563;font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Grammar rules are easy to forget by Friday. Real conversations aren't. We build lessons around situations students actually face — presenting at work, writing emails, talking about their passions — so the language sticks because it matters.</p>
+        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;line-height:1.3;margin:0;">English in context, not in isolation</h3>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Grammar rules are easy to forget by Friday. Real conversations aren't. We build lessons around situations students actually face — presenting at work, writing emails, talking about their passions — so the language sticks because it matters.</p>
       </div>
-      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 28px rgba(15,29,46,0.08);display:flex;flex-direction:column;gap:.75rem;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
         <div style="font-size:1.75rem;line-height:1;">👥</div>
-        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:#0f1d2e;line-height:1.3;margin:0;">Small groups, real voices</h3>
-        <p style="color:#4b5563;font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">With 9 to 12 students per group, no one hides at the back. Everyone speaks. Everyone is heard. The small format creates a low-pressure environment where students take risks with the language — and that's where real progress happens.</p>
+        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;line-height:1.3;margin:0;">Small groups, real voices</h3>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">With 9 to 12 students per group, no one hides at the back. Everyone speaks. Everyone is heard. The small format creates a low-pressure environment where students take risks with the language — and that's where real progress happens.</p>
       </div>
-      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:0 4px 28px rgba(15,29,46,0.08);display:flex;flex-direction:column;gap:.75rem;">
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
         <div style="font-size:1.75rem;line-height:1;">📈</div>
-        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:700;color:#0f1d2e;line-height:1.3;margin:0;">Progress you can see</h3>
-        <p style="color:#4b5563;font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Students track their attendance, grades, and lesson notes directly on their dashboard after every session. Learning feels less like a course and more like a journey with a clear direction.</p>
+        <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;line-height:1.3;margin:0;">Progress you can see</h3>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Students track their attendance, grades, and lesson notes directly on their dashboard after every session. Learning feels less like a course and more like a journey with a clear direction.</p>
       </div>
     </div>
   </div>
