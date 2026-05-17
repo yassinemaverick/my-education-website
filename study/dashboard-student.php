@@ -1180,6 +1180,7 @@ let currentLang = 'en';
 let currentAssignFilter = 'all';
 let currentQuizFilter = 'all';
 let activePage = sessionStorage.getItem('upskill_page_s') || 'home';
+let _cachedFeedPosts = null;
 
 /* ── TRANSLATIONS ── */
 const T = {
@@ -1437,7 +1438,7 @@ function navigate(page, el) {
   if (page === 'assignments') refreshAssignments();
   if (page === 'quizzes')     renderQuizzes();
   if (page === 'myclass')     { renderMyClass(); loadMyGroup(); }
-  if (page === 'feed')          loadFeed();
+  if (page === 'feed')          { if (_cachedFeedPosts !== null) renderFeed(_cachedFeedPosts); else loadFeed(); }
   if (page === 'progress')      updateProgress();
   if (page === 'announcements') loadAnnouncements();
   if (window.innerWidth <= 768) {
@@ -2108,7 +2109,8 @@ async function loadFeed() {
     const res  = await fetch('api_lesson_posts.php?action=feed');
     const data = await res.json();
     if (!data.ok) throw new Error(data.error);
-    renderFeed(data.posts);
+    _cachedFeedPosts = data.posts;
+    renderFeed(_cachedFeedPosts);
   } catch(e) {
     list.innerHTML = `<p style="color:var(--red);font-size:.85rem;">${T[currentLang].errorPrefix + e.message}</p>`;
   }

@@ -1358,7 +1358,7 @@ async function loadAssignments() {
     const res  = await fetch('api_assignments.php?action=list');
     const data = await res.json();
     if (data.ok && Array.isArray(data.assignments)) ASSIGNMENTS_LIVE = data.assignments;
-  } catch(e) { console.warn('Could not load assignments:', e); }
+  } catch(e) { }
   // Update Assignments sidebar badge (shows pending-review count)
   const ba = document.getElementById('badge-assignments');
   if (ba) {
@@ -1906,7 +1906,7 @@ async function loadTeacherCourses() {
     if (data.ok && Array.isArray(data.courses)) {
       TEACHER_COURSES = data.courses;
     }
-  } catch(e) { console.warn('Could not load teacher courses:', e); }
+  } catch(e) { }
 }
 
 function populateCourseSelect() {
@@ -2091,7 +2091,6 @@ async function initAttData() {
       }
     }
   } catch (e) {
-    console.warn('Could not load attendance from server:', e);
   }
 }
 
@@ -2219,7 +2218,6 @@ async function attSave() {
     }
   } catch (e) {
     showToast(T[currentLang].toastAttError || (currentLang==='en'?'Network error':'Erreur réseau'));
-    console.error('Save attendance error:', e);
   } finally {
     attSaving = false;
     if (btn) btn.innerHTML = origText;
@@ -2583,7 +2581,6 @@ async function attSelectGroup(groupId) {
     }));
     renderAttendance();
   } catch(e) {
-    console.error(e);
   } finally {
     if (loadingEl) loadingEl.style.display = 'none';
   }

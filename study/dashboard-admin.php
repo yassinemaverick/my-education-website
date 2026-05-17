@@ -951,10 +951,10 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 /* ══════════════════════════════════════════════════════
    PAGE PERSISTENCE — runs synchronously before first paint
 ══════════════════════════════════════════════════════ */
+const ADMIN_VALID_PAGES = ['home','users','inscriptions','classes','assigning-classes','schedule','settings','placement','announcements'];
 (function() {
-  const _validPages = ['home','users','inscriptions','classes','assigning-classes','schedule','settings','placement','announcements'];
   const _saved = sessionStorage.getItem('upskill_admin_page');
-  if (_saved && _validPages.includes(_saved) && _saved !== 'home') {
+  if (_saved && ADMIN_VALID_PAGES.includes(_saved) && _saved !== 'home') {
     const _home   = document.getElementById('page-home');
     const _target = document.getElementById('page-' + _saved);
     if (_home)   _home.classList.remove('active');
@@ -3037,14 +3037,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       actList.innerHTML = `<div class="activity-item"><div class="activity-dot orange"></div><div><div class="activity-text" style="color:var(--muted)">${noRecentMsg}</div></div></div>`;
     }
 
-  } catch(e) { console.warn('Admin stats load error:', e); }
+  } catch(e) { }
 
   setLang(lang);
 
   // Restore last active page after refresh
-  const validPages = ['home','users','inscriptions','classes','assigning-classes','schedule','announcements','placement','settings'];
-  const savedPage  = sessionStorage.getItem('upskill_admin_page');
-  if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
+  const savedPage = sessionStorage.getItem('upskill_admin_page');
+  if (savedPage && ADMIN_VALID_PAGES.includes(savedPage) && savedPage !== 'home') {
     const navEl = document.getElementById('nav-' + savedPage);
     navigate(savedPage, navEl);
   }
