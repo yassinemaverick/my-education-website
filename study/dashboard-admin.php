@@ -889,6 +889,45 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
   </div>
 </div>
 
+<!-- ── MODAL: ACCEPT ENROLLMENT ── -->
+<div class="modal-overlay" id="modal-accept-enroll" role="dialog" aria-modal="true" aria-labelledby="ae-modal-title">
+  <div class="modal sm">
+    <div class="modal-header">
+      <h3 id="ae-modal-title">Créer le compte étudiant</h3>
+      <button class="modal-close" onclick="closeModal('accept-enroll')" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="ae-student-info" style="background:rgba(91,156,246,.08);border:1px solid rgba(91,156,246,.2);border-radius:10px;padding:.75rem 1rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:.75rem;">
+        <div id="ae-student-avatar" style="width:36px;height:36px;border-radius:50%;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.75rem;color:var(--purple);flex-shrink:0;">?</div>
+        <div>
+          <div id="ae-student-name" style="font-family:var(--font);font-size:.88rem;font-weight:600;"></div>
+          <div id="ae-student-email" style="font-size:.75rem;color:var(--muted);"></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label id="ae-lbl-username">Identifiant (login)</label>
+        <input type="text" id="ae-username" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="ex: m.amrani">
+      </div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;justify-content:space-between;">
+          <span id="ae-lbl-password">Mot de passe initial</span>
+          <button type="button" onclick="generateAePassword()" id="ae-gen-btn" style="background:none;border:none;color:var(--blue);font-size:.72rem;cursor:pointer;font-family:var(--font);">↺ Générer</button>
+        </label>
+        <div style="position:relative;">
+          <input type="password" id="ae-password" autocomplete="new-password" placeholder="Minimum 8 caractères" style="padding-right:2.8rem;">
+          <button type="button" onclick="toggleAePw()" id="ae-pw-toggle" title="Show/hide" style="position:absolute;right:.6rem;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:1rem;padding:.2rem;line-height:1;">👁</button>
+        </div>
+        <div id="ae-pw-hint" style="font-size:.72rem;color:var(--muted);margin-top:.3rem;">Min. 8 caractères</div>
+      </div>
+      <div id="ae-error" style="display:none;color:var(--red);font-size:.83rem;margin-top:.25rem;padding:.5rem .75rem;background:rgba(232,93,117,.08);border-radius:8px;border:1px solid rgba(232,93,117,.2);"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('accept-enroll')" id="ae-cancel-btn">Annuler</button>
+      <button onclick="submitAcceptEnrollment()" id="ae-submit-btn" style="padding:.55rem 1.2rem;border-radius:10px;border:none;background:var(--green);color:var(--navy);font-family:var(--font);font-size:.85rem;font-weight:700;cursor:pointer;">✓ Confirmer</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── MODAL: ASSIGN CLASS ── -->
 <div class="modal-overlay" id="modal-assign-class" role="dialog" aria-modal="true" aria-labelledby="assign-class-modal-title">
   <div class="modal md">
@@ -1616,10 +1655,14 @@ function renderEnrollmentsTable() {
         ${row.status === 'accepted'
           ? `<span style="color:var(--muted2);font-size:.8rem;">—</span>`
           : `<div style="display:flex;gap:.4rem;align-items:center;">
-              <button onclick="acceptEnrollment(${row.id})"
+              <button
+                data-enroll-id="${row.id}"
+                data-enroll-name="${escHtml(row.name)}"
+                data-enroll-email="${escHtml(row.email||'')}"
+                onclick="openAcceptEnrollmentModal(parseInt(this.dataset.enrollId), this.dataset.enrollName, this.dataset.enrollEmail)"
                 style="background:rgba(62,207,120,.1);border:1px solid rgba(62,207,120,.3);color:var(--green);border-radius:8px;padding:.3rem .7rem;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;white-space:nowrap;"
                 onmouseenter="this.style.background='rgba(62,207,120,.22)'"
-                onmouseleave="this.style.background='rgba(62,207,120,.1)'">✓ ${currentLang==='en'?'Accept':currentLang==='ar'?'قبول':'Accepter'}</button>
+                onmouseleave="this.style.background='rgba(62,207,120,.1)'">✓ ${currentLang==='en'?'Accept':'Accepter'}</button>
               <button onclick="deleteEnrollment(${row.id})"
                 style="background:transparent;border:1px solid rgba(232,93,117,.3);color:var(--red);border-radius:8px;padding:.3rem .6rem;font-size:.78rem;cursor:pointer;transition:.2s;"
                 onmouseenter="this.style.background='rgba(232,93,117,.1)'"
@@ -1642,17 +1685,108 @@ async function updateEnrollmentStatus(id, status) {
   }
 }
 
-async function acceptEnrollment(id) {
+/* ── ACCEPT ENROLLMENT MODAL ──────────────────────────────────────────────── */
+let _aeEnrollmentId  = null;
+let _aeFullName      = '';
+let _aeEmail         = '';
+let _aePwVisible     = false;
+
+function openAcceptEnrollmentModal(enrollId, fullName, email) {
+  _aeEnrollmentId = enrollId;
+  _aeFullName     = fullName;
+  _aeEmail        = email || '';
+  _aePwVisible    = false;
+
+  const lang = currentLang;
+  const init = fullName.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?';
+  document.getElementById('ae-student-avatar').textContent = init;
+  document.getElementById('ae-student-name').textContent   = fullName;
+  document.getElementById('ae-student-email').textContent  = email || '—';
+
+  // Suggest username: first-initial.lastname, lowercased, ASCII-only
+  const parts   = fullName.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const raw     = parts.length > 1 ? parts[0][0] + '.' + parts[parts.length - 1] : (parts[0] || '');
+  const suggestion = raw.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9._-]/g, '');
+  document.getElementById('ae-username').value  = suggestion;
+
+  const pwInput = document.getElementById('ae-password');
+  pwInput.value = '';
+  pwInput.type  = 'password';
+  document.getElementById('ae-pw-toggle').textContent = '👁';
+
+  document.getElementById('ae-error').style.display = 'none';
+  document.getElementById('ae-submit-btn').disabled  = false;
+
+  document.getElementById('ae-modal-title').textContent   = lang === 'en' ? 'Create student account' : 'Créer le compte étudiant';
+  document.getElementById('ae-lbl-username').textContent  = lang === 'en' ? 'Username (login)' : 'Identifiant (login)';
+  document.getElementById('ae-lbl-password').textContent  = lang === 'en' ? 'Initial password' : 'Mot de passe initial';
+  document.getElementById('ae-gen-btn').textContent       = lang === 'en' ? '↺ Generate' : '↺ Générer';
+  document.getElementById('ae-pw-hint').textContent       = lang === 'en' ? 'Min. 8 characters' : 'Min. 8 caractères';
+  document.getElementById('ae-cancel-btn').textContent    = tr().cancelBtn;
+  document.getElementById('ae-submit-btn').textContent    = '✓ ' + (lang === 'en' ? 'Confirm' : 'Confirmer');
+
+  document.getElementById('modal-accept-enroll').classList.add('open');
+  setTimeout(() => document.getElementById('ae-username').focus(), 80);
+}
+
+function generateAePassword() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#!';
+  let pw = '';
+  for (let i = 0; i < 10; i++) pw += chars[Math.floor(Math.random() * chars.length)];
+  const input = document.getElementById('ae-password');
+  input.value = pw;
+  input.type  = 'text';
+  document.getElementById('ae-pw-toggle').textContent = '🙈';
+  _aePwVisible = true;
+}
+
+function toggleAePw() {
+  _aePwVisible = !_aePwVisible;
+  const input = document.getElementById('ae-password');
+  input.type  = _aePwVisible ? 'text' : 'password';
+  document.getElementById('ae-pw-toggle').textContent = _aePwVisible ? '🙈' : '👁';
+}
+
+async function submitAcceptEnrollment() {
+  const username  = document.getElementById('ae-username').value.trim();
+  const password  = document.getElementById('ae-password').value;
+  const errEl     = document.getElementById('ae-error');
+  const submitBtn = document.getElementById('ae-submit-btn');
+  const lang      = currentLang;
+
+  errEl.style.display = 'none';
+  if (!username) {
+    errEl.textContent = lang === 'en' ? 'Username is required.' : 'L\'identifiant est requis.';
+    errEl.style.display = 'block'; return;
+  }
+  if (password.length < 8) {
+    errEl.textContent = lang === 'en' ? 'Password must be at least 8 characters.' : 'Le mot de passe doit contenir au moins 8 caractères.';
+    errEl.style.display = 'block'; return;
+  }
+
+  submitBtn.disabled   = true;
+  submitBtn.textContent = '…';
+
   try {
-    await api('api_students.php?action=update_enrollment_status', 'POST', { id, status: 'accepted' });
-    showToast(currentLang==='en'?'Request accepted ✓':currentLang==='ar'?'تم قبول الطلب ✓':'Demande acceptée ✓', 'success');
-    addActivity((currentLang==='en'?'Enrollment #':currentLang==='ar'?'تسجيل #':'Inscription #') + id + (currentLang==='en'?' accepted':currentLang==='ar'?' مقبول':' acceptée'));
-    // Switch to "Acceptées" tab and reload
+    await api('api_students.php', 'POST', {
+      action:        'accept_enrollment_with_user',
+      enrollment_id: _aeEnrollmentId,
+      full_name:     _aeFullName,
+      username,
+      email:         _aeEmail,
+      password,
+    });
+    closeModal('accept-enroll');
+    showToast(lang === 'en' ? 'Account created & enrollment accepted ✓' : 'Compte créé et inscription acceptée ✓', 'success');
+    addActivity((lang === 'en' ? 'Enrollment #' : 'Inscription #') + _aeEnrollmentId + (lang === 'en' ? ' accepted' : ' acceptée'));
     const tab = document.getElementById('enroll-tab-accepted');
     if (tab) filterEnrollments('accepted', tab);
     else await loadEnrollments();
   } catch(e) {
-    showToast(e.message || tr().errNetwork, 'error');
+    errEl.textContent   = e.message || tr().errNetwork;
+    errEl.style.display = 'block';
+    submitBtn.disabled  = false;
+    submitBtn.textContent = '✓ ' + (lang === 'en' ? 'Confirm' : 'Confirmer');
   }
 }
 

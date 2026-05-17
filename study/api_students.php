@@ -212,6 +212,51 @@ try {
             ob_clean(); echo json_encode(['ok'=>true]); exit;
         }
 
+        if ($action === 'accept_enrollment_with_user') {
+            csrf_verify();
+            $raw      = json_decode(file_get_contents('php://input'), true) ?? [];
+            $enrollId = (int)(  $raw['enrollment_id'] ?? 0);
+            $fullname = trim(   $raw['full_name']      ?? '');
+            $username = trim(   $raw['username']       ?? '');
+            $email    = trim(   $raw['email']          ?? '');
+            $pw       =         $raw['password']       ?? '';
+
+            if (!$enrollId || !$fullname || !$username || mb_strlen($pw) < 8) {
+                ob_clean(); echo json_encode(['ok'=>false,'error'=>'Champs requis manquants ou mot de passe trop court (min. 8 caractères).']); exit;
+            }
+            if ($email && (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 180)) {
+                ob_clean(); echo json_encode(['ok'=>false,'error'=>'Email invalide.']); exit;
+            }
+
+            // Verify enrollment exists and is not already accepted
+            $enroll = $pdo->prepare("SELECT id, status FROM enrollments WHERE id = ?");
+            $enroll->execute([$enrollId]);
+            $enrollRow = $enroll->fetch(PDO::FETCH_ASSOC);
+            if (!$enrollRow) { ob_clean(); echo json_encode(['ok'=>false,'error'=>'Inscription introuvable.']); exit; }
+            if ($enrollRow['status'] === 'accepted') { ob_clean(); echo json_encode(['ok'=>false,'error'=>'Cette inscription a déjà été acceptée.']); exit; }
+
+            // Check username uniqueness
+            $chk = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+            $chk->execute([$username]);
+            if ($chk->fetch()) { ob_clean(); echo json_encode(['ok'=>false,'error'=>'Cet identifiant est déjà utilisé.']); exit; }
+
+            try { $pdo->exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS email VARCHAR(180) DEFAULT NULL"); } catch(Throwable $e){}
+
+            $hash = password_hash($pw, PASSWORD_BCRYPT, ['cost'=>12]);
+            try {
+                $pdo->beginTransaction();
+                $pdo->prepare("INSERT INTO users (full_name, username, email, password, role) VALUES (?,?,?,?,?)")
+                    ->execute([$fullname, $username, $email ?: null, $hash, 'student']);
+                $newUserId = (int)$pdo->lastInsertId();
+                $pdo->prepare("UPDATE enrollments SET status='accepted' WHERE id=?")->execute([$enrollId]);
+                $pdo->commit();
+                ob_clean(); echo json_encode(['ok'=>true,'user_id'=>$newUserId]); exit;
+            } catch(Throwable $e) {
+                try { $pdo->rollBack(); } catch(Throwable $e2){}
+                ob_clean(); echo json_encode(['ok'=>false,'error'=>'Erreur lors de la création du compte.']); exit;
+            }
+        }
+
     } // end $isAdmin
 
     // Non-admin must be teacher for the following actions
