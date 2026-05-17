@@ -1809,8 +1809,8 @@ async function renderQuizzes() {
     const pct  = done && q.total > 0 ? Math.round(q.score / q.total * 100) : (q.score != null ? q.score : 0);
     return `<div class="quiz-card">
       <div class="quiz-icon">${done ? '✅' : '🧠'}</div>
-      <div class="quiz-title">${escHtmlS(q.title)}</div>
-      <div class="quiz-desc">${q.description ? escHtmlS(q.description) : ''}</div>
+      <div class="quiz-title">${e(q.title)}</div>
+      <div class="quiz-desc">${q.description ? e(q.description) : ''}</div>
       <div class="quiz-meta">
         <span>📝 ${q.question_count||0} ${tr.qsLabel||'q'}</span>
         ${q.time_limit_min>0?`<span>⏱ ${q.time_limit_min} ${tr.minLabel||'min'}</span>`:''}
@@ -1820,7 +1820,7 @@ async function renderQuizzes() {
             <div style="width:48px;height:48px;border-radius:50%;border:3px solid ${pct>=60?'var(--green)':'var(--red)'};display:flex;align-items:center;justify-content:center;font-family:var(--font);font-size:.78rem;font-weight:700;color:${pct>=60?'var(--green)':'var(--red)'};">${pct}%</div>
             <div><div style="font-size:.83rem;color:var(--muted);">${tr.doneLabel||'Completed'}</div><div style="font-size:.78rem;color:var(--muted2);">${q.score}/${q.total}</div></div>
            </div>`
-        : `<button class="btn-primary" style="margin-top:auto;" onclick="startQuiz(${q.id},'${escHtmlS(q.title).replace(/'/g,"&#39;")}')">${tr.startQuiz||'Start'}</button>`
+        : `<button class="btn-primary" style="margin-top:auto;" onclick="startQuiz(${q.id},'${e(q.title).replace(/'/g,"&#39;")}')">${tr.startQuiz||'Start'}</button>`
       }
     </div>`;
   }).join('');
@@ -1847,7 +1847,7 @@ async function startQuiz(quizId, title) {
     <div style="max-width:640px;margin:0 auto;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem;">
         <div>
-          <h2 style="font-family:var(--font);font-size:1.25rem;font-weight:700;">🧠 ${escHtmlS(title)}</h2>
+          <h2 style="font-family:var(--font);font-size:1.25rem;font-weight:700;">🧠 ${e(title)}</h2>
           <p style="color:var(--muted);font-size:.85rem;">${questions.length} ${tr.qsLabel||'questions'}</p>
         </div>
         ${timeLimit>0?`<div id="quiz-timer" style="font-family:var(--font);font-size:1.1rem;font-weight:700;color:var(--yellow);">⏱ ${timeLimit}:00</div>`:''}
@@ -1856,11 +1856,11 @@ async function startQuiz(quizId, title) {
         ${questions.map((q,i)=>`
           <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:1rem;">
             <div style="font-family:var(--font);font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:.5rem;">${lang==='en'?'Q':'Q'}${i+1}</div>
-            <div style="font-size:.95rem;font-weight:600;margin-bottom:.9rem;line-height:1.5;">${escHtmlS(q.question)}</div>
+            <div style="font-size:.95rem;font-weight:600;margin-bottom:.9rem;line-height:1.5;">${e(q.question)}</div>
             ${q.options.map(opt=>`
               <label style="${optStyle}">
                 <input type="radio" name="q_${q.id}" value="${opt.id}" style="accent-color:var(--green);margin-right:.65rem;">
-                ${escHtmlS(opt.option_text)}
+                ${e(opt.option_text)}
               </label>`).join('')}
           </div>`).join('')}
         <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;flex-wrap:wrap;">
@@ -1933,8 +1933,6 @@ async function submitStudentQuiz() {
     document.body.appendChild(dlg); dlg.classList.add('open');
   } catch(e) { if(errEl) errEl.textContent = e.message; }
 }
-
-function escHtmlS(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 async function saveProfile() {
   const name    = document.getElementById('pref-name').value.trim();
@@ -2082,10 +2080,6 @@ async function changePassword() {
 }
 
 /* ── LESSON FEED ── */
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
 async function loadFeed() {
   const list = document.getElementById('feed-list');
   list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${T[currentLang].feedLoading}</p>`;
@@ -2114,14 +2108,14 @@ function renderFeed(posts) {
     const lang       = currentLang;
     const courseName = p.group_name_fr || p.group_name_ar;
     const dateStr    = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
-    const linkBtn    = p.link ? `<a href="${escHtml(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.45rem;margin-top:.75rem;padding:.5rem 1rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:8px;font-size:.82rem;font-weight:600;color:var(--blue);text-decoration:none;font-family:var(--font);transition:background .2s;" onmouseover="this.style.background='rgba(59,130,246,.18)'" onmouseout="this.style.background='rgba(59,130,246,.1)'"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${escHtml(tr.feedOpenLink)}</a>` : '';
-    const notesHtml  = p.notes ? `<div style="margin-top:.75rem;padding:.85rem 1rem;background:rgba(30,27,75,.04);border-radius:10px;border-left:3px solid rgba(59,130,246,.4);"><p style="color:var(--muted);font-size:.87rem;white-space:pre-wrap;line-height:1.7;margin:0;">${escHtml(p.notes)}</p></div>` : '';
+    const linkBtn    = p.link ? `<a href="${e(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.45rem;margin-top:.75rem;padding:.5rem 1rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:8px;font-size:.82rem;font-weight:600;color:var(--blue);text-decoration:none;font-family:var(--font);transition:background .2s;" onmouseover="this.style.background='rgba(59,130,246,.18)'" onmouseout="this.style.background='rgba(59,130,246,.1)'"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${e(tr.feedOpenLink)}</a>` : '';
+    const notesHtml  = p.notes ? `<div style="margin-top:.75rem;padding:.85rem 1rem;background:rgba(30,27,75,.04);border-radius:10px;border-left:3px solid rgba(59,130,246,.4);"><p style="color:var(--muted);font-size:.87rem;white-space:pre-wrap;line-height:1.7;margin:0;">${e(p.notes)}</p></div>` : '';
     return `<div style="background:#fff;border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:1rem;box-shadow:0 2px 8px rgba(30,27,75,.05);">
       <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem;">
-        <span style="font-size:.72rem;font-weight:700;background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.3);padding:.15rem .6rem;border-radius:100px;font-family:var(--font);">${escHtml(courseName)}</span>
+        <span style="font-size:.72rem;font-weight:700;background:rgba(245,158,11,.12);color:#f59e0b;border:1px solid rgba(245,158,11,.3);padding:.15rem .6rem;border-radius:100px;font-family:var(--font);">${e(courseName)}</span>
         <span style="font-size:.78rem;color:var(--muted);">📅 ${dateStr}</span>
       </div>
-      <div style="font-family:var(--font);font-weight:700;font-size:1rem;color:var(--white);">${escHtml(p.title)}</div>
+      <div style="font-family:var(--font);font-weight:700;font-size:1rem;color:var(--white);">${e(p.title)}</div>
       ${linkBtn}${notesHtml}
     </div>`;
   }).join('');
