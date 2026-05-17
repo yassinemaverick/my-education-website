@@ -992,21 +992,7 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 
 <script>
 /* ── DATA ── */
-let STUDENTS = []; // populated from api_students.php on load
-const ASSIGNS_T = [
-  { id:1, title_fr:'Dissertation : Mes objectifs professionnels', title_en:'Essay: My Career Goals', due_fr:'9 mai', submitted:18, total:24, subject_fr:'Écriture', subject_en:'Writing' },
-  { id:2, title_fr:'Exercice de compréhension orale #3', title_en:'Listening Exercise #3', due_fr:'12 mai', submitted:10, total:24, subject_fr:'Écoute', subject_en:'Listening' },
-  { id:3, title_fr:'Présentation orale – Sujet libre', title_en:'Oral Presentation – Free Topic', due_fr:'15 mai', submitted:5, total:24, subject_fr:'Expression', subject_en:'Speaking' },
-  { id:4, title_fr:'Rédaction Email professionnel', title_en:'Professional Email Writing', due_fr:'1 mai', submitted:22, total:24, subject_fr:'Écriture', subject_en:'Writing' },
-  { id:5, title_fr:'Quiz de grammaire de base', title_en:'Basic Grammar Quiz', due_fr:'28 avril', submitted:24, total:24, subject_fr:'Grammaire', subject_en:'Grammar' },
-];
-const QUIZZES_T = [
-  { id:1, title_fr:'Quiz Grammaire Unité 1', title_en:'Grammar Quiz Unit 1', qs:15, min:20, attempts:22, avg:78 },
-  { id:2, title_fr:'Vocabulaire Unité 3', title_en:'Vocabulary Unit 3', qs:20, min:25, attempts:18, avg:74 },
-  { id:3, title_fr:'Compréhension écrite #2', title_en:'Reading Comprehension #2', qs:10, min:15, attempts:24, avg:82 },
-  { id:4, title_fr:'Grammaire – Temps passés', title_en:'Grammar – Past Tenses', qs:12, min:18, attempts:20, avg:71 },
-  { id:5, title_fr:'Expression orale – Évaluation', title_en:'Speaking – Assessment', qs:8, min:12, attempts:16, avg:68 },
-];
+let STUDENTS = [];
 
 /* ── PAGE PERSISTENCE — synchronous, runs before first paint ── */
 (function() {
