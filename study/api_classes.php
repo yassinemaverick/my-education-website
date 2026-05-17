@@ -370,6 +370,10 @@ if ($action === 'list_all_users') {
 if ($action === 'list_assignments') {
   if ($role !== 'admin') err('Accès refusé', 403);
 
+  $typeLabels = [];
+  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'en'=>$t['label_en'], 'ar'=>$t['label_ar']]; }
+
+  // Assigned students and teachers (via class_group_members)
   $stmt = $pdo->query(
     "SELECT u.id AS user_id, u.full_name AS name, u.username, u.role,
             g.id AS group_id, g.type_key, g.level_number, g.group_letter
@@ -378,21 +382,13 @@ if ($action === 'list_assignments') {
      JOIN class_groups g ON g.id = m.group_id
      ORDER BY u.role DESC, u.full_name"
   );
-
-  $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-  // Build type label map
-  $typeLabels = [];
-  foreach (CLASS_TYPES as $t) { $typeLabels[$t['key']] = ['fr'=>$t['label_fr'], 'en'=>$t['label_en'], 'ar'=>$t['label_ar']]; }
-
   $byUser = [];
-  foreach ($rows as $r) {
+  foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
     $uid = $r['user_id'];
     if (!isset($byUser[$uid])) {
       $byUser[$uid] = ['id'=>$uid,'name'=>$r['name'],'username'=>$r['username'],'role'=>$r['role'],'groups'=>[]];
     }
     $lvl = $r['level_number'];
-    $groupLabel = $typeLabels[$r['type_key']]['fr'] . ($lvl ? ' ' . $lvl : '') . ' – Groupe ' . $r['group_letter'];
     $byUser[$uid]['groups'][] = [
       'group_id'    => (int)$r['group_id'],
       'type_key'    => $r['type_key'],
@@ -404,10 +400,23 @@ if ($action === 'list_assignments') {
     ];
   }
 
+  // Teachers with no group assignments (add them with empty groups array)
+  $unassignedTeachers = $pdo->query(
+    "SELECT u.id AS user_id, u.full_name AS name, u.username
+     FROM users u
+     WHERE u.role = 'teacher'
+       AND u.id NOT IN (SELECT user_id FROM class_group_members)
+     ORDER BY u.full_name"
+  )->fetchAll(PDO::FETCH_ASSOC);
+  foreach ($unassignedTeachers as $t) {
+    $byUser[$t['user_id']] = ['id'=>$t['user_id'],'name'=>$t['name'],'username'=>$t['username'],'role'=>'teacher','groups'=>[]];
+  }
+
   $students = array_values(array_filter($byUser, fn($u) => $u['role']==='student'));
   $teachers = array_values(array_filter($byUser, fn($u) => $u['role']==='teacher'));
+  usort($teachers, fn($a,$b) => strcmp($a['name'] ?? $a['username'], $b['name'] ?? $b['username']));
 
-  $unassigned = $pdo->query(
+  $unassigned_students = $pdo->query(
     "SELECT u.id AS user_id, u.full_name AS name, u.username
      FROM users u
      WHERE u.role = 'student'
@@ -415,7 +424,7 @@ if ($action === 'list_assignments') {
      ORDER BY u.full_name"
   )->fetchAll(PDO::FETCH_ASSOC);
 
-  jsonOut(['ok'=>true, 'students'=>$students, 'teachers'=>$teachers, 'unassigned_students'=>$unassigned]);
+  jsonOut(['ok'=>true, 'students'=>$students, 'teachers'=>$teachers, 'unassigned_students'=>$unassigned_students]);
 }
 
 // my_group: student/teacher sees their own group(s)

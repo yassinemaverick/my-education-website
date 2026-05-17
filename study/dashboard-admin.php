@@ -571,10 +571,11 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
               <tr class="tr-sep">
                 <th class="th-col-sm" id="ath-teacher">Professeur</th>
                 <th class="th-col-sm" id="ath-teacher-group">Groupe(s)</th>
+                <th class="th-col-sm" id="ath-teacher-action"></th>
               </tr>
             </thead>
             <tbody id="assigning-teachers-tbody">
-              <tr><td colspan="2" class="td-empty"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+              <tr><td colspan="3" class="td-empty"><div class="spinner" style="margin:0 auto;"></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -1010,7 +1011,7 @@ const T = {
     assignClassBtn:'Assigner une classe',
     noGroupsAssigned:'Aucun étudiant n\'est encore assigné à un groupe.',
     allAssignedMsg:'✓ Tous les étudiants sont dans un groupe',
-    assignSuccess:'Étudiant assigné avec succès !',
+    assignSuccess:'Assigné avec succès !',
     noGroupsAvailable:'Aucun groupe disponible pour ce type.',
     welcomeSub:'Gérez les classes et les groupes depuis ce tableau de bord.',
     statTeachersLbl:'Professeurs', statStudentsLbl:'Étudiants', statEnrollmentsLbl:'Inscriptions', statGroupsLbl:'Groupes actifs',
@@ -1103,7 +1104,7 @@ const T = {
     assignClassBtn:'Assign class',
     noGroupsAssigned:'No students have been assigned to a group yet.',
     allAssignedMsg:'✓ All students are assigned to a group',
-    assignSuccess:'Student assigned successfully!',
+    assignSuccess:'Assigned successfully!',
     noGroupsAvailable:'No groups available for this type.',
     welcomeSub:'Manage classes and groups from this dashboard.',
     statTeachersLbl:'Teachers', statStudentsLbl:'Students', statEnrollmentsLbl:'Enrollments', statGroupsLbl:'Active groups',
@@ -2415,12 +2416,14 @@ async function loadAssigningClasses() {
   }
 
   // ── TEACHERS ──────────────────────────────────────────────────────────────
-  const noRow = `<tr><td colspan="2" style="padding:1.5rem;text-align:center;color:var(--muted);">${t.noAssignments}</td></tr>`;
+  const noRow = `<tr><td colspan="3" style="padding:1.5rem;text-align:center;color:var(--muted);">${t.noAssignments}</td></tr>`;
   tTbody.innerHTML = !(data.teachers || []).length ? noRow : data.teachers.map(u => {
     const init = (u.name || u.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-    const groupTags = u.groups.map(g =>
-      `<span style="display:inline-block;margin:.15rem .2rem;padding:.15rem .55rem;background:rgba(62,207,120,.08);border:1px solid rgba(62,207,120,.2);border-radius:100px;font-size:.72rem;color:var(--green);font-family:var(--font);font-weight:600;">${lang === 'en' ? g.label_en : g.label_fr}</span>`
-    ).join('');
+    const groupTags = u.groups.length
+      ? u.groups.map(g =>
+          `<span style="display:inline-block;margin:.15rem .2rem;padding:.15rem .55rem;background:rgba(62,207,120,.08);border:1px solid rgba(62,207,120,.2);border-radius:100px;font-size:.72rem;color:var(--green);font-family:var(--font);font-weight:600;">${lang === 'en' ? g.label_en : g.label_fr}</span>`
+        ).join('')
+      : `<span style="font-size:.75rem;color:var(--muted);font-style:italic;">${t.noAssignments}</span>`;
     return `<tr>
       <td style="padding:.85rem 1.2rem;">
         <div style="display:flex;align-items:center;gap:.6rem;">
@@ -2432,6 +2435,11 @@ async function loadAssigningClasses() {
         </div>
       </td>
       <td style="padding:.85rem 1.2rem;">${groupTags}</td>
+      <td style="padding:.85rem 1.2rem;text-align:right;">
+        <button data-user-id="${u.id}" data-user-name="${escHtml(u.name || u.username)}"
+          onclick="openAssignClassModal(parseInt(this.dataset.userId), this.dataset.userName)"
+          style="font-family:var(--font);font-size:.75rem;font-weight:600;padding:.35rem .8rem;border-radius:8px;border:1px solid rgba(91,156,246,.4);background:rgba(91,156,246,.1);color:var(--blue);cursor:pointer;white-space:nowrap;">${t.assignClassBtn}</button>
+      </td>
     </tr>`;
   }).join('');
 }
