@@ -1569,6 +1569,7 @@ async function gradeSubmission(subId) {
     const data = await res.json();
     if (data.ok) {
       showToast(T[currentLang].toastGraded);
+      loadAssignments();
       // Update badge inline
       const row = document.getElementById('sub-row-'+subId);
       if (row && score!=='') { let b=row.querySelector('span[style*="var(--purple)"]'); if(!b){b=document.createElement('span');b.style.cssText='background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:100px;';row.querySelector('div[style*="font-weight:600"]').appendChild(b);} b.textContent='📊 '+score+'/100'; }
