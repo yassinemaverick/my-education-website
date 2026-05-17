@@ -642,7 +642,7 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
 }
 
 /* NOTIFICATION PANEL */
-.notif-panel { position:fixed; top:64px; right:1rem; width:320px; background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:0 8px 32px rgba(30,27,75,.14); z-index:9000; overflow:hidden; display:none; animation:fadeIn .15s ease; }
+.notif-panel { position:fixed; top:64px; right:1rem; width:320px; background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:0 8px 32px rgba(30,27,75,.14); z-index:9100; overflow:hidden; display:none; animation:fadeIn .15s ease; }
 body.ar .notif-panel { right:auto; left:1rem; }
 .notif-panel.open { display:block; }
 .notif-panel-header { display:flex; align-items:center; justify-content:space-between; padding:.9rem 1.1rem; border-bottom:1px solid var(--border); }
@@ -2514,7 +2514,7 @@ async function retractSubmission(aid) {
 }
 </script>
 <!-- NOTIF PANEL (outside topbar to avoid stacking context clipping) -->
-<div class="notif-panel" id="notif-panel" onclick="event.stopPropagation()" style="position:fixed;top:64px;right:1rem;z-index:9000;">
+<div class="notif-panel" id="notif-panel" onclick="event.stopPropagation()" style="position:fixed;top:64px;right:1rem;z-index:9100;">
   <div class="notif-panel-header">
     <span class="notif-panel-title" id="notif-panel-title">Notifications</span>
     <div style="display:flex;align-items:center;gap:.5rem;">
@@ -2850,26 +2850,34 @@ function updateNotifBadge(count) {
   }
 }
 
-async function markAllRead() {
-  try {
-    await fetch('api_notifications.php', { method:'POST', headers:{'X-CSRF-Token':_csrf}, body: new URLSearchParams({ action:'mark_read' }) });
-    notifData.forEach(n => n.is_read = 1);
-    renderNotifList();
-    updateNotifBadge(0);
-  } catch(e) {}
+function markAllRead() {
+  // Update UI immediately — don't wait for the server round-trip
+  notifData.forEach(n => n.is_read = 1);
+  renderNotifList();
+  updateNotifBadge(0);
+  // Fire-and-forget server sync
+  fetch('api_notifications.php', {
+    method:'POST',
+    headers:{'X-CSRF-Token':_csrf},
+    body: new URLSearchParams({ action:'mark_read' })
+  }).catch(() => {});
 }
 
-async function markOneRead(id, el) {
-  try {
-    await fetch('api_notifications.php', { method:'POST', headers:{'X-CSRF-Token':_csrf}, body: new URLSearchParams({ action:'mark_one', id }) });
-    el.classList.remove('unread');
-    const dot = el.querySelector('.notif-unread-dot');
-    if (dot) dot.remove();
-    const n = notifData.find(x => x.id == id);
-    if (n) n.is_read = 1;
-    const unread = notifData.filter(x => x.is_read == 0).length;
-    updateNotifBadge(unread);
-  } catch(e) {}
+function markOneRead(id, el) {
+  // Update UI immediately
+  el.classList.remove('unread');
+  const dot = el.querySelector('.notif-unread-dot');
+  if (dot) dot.remove();
+  const n = notifData.find(x => x.id == id);
+  if (n) n.is_read = 1;
+  const unread = notifData.filter(x => x.is_read == 0).length;
+  updateNotifBadge(unread);
+  // Fire-and-forget server sync
+  fetch('api_notifications.php', {
+    method:'POST',
+    headers:{'X-CSRF-Token':_csrf},
+    body: new URLSearchParams({ action:'mark_one', id })
+  }).catch(() => {});
 }
 
 // Poll for new notifications every 60 seconds
