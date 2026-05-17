@@ -320,7 +320,7 @@ $t = [
         </div>
         <div class="form-group">
           <label for="name">NOM COMPLET</label>
-          <input type="text" id="name" placeholder="Votre nom complet" required>
+          <input type="text" id="name" placeholder="Votre nom complet" maxlength="120" required>
         </div>
         <div class="form-group">
           <label for="level">NIVEAU ACTUEL</label>
@@ -336,11 +336,11 @@ $t = [
         <div class="form-grid">
           <div class="form-group">
             <label for="email">ADRESSE E-MAIL</label>
-            <input type="email" id="email" placeholder="vous@exemple.com" required>
+            <input type="email" id="email" placeholder="vous@exemple.com" maxlength="180" required>
           </div>
           <div class="form-group">
             <label for="phone">NUMÉRO DE TÉLÉPHONE</label>
-            <input type="tel" id="phone" placeholder="+212 6XX XXX XXX" required>
+            <input type="tel" id="phone" placeholder="+212 6XX XXX XXX" maxlength="30" required>
           </div>
         </div>
         <button class="btn-submit" onclick="submitForm()">Envoyer ma demande d'inscription →</button>
@@ -478,9 +478,9 @@ $t = [
 
 <!-- ── CONTACT MODAL ── -->
 <div id="contact-overlay" onclick="if(event.target===this)closeContact()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;">
-  <div style="background:#162436;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:480px;margin:1rem;position:relative;">
+  <div role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" style="background:#162436;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:480px;margin:1rem;position:relative;">
     <button onclick="closeContact()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.3rem;cursor:pointer;line-height:1;">✕</button>
-    <div style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.3rem;">Nous contacter</div>
+    <div id="contact-modal-title" style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.3rem;">Nous contacter</div>
     <div style="color:rgba(255,255,255,.55);font-size:.88rem;margin-bottom:1.5rem;font-family:'DM Sans',sans-serif;">Envoyez-nous un message, nous vous répondrons sous 24 heures.</div>
     <div style="margin-bottom:1rem;">
       <label style="display:block;font-family:'Sora',sans-serif;font-size:.75rem;font-weight:600;color:rgba(255,255,255,.55);margin-bottom:.4rem;letter-spacing:.04em;text-transform:uppercase;">VOTRE NOM</label>
