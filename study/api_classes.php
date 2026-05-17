@@ -406,7 +406,16 @@ if ($action === 'list_assignments') {
 
   $students = array_values(array_filter($byUser, fn($u) => $u['role']==='student'));
   $teachers = array_values(array_filter($byUser, fn($u) => $u['role']==='teacher'));
-  jsonOut(['ok'=>true, 'students'=>$students, 'teachers'=>$teachers]);
+
+  $unassigned = $pdo->query(
+    "SELECT u.id AS user_id, u.full_name AS name, u.username
+     FROM users u
+     WHERE u.role = 'student'
+       AND u.id NOT IN (SELECT user_id FROM class_group_members)
+     ORDER BY u.full_name"
+  )->fetchAll(PDO::FETCH_ASSOC);
+
+  jsonOut(['ok'=>true, 'students'=>$students, 'teachers'=>$teachers, 'unassigned_students'=>$unassigned]);
 }
 
 // my_group: student/teacher sees their own group(s)

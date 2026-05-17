@@ -549,24 +549,15 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
     </div>
     <div class="grid-2" style="gap:1.5rem;">
       <!-- Students -->
-      <div class="card card-flush">
+      <div class="card card-flush" style="overflow:hidden;">
         <div class="card-hdr">
           <span style="font-size:1.1rem;">🎓</span>
           <span class="card-title" style="margin-bottom:0;" id="assigning-students-title">Étudiants</span>
         </div>
-        <div class="tbl-scroll">
-          <table class="tbl-full" id="assigning-students-table">
-            <thead>
-              <tr class="tr-sep">
-                <th class="th-col-sm" id="ath-student">Étudiant</th>
-                <th class="th-col-sm" id="ath-group">Groupe(s)</th>
-              </tr>
-            </thead>
-            <tbody id="assigning-students-tbody">
-              <tr><td colspan="2" class="td-empty"><div class="spinner" style="margin:0 auto;"></div></td></tr>
-            </tbody>
-          </table>
+        <div id="assigning-groups-wrap">
+          <div style="padding:2rem;text-align:center;"><div class="spinner" style="margin:0 auto;"></div></div>
         </div>
+        <div id="assigning-unassigned-wrap"></div>
       </div>
       <!-- Teachers -->
       <div class="card card-flush">
@@ -898,6 +889,20 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
   </div>
 </div>
 
+<!-- ── MODAL: ASSIGN CLASS ── -->
+<div class="modal-overlay" id="modal-assign-class" role="dialog" aria-modal="true" aria-labelledby="assign-class-modal-title">
+  <div class="modal md">
+    <div class="modal-header">
+      <h3 id="assign-class-modal-title">Assigner une classe</h3>
+      <button class="modal-close" onclick="closeAssignClassModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="assign-class-modal-body" style="min-height:160px;"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeAssignClassModal()" id="assign-class-cancel-btn">Annuler</button>
+    </div>
+  </div>
+</div>
+
 <!-- SIDEBAR BACKDROP -->
 <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
 <!-- TOAST -->
@@ -962,6 +967,12 @@ const T = {
     selectUser:'— Sélectionner un utilisateur —',
     confirmDeleteGroup:'Supprimer ce groupe et tous ses membres ?',
     noAssignments:'Aucun groupe assigné.',
+    unassignedStudents:'Étudiants sans groupe',
+    assignClassBtn:'Assigner une classe',
+    noGroupsAssigned:'Aucun étudiant n\'est encore assigné à un groupe.',
+    allAssignedMsg:'✓ Tous les étudiants sont dans un groupe',
+    assignSuccess:'Étudiant assigné avec succès !',
+    noGroupsAvailable:'Aucun groupe disponible pour ce type.',
     welcomeSub:'Gérez les classes et les groupes depuis ce tableau de bord.',
     statTeachersLbl:'Professeurs', statStudentsLbl:'Étudiants', statEnrollmentsLbl:'Inscriptions', statGroupsLbl:'Groupes actifs',
     recentActivityTitle:'Activité récente',
@@ -1049,6 +1060,12 @@ const T = {
     selectUser:'— Select a user —',
     confirmDeleteGroup:'Delete this group and all its members?',
     noAssignments:'No groups assigned.',
+    unassignedStudents:'Students without a group',
+    assignClassBtn:'Assign class',
+    noGroupsAssigned:'No students have been assigned to a group yet.',
+    allAssignedMsg:'✓ All students are assigned to a group',
+    assignSuccess:'Student assigned successfully!',
+    noGroupsAvailable:'No groups available for this type.',
     welcomeSub:'Manage classes and groups from this dashboard.',
     statTeachersLbl:'Teachers', statStudentsLbl:'Students', statEnrollmentsLbl:'Enrollments', statGroupsLbl:'Active groups',
     recentActivityTitle:'Recent activity',
@@ -2173,38 +2190,247 @@ async function removeMember(userId) {
    ASSIGNING CLASSES PAGE
 ══════════════════════════════════════════════════════ */
 async function loadAssigningClasses() {
-  const sTbody = document.getElementById('assigning-students-tbody');
-  const tTbody = document.getElementById('assigning-teachers-tbody');
-  sTbody.innerHTML = '<tr><td colspan="2" style="padding:2rem;text-align:center;"><div class="spinner" style="margin:0 auto;"></div></td></tr>';
-  tTbody.innerHTML = sTbody.innerHTML;
+  const groupsWrap     = document.getElementById('assigning-groups-wrap');
+  const unassignedWrap = document.getElementById('assigning-unassigned-wrap');
+  const tTbody         = document.getElementById('assigning-teachers-tbody');
+  groupsWrap.innerHTML = '<div style="padding:2rem;text-align:center;"><div class="spinner" style="margin:0 auto;"></div></div>';
+  unassignedWrap.innerHTML = '';
+  tTbody.innerHTML = '<tr><td colspan="2" style="padding:2rem;text-align:center;"><div class="spinner" style="margin:0 auto;"></div></td></tr>';
 
   let data;
   try { data = await api('api_classes.php?action=list_assignments'); }
-  catch(e) { sTbody.innerHTML = `<tr><td colspan="2" style="padding:1.5rem;color:var(--red);text-align:center;">${e.message}</td></tr>`; tTbody.innerHTML = sTbody.innerHTML; return; }
+  catch(e) {
+    groupsWrap.innerHTML = `<div style="padding:1.5rem;color:var(--red);text-align:center;">${escHtml(e.message)}</div>`;
+    tTbody.innerHTML = '';
+    return;
+  }
 
-  const noRow = `<tr><td colspan="2" style="padding:1.5rem;text-align:center;color:var(--muted);">${tr().noAssignments}</td></tr>`;
+  const t    = tr();
+  const lang = currentLang;
 
-  const renderRows = (users, role) => users.length === 0 ? noRow : users.map(u => {
-    const init = (u.name||u.username||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  // ── GROUPS VIEW (invert student-centric → group-centric) ──────────────────
+  const groupMap = {};
+  (data.students || []).forEach(u => {
+    u.groups.forEach(g => {
+      if (!groupMap[g.group_id]) groupMap[g.group_id] = { ...g, students: [] };
+      groupMap[g.group_id].students.push({ id: u.id, name: u.name, username: u.username });
+    });
+  });
+
+  const groups = Object.values(groupMap).sort((a, b) => {
+    if (a.type_key !== b.type_key) return a.type_key.localeCompare(b.type_key);
+    if ((a.level_number || 0) !== (b.level_number || 0)) return (a.level_number || 0) - (b.level_number || 0);
+    return a.group_letter.localeCompare(b.group_letter);
+  });
+
+  if (!groups.length) {
+    groupsWrap.innerHTML = `<p style="padding:1.25rem 1.5rem;color:var(--muted);font-size:.85rem;font-style:italic;">${t.noGroupsAssigned}</p>`;
+  } else {
+    groupsWrap.innerHTML = groups.map(g => {
+      const label = lang === 'en' ? g.label_en : g.label_fr;
+      const studentRows = g.students.map(s => {
+        const init = (s.name || s.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        return `<div style="display:flex;align-items:center;gap:.55rem;padding:.45rem 1.5rem;">
+          <div style="width:26px;height:26px;border-radius:50%;background:rgba(91,156,246,.15);border:1px solid rgba(91,156,246,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.65rem;color:var(--blue);flex-shrink:0;">${init}</div>
+          <div>
+            <div style="font-family:var(--font);font-size:.83rem;font-weight:600;">${escHtml(s.name || s.username)}</div>
+            <div style="font-size:.72rem;color:var(--muted);">${escHtml(s.username)}</div>
+          </div>
+        </div>`;
+      }).join('');
+      const studentCount = g.students.length;
+      const studentLbl = lang === 'en'
+        ? studentCount + ' student' + (studentCount !== 1 ? 's' : '')
+        : studentCount + ' étudiant' + (studentCount !== 1 ? 's' : '');
+      return `<div style="border-bottom:1px solid var(--border2);">
+        <div style="display:flex;align-items:center;padding:.6rem 1.5rem;background:rgba(62,207,120,.05);border-bottom:1px solid var(--border2);">
+          <span style="font-family:var(--font);font-size:.78rem;font-weight:700;color:var(--green);">${escHtml(label)}</span>
+          <span style="font-size:.7rem;color:var(--muted);margin-left:auto;">${studentLbl}</span>
+        </div>
+        ${studentRows}
+      </div>`;
+    }).join('');
+  }
+
+  // ── UNASSIGNED STUDENTS ───────────────────────────────────────────────────
+  const unassigned = data.unassigned_students || [];
+  if (!unassigned.length) {
+    unassignedWrap.innerHTML = `<div style="padding:.75rem 1.5rem;border-top:1px solid var(--border);">
+      <p style="font-size:.82rem;color:var(--green);font-style:italic;">${t.allAssignedMsg}</p>
+    </div>`;
+  } else {
+    const rows = unassigned.map(u => {
+      const init = (u.name || u.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      return `<div style="display:flex;align-items:center;gap:.75rem;padding:.7rem 1.5rem;border-bottom:1px solid var(--border2);">
+        <div style="width:30px;height:30px;border-radius:50%;background:rgba(232,93,117,.12);border:1px solid rgba(232,93,117,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.7rem;color:var(--red);flex-shrink:0;">${init}</div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-family:var(--font);font-size:.87rem;font-weight:600;">${escHtml(u.name || u.username)}</div>
+          <div style="font-size:.75rem;color:var(--muted);">${escHtml(u.username)}</div>
+        </div>
+        <button data-user-id="${u.user_id}" data-user-name="${escHtml(u.name || u.username)}"
+          onclick="openAssignClassModal(parseInt(this.dataset.userId), this.dataset.userName)"
+          style="font-family:var(--font);font-size:.75rem;font-weight:600;padding:.35rem .8rem;border-radius:8px;border:1px solid rgba(91,156,246,.4);background:rgba(91,156,246,.1);color:var(--blue);cursor:pointer;white-space:nowrap;flex-shrink:0;">${t.assignClassBtn}</button>
+      </div>`;
+    }).join('');
+    unassignedWrap.innerHTML = `<div style="border-top:1px solid var(--border);">
+      <div style="display:flex;align-items:center;padding:.6rem 1.5rem;background:rgba(232,93,117,.05);">
+        <span style="font-family:var(--font);font-size:.78rem;font-weight:700;color:var(--red);">${t.unassignedStudents}</span>
+        <span style="background:rgba(232,93,117,.15);color:var(--red);font-family:var(--font);font-size:.68rem;font-weight:700;padding:.1rem .45rem;border-radius:100px;margin-left:.4rem;">${unassigned.length}</span>
+      </div>
+      ${rows}
+    </div>`;
+  }
+
+  // ── TEACHERS ──────────────────────────────────────────────────────────────
+  const noRow = `<tr><td colspan="2" style="padding:1.5rem;text-align:center;color:var(--muted);">${t.noAssignments}</td></tr>`;
+  tTbody.innerHTML = !(data.teachers || []).length ? noRow : data.teachers.map(u => {
+    const init = (u.name || u.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
     const groupTags = u.groups.map(g =>
-      `<span style="display:inline-block;margin:.15rem .2rem;padding:.15rem .55rem;background:rgba(62,207,120,.08);border:1px solid rgba(62,207,120,.2);border-radius:100px;font-size:.72rem;color:var(--green);font-family:var(--font);font-weight:600;">${currentLang==='ar'?g.label_ar:(g.label_fr||g.label_ar)}</span>`
+      `<span style="display:inline-block;margin:.15rem .2rem;padding:.15rem .55rem;background:rgba(62,207,120,.08);border:1px solid rgba(62,207,120,.2);border-radius:100px;font-size:.72rem;color:var(--green);font-family:var(--font);font-weight:600;">${lang === 'en' ? g.label_en : g.label_fr}</span>`
     ).join('');
     return `<tr>
       <td style="padding:.85rem 1.2rem;">
         <div style="display:flex;align-items:center;gap:.6rem;">
           <div style="width:30px;height:30px;border-radius:50%;background:rgba(91,156,246,.15);border:1px solid rgba(91,156,246,.3);display:flex;align-items:center;justify-content:center;font-family:var(--font);font-weight:700;font-size:.7rem;color:var(--blue);flex-shrink:0;">${init}</div>
           <div>
-            <div style="font-family:var(--font);font-size:.87rem;font-weight:600;">${u.name||u.username}</div>
-            <div style="font-size:.75rem;color:var(--muted);">${u.username}</div>
+            <div style="font-family:var(--font);font-size:.87rem;font-weight:600;">${escHtml(u.name || u.username)}</div>
+            <div style="font-size:.75rem;color:var(--muted);">${escHtml(u.username)}</div>
           </div>
         </div>
       </td>
       <td style="padding:.85rem 1.2rem;">${groupTags}</td>
     </tr>`;
   }).join('');
+}
 
-  sTbody.innerHTML = renderRows(data.students||[], 'student');
-  tTbody.innerHTML = renderRows(data.teachers||[], 'teacher');
+/* ── ASSIGN CLASS MODAL ───────────────────────────────────────────────────── */
+let _assignUserId   = null;
+let _assignTypeLevels = 0;
+let _assignTypeKey  = null;
+let _assignLevel    = null;
+
+function openAssignClassModal(userId, userName) {
+  _assignUserId   = userId;
+  _assignTypeKey  = null;
+  _assignTypeLevels = 0;
+  _assignLevel    = null;
+  const t = tr();
+  document.getElementById('assign-class-modal-title').textContent = t.assignClassBtn + ' — ' + userName;
+  document.getElementById('assign-class-cancel-btn').textContent  = t.cancelBtn;
+  document.getElementById('modal-assign-class').classList.add('open');
+  _renderAssignStep1();
+}
+
+function closeAssignClassModal() {
+  document.getElementById('modal-assign-class').classList.remove('open');
+  _assignUserId = null;
+}
+
+async function _renderAssignStep1() {
+  const body = document.getElementById('assign-class-modal-body');
+  body.innerHTML = '<div style="padding:1.5rem;text-align:center;"><div class="spinner" style="margin:0 auto;"></div></div>';
+  let data;
+  try { data = await api('api_classes.php?action=list_types'); }
+  catch(e) { body.innerHTML = `<p style="color:var(--red);padding:1rem;">${escHtml(e.message)}</p>`; return; }
+
+  const lang = currentLang;
+  const sub  = lang === 'en' ? 'Choose a class type:' : 'Choisissez le type de classe :';
+  body.innerHTML = `<p style="font-size:.82rem;color:var(--muted);margin-bottom:1rem;">${sub}</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.6rem;">
+      ${data.types.map(tp => {
+        const label = lang === 'en' ? tp.label_en : tp.label_fr;
+        const hasGroups = tp.levels > 0
+          ? (tp.level_groups || []).some(lg => lg.group_count > 0)
+          : (tp.group_count || 0) > 0;
+        const levelsTxt = tp.levels > 0
+          ? tp.levels + (lang === 'en' ? ' levels' : ' niveaux')
+          : (tp.group_count || 0) + (lang === 'en' ? ' group(s)' : ' groupe(s)');
+        return `<button onclick="_assignPickType('${tp.key.replace(/'/g,"\\'")}',${tp.levels})"
+          ${hasGroups ? '' : 'disabled'}
+          style="padding:.6rem .8rem;border-radius:10px;border:1px solid var(--border);background:var(--navy-light);color:var(--white);font-family:var(--font);font-size:.8rem;font-weight:600;cursor:pointer;text-align:left;transition:background .15s;${hasGroups ? '' : 'opacity:.4;cursor:not-allowed;'}">
+          ${escHtml(label)}
+          <div style="font-size:.68rem;color:var(--muted);font-weight:400;margin-top:.2rem;">${levelsTxt}</div>
+        </button>`;
+      }).join('')}
+    </div>`;
+}
+
+function _assignPickType(typeKey, levels) {
+  _assignTypeKey   = typeKey;
+  _assignTypeLevels = levels;
+  _assignLevel     = null;
+  if (levels > 0) { _renderAssignStep2(); } else { _renderAssignStep3(); }
+}
+
+function _renderAssignStep2() {
+  const body = document.getElementById('assign-class-modal-body');
+  const lang = currentLang;
+  const levelBtns = Array.from({ length: _assignTypeLevels }, (_, i) => i + 1).map(l =>
+    `<button onclick="_assignPickLevel(${l})"
+      style="padding:.65rem 1.2rem;border-radius:10px;border:1px solid var(--border);background:var(--navy-light);color:var(--white);font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;min-width:80px;transition:background .15s;">
+      ${lang === 'en' ? 'Level' : 'Niveau'} ${l}
+    </button>`
+  ).join('');
+  body.innerHTML = `
+    <button onclick="_renderAssignStep1()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;font-family:var(--font);margin-bottom:.75rem;padding:0;">← ${lang === 'en' ? 'Back' : 'Retour'}</button>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:1rem;">${lang === 'en' ? 'Choose a level:' : 'Choisissez un niveau :'}</p>
+    <div style="display:flex;gap:.6rem;flex-wrap:wrap;">${levelBtns}</div>`;
+}
+
+function _assignPickLevel(level) {
+  _assignLevel = level;
+  _renderAssignStep3();
+}
+
+async function _renderAssignStep3() {
+  const body = document.getElementById('assign-class-modal-body');
+  body.innerHTML = '<div style="padding:1.5rem;text-align:center;"><div class="spinner" style="margin:0 auto;"></div></div>';
+  const url = `api_classes.php?action=list_groups&type_key=${encodeURIComponent(_assignTypeKey)}${_assignLevel ? '&level=' + _assignLevel : ''}`;
+  let data;
+  try { data = await api(url); }
+  catch(e) { body.innerHTML = `<p style="color:var(--red);padding:1rem;">${escHtml(e.message)}</p>`; return; }
+
+  const t       = tr();
+  const lang    = currentLang;
+  const backFn  = _assignTypeLevels > 0 ? '_renderAssignStep2()' : '_renderAssignStep1()';
+  const backLbl = lang === 'en' ? 'Back' : 'Retour';
+
+  if (!data.groups || !data.groups.length) {
+    body.innerHTML = `
+      <button onclick="${backFn}" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;font-family:var(--font);margin-bottom:.75rem;padding:0;">← ${backLbl}</button>
+      <p style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${t.noGroupsAvailable}</p>`;
+    return;
+  }
+
+  const groupBtns = data.groups.map(g =>
+    `<button onclick="_assignConfirm(${g.id})"
+      style="padding:.65rem 1rem;border-radius:10px;border:1px solid var(--border);background:var(--navy-light);color:var(--white);font-family:var(--font);font-size:.83rem;font-weight:600;cursor:pointer;text-align:left;width:100%;transition:background .15s;">
+      ${lang === 'en' ? 'Group' : 'Groupe'} ${escHtml(g.group_letter)}
+      <span style="font-size:.7rem;color:var(--muted);font-weight:400;margin-left:.5rem;">${g.member_count} ${lang === 'en' ? 'member(s)' : 'membre(s)'}</span>
+    </button>`
+  ).join('');
+
+  body.innerHTML = `
+    <button onclick="${backFn}" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;font-family:var(--font);margin-bottom:.75rem;padding:0;">← ${backLbl}</button>
+    <p style="font-size:.82rem;color:var(--muted);margin-bottom:1rem;">${lang === 'en' ? 'Choose a group:' : 'Choisissez un groupe :'}</p>
+    <div style="display:flex;flex-direction:column;gap:.5rem;">${groupBtns}</div>`;
+}
+
+async function _assignConfirm(groupId) {
+  const body = document.getElementById('assign-class-modal-body');
+  body.innerHTML = '<div style="padding:1.5rem;text-align:center;"><div class="spinner" style="margin:0 auto;"></div></div>';
+  try {
+    await api('api_classes.php', 'POST', { action: 'add_member', group_id: groupId, user_id: _assignUserId });
+    closeAssignClassModal();
+    showToast(tr().assignSuccess, 'success');
+    await loadAssigningClasses();
+  } catch(e) {
+    const lang = currentLang;
+    body.innerHTML = `<div>
+      <p style="color:var(--red);padding:.5rem 0;font-size:.85rem;">${escHtml(e.message)}</p>
+      <button onclick="_renderAssignStep3()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;font-family:var(--font);padding:0;">← ${lang === 'en' ? 'Back' : 'Retour'}</button>
+    </div>`;
+  }
 }
 
 function saveProfile() {
