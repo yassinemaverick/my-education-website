@@ -429,8 +429,10 @@ body.ar .notif-panel { right:auto; left:1rem; }
 .notif-panel.open { display:block; }
 .notif-header { display:flex; align-items:center; justify-content:space-between; padding:.9rem 1.25rem .7rem; border-bottom:1px solid var(--border); }
 .notif-header h4 { font-family:var(--font); font-size:.9rem; font-weight:700; }
-.notif-item { display:flex; gap:.8rem; padding:.8rem 1.25rem; border-bottom:1px solid var(--border2); font-size:.83rem; line-height:1.45; }
-.notif-item.unread { background:rgba(59,130,246,.04); }
+.notif-item { display:flex; gap:.8rem; padding:.8rem 1.25rem; border-bottom:1px solid var(--border2); font-size:.83rem; line-height:1.45; cursor:pointer; transition:background .15s; user-select:none; -webkit-user-select:none; }
+.notif-item:hover { background:rgba(59,130,246,.08); }
+.notif-item:active { background:rgba(59,130,246,.15); }
+.notif-item.unread { background:rgba(59,130,246,.06); border-left:3px solid var(--blue); }
 .notif-item:last-child { border-bottom:none; }
 .notif-dot { width:8px; height:8px; border-radius:50%; background:var(--blue); flex-shrink:0; margin-top:.35rem; }
 .notif-dot-placeholder { width:8px; flex-shrink:0; }
@@ -3336,15 +3338,19 @@ async function loadNotifications() {
 
     const lang = currentLang;
     list.innerHTML = data.notifications.map(n => {
-      const title = lang === 'ar' ? (n.title_ar || n.title_fr) : n.title_fr;
-      const body  = lang === 'ar' ? (n.body_ar  || n.body_fr)  : n.body_fr;
+      const title = lang === 'en' ? (n.title_en || n.title_fr)
+                  : lang === 'ar' ? (n.title_ar || n.title_fr)
+                  : n.title_fr;
+      const body  = lang === 'en' ? (n.body_en  || n.body_fr)
+                  : lang === 'ar' ? (n.body_ar  || n.body_fr)
+                  : n.body_fr;
       const icon  = TEACHER_NOTIF_ICONS[n.type] || '🔔';
       const age   = parseInt(n.age_min) || 0;
-      const timeStr = age < 1 ? (lang==='en'?'Just now':lang==='ar'?'الآن':'À l\'instant')
+      const timeStr = age < 1 ? (lang==='en'?'Just now':'À l\'instant')
                     : age < 60 ? `${age} min`
                     : age < 1440 ? `${Math.floor(age/60)}h`
-                    : `${Math.floor(age/1440)}j`;
-      return `<div class="notif-item${parseInt(n.is_read) ? '' : ' unread'}" style="display:flex;gap:.65rem;padding:.85rem 1rem;border-bottom:1px solid rgba(0,0,0,.05);cursor:pointer;" onclick="markOneRead(${n.id},this)">
+                    : `${Math.floor(age/1440)}d`;
+      return `<div class="notif-item${parseInt(n.is_read) ? '' : ' unread'}" data-type="${n.type}" onclick="markOneRead(${n.id},this)">
         <div style="width:34px;height:34px;border-radius:10px;background:rgba(30,27,75,.06);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;">${icon}</div>
         <div style="flex:1;min-width:0;">
           <div style="font-family:var(--font);font-size:.8rem;font-weight:600;margin-bottom:.1rem;">${escHtml(title)}</div>
@@ -3358,10 +3364,26 @@ async function loadNotifications() {
   }
 }
 
-async function markOneRead(id, el) {
-  el.style.background = '';
+function markOneRead(id, el) {
+  // Update UI immediately
   el.classList.remove('unread');
-  try { await fetch('api_notifications.php', {method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},body:JSON.stringify({action:'mark_one',id})}); } catch(e) {}
+  el.style.borderLeft = '';
+  // Fire-and-forget server sync
+  fetch('api_notifications.php', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},
+    body:JSON.stringify({action:'mark_one', id})
+  }).catch(() => {});
+  // Close panel and navigate to relevant page
+  closeNotifPanel(false);
+  const type = el.dataset.type || '';
+  const typeNav = {
+    submission:'assignments', new_assignment:'assignments', overdue:'assignments',
+    quiz:'quizzes', announcement:'home', message:'home', lesson_note:'posts'
+  };
+  const dest = typeNav[type] || 'home';
+  const navIdMap = {home:'nav-home',assignments:'nav-assign',quizzes:'nav-quiz',posts:'nav-posts'};
+  navigate(dest, document.getElementById(navIdMap[dest]));
 }
 
 /* ── PROFILE DROPDOWN ── */
