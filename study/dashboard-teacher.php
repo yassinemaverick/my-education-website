@@ -721,6 +721,26 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
   </div>
 </main>
 
+<!-- MODAL: CONFIRM DELETE -->
+<div class="modal-overlay" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <h3 id="confirm-modal-title">Confirm</h3>
+      <button class="btn-close" onclick="closeConfirmModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-modal-body" style="color:var(--muted);font-size:.9rem;margin:0;"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="confirm-cancel-btn" onclick="closeConfirmModal()">Cancel</button>
+      <button onclick="confirmAction()" id="confirm-ok-btn"
+        style="padding:.55rem 1.1rem;border-radius:10px;border:none;background:#ef4444;color:#fff;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;">
+        <span id="confirm-ok-text">Delete</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: NEW ASSIGN -->
 <div class="modal-overlay" id="modal-assign">
   <div class="modal">
@@ -1468,14 +1488,15 @@ function renderAssignments() {
   }).join('');
 }
 
-async function deleteAssignment(id) {
-  if (!confirm(T[currentLang].deleteConfirm)) return;
-  try {
-    const res  = await fetch('api_assignments.php', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken}, body:JSON.stringify({action:'delete',id}) });
-    const data = await res.json();
-    if (data.ok) { await loadAssignments(); showToast(T[currentLang].toastAssignDeleted); }
-    else showToast('❌ '+(data.error||T[currentLang].toastServerError));
-  } catch(e) { showToast(T[currentLang].toastNetError); }
+function deleteAssignment(id) {
+  openConfirmModal(T[currentLang].deleteConfirm, async () => {
+    try {
+      const res  = await fetch('api_assignments.php', { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken}, body:JSON.stringify({action:'delete',id}) });
+      const data = await res.json();
+      if (data.ok) { await loadAssignments(); showToast(T[currentLang].toastAssignDeleted); }
+      else showToast('❌ '+(data.error||T[currentLang].toastServerError));
+    } catch(e) { showToast(T[currentLang].toastNetError); }
+  });
 }
 
 /* ── Submissions sub-view ── */
@@ -1682,15 +1703,16 @@ async function toggleQuiz(id, btn) {
   } catch(e) { showToast(e.message); } finally { btn.disabled = false; }
 }
 
-async function deleteQuiz(id, btn) {
+function deleteQuiz(id, btn) {
   const lang = currentLang;
-  if (!confirm(lang==='en'?'Delete this quiz and all its attempts?':'Supprimer ce quiz et toutes ses tentatives ?')) return;
-  btn.disabled = true;
-  try {
-    await fetch('api_quiz.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},body:JSON.stringify({action:'delete_quiz',id})}).then(r=>r.json());
-    await renderQuizzes();
-    showToast(lang==='en'?'Quiz deleted':'Quiz supprimé');
-  } catch(e) { showToast(e.message); } finally { btn.disabled = false; }
+  openConfirmModal(lang==='en'?'Delete this quiz and all its attempts?':'Supprimer ce quiz et toutes ses tentatives ?', async () => {
+    btn.disabled = true;
+    try {
+      await fetch('api_quiz.php',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},body:JSON.stringify({action:'delete_quiz',id})}).then(r=>r.json());
+      await renderQuizzes();
+      showToast(lang==='en'?'Quiz deleted':'Quiz supprimé');
+    } catch(e) { showToast(e.message); } finally { btn.disabled = false; }
+  });
 }
 
 async function viewQuizResults(quizId, title) {
@@ -1863,6 +1885,29 @@ function openModal(type) {
 function closeModal(type) {
   document.getElementById('modal-' + type).classList.remove('open');
 }
+
+let _confirmCallback = null;
+function openConfirmModal(msg, onConfirm) {
+  _confirmCallback = onConfirm;
+  const lang = currentLang;
+  document.getElementById('confirm-modal-title').textContent = lang === 'fr' ? 'Confirmer' : 'Confirm';
+  document.getElementById('confirm-modal-body').textContent  = msg;
+  document.getElementById('confirm-cancel-btn').textContent  = T[lang].modalCancel;
+  document.getElementById('confirm-ok-text').textContent     = lang === 'fr' ? 'Supprimer' : 'Delete';
+  document.getElementById('modal-confirm').classList.add('open');
+}
+function closeConfirmModal() {
+  document.getElementById('modal-confirm').classList.remove('open');
+  _confirmCallback = null;
+}
+function confirmAction() {
+  const cb = _confirmCallback;
+  closeConfirmModal();
+  if (cb) cb();
+}
+document.getElementById('modal-confirm')?.addEventListener('click', function(e) {
+  if (e.target === this) closeConfirmModal();
+});
 
 /* ── Teacher course selector ── */
 let TEACHER_COURSES = [];
@@ -2903,8 +2948,8 @@ async function submitPost() {
   }
 }
 
-async function deletePost(id) {
-  if (!confirm(T[currentLang].postsDeleteConfirm)) return;
+function deletePost(id) {
+  openConfirmModal(T[currentLang].postsDeleteConfirm, async () => {
   try {
     const res  = await fetch('api_lesson_posts.php', {
       method:  'POST',
@@ -2916,6 +2961,7 @@ async function deletePost(id) {
     showToast(T[currentLang].toastPostDeleted);
     loadPosts();
   } catch(e) { showToast((currentLang==='en'?'Error: ':'Erreur : ') + e.message); }
+  });
 }
 
 let _editPostId = null;
