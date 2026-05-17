@@ -1470,9 +1470,6 @@ function confirmAction() {
   if (cb) cb();
 }
 
-async function refreshData() {
-}
-
 function showToast(msg, type='default') {
   const toast = document.getElementById('toast');
   const dot   = document.getElementById('toast-dot');
