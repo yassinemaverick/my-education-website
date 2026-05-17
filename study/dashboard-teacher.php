@@ -1310,6 +1310,10 @@ function applyTranslations() {
 }
 
 function navigate(page, el) {
+  // Close any open overlays so they don't obscure the destination page
+  closeNotifPanel();
+  profileMenuOpen = false;
+  document.getElementById('profile-menu').classList.remove('open');
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
@@ -2045,7 +2049,9 @@ async function changePassword() {
   const errEl   = document.getElementById('pwd-error');
   const btnText = document.getElementById('pwd-btn-text');
   errEl.style.display = 'none';
-  if (!cur || !nw || !conf) { errEl.textContent = T[currentLang].toastServerError; errEl.style.display=''; return; }
+  if (!cur || !nw || !conf) { errEl.textContent = currentLang==='en'?'All fields are required.':'Tous les champs sont requis.'; errEl.style.display=''; return; }
+  if (nw !== conf) { errEl.textContent = currentLang==='en'?'Passwords do not match.':'Les mots de passe ne correspondent pas.'; errEl.style.display=''; return; }
+  if (nw.length < 8) { errEl.textContent = currentLang==='en'?'Password must be at least 8 characters.':'Le mot de passe doit contenir au moins 8 caractères.'; errEl.style.display=''; return; }
   btnText.textContent = '…';
   document.getElementById('pwd-btn').disabled = true;
   try {
