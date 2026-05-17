@@ -1963,14 +1963,6 @@ async function submitNewAssign() {
   }
 }
 
-function submitNewQuiz() {
-  const title = document.getElementById('new-quiz-title').value.trim();
-  if(!title) return;
-  closeModal('quiz');
-  document.getElementById('new-quiz-title').value = '';
-  showToast(T[currentLang].toastQuizCreated);
-}
-
 async function saveProfile() {
   const name = document.getElementById('pref-name').value.trim();
   const btn  = document.getElementById('save-btn');
