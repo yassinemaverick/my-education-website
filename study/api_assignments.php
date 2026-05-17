@@ -251,7 +251,28 @@ try {
             $sub['initials'] = $init ?: '?';
         } unset($sub);
 
-        echo json_encode(['ok'=>true,'assignment'=>$assignment,'submissions'=>$submissions], JSON_UNESCAPED_UNICODE);
+        // Students enrolled in the same course who have not submitted
+        $notStmt = $pdo->prepare("
+            SELECT u.id, u.full_name AS student_name, u.username
+            FROM student_courses sc
+            JOIN users u ON u.id = sc.student_id
+            WHERE sc.course_id = ?
+              AND u.id NOT IN (
+                  SELECT student_id FROM assignment_submissions WHERE assignment_id = ?
+              )
+            ORDER BY u.full_name
+        ");
+        $notStmt->execute([$assignment['course_id'], $aId]);
+        $notSubmitted = $notStmt->fetchAll();
+
+        foreach ($notSubmitted as &$ns) {
+            $parts = preg_split('/\s+/', trim($ns['student_name'] ?: $ns['username']));
+            $init = '';
+            foreach (array_slice($parts,0,2) as $p) $init .= mb_strtoupper(mb_substr($p,0,1));
+            $ns['initials'] = $init ?: '?';
+        } unset($ns);
+
+        echo json_encode(['ok'=>true,'assignment'=>$assignment,'submissions'=>$submissions,'not_submitted'=>$notSubmitted], JSON_UNESCAPED_UNICODE);
         exit;
     }
 

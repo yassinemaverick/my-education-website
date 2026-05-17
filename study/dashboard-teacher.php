@@ -1077,6 +1077,7 @@ const T = {
     scorePlaceholder:'Note /100', commentPlaceholder:"Commentaire pour l'étudiant…",
     yourComment:'Feedback enregistré :', saveGrade:'Enregistrer', gradeSectionLbl:'Corriger :',
     toastGraded:'✅ Correction enregistrée', noSubmissions:'Aucune soumission pour le moment.',
+    submittedSection:'Ont rendu', notSubmittedSection:'N\'ont pas rendu',
     noClassAssigned:'— Aucune classe assignée —', chooseClass:'— Choisir la classe —',
     classLabel:'Classe', validateChooseClass:'Veuillez choisir une classe.',
     validateTitleRequired:'Le titre est requis.', networkError:'❌ Erreur réseau',
@@ -1159,6 +1160,7 @@ const T = {
     scorePlaceholder:'Score /100', commentPlaceholder:'Comment for student…',
     yourComment:'Saved feedback:', saveGrade:'Save', gradeSectionLbl:'Grade:',
     toastGraded:'✅ Grade saved', noSubmissions:'No submissions yet.',
+    submittedSection:'Submitted', notSubmittedSection:'Not submitted yet',
     noClassAssigned:'— No class assigned —', chooseClass:'— Choose a class —',
     classLabel:'Class', validateChooseClass:'Please choose a class.',
     validateTitleRequired:'Title is required.', networkError:'❌ Network error',
@@ -1510,20 +1512,21 @@ async function openSubmissions(assignId) {
     if (metaEl)  metaEl.textContent  = cn + (a.due_date ? ' · ' + T[lang].dueLbl2 + new Date(a.due_date).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'long',year:'numeric'}) : '');
     const backLbl = document.getElementById('back-assign-lbl');
     if (backLbl) backLbl.textContent = T[lang].subBack;
-    renderSubmissions(data.submissions);
+    renderSubmissions(data.submissions, data.not_submitted || []);
   } catch(e) { if(subList) subList.innerHTML = `<div style="color:var(--red);">${T[currentLang].toastNetError}</div>`; }
 }
 
-function renderSubmissions(submissions) {
+function renderSubmissions(submissions, notSubmitted = []) {
   const subList = document.getElementById('submissions-list');
   if (!subList) return;
   const lang = currentLang;
   const tr2 = T[lang];
-  if (!submissions.length) {
-    subList.innerHTML = `<div style="color:var(--muted);text-align:center;padding:2rem;">${tr2.noSubmissions}</div>`;
-    return;
-  }
-  subList.innerHTML = submissions.map(s => {
+
+  let html = '';
+
+  if (submissions.length) {
+    html += `<div style="font-size:.72rem;font-weight:700;color:var(--green);letter-spacing:.06em;text-transform:uppercase;padding:.5rem 0 .25rem;">${tr2.submittedSection} (${submissions.length})</div>`;
+    html += submissions.map(s => {
     const date = new Date(s.submitted_at).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
     const scoreBadge = s.score!=null ? `<span style="background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:100px;font-family:var(--font);">📊 ${s.score}/100</span>` : '';
     const fbBlock = s.teacher_comment ? `<div style="margin-top:.4rem;padding:.5rem .75rem;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:8px;font-size:.8rem;"><strong style="color:var(--purple);font-size:.72rem;display:block;margin-bottom:.2rem;">${tr2.yourComment}</strong>${escHtml(s.teacher_comment)}</div>` : '';
@@ -1549,7 +1552,24 @@ function renderSubmissions(submissions) {
         </div>
       </div>
     </div>`;
-  }).join('');
+    }).join('');
+  }
+
+  if (notSubmitted.length) {
+    html += `<div style="font-size:.72rem;font-weight:700;color:var(--red);letter-spacing:.06em;text-transform:uppercase;padding:1.25rem 0 .25rem;margin-top:${submissions.length?'.5rem':'0'};">${tr2.notSubmittedSection} (${notSubmitted.length})</div>`;
+    html += notSubmitted.map(s =>
+      `<div style="display:flex;align-items:center;gap:.85rem;padding:.7rem 0;border-bottom:1px solid var(--border2);opacity:.7;">
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(232,93,117,.1);border:1.5px solid rgba(232,93,117,.3);display:inline-flex;align-items:center;justify-content:center;font-family:var(--font);font-size:.72rem;font-weight:700;color:var(--red);flex-shrink:0;">${escHtml(s.initials)}</div>
+        <div style="font-family:var(--font);font-size:.88rem;font-weight:500;color:var(--muted);">${escHtml(s.student_name||s.username)}</div>
+      </div>`
+    ).join('');
+  }
+
+  if (!submissions.length && !notSubmitted.length) {
+    html = `<div style="color:var(--muted);text-align:center;padding:2rem;">${tr2.noSubmissions}</div>`;
+  }
+
+  subList.innerHTML = html;
 }
 
 function closeSubmissions() {
