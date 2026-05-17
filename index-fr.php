@@ -140,7 +140,7 @@ $t = [
 <div class="stats">
   <div class="stat"><div class="stat-num">3<span>+</span></div><div class="stat-label">Programmes spécialisés</div></div>
   <div class="stat"><div class="stat-num">599<span> Dh</span></div><div class="stat-label">Pour 2,5 mois</div></div>
-  <div class="stat"><div class="stat-num">29<span>h</span></div><div class="stat-label">Heures d'enseignement</div></div>
+  <div class="stat"><div class="stat-num">30<span>h</span></div><div class="stat-label">Heures d'enseignement</div></div>
   <div class="stat"><div class="stat-num">9–12</div><div class="stat-label">Étudiants par classe</div></div>
   <div class="stat"><div class="stat-num" id="stat-student-count">—</div><div class="stat-label">Apprenants inscrits</div></div>
 </div>
@@ -199,7 +199,7 @@ $t = [
         <li>Vocabulaire professionnel pour e-mails, réunions &amp; négociations</li>
         <li>Techniques de présentation et prise de parole en milieu pro</li>
         <li>Terminologie spécifique à votre secteur d'activité</li>
-        <li>~29 heures d'enseignement (deux séances de 1h30 par semaine)</li>
+        <li>~30 heures d'enseignement (deux séances de 1h30 par semaine)</li>
         <li>9 à 12 étudiants par classe — séances Zoom en direct</li>
         <li>Exercices, devoirs et évaluations</li>
         <li>Certificat à l'issue du cours</li>
@@ -221,7 +221,7 @@ $t = [
         <li>Les quatre compétences : oral, écoute, lecture &amp; écriture</li>
         <li>Exercices de grammaire et enrichissement du vocabulaire</li>
         <li>Pratique conversationnelle pour les situations du quotidien</li>
-        <li>~29 heures d'enseignement (deux séances de 1h30 par semaine)</li>
+        <li>~30 heures d'enseignement (deux séances de 1h30 par semaine)</li>
         <li>9 à 12 étudiants par classe — séances Zoom en direct</li>
         <li>Exercices, devoirs et évaluations</li>
         <li>Certificat à l'issue du cours</li>
@@ -243,7 +243,7 @@ $t = [
         <li>Vrais sujets du Bac avec entraînements chronométrés</li>
         <li>Techniques de rédaction adaptées au format de l'examen national</li>
         <li>Coaching en compréhension et expression orales</li>
-        <li>~29 heures d'enseignement (deux séances de 1h30 par semaine)</li>
+        <li>~30 heures d'enseignement (deux séances de 1h30 par semaine)</li>
         <li>9 à 12 étudiants par classe — séances Zoom en direct</li>
         <li>Exercices, devoirs et évaluations</li>
         <li>Certificat à l'issue du cours</li>

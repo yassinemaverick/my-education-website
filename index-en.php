@@ -140,7 +140,7 @@ $t = [
 <div class="stats">
   <div class="stat"><div class="stat-num">3<span>+</span></div><div class="stat-label">Specialized programs</div></div>
   <div class="stat"><div class="stat-num">599<span> Dh</span></div><div class="stat-label">Per 2.5 months</div></div>
-  <div class="stat"><div class="stat-num">29<span>h</span></div><div class="stat-label">Hours of instruction</div></div>
+  <div class="stat"><div class="stat-num">30<span>h</span></div><div class="stat-label">Hours of instruction</div></div>
   <div class="stat"><div class="stat-num">9–12</div><div class="stat-label">Students per class</div></div>
   <div class="stat"><div class="stat-num" id="stat-student-count">—</div><div class="stat-label">Enrolled learners</div></div>
 </div>
@@ -199,7 +199,7 @@ $t = [
         <li>Professional vocabulary for emails, meetings &amp; negotiations</li>
         <li>Presentation skills and workplace speaking confidence</li>
         <li>Industry-specific language for your sector</li>
-        <li>~29 hours of instruction (two 1.5-hour sessions per week)</li>
+        <li>~30 hours of instruction (two 1.5-hour sessions per week)</li>
         <li>9 to 12 students per class — live Zoom sessions</li>
         <li>Exercises, homework, and tests</li>
         <li>Certificate upon completion</li>
@@ -221,7 +221,7 @@ $t = [
         <li>All four skills: speaking, listening, reading &amp; writing</li>
         <li>Grammar drills and practical vocabulary expansion</li>
         <li>Conversational practice for everyday real-life situations</li>
-        <li>~29 hours of instruction (two 1.5-hour sessions per week)</li>
+        <li>~30 hours of instruction (two 1.5-hour sessions per week)</li>
         <li>9 to 12 students per class — live Zoom sessions</li>
         <li>Exercises, homework, and tests</li>
         <li>Certificate upon completion</li>
@@ -243,7 +243,7 @@ $t = [
         <li>Real past Bac papers with timed practice exams</li>
         <li>Essay writing techniques for the national exam format</li>
         <li>Oral comprehension and expression coaching</li>
-        <li>~29 hours of instruction (two 1.5-hour sessions per week)</li>
+        <li>~30 hours of instruction (two 1.5-hour sessions per week)</li>
         <li>9 to 12 students per class — live Zoom sessions</li>
         <li>Exercises, homework, and tests</li>
         <li>Certificate upon completion</li>
