@@ -1068,6 +1068,26 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 <!-- TOAST -->
 <div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg"></span></div>
 
+<!-- RETRACT CONFIRM MODAL -->
+<div class="modal-overlay" id="modal-retract" role="dialog" aria-modal="true" aria-labelledby="retract-modal-title">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <h3 id="retract-modal-title">Retract submission</h3>
+      <button class="btn-close" onclick="closeRetractModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="retract-modal-body" style="color:var(--muted);font-size:.9rem;margin:0;">Retract this submission?</p>
+    </div>
+    <div class="modal-footer" style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;">
+      <button class="btn-secondary" onclick="closeRetractModal()" id="retract-cancel-btn">Cancel</button>
+      <button onclick="confirmRetract()" id="retract-confirm-btn"
+        style="padding:.55rem 1.1rem;border-radius:10px;border:none;background:#ef4444;color:#fff;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;">
+        <span id="retract-btn-text">Retract</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- SUBMIT MODAL -->
 <div class="modal-overlay" id="modal-submit" role="dialog" aria-modal="true" aria-labelledby="submit-modal-title">
   <div class="modal">
@@ -1702,7 +1722,7 @@ function renderAssignments() {
               ${tr.badgeSubmitted}
               ${a.submitted_at ? `<span style="color:var(--muted);font-weight:400;">· ${formatRelativeTime(a.submitted_at, currentLang)}</span>` : ''}
             </div>
-            ${a.score === null ? `<button onclick="retractSubmission(${a.id})"
+            ${a.score === null ? `<button onclick="openRetractModal(${a.id})"
               style="font-size:.75rem;padding:.3rem .7rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-family:var(--font);"
               onmouseenter="this.style.color='var(--white)'" onmouseleave="this.style.color='var(--muted)'"
               title="${tr.retractTitle}">
@@ -2478,8 +2498,30 @@ async function loadAnnouncements() {
   }
 }
 
+let _retractAid = null;
+function openRetractModal(aid) {
+  _retractAid = aid;
+  const tr = T[currentLang];
+  document.getElementById('retract-modal-title').textContent = tr.retractTitle;
+  document.getElementById('retract-modal-body').textContent  = tr.retractConfirm;
+  document.getElementById('retract-btn-text').textContent    = tr.retractBtn;
+  document.getElementById('retract-cancel-btn').textContent  = tr.cancelBtn;
+  document.getElementById('modal-retract').classList.add('open');
+}
+function closeRetractModal() {
+  document.getElementById('modal-retract').classList.remove('open');
+  _retractAid = null;
+}
+document.getElementById('modal-retract')?.addEventListener('click', function(e) {
+  if (e.target === this) closeRetractModal();
+});
+function confirmRetract() {
+  const aid = _retractAid;
+  closeRetractModal();
+  if (aid !== null) retractSubmission(aid);
+}
+
 async function retractSubmission(aid) {
-  if (!confirm(T[currentLang].retractConfirm)) return;
 
   try {
     const res = await fetch('api_submit.php?action=unsubmit', {
