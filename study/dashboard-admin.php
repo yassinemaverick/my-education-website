@@ -2683,7 +2683,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setLang(lang);
 
   // Restore last active page after refresh
-  const validPages = ['home','users','inscriptions','classes','assigning-classes','schedule','settings'];
+  const validPages = ['home','users','inscriptions','classes','assigning-classes','schedule','announcements','placement','settings'];
   const savedPage  = sessionStorage.getItem('upskill_admin_page');
   if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
     const navEl = document.getElementById('nav-' + savedPage);
