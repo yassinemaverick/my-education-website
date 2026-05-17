@@ -1033,7 +1033,7 @@ const T = {
     attentionTitle:'Étudiants à surveiller ⚠️',
     activityTitle:'Activité récente', activityEmpty:'Aucune activité récente.',
     todayClassesTitle:"📅 Cours d'aujourd'hui", todayNoClasses:'Aucun cours prévu aujourd\'hui.', todayZoomPlaceholder:'https://zoom.us/j/...', todayZoomLbl:'Lien Zoom', todayZoomHint:'Ce lien sera visible par vos étudiants dans "Ma classe".', todayZoomSave:'Enregistrer', todaySaving:'…', todayZoomSaved:'✔ Enregistré', todayStudents:'étudiant(s)',
-    studentsPageTitle:'Étudiants', studentsPageSub:'24 étudiants inscrits · Session 2',
+    studentsPageTitle:'Étudiants',
     thName:'Étudiant', thProgress:'Progression', thAssigns:'Devoirs', thAvg:'Moyenne', thStatus:'Statut',
     statusGood:'Bon niveau', statusWarn:'À surveiller', statusLow:'En difficulté',
     assignPageTitle:'Devoirs', assignPageSub:'5 devoirs actifs · 8 soumissions en attente de correction',
@@ -1115,7 +1115,7 @@ const T = {
     attentionTitle:'Students to watch ⚠️',
     activityTitle:'Recent activity', activityEmpty:'No recent activity.',
     todayClassesTitle:'📅 Classes Today', todayNoClasses:'No classes scheduled for today.', todayZoomPlaceholder:'https://zoom.us/j/...', todayZoomLbl:'Zoom link', todayZoomHint:"This link will be visible to your students in 'My Class'.", todayZoomSave:'Save', todaySaving:'…', todayZoomSaved:'✔ Saved', todayStudents:'student(s)',
-    studentsPageTitle:'Students', studentsPageSub:'24 enrolled students · Session 2',
+    studentsPageTitle:'Students',
     thName:'Student', thProgress:'Progress', thAssigns:'Assignments', thAvg:'Average', thStatus:'Status',
     statusGood:'On track', statusWarn:'Needs attention', statusLow:'Struggling',
     assignPageTitle:'Assignments', assignPageSub:'5 active assignments · 8 submissions pending review',
@@ -1222,7 +1222,7 @@ function applyTranslations() {
   set('attention-title', tr.attentionTitle); set('activity-title', tr.activityTitle);
   set('today-classes-title', tr.todayClassesTitle);
   if (_cachedTodayGroups !== null) renderTodayClasses(); else loadTodayClasses();
-  set('students-page-title', tr.studentsPageTitle); set('students-page-sub', tr.studentsPageSub);
+  set('students-page-title', tr.studentsPageTitle);
   set('th-name', tr.thName); set('th-progress', tr.thProgress); set('th-assigns', tr.thAssigns); set('th-avg', tr.thAvg); set('th-status', tr.thStatus);
   set('assign-page-title', tr.assignPageTitle); set('assign-page-sub', tr.assignPageSub);
   set('quiz-page-title', tr.quizPageTitle); set('quiz-page-sub', tr.quizPageSub);
