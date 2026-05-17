@@ -1190,7 +1190,7 @@ let _studentQuizzes = [];
 
 /* ── PAGE PERSISTENCE — synchronous, runs before first paint ── */
 (function() {
-  const _valid = ['home','myclass','assignments','feed','quizzes','progress','howto','settings'];
+  const _valid = ['home','myclass','assignments','feed','quizzes','progress','howto','settings','announcements'];
   const _saved = sessionStorage.getItem('upskill_page_s');
   if (_saved && _valid.includes(_saved) && _saved !== 'home') {
     const _home   = document.getElementById('page-home');
