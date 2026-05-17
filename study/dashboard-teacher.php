@@ -1026,6 +1026,7 @@ const T = {
     postsEmptyTxt:'Publiez votre premier résumé de cours ci-dessus.',
     postsDeleteConfirm:'Supprimer cette note ?', toastPostPublished:'Note publiée !', toastPostDeleted:'Note supprimée.', editPost:'Mettre à jour',
     teacherChip:'Prof', roleLabel:'Professeur', logout:'Déconnexion',
+    pmName:'Changer le prénom', pmAvatar:"Changer l'avatar",
     welcomeMsg:'Bonjour, ', welcomeSub:'',
     stat1:'Étudiants actifs', stat2:'Devoirs à corriger', stat3:'Moyenne de la classe', stat4:'Devoirs publiés',
     btnNewAssign:'+ Nouveau devoir', btnNewQuiz:'+ Créer un quiz',
@@ -1109,6 +1110,7 @@ const T = {
     postsEmptyTxt:'Publish your first lesson summary above.',
     postsDeleteConfirm:'Delete this note?', toastPostPublished:'Note published!', toastPostDeleted:'Note deleted.', editPost:'Update note',
     teacherChip:'Teacher', roleLabel:'Teacher', logout:'Log out',
+    pmName:'Change first name', pmAvatar:'Change avatar',
     welcomeMsg:'Hello, ', welcomeSub:'',
     stat1:'Active students', stat2:'Assignments to grade', stat3:'Class average', stat4:'Assignments posted',
     btnNewAssign:'+ New assignment', btnNewQuiz:'+ Create quiz',
@@ -1212,11 +1214,11 @@ function applyTranslations() {
   set('nav-assign-lbl', tr.navAssign); set('nav-posts-lbl', tr.navPosts); set('nav-quiz-lbl', tr.navQuiz);
   set('nav-grades-lbl', tr.navGrades); set('nav-set-lbl', tr.navSet);
   set('role-label', tr.roleLabel); set('logout-lbl', tr.logout);
-  set('btn-new-assign', tr.btnNewAssign); set('btn-new-assign2', '');
+  set('btn-new-assign', tr.btnNewAssign);
   const btn2 = document.getElementById('btn-new-assign2'); if(btn2) btn2.innerHTML = '+ <span id="new-assign-lbl">' + tr.newAssignLbl + '</span>';
   const btnQ = document.getElementById('btn-new-quiz'); if(btnQ) btnQ.innerHTML = '+ <span id="new-quiz-lbl">' + tr.newQuizLbl + '</span>';
   const wn = document.getElementById('sidebar-name');
-  set('welcome-msg', ''); const wm = document.getElementById('welcome-msg');
+  const wm = document.getElementById('welcome-msg');
   if(wm) wm.innerHTML = tr.welcomeMsg + '<span id="welcome-name">' + (wn ? wn.textContent.split(' ')[0] : '') + '</span> 👋';
   set('welcome-sub', tr.welcomeSub);
   set('stat1-lbl', tr.stat1); set('stat2-lbl', tr.stat2); set('stat3-lbl', tr.stat3); set('stat4-lbl', tr.stat4);
@@ -1224,6 +1226,7 @@ function applyTranslations() {
   set('attention-title', tr.attentionTitle); set('activity-title', tr.activityTitle);
   set('today-classes-title', tr.todayClassesTitle);
   if (_cachedTodayGroups !== null) renderTodayClasses(); else loadTodayClasses();
+  if (_cachedActivity !== null) renderActivityFeed(_cachedActivity); else loadActivityFeed();
   set('students-page-title', tr.studentsPageTitle);
   set('th-name', tr.thName); set('th-progress', tr.thProgress); set('th-assigns', tr.thAssigns); set('th-avg', tr.thAvg); set('th-status', tr.thStatus);
   set('assign-page-title', tr.assignPageTitle); set('assign-page-sub', tr.assignPageSub);
@@ -1269,7 +1272,6 @@ function applyTranslations() {
   renderAttention(); renderAssignments(); renderQuizzes(); renderGrades();
   renderAttendance(); renderCourses(); renderTeacherGroups(); renderTeacherSchedule();
   if (_cachedPosts !== null) renderPostsList(_cachedPosts);
-  loadActivityFeed();
   // Translate subject dropdown options
   document.querySelectorAll('#new-assign-subject option').forEach(opt => {
     const txt = opt.getAttribute('data-' + currentLang) || opt.getAttribute('data-fr');
@@ -1301,9 +1303,12 @@ function navigate(page, el) {
 
   if (page === 'courses')    { teacherClassView='types'; teacherSelType=null; teacherSelLevel=null; _coursesTabUI('groups'); renderCourses(); loadTeacherGroups(); }
   if (page === 'attendance') { if (teacherGroups.length === 0) loadTeacherGroups(); }
-  if (page === 'posts')      loadPosts();
-  if (page === 'grades')     loadGrades();
-  if (page === 'home')       { loadActivityFeed(); loadTodayClasses(); }
+  if (page === 'posts')      { if (_cachedPosts !== null) renderPostsList(_cachedPosts); else loadPosts(); }
+  if (page === 'grades')     { if (_gradesLoaded) renderGrades(); else loadGrades(); }
+  if (page === 'home')       {
+    if (_cachedActivity !== null) renderActivityFeed(_cachedActivity); else loadActivityFeed();
+    if (_cachedTodayGroups !== null) renderTodayClasses(); else loadTodayClasses();
+  }
   if (window.innerWidth <= 768) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-backdrop').classList.remove('open');
@@ -1865,6 +1870,7 @@ async function loadGrades() {
       return;
     }
     GRADES_LIVE = data.grades || [];
+    _gradesLoaded = true;
     renderGrades();
   } catch(e) {
     tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red);text-align:center;">${T[lang].toastNetError}</td></tr>`;
@@ -2397,8 +2403,10 @@ let teacherGroups    = [];
 let teacherClassView = 'types'; // 'types' | 'levels' | 'groups'
 let teacherSelType   = null;
 let teacherSelLevel  = null;
-let _cachedPosts     = null;   // cached for lang-switch re-render
+let _cachedPosts       = null; // cached for lang-switch re-render
 let _cachedTodayGroups = null; // cached for lang-switch re-render
+let _cachedActivity    = null; // cached for lang-switch re-render
+let _gradesLoaded      = false;
 
 async function loadTeacherGroups() {
   teacherGroups = [];
@@ -3277,27 +3285,34 @@ async function saveTodayZoom(courseId) {
   }
 }
 
+function renderActivityFeed(items) {
+  const list = document.getElementById('activity-list');
+  if (!list) return;
+  if (!items || !items.length) {
+    list.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${T[currentLang].activityEmpty}</div>`;
+    return;
+  }
+  list.innerHTML = items.map(item => {
+    const dotCol = ACT_DOT_COLORS[item.type] || 'blue';
+    const date   = new Date(item.created_at + 'Z').toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+    return `<div class="activity-item">
+      <div class="activity-dot ${dotCol}"></div>
+      <div>
+        <div class="activity-text">${escHtml(item.description)}</div>
+        <div class="activity-time">${date}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
 async function loadActivityFeed() {
   const list = document.getElementById('activity-list');
   if (!list) return;
   try {
     const res  = await fetch('api_assignments.php?action=activity');
     const data = await res.json();
-    if (!data.ok || !data.activity || !data.activity.length) {
-      list.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">${T[currentLang].activityEmpty}</div>`;
-      return;
-    }
-    list.innerHTML = data.activity.map(item => {
-      const dotCol = ACT_DOT_COLORS[item.type] || 'blue';
-      const date   = new Date(item.created_at + 'Z').toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
-      return `<div class="activity-item">
-        <div class="activity-dot ${dotCol}"></div>
-        <div>
-          <div class="activity-text">${escHtml(item.description)}</div>
-          <div class="activity-time">${date}</div>
-        </div>
-      </div>`;
-    }).join('');
+    _cachedActivity = (data.ok && data.activity) ? data.activity : [];
+    renderActivityFeed(_cachedActivity);
   } catch(e) {
     const list2 = document.getElementById('activity-list');
     if (list2) list2.innerHTML = `<div style="color:var(--muted);font-size:.85rem;padding:.5rem 0;">—</div>`;
@@ -3466,15 +3481,11 @@ function toggleProfileMenu(e) {
 }
 
 function applyProfileMenuTranslations() {
-  const PM = {
-    fr: { name:"Changer le prénom", avatar:"Changer l'avatar", logout:"Déconnexion" },
-    en: { name:"Change first name",  avatar:"Change avatar",    logout:"Log out" },
-  };
-  const t = PM[currentLang] || PM.en;
+  const tr = T[currentLang];
   const s = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
-  s('pm-name-lbl',   t.name);
-  s('pm-avatar-lbl', t.avatar);
-  s('pm-logout-lbl', t.logout);
+  s('pm-name-lbl',   tr.pmName);
+  s('pm-avatar-lbl', tr.pmAvatar);
+  s('pm-logout-lbl', tr.logout);
 }
 
 function profileMenuAction(action) {
