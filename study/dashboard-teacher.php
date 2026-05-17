@@ -1263,6 +1263,7 @@ function applyTranslations() {
   set('att-unsaved-txt', tr.attUnsavedTxt); set('att-save-now-lbl', tr.attSaveNowLbl);
   set('att-th-student', tr.attThStudent); set('att-th-sessions', tr.attThSessions); set('att-th-total', tr.attThTotal);
   set('att-group-lbl', tr.attGroupLbl);
+  populateAttGroupSelect();
   renderAttention(); renderAssignments(); renderQuizzes(); renderGrades();
   renderAttendance(); renderCourses(); renderTeacherGroups(); renderTeacherSchedule();
   if (_cachedPosts !== null) renderPostsList(_cachedPosts);
