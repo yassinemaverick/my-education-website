@@ -1517,8 +1517,8 @@ async function openSubmissions(assignId) {
     if (!data.ok) { if(subList) subList.innerHTML = `<div style="color:var(--red);">${T[currentLang].errorLoading}</div>`; return; }
     const a    = data.assignment;
     const lang = currentLang;
-    const title = a.title_fr;
-    const cn    = (a.group_name_fr||'');
+    const title = lang === 'en' ? (a.title_en || a.title_fr) : a.title_fr;
+    const cn    = lang === 'en' ? (a.group_name_en || a.group_name_fr || '') : (a.group_name_fr || '');
     if (titleEl) titleEl.textContent = title;
     if (metaEl)  metaEl.textContent  = cn + (a.due_date ? ' · ' + T[lang].dueLbl2 + new Date(a.due_date).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'long',year:'numeric'}) : '');
     const backLbl = document.getElementById('back-assign-lbl');
