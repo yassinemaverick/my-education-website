@@ -647,12 +647,13 @@ body.ar .notif-panel { right:auto; left:1rem; }
 .notif-panel.open { display:block; }
 .notif-panel-header { display:flex; align-items:center; justify-content:space-between; padding:.9rem 1.1rem; border-bottom:1px solid var(--border); }
 .notif-panel-title { font-family:var(--font); font-size:.82rem; font-weight:700; color:var(--white); }
-.notif-mark-all { font-family:var(--font); font-size:.72rem; color:var(--blue); cursor:pointer; background:none; border:none; padding:0; }
+.notif-mark-all { font-family:var(--font); font-size:.72rem; color:var(--blue); cursor:pointer; background:none; border:none; padding:0; user-select:none; }
 .notif-mark-all:hover { text-decoration:underline; }
 .notif-list { max-height:320px; overflow-y:auto; }
-.notif-item { display:flex; gap:.75rem; padding:.85rem 1.1rem; border-bottom:1px solid rgba(30,27,75,.05); cursor:pointer; transition:background .15s; align-items:flex-start; }
-.notif-item:hover { background:rgba(30,27,75,.03); }
-.notif-item.unread { background:rgba(59,130,246,.04); }
+.notif-item { display:flex; gap:.75rem; padding:.85rem 1.1rem; border-bottom:1px solid rgba(30,27,75,.05); cursor:pointer; transition:background .15s; align-items:flex-start; user-select:none; -webkit-user-select:none; }
+.notif-item:hover { background:rgba(59,130,246,.08); }
+.notif-item:active { background:rgba(59,130,246,.15); }
+.notif-item.unread { background:rgba(59,130,246,.06); border-left:3px solid var(--blue); }
 .notif-icon { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
 .notif-icon.new_assignment { background:rgba(59,130,246,.1); }
 .notif-icon.overdue { background:rgba(245,158,11,.1); }
@@ -2878,6 +2879,15 @@ function markOneRead(id, el) {
     headers:{'X-CSRF-Token':_csrf},
     body: new URLSearchParams({ action:'mark_one', id })
   }).catch(() => {});
+  // Navigate to relevant page and close panel
+  closeNotifPanel();
+  const typeNav = {
+    new_assignment:'assignments', overdue:'assignments',
+    lesson_note:'feed', announcement:'announcements',
+    quiz:'quizzes', message:'home'
+  };
+  const dest = n ? (typeNav[n.type] || 'home') : 'home';
+  navigate(dest);
 }
 
 // Poll for new notifications every 60 seconds
