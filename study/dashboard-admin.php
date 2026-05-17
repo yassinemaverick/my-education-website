@@ -909,6 +909,26 @@ body.ar .toast { right:auto; left:2rem; font-family:var(--font-ar); }
   </div>
 </div>
 
+<!-- ── MODAL: CONFIRM ── -->
+<div class="modal-overlay" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+  <div class="modal md">
+    <div class="modal-header">
+      <h3 id="confirm-modal-title">Confirmer</h3>
+      <button class="modal-close" onclick="closeConfirmModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <p id="confirm-modal-body" style="color:var(--muted);font-size:.9rem;margin:0;"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeConfirmModal()" id="confirm-cancel-btn">Annuler</button>
+      <button onclick="confirmAction()" id="confirm-ok-btn"
+        style="padding:.55rem 1.1rem;border-radius:10px;border:none;background:#ef4444;color:#fff;font-family:var(--font);font-size:.85rem;font-weight:600;cursor:pointer;">
+        <span id="confirm-ok-text">Supprimer</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- SIDEBAR BACKDROP -->
 <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
 <!-- TOAST -->
@@ -1544,6 +1564,26 @@ async function submitAddUser() {
 function openModal(id)  { document.getElementById('modal-' + id).classList.add('open'); }
 function closeModal(id) { document.getElementById('modal-' + id).classList.remove('open'); }
 
+let _confirmCallback = null;
+function openConfirmModal(msg, onConfirm) {
+  _confirmCallback = onConfirm;
+  const lang = currentLang;
+  document.getElementById('confirm-modal-title').textContent = lang === 'en' ? 'Confirm' : 'Confirmer';
+  document.getElementById('confirm-modal-body').textContent  = msg;
+  document.getElementById('confirm-cancel-btn').textContent  = tr().cancelBtn;
+  document.getElementById('confirm-ok-text').textContent     = tr().deleteBtn;
+  document.getElementById('modal-confirm').classList.add('open');
+}
+function closeConfirmModal() {
+  document.getElementById('modal-confirm').classList.remove('open');
+  _confirmCallback = null;
+}
+function confirmAction() {
+  const cb = _confirmCallback;
+  closeConfirmModal();
+  if (cb) cb();
+}
+
 async function refreshData() {
 }
 
@@ -1716,15 +1756,16 @@ async function acceptEnrollment(id) {
   }
 }
 
-async function deleteEnrollment(id) {
-  if (!confirm(tr().confirmDeleteEnroll)) return;
-  try {
-    await api('api_students.php?action=delete_enrollment', 'POST', { id });
-    showToast(tr().toastEnrollDeleted, 'success');
-    await loadEnrollments();
-  } catch(e) {
-    showToast(e.message || tr().errNetwork, 'error');
-  }
+function deleteEnrollment(id) {
+  openConfirmModal(tr().confirmDeleteEnroll, async () => {
+    try {
+      await api('api_students.php?action=delete_enrollment', 'POST', { id });
+      showToast(tr().toastEnrollDeleted, 'success');
+      await loadEnrollments();
+    } catch(e) {
+      showToast(e.message || tr().errNetwork, 'error');
+    }
+  });
 }
 
 function exportEnrollmentsCSV() {
@@ -1992,13 +2033,14 @@ async function submitAddGroup() {
   } finally { btn.disabled = false; }
 }
 
-async function deleteGroup(groupId) {
-  if (!confirm(tr().confirmDeleteGroup)) return;
-  try {
-    await api('api_classes.php', 'POST', {action:'delete_group', group_id:groupId});
-    showToast(tr().toastGroupDeleted);
-    await loadGroupChips();
-  } catch(e) { showToast(e.message, 'error'); }
+function deleteGroup(groupId) {
+  openConfirmModal(tr().confirmDeleteGroup, async () => {
+    try {
+      await api('api_classes.php', 'POST', {action:'delete_group', group_id:groupId});
+      showToast(tr().toastGroupDeleted);
+      await loadGroupChips();
+    } catch(e) { showToast(e.message, 'error'); }
+  });
 }
 
 // Cache for courses list (loaded once per session)
@@ -2347,17 +2389,18 @@ async function createAnnouncement() {
   } finally { btn.disabled = false; }
 }
 
-async function deleteAnnouncement(id, btn) {
-  if (!confirm(tr().annDeleteConfirm)) return;
-  btn.disabled = true;
-  try {
-    await api('api_announcements.php', 'POST', {action:'delete', id});
-    showToast(tr().annDeleted, 'success');
-    await loadAnnouncements();
-  } catch(e) {
-    showToast(e.message, 'error');
-    btn.disabled = false;
-  }
+function deleteAnnouncement(id, btn) {
+  openConfirmModal(tr().annDeleteConfirm, async () => {
+    btn.disabled = true;
+    try {
+      await api('api_announcements.php', 'POST', {action:'delete', id});
+      showToast(tr().annDeleted, 'success');
+      await loadAnnouncements();
+    } catch(e) {
+      showToast(e.message, 'error');
+      btn.disabled = false;
+    }
+  });
 }
 
 function logout() {
@@ -2459,17 +2502,18 @@ function filterPlacement() {
   renderPlacement(filtered);
 }
 
-async function deletePlacement(id, btn) {
-  if (!confirm(tr().confirmDeletePlacement || 'Delete this result?')) return;
-  btn.disabled = true;
-  try {
-    await api('api_placement.php', 'DELETE', { id });
-    showToast(tr().placementDeleted || 'Deleted.', 'success');
-    await loadPlacement();
-  } catch(e) {
-    showToast(e.message, 'error');
-    btn.disabled = false;
-  }
+function deletePlacement(id, btn) {
+  openConfirmModal(tr().confirmDeletePlacement, async () => {
+    btn.disabled = true;
+    try {
+      await api('api_placement.php', 'DELETE', { id });
+      showToast(tr().placementDeleted, 'success');
+      await loadPlacement();
+    } catch(e) {
+      showToast(e.message, 'error');
+      btn.disabled = false;
+    }
+  });
 }
 
 function exportPlacementCSV() {
