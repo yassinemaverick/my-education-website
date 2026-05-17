@@ -3012,9 +3012,7 @@ async function updatePost() {
   }
 }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+
 
 /* ── ACTIVITY FEED ── */
 const ACT_DOT_COLORS = { assignment_created:'blue', submission_graded:'green', assignment_graded:'purple' };
