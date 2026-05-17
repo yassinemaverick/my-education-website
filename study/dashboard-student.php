@@ -1200,6 +1200,7 @@ const T = {
     myclassTeacher:'Professeur :', myclassSchedule:'Horaire :',
     myclassAttLbl:'Taux de présence', myclassEmptyTxt:'Aucun cours assigné',
     myclassNoMates:'Aucun camarade trouvé.', myclassJoinZoom:'Rejoindre le cours',
+    myclassYourGroup:'Votre groupe',
 
     assignPageTitle:'Devoirs', assignPageSub:'3 en attente · 1 en retard · 2 soumis',
     tabAll:'Tous', tabPending:'En attente', tabDone:'Soumis',
@@ -1259,6 +1260,7 @@ const T = {
     myclassTeacher:'Teacher:', myclassSchedule:'Schedule:',
     myclassAttLbl:'Attendance rate', myclassEmptyTxt:'No course assigned yet',
     myclassNoMates:'No classmates found.', myclassJoinZoom:'Join class →',
+    myclassYourGroup:'Your group',
 
     assignPageTitle:'Assignments', assignPageSub:'3 pending · 1 overdue · 2 submitted',
     tabAll:'All', tabPending:'Pending', tabDone:'Submitted',
@@ -1363,9 +1365,6 @@ function applyTranslations() {
   st('myclass-att-lbl', tr.myclassAttLbl);
   st('myclass-empty-txt', tr.myclassEmptyTxt);
   st('myclass-zoom-lbl', tr.myclassJoinZoom);
-
-
-
 
 
 
@@ -1507,6 +1506,13 @@ function renderLeaderboard() {
 
 /* ── MY CLASS ── */
 async function loadMyGroup() {
+  // Use cached data on repeat navigations (reset on full page reload)
+  if (LIVE.myGroups !== undefined) {
+    renderGroupSection();
+    renderGroupMates();
+    return;
+  }
+
   const section = document.getElementById('myclass-group-section');
   if (!section) return;
   section.innerHTML = '<div class="loading-overlay"><div class="spinner"></div></div>';
@@ -1521,11 +1527,6 @@ async function loadMyGroup() {
   if (LIVE.myGroups.length === 0) { section.innerHTML = ''; return; }
 
   renderGroupSection();
-
-  const matesEl = document.getElementById('myclass-mates');
-  if (!matesEl) return;
-  const lang = currentLang;
-  matesEl.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--muted);font-size:.85rem;">${lang==='en'?'Loading…':'Chargement…'}</div>`;
 
   try {
     const mdata = await fetch(`api_classes.php?action=group_classmates&group_id=${LIVE.myGroups[0].group_id}`).then(r => r.json());
@@ -1548,7 +1549,7 @@ function renderGroupSection() {
   }).join('');
   section.innerHTML = `<div class="card" style="padding:1rem 1.25rem;background:linear-gradient(135deg,rgba(62,207,120,.05),rgba(91,156,246,.03));border-color:rgba(62,207,120,.2);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
     <div>
-      <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">${lang==='en'?'Your group':'Votre groupe'}</div>
+      <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">${T[lang].myclassYourGroup}</div>
       <div style="display:flex;gap:.5rem;flex-wrap:wrap;">${badges}</div>
     </div>
   </div>`;
