@@ -37,41 +37,63 @@ try {
         id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         teacher_id   INT UNSIGNED NOT NULL,
         course_id    INT UNSIGNED NOT NULL,
+        group_id     INT UNSIGNED NULL DEFAULT NULL,
         title        VARCHAR(200) NOT NULL,
         session_date DATE NOT NULL,
         link         VARCHAR(500) DEFAULT NULL,
         notes        TEXT DEFAULT NULL,
         created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX idx_lp_course (course_id),
+        INDEX idx_lp_group (group_id),
         INDEX idx_lp_teacher (teacher_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+    try { $pdo->exec("ALTER TABLE lesson_posts ADD COLUMN group_id INT UNSIGNED NULL DEFAULT NULL"); } catch(Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE lesson_posts ADD INDEX idx_lp_group (group_id)"); } catch(Throwable $e) {}
 
     if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
         if ($action === 'list' && $isTeacher) {
             $stmt = $pdo->prepare("
                 SELECT lp.id, lp.title, lp.session_date, lp.link, lp.notes, lp.created_at,
-                       c.group_name_fr, c.group_name_ar, lp.course_id
+                       lp.course_id, lp.group_id,
+                       c.group_name_fr, c.group_name_ar,
+                       cg.type_key, cg.level_number, cg.group_letter
                 FROM   lesson_posts lp
-                JOIN   courses c ON c.id = lp.course_id
+                LEFT JOIN courses c  ON c.id  = lp.course_id
+                LEFT JOIN class_groups cg ON cg.id = lp.group_id
                 WHERE  lp.teacher_id = ?
                 ORDER  BY lp.session_date DESC, lp.created_at DESC
                 LIMIT  100
             ");
             $stmt->execute([$uid]);
-            echo json_encode(['ok' => true, 'posts' => $stmt->fetchAll()], JSON_UNESCAPED_UNICODE);
+            $posts = $stmt->fetchAll();
+            echo json_encode(['ok' => true, 'posts' => $posts], JSON_UNESCAPED_UNICODE);
 
         } elseif ($action === 'feed' && $isStudent) {
+            // Fetch posts linked via new group system OR old course system
             $stmt = $pdo->prepare("
                 SELECT lp.id, lp.title, lp.session_date, lp.link, lp.notes, lp.created_at,
-                       c.group_name_fr, c.group_name_ar, lp.course_id
+                       lp.course_id, lp.group_id,
+                       c.group_name_fr, c.group_name_ar,
+                       cg.type_key, cg.level_number, cg.group_letter
                 FROM   lesson_posts lp
-                JOIN   courses c ON c.id = lp.course_id
-                JOIN   student_courses sc ON sc.course_id = lp.course_id AND sc.student_id = ?
+                LEFT JOIN courses c      ON c.id  = lp.course_id
+                LEFT JOIN class_groups cg ON cg.id = lp.group_id
+                WHERE (
+                    (lp.group_id IS NOT NULL AND EXISTS (
+                        SELECT 1 FROM class_group_members cgm
+                        WHERE cgm.group_id = lp.group_id AND cgm.user_id = ?
+                    ))
+                    OR
+                    (lp.group_id IS NULL AND lp.course_id IS NOT NULL AND EXISTS (
+                        SELECT 1 FROM student_courses sc
+                        WHERE sc.course_id = lp.course_id AND sc.student_id = ?
+                    ))
+                )
                 ORDER  BY lp.session_date DESC, lp.created_at DESC
                 LIMIT  50
             ");
-            $stmt->execute([$uid]);
+            $stmt->execute([$uid, $uid]);
             echo json_encode(['ok' => true, 'posts' => $stmt->fetchAll()], JSON_UNESCAPED_UNICODE);
 
         } else {
@@ -82,13 +104,14 @@ try {
         csrf_verify();
 
         if ($action === 'create' && $isTeacher) {
-            $courseId = (int)($bodyData['course_id'] ?? 0);
+            $groupId  = isset($bodyData['group_id'])  ? (int)$bodyData['group_id']  : 0;
+            $courseId = isset($bodyData['course_id']) ? (int)$bodyData['course_id'] : 0;
             $title    = trim($bodyData['title'] ?? '');
             $date     = trim($bodyData['session_date'] ?? '');
             $link     = trim($bodyData['link'] ?? '') ?: null;
             $notes    = trim($bodyData['notes'] ?? '') ?: null;
 
-            if (!$courseId || $title === '' || $date === '') {
+            if ((!$groupId && !$courseId) || $title === '' || $date === '') {
                 echo json_encode(['ok' => false, 'error' => 'Champs requis manquants']); exit;
             }
             if (mb_strlen($title) > 200) {
@@ -104,17 +127,26 @@ try {
                 echo json_encode(['ok' => false, 'error' => 'Date trop éloignée dans le futur']); exit;
             }
 
-            $check = $pdo->prepare("SELECT id FROM teacher_courses WHERE teacher_id = ? AND course_id = ?");
-            $check->execute([$uid, $courseId]);
-            if (!$check->fetch()) {
-                echo json_encode(['ok' => false, 'error' => 'Accès refusé']); exit;
+            if ($groupId) {
+                // New system: verify teacher is a member of this class group
+                $check = $pdo->prepare("SELECT g.id, g.course_id FROM class_groups g JOIN class_group_members m ON m.group_id = g.id WHERE g.id = ? AND m.user_id = ?");
+                $check->execute([$groupId, $uid]);
+                $grp = $check->fetch();
+                if (!$grp) { echo json_encode(['ok' => false, 'error' => 'Accès refusé']); exit; }
+                $courseId = $grp['course_id'] ? (int)$grp['course_id'] : 0;
+            } else {
+                // Legacy system: verify teacher is in teacher_courses
+                $check = $pdo->prepare("SELECT id FROM teacher_courses WHERE teacher_id = ? AND course_id = ?");
+                $check->execute([$uid, $courseId]);
+                if (!$check->fetch()) { echo json_encode(['ok' => false, 'error' => 'Accès refusé']); exit; }
+                $groupId = null;
             }
 
             $stmt = $pdo->prepare("
-                INSERT INTO lesson_posts (teacher_id, course_id, title, session_date, link, notes)
-                VALUES (?,?,?,?,?,?)
+                INSERT INTO lesson_posts (teacher_id, course_id, group_id, title, session_date, link, notes)
+                VALUES (?,?,?,?,?,?,?)
             ");
-            $stmt->execute([$uid, $courseId, $title, $date, $link, $notes]);
+            $stmt->execute([$uid, $courseId ?: 0, $groupId ?: null, $title, $date, $link, $notes]);
             echo json_encode(['ok' => true, 'id' => (int)$pdo->lastInsertId()], JSON_UNESCAPED_UNICODE);
 
         } elseif ($action === 'update' && $isTeacher) {

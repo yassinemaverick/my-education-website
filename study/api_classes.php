@@ -469,7 +469,7 @@ if ($action === 'teacher_groups') {
 
   $stmt = $pdo->prepare(
     "SELECT g.id AS group_id, g.type_key, g.level_number, g.group_letter,
-            g.schedule_json, g.zoom_url,
+            g.schedule_json, g.zoom_url, g.course_id,
             (SELECT COUNT(*) FROM class_group_members m2
              JOIN users u2 ON u2.id=m2.user_id
              WHERE m2.group_id=g.id AND u2.role='student') AS student_count

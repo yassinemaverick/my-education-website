@@ -2830,7 +2830,7 @@ function loadSavedAvatar() {
 
 /* ── LESSON POSTS ── */
 async function loadPosts() {
-  if (TEACHER_COURSES.length === 0) await loadTeacherCourses();
+  if (teacherGroups.length === 0) await loadTeacherGroups();
   populatePostCourseSelect();
   const list = document.getElementById('posts-list');
   list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;"></p>`;
@@ -2849,16 +2849,13 @@ function populatePostCourseSelect() {
   const sel = document.getElementById('post-course-select');
   if (!sel) return;
   const lang = currentLang;
-  sel.innerHTML = TEACHER_COURSES.length === 0
+  const groups = teacherGroups;
+  sel.innerHTML = groups.length === 0
     ? `<option value="">${T[lang].noClassAssigned}</option>`
     : `<option value="">${T[lang].chooseClass}</option>`
-      + TEACHER_COURSES.map(c => {
-          const name = lang === 'ar'
-            ? (c.group_name_ar || c.group_name_fr)
-            : lang === 'en'
-              ? (c.group_name_en || c.group_name_fr || c.group_name_ar)
-              : (c.group_name_fr || c.group_name_ar);
-          return `<option value="${c.id}">${name}</option>`;
+      + groups.map(g => {
+          const name = lang === 'en' ? (g.label_en || g.label_fr) : g.label_fr;
+          return `<option value="${g.group_id}" data-gid="${g.group_id}">${name}</option>`;
         }).join('');
 }
 
@@ -2873,9 +2870,28 @@ function renderPostsList(posts) {
     </div>`;
     return;
   }
+  // Build group label from type_key/level/letter if the post came from the new system
+  const TYPE_LABELS = { en:{}, fr:{} };
+  if (typeof CLASS_TYPE_MAP !== 'undefined') {
+    Object.entries(CLASS_TYPE_MAP).forEach(([k,v]) => { TYPE_LABELS.en[k] = v.en; TYPE_LABELS.fr[k] = v.fr; });
+  }
   list.innerHTML = posts.map(p => {
     const lang = currentLang;
-    const courseName = lang === 'ar' ? (p.group_name_ar || p.group_name_fr) : lang === 'en' ? (p.group_name_en || p.group_name_fr || p.group_name_ar) : (p.group_name_fr || p.group_name_ar);
+    let courseName;
+    if (p.group_id && p.type_key) {
+      // New system: build label from class_groups fields
+      const g = teacherGroups.find(x => x.group_id === parseInt(p.group_id));
+      if (g) {
+        courseName = lang === 'en' ? (g.label_en || g.label_fr) : g.label_fr;
+      } else {
+        // Fallback: rebuild from raw fields
+        const lvl = p.level_number ? ' ' + p.level_number : '';
+        const grpWord = lang === 'en' ? 'Group' : 'Groupe';
+        courseName = (p.type_key || '') + lvl + ' – ' + grpWord + ' ' + (p.group_letter || '');
+      }
+    } else {
+      courseName = lang === 'en' ? (p.group_name_fr || p.group_name_ar) : (p.group_name_fr || p.group_name_ar);
+    }
     const dateStr = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', { day:'numeric', month:'long', year:'numeric' }) : '';
     const linkBtn = p.link ? `<a href="${escHtml(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--blue);text-decoration:none;font-weight:500;margin-top:.5rem;"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> ${T[lang].openLink}</a>` : '';
     const notesHtml = p.notes ? `<p style="color:var(--muted);font-size:.85rem;margin-top:.6rem;white-space:pre-wrap;line-height:1.6;">${escHtml(p.notes)}</p>` : '';
@@ -2904,7 +2920,7 @@ function renderPostsList(posts) {
 
 async function submitPost() {
   if (_editPostId) { await updatePost(); return; }
-  const courseId = document.getElementById('post-course-select').value;
+  const groupId  = document.getElementById('post-course-select').value;
   const title    = document.getElementById('post-title').value.trim();
   const date     = document.getElementById('post-date').value;
   const link     = document.getElementById('post-link').value.trim();
@@ -2913,8 +2929,8 @@ async function submitPost() {
   const btnLbl   = document.getElementById('post-submit-lbl');
   errEl.style.display = 'none';
 
-  if (!courseId || !title || !date) {
-    errEl.textContent = currentLang === 'en' ? 'Please fill in the required fields.' : currentLang === 'ar' ? 'يرجى ملء الحقول المطلوبة' : 'Veuillez remplir les champs requis.';
+  if (!groupId || !title || !date) {
+    errEl.textContent = currentLang === 'en' ? 'Please fill in the required fields.' : 'Veuillez remplir les champs requis.';
     errEl.style.display = '';
     return;
   }
@@ -2924,7 +2940,7 @@ async function submitPost() {
     const res  = await fetch('api_lesson_posts.php', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
-      body:    JSON.stringify({ action: 'create', course_id: parseInt(courseId), title, session_date: date, link: link || null, notes: notes || null })
+      body:    JSON.stringify({ action: 'create', group_id: parseInt(groupId), title, session_date: date, link: link || null, notes: notes || null })
     });
     const data = await res.json();
     if (!data.ok) throw new Error(data.error);
