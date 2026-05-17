@@ -290,7 +290,7 @@ try {
         if (!$isTeacher) { http_response_code(403); echo json_encode(['ok'=>false,'error'=>'Forbidden']); exit; }
         csrf_verify();
 
-        $titleFr  = trim($bodyData['title']       ?? '');  // frontend sends 'title' → stored as title_fr
+        $titleFr  = trim($bodyData['title']       ?? '');
         $titleAr  = trim($bodyData['title_ar']    ?? $titleFr);
         $descFr   = trim($bodyData['description'] ?? '');
         $descAr   = trim($bodyData['description_ar'] ?? $descFr);
@@ -298,15 +298,68 @@ try {
         $subjectAr= trim($bodyData['subject_ar']  ?? $subjectFr);
         $due      = trim($bodyData['due_date']    ?? '');
         $courseId = (int)($bodyData['course_id']  ?? 0) ?: null;
+        $groupId  = (int)($bodyData['group_id']   ?? 0) ?: null;
 
         if (!$titleFr) { echo json_encode(['ok'=>false,'error'=>'Titre requis']); exit; }
-        if (!$courseId) { echo json_encode(['ok'=>false,'error'=>'Un cours doit être sélectionné.']); exit; }
+        if (!$courseId && !$groupId) { echo json_encode(['ok'=>false,'error'=>'Un cours doit être sélectionné.']); exit; }
         if ($due && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $due)) $due = null;
 
-        // Verify this teacher owns the selected course
-        $chk = $pdo->prepare("SELECT course_id FROM teacher_courses WHERE teacher_id=? AND course_id=?");
-        $chk->execute([$uid, $courseId]);
-        if (!$chk->fetch()) { echo json_encode(['ok'=>false,'error'=>'Cours non autorisé.']); exit; }
+        if ($groupId) {
+            // Verify teacher is a member of this group
+            $chkGrp = $pdo->prepare("
+                SELECT g.id, g.course_id, g.type_key, g.level_number, g.group_letter
+                FROM class_groups g
+                JOIN class_group_members m ON m.group_id = g.id
+                WHERE g.id = ? AND m.user_id = ?
+            ");
+            $chkGrp->execute([$groupId, $uid]);
+            $group = $chkGrp->fetch();
+            if (!$group) { echo json_encode(['ok'=>false,'error'=>'Groupe non autorisé.']); exit; }
+
+            if ($group['course_id']) {
+                $courseId = (int)$group['course_id'];
+            } else {
+                // Auto-create a course for this group, link it, sync members
+                $pdo->beginTransaction();
+                try {
+                    $parts = [ucwords(str_replace('_', ' ', $group['type_key']))];
+                    if ($group['level_number']) $parts[] = 'Niveau ' . $group['level_number'];
+                    $parts[] = 'Gr. ' . $group['group_letter'];
+                    $courseName = implode(' – ', $parts);
+
+                    $pdo->prepare("INSERT INTO courses (group_name_fr, group_name_ar, subject_fr, subject_ar) VALUES (?,?,?,?)")
+                        ->execute([$courseName, $courseName, '', '']);
+                    $courseId = (int)$pdo->lastInsertId();
+
+                    $pdo->prepare("UPDATE class_groups SET course_id = ? WHERE id = ?")
+                        ->execute([$courseId, $groupId]);
+
+                    // Sync students
+                    $members = $pdo->prepare("
+                        SELECT m.user_id FROM class_group_members m
+                        JOIN users u ON u.id = m.user_id
+                        WHERE m.group_id = ? AND u.role = 'student'
+                    ");
+                    $members->execute([$groupId]);
+                    $insSc = $pdo->prepare("INSERT IGNORE INTO student_courses (student_id, course_id) VALUES (?,?)");
+                    foreach ($members->fetchAll() as $r) $insSc->execute([$r['user_id'], $courseId]);
+
+                    // Link teacher to course
+                    $pdo->prepare("INSERT IGNORE INTO teacher_courses (teacher_id, course_id) VALUES (?,?)")
+                        ->execute([$uid, $courseId]);
+
+                    $pdo->commit();
+                } catch (Throwable $e) {
+                    $pdo->rollBack();
+                    echo json_encode(['ok'=>false,'error'=>'Erreur lors de la création du cours.']); exit;
+                }
+            }
+        } else {
+            // Verify this teacher owns the selected course
+            $chk = $pdo->prepare("SELECT course_id FROM teacher_courses WHERE teacher_id=? AND course_id=?");
+            $chk->execute([$uid, $courseId]);
+            if (!$chk->fetch()) { echo json_encode(['ok'=>false,'error'=>'Cours non autorisé.']); exit; }
+        }
 
         $pdo->prepare("
             INSERT INTO assignments

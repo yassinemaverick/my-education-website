@@ -2020,11 +2020,8 @@ function populateCourseSelect() {
         if (g.level_number) parts.push(`${tr.levelWord} ${g.level_number}`);
         parts.push(`${tr.groupWord} ${g.group_letter}`);
         const lbl = parts.join(' · ') + (g.student_count ? ` (${g.student_count} ${tr.studentUnit})` : '');
-        if (g.course_id) {
-          html += `<option value="${g.course_id}">${lbl}</option>`;
-        } else {
-          html += `<option value="" disabled>${lbl} — ${lang==='en'?'no course linked':'sans cours lié'}</option>`;
-        }
+        const val = g.course_id ? `c:${g.course_id}` : `g:${g.group_id}`;
+        html += `<option value="${val}">${lbl}</option>`;
       });
       html += `</optgroup>`;
     });
@@ -2039,7 +2036,7 @@ function populateCourseSelect() {
       remaining.forEach(c => {
         const name    = lang === 'en' ? (c.group_name_en || c.group_name_fr) : c.group_name_fr;
         const subject = lang === 'en' ? (c.subject_en || c.subject_fr) : c.subject_fr;
-        html += `<option value="${c.id}">${name}${subject ? ' – ' + subject : ''}${c.level ? ' ('+c.level+')' : ''}</option>`;
+        html += `<option value="c:${c.id}">${name}${subject ? ' – ' + subject : ''}${c.level ? ' ('+c.level+')' : ''}</option>`;
       });
       html += `</optgroup>`;
     }
@@ -2062,7 +2059,7 @@ async function openAssignModal() {
 }
 
 async function submitNewAssign() {
-  const courseId = document.getElementById('new-assign-course')?.value;
+  const rawVal   = document.getElementById('new-assign-course')?.value;
   const title    = document.getElementById('new-assign-title').value.trim();
   const desc     = document.getElementById('new-assign-desc').value.trim();
   const due      = document.getElementById('new-assign-due').value;
@@ -2072,7 +2069,7 @@ async function submitNewAssign() {
   const lang     = typeof currentLang !== 'undefined' ? currentLang : 'fr';
 
   // Validation
-  if (!courseId) {
+  if (!rawVal) {
     if (errEl) { errEl.textContent = T[lang].validateChooseClass; errEl.style.display = ''; }
     return;
   }
@@ -2082,6 +2079,11 @@ async function submitNewAssign() {
   }
   if (errEl) errEl.style.display = 'none';
 
+  // Parse c:N (course_id) vs g:N (group_id with no course yet)
+  const isCourse  = rawVal.startsWith('c:');
+  const idVal     = parseInt(rawVal.slice(2));
+  const bodyField = isCourse ? { course_id: idVal } : { group_id: idVal };
+
   const origText = btn ? btn.textContent : '';
   if (btn) { btn.textContent = '…'; btn.disabled = true; }
 
@@ -2090,8 +2092,8 @@ async function submitNewAssign() {
       method:  'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': _csrfToken },
       body: JSON.stringify({
-        action:      'create',
-        course_id:   parseInt(courseId),
+        action: 'create',
+        ...bodyField,
         title,
         description: desc,
         due_date:    due,
