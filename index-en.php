@@ -121,7 +121,6 @@ $t = [
     <a href="#courses">Courses</a>
     <a href="#how">How it works</a>
     <a href="#enroll">Enroll</a>
-    <a href="/placement-test.php">Placement Test</a>
     <a target="_blank" rel="noopener noreferrer" href="https://study.upskill-edu.com" class="nav-cta">Student Login &rarr;</a>
   </div>
 </nav>
@@ -133,7 +132,6 @@ $t = [
   <p>Expert-led English courses designed for real results — whether you're building a career, acing your Baccalaureate, or simply leveling up.</p>
   <div class="hero-actions">
     <a href="#courses" class="btn-primary">Explore Courses</a>
-    <a href="/placement-test.php" class="btn-outline">Take the Placement Test →</a>
     <a target="_blank" rel="noopener noreferrer" href="https://wa.me/212702099967" class="btn-outline">More Information →</a>
   </div>
 </div>
@@ -368,6 +366,7 @@ $t = [
         <h3>Request received!</h3>
         <p>Thank you for enrolling. Our team will review your request and contact you within 24 hours to confirm your place and send your login credentials.</p>
         <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:1.2rem;display:inline-block;">Message us on WhatsApp →</a>
+        <a href="/placement-test.php" class="btn-primary" style="margin-top:.75rem;display:inline-block;background:#10b981;">Placement Test →</a>
       </div>
     </div>
   </div>
