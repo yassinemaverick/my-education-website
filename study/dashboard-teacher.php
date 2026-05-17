@@ -127,7 +127,7 @@ html { scroll-behavior:smooth; }
   --green:#10b981; --green-dark:#059669; --green-glow:rgba(16,185,129,0.12); --green-dim:rgba(16,185,129,0.08);
   --white:#1e1b4b; --muted:rgba(30,27,75,0.55); --muted2:rgba(30,27,75,0.40);
   --border:rgba(0,0,0,0.09); --border2:rgba(0,0,0,0.05);
-  --yellow:#f59e0b; --red:#ef4444; --blue:#3b82f6; --purple:#a78bfa; --orange:#f59e0b;
+  --yellow:#f59e0b; --red:#ef4444; --blue:#3b82f6; --primary:#3b82f6; --purple:#a78bfa; --orange:#f59e0b;
   --font:'Sora',sans-serif; --font-body:'DM Sans',sans-serif;
   --sidebar-w:270px;
 }
