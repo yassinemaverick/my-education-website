@@ -273,25 +273,25 @@ try {
 $starsOfMonth = [];
 $classActivity = [];
 if (!empty($liveData['course'])) {
-    $courseId = (int)$liveData['course']['id'];
+    $groupId = (int)$liveData['course']['group_id'];
     try {
         $sStmt = $pdo->prepare("
             SELECT u.full_name, u.id,
-                   COUNT(a.id) AS total_sessions,
-                   COALESCE(SUM(a.present), 0) AS present_sessions
-            FROM   student_courses sc
-            JOIN   users u ON u.id = sc.student_id
-            LEFT   JOIN attendance a
-                     ON a.student_id = sc.student_id
-                    AND YEAR(a.updated_at)  = YEAR(CURDATE())
-                    AND MONTH(a.updated_at) = MONTH(CURDATE())
-            WHERE  sc.course_id = ?
+                   COUNT(att.id) AS total_sessions,
+                   COALESCE(SUM(att.present), 0) AS present_sessions
+            FROM   class_group_members m
+            JOIN   users u ON u.id = m.user_id AND u.role = 'student'
+            LEFT   JOIN attendance att
+                     ON att.student_id = m.user_id
+                    AND YEAR(att.updated_at)  = YEAR(CURDATE())
+                    AND MONTH(att.updated_at) = MONTH(CURDATE())
+            WHERE  m.group_id = ?
             GROUP  BY u.id, u.full_name
-            ORDER  BY (COALESCE(SUM(a.present),0) / GREATEST(COUNT(a.id),1)) DESC,
+            ORDER  BY (COALESCE(SUM(att.present),0) / GREATEST(COUNT(att.id),1)) DESC,
                       present_sessions DESC
             LIMIT  5
         ");
-        $sStmt->execute([$courseId]);
+        $sStmt->execute([$groupId]);
         $starsOfMonth = $sStmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Throwable $e) {}
     try {
@@ -300,11 +300,12 @@ if (!empty($liveData['course'])) {
             FROM   assignment_submissions sub
             JOIN   users u ON u.id = sub.student_id
             JOIN   assignments a ON a.id = sub.assignment_id
-            WHERE  a.course_id = ? AND sub.status = 'submitted'
+            JOIN   class_group_members m ON m.user_id = sub.student_id AND m.group_id = ?
+            WHERE  sub.status = 'submitted'
             ORDER  BY sub.submitted_at DESC
             LIMIT  8
         ");
-        $caStmt->execute([$courseId]);
+        $caStmt->execute([$groupId]);
         $classActivity = $caStmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (Throwable $e) {}
 }
