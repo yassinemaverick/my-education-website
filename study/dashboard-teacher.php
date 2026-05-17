@@ -396,6 +396,9 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 .notif-time { font-size:.72rem; color:var(--muted2); margin-top:.2rem; }
 #notif-badge { position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; border-radius:100px; background:var(--red); color:#fff; font-family:var(--font); font-size:.6rem; font-weight:700; display:none; align-items:center; justify-content:center; padding:0 3px; }
 #notif-badge.show { display:flex; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.spinner { display:inline-block; width:20px; height:20px; border:2px solid rgba(30,27,75,.12); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
+.loading-overlay { display:flex; align-items:center; justify-content:center; padding:3rem; color:var(--muted); gap:.75rem; font-size:.9rem; }
 </style>
 <style id="lang-hide">body{visibility:hidden}</style>
 </head>
