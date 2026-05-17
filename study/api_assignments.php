@@ -194,16 +194,23 @@ try {
                    a.subject_fr, a.subject_ar, a.due_date, a.created_at,
                    a.teacher_id, a.course_id,
                    c.group_name_fr, c.group_name_ar,
+                   cg.type_key, cg.level_number, cg.group_letter,
                    COUNT(DISTINCT s.id)          AS submitted_count,
                    COUNT(DISTINCT sc.student_id) AS total_students,
                    SUM(s.score IS NOT NULL)       AS graded_count
             FROM   assignments a
-            LEFT JOIN courses c          ON c.id = a.course_id
+            LEFT JOIN courses c ON c.id = a.course_id
+            LEFT JOIN (
+                SELECT course_id, type_key, level_number, group_letter
+                FROM class_groups
+                WHERE course_id IS NOT NULL
+                GROUP BY course_id
+            ) cg ON cg.course_id = a.course_id
             LEFT JOIN assignment_submissions s ON s.assignment_id = a.id
             LEFT JOIN student_courses sc ON sc.course_id = a.course_id
             WHERE  a.teacher_id = ?
             GROUP  BY a.id
-            ORDER  BY a.created_at DESC, a.id DESC
+            ORDER  BY cg.type_key, cg.level_number, cg.group_letter, a.created_at DESC
         ");
         $stmt->execute([$uid]);
         echo json_encode(['ok'=>true,'assignments'=>$stmt->fetchAll()], JSON_UNESCAPED_UNICODE);

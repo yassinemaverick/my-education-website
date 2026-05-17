@@ -1427,6 +1427,35 @@ function updateHomeStats() {
   if (b3) b3.style.width = avgG !== null ? avgG + '%' : '0%';
 }
 
+function _assignmentRowHtml(a, tr, lang) {
+  const title     = lang==='en' ? (a.title_en||a.title_fr) : a.title_fr;
+  const subject   = lang==='en' ? (a.subject_en||a.subject_fr||'') : (a.subject_fr||'');
+  const submitted = parseInt(a.submitted_count)||0;
+  const total     = parseInt(a.total_students)||0;
+  const graded    = parseInt(a.graded_count)||0;
+  const ungraded  = submitted - graded;
+  const dueStr    = a.due_date ? new Date(a.due_date).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'short'}) : '—';
+  const pendingBadge = ungraded > 0
+    ? `<span style="background:rgba(245,197,66,.15);color:var(--yellow);border:1px solid rgba(245,197,66,.3);font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;font-family:var(--font);">${ungraded} ${tr.pendingBadge}</span>`
+    : `<span style="background:rgba(62,207,120,.1);color:var(--green);border:1px solid rgba(62,207,120,.25);font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;font-family:var(--font);">✓ ${tr.gradedBadge}</span>`;
+  return `<div class="assign-row">
+    <div class="assign-info">
+      <div class="assign-title-t">${escHtml(title)} ${pendingBadge}</div>
+      <div class="assign-meta-t">
+        ${dueStr!=='—' ? `<span>📅 ${tr.dueLbl} ${dueStr}</span>` : ''}
+        ${subject ? `<span>📚 ${tr.subjectLbl} ${escHtml(subject)}</span>` : ''}
+        <span style="color:${submitted===0?'var(--muted)':submitted/Math.max(total,1)>.7?'var(--green)':'var(--yellow)'}">
+          📨 ${submitted}${total?'/'+total:''} ${tr.submittedLbl}
+        </span>
+      </div>
+    </div>
+    <div class="assign-actions">
+      <button class="btn-primary btn-sm" onclick="openSubmissions(${a.id})">${tr.viewGradeBtn}</button>
+      <button class="btn-secondary btn-sm" onclick="deleteAssignment(${a.id})" style="color:var(--red);border-color:rgba(232,93,117,.3);" title="${tr.deleteTitle}">🗑</button>
+    </div>
+  </div>`;
+}
+
 function renderAssignments() {
   const list = document.getElementById('assign-teacher-list');
   if (!list) return;
@@ -1444,37 +1473,64 @@ function renderAssignments() {
   if (sub) sub.textContent = `${ASSIGNMENTS_LIVE.length} ${tr.newAssignLbl.replace('+ ','')} · ${pending>0?pending+' '+tr.pendingBadge:tr.allGraded}`;
   const s2 = document.getElementById('stat2-val'); if (s2) s2.textContent = pending;
 
-  list.innerHTML = ASSIGNMENTS_LIVE.map(a => {
-    const title     = lang==='en' ? (a.title_en||a.title_fr) : a.title_fr;
-    const subject   = lang==='en' ? (a.subject_en||a.subject_fr||'') : (a.subject_fr||'');
-    const className = lang==='en' ? (a.group_name_en||a.group_name_fr||'') : (a.group_name_fr||'');
-    const submitted = parseInt(a.submitted_count)||0;
-    const total     = parseInt(a.total_students)||0;
-    const graded    = parseInt(a.graded_count)||0;
-    const ungraded  = submitted - graded;
-    const dueStr    = a.due_date ? new Date(a.due_date).toLocaleDateString(lang==='fr'?'fr-FR':'en-GB',{day:'numeric',month:'short'}) : '—';
-    const pendingBadge = ungraded > 0
-      ? `<span style="background:rgba(245,197,66,.15);color:var(--yellow);border:1px solid rgba(245,197,66,.3);font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;font-family:var(--font);">${ungraded} ${tr.pendingBadge}</span>`
-      : `<span style="background:rgba(62,207,120,.1);color:var(--green);border:1px solid rgba(62,207,120,.25);font-size:.7rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;font-family:var(--font);">✓ ${tr.gradedBadge}</span>`;
-    return `<div class="assign-row">
-      <div class="assign-info">
-        <div class="assign-title-t">${escHtml(title)} ${pendingBadge}</div>
-        <div class="assign-meta-t">
-          ${className ? `<span>👥 ${escHtml(className)}</span>` : ''}
-          ${dueStr!=='—' ? `<span>📅 ${tr.dueLbl} ${dueStr}</span>` : ''}
-          ${subject   ? `<span>📚 ${tr.subjectLbl} ${escHtml(subject)}</span>` : ''}
-          <span style="color:${submitted===0?'var(--muted)':submitted/Math.max(total,1)>.7?'var(--green)':'var(--yellow)'}">
-            📨 ${submitted}${total?'/'+total:''} ${tr.submittedLbl}
-          </span>
-        </div>
-      </div>
-      <div class="assign-actions">
-        <button class="btn-primary btn-sm" onclick="openSubmissions(${a.id})">${tr.viewGradeBtn}</button>
-        <button class="btn-secondary btn-sm" onclick="deleteAssignment(${a.id})" style="color:var(--red);border-color:rgba(232,93,117,.3);"
-          title="${tr.deleteTitle}">🗑</button>
-      </div>
-    </div>`;
-  }).join('');
+  // Group: type_key → level_number → group_letter
+  const grouped = {};
+  const typeOrder = [];
+  const ungrouped = [];
+
+  ASSIGNMENTS_LIVE.forEach(a => {
+    if (a.type_key) {
+      const lvl = a.level_number !== null && a.level_number !== undefined ? String(a.level_number) : '_';
+      const grp = a.group_letter || '_';
+      if (!grouped[a.type_key]) { grouped[a.type_key] = {}; typeOrder.push(a.type_key); }
+      if (!grouped[a.type_key][lvl]) grouped[a.type_key][lvl] = {};
+      if (!grouped[a.type_key][lvl][grp]) grouped[a.type_key][lvl][grp] = [];
+      grouped[a.type_key][lvl][grp].push(a);
+    } else {
+      ungrouped.push(a);
+    }
+  });
+
+  let html = '';
+
+  typeOrder.forEach((typeKey, ti) => {
+    const labels   = TYPE_LABELS[typeKey] || {fr: typeKey, en: typeKey};
+    const typeName = lang === 'en' ? (labels.en || labels.fr) : labels.fr;
+    const icon     = TYPE_ICONS[typeKey] || '🏫';
+    html += `<div style="font-family:var(--font);font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;padding:${ti>0?'1.5rem':'.25rem'} 0 .5rem;${ti>0?'border-top:1px solid var(--border2);margin-top:.5rem;':''}">${icon} ${escHtml(typeName)}</div>`;
+
+    const levelMap = grouped[typeKey];
+    Object.keys(levelMap).sort((a,b) => a==='_'?1:b==='_'?-1:Number(a)-Number(b)).forEach(lvl => {
+      const grpMap = levelMap[lvl];
+      Object.keys(grpMap).sort().forEach(grp => {
+        const parts = [];
+        if (lvl !== '_') parts.push(`${tr.levelWord} ${lvl}`);
+        if (grp !== '_') parts.push(`${tr.groupWord} ${grp}`);
+        if (parts.length) {
+          html += `<div style="font-size:.8rem;font-weight:600;color:var(--text);padding:.45rem .85rem;background:rgba(255,255,255,.03);border:1px solid var(--border2);border-radius:9px;margin:.35rem 0 .15rem;display:inline-flex;align-items:center;gap:.4rem;">📂 ${parts.join(' · ')}</div>`;
+        }
+        grpMap[grp].forEach(a => { html += _assignmentRowHtml(a, tr, lang); });
+      });
+    });
+  });
+
+  // Fallback: assignments whose course isn't linked to a class_group
+  if (ungrouped.length) {
+    const fallbackLabel = lang === 'en' ? 'Other' : 'Autre';
+    const byName = {};
+    const nameOrder = [];
+    ungrouped.forEach(a => {
+      const n = a.group_name_fr || fallbackLabel;
+      if (!byName[n]) { byName[n] = []; nameOrder.push(n); }
+      byName[n].push(a);
+    });
+    nameOrder.forEach((name, ni) => {
+      html += `<div style="font-family:var(--font);font-size:.72rem;font-weight:700;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;padding:${(typeOrder.length||ni>0)?'1.5rem':'.25rem'} 0 .5rem;${(typeOrder.length||ni>0)?'border-top:1px solid var(--border2);margin-top:.5rem;':''}">🏫 ${escHtml(name)}</div>`;
+      byName[name].forEach(a => { html += _assignmentRowHtml(a, tr, lang); });
+    });
+  }
+
+  list.innerHTML = html;
 }
 
 function deleteAssignment(id) {
