@@ -2272,9 +2272,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.nav-item').forEach(el => {
     el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
   });
-  // Close overlays when clicking anywhere in settings page so panels never block the password form
+  // Close overlays when clicking anywhere in settings page so panels never block the password form.
+  // NOTE: do NOT call closeNotifPanel() here — it calls .focus() on notif-btn which steals focus
+  // from whatever input the user just clicked. Manipulate classes directly instead.
   document.getElementById('page-settings').addEventListener('click', () => {
-    closeNotifPanel();
+    notifPanelOpen = false;
+    document.getElementById('notif-panel').classList.remove('open');
     profileMenuOpen = false;
     document.getElementById('profile-menu').classList.remove('open');
   });
