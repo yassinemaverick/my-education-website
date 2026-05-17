@@ -1974,80 +1974,45 @@ document.getElementById('modal-confirm')?.addEventListener('click', function(e) 
 });
 
 /* ── Teacher course selector ── */
-let TEACHER_COURSES = [];
-
-async function loadTeacherCourses() {
-  try {
-    const res  = await fetch('api_assignments.php?action=my_courses');
-    const data = await res.json();
-    if (data.ok && Array.isArray(data.courses)) {
-      TEACHER_COURSES = data.courses;
-    }
-  } catch(e) { }
-}
-
 function populateCourseSelect() {
   const sel = document.getElementById('new-assign-course');
   if (!sel) return;
   const lang = currentLang;
   const tr   = T[lang];
 
-  const hasNew = teacherGroups.length > 0;
-  const hasOld = TEACHER_COURSES.length > 0;
-
-  if (!hasNew && !hasOld) {
+  if (!teacherGroups.length) {
     sel.innerHTML = `<option value="">${tr.noClassAssigned}</option>`;
     return;
   }
 
+  const byType = {};
+  const typeOrder = [];
+  teacherGroups.forEach(g => {
+    if (!byType[g.type_key]) { byType[g.type_key] = []; typeOrder.push(g.type_key); }
+    byType[g.type_key].push(g);
+  });
+
   let html = `<option value="">${tr.chooseClass}</option>`;
-
-  // ── New system: class_groups grouped by type → level → group ──
-  if (hasNew) {
-    const byType = {};
-    const typeOrder = [];
-    teacherGroups.forEach(g => {
-      if (!byType[g.type_key]) { byType[g.type_key] = []; typeOrder.push(g.type_key); }
-      byType[g.type_key].push(g);
+  typeOrder.forEach(typeKey => {
+    const labels   = TYPE_LABELS[typeKey] || {fr: typeKey, en: typeKey};
+    const typeName = lang === 'en' ? (labels.en || labels.fr) : labels.fr;
+    const icon     = TYPE_ICONS[typeKey] || '🏫';
+    html += `<optgroup label="${icon} ${typeName}">`;
+    byType[typeKey].forEach(g => {
+      const parts = [];
+      if (g.level_number) parts.push(`${tr.levelWord} ${g.level_number}`);
+      parts.push(`${tr.groupWord} ${g.group_letter}`);
+      const lbl = parts.join(' · ') + (g.student_count ? ` (${g.student_count} ${tr.studentUnit})` : '');
+      const val = g.course_id ? `c:${g.course_id}` : `g:${g.group_id}`;
+      html += `<option value="${val}">${lbl}</option>`;
     });
-    typeOrder.forEach(typeKey => {
-      const labels   = TYPE_LABELS[typeKey] || {fr: typeKey, en: typeKey};
-      const typeName = lang === 'en' ? (labels.en || labels.fr) : labels.fr;
-      const icon     = TYPE_ICONS[typeKey] || '🏫';
-      html += `<optgroup label="${icon} ${typeName}">`;
-      byType[typeKey].forEach(g => {
-        const parts = [];
-        if (g.level_number) parts.push(`${tr.levelWord} ${g.level_number}`);
-        parts.push(`${tr.groupWord} ${g.group_letter}`);
-        const lbl = parts.join(' · ') + (g.student_count ? ` (${g.student_count} ${tr.studentUnit})` : '');
-        const val = g.course_id ? `c:${g.course_id}` : `g:${g.group_id}`;
-        html += `<option value="${val}">${lbl}</option>`;
-      });
-      html += `</optgroup>`;
-    });
-  }
-
-  // ── Old system fallback: teacher_courses not already covered above ──
-  if (hasOld) {
-    const coveredIds = new Set(teacherGroups.map(g => g.course_id).filter(Boolean));
-    const remaining  = TEACHER_COURSES.filter(c => !coveredIds.has(String(c.id)) && !coveredIds.has(c.id));
-    if (remaining.length) {
-      html += `<optgroup label="${lang==='en'?'My Classes':'Mes classes'}">`;
-      remaining.forEach(c => {
-        const name    = lang === 'en' ? (c.group_name_en || c.group_name_fr) : c.group_name_fr;
-        const subject = lang === 'en' ? (c.subject_en || c.subject_fr) : c.subject_fr;
-        html += `<option value="c:${c.id}">${name}${subject ? ' – ' + subject : ''}${c.level ? ' ('+c.level+')' : ''}</option>`;
-      });
-      html += `</optgroup>`;
-    }
-  }
-
+    html += `</optgroup>`;
+  });
   sel.innerHTML = html;
 }
 
 async function openAssignModal() {
   if (teacherGroups.length === 0) await loadTeacherGroups();
-  if (TEACHER_COURSES.length === 0) await loadTeacherCourses();
   populateCourseSelect();
   // Update label language
   const lang = typeof currentLang !== 'undefined' ? currentLang : 'fr';
@@ -2352,7 +2317,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const savedLang = (_sl === 'fr' || _sl === 'en') ? _sl : 'en';
   // Load everything in parallel
   await loadLiveStudents();
-  await Promise.all([initAttData(), loadTeacherCourses(), loadAssignments()]);
+  await Promise.all([initAttData(), loadAssignments()]);
   const postDateEl = document.getElementById('post-date');
   if (postDateEl) postDateEl.value = new Date().toISOString().slice(0, 10);
   setLang(savedLang);
