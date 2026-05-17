@@ -267,47 +267,32 @@ $t = [
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<div class="testimonials">
-  <div class="testimonials-inner">
-    <div class="section-label text-center" style="text-align:center;">Ce que disent nos étudiants</div>
-    <h2 class="section-title text-center" style="text-align:center;">Des résultats réels, des expériences formidables.</h2>
-    <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <div class="testimonial-header">
-          <img class="testimonial-avatar" src="/assets/img/testimonial-yasmine.png" alt="Yasmine B." width="54" height="54" loading="lazy">
-          <div class="testimonial-author">
-            <span class="testimonial-name">Yasmine B.</span>
-            <span class="testimonial-badge">Étudiante Baccalauréat</span>
-          </div>
-        </div>
-        <div class="testimonial-stars">★★★★★</div>
-        <div class="testimonial-quote">"</div>
-        <p class="testimonial-text">Ma note d'anglais au Bac est passée de 8/20 à 16/20 après une seule session avec Upskill. Le petit groupe a tout changé.</p>
+<!-- NOTRE APPROCHE -->
+<div class="approach-section">
+  <div class="approach-inner">
+    <div class="section-label text-center" style="text-align:center;">Notre approche</div>
+    <h2 class="section-title text-center" style="text-align:center;">On n'enseigne pas l'anglais.<br>On aide les étudiants à le vivre.</h2>
+    <p class="approach-intro">Notre pédagogie est centrée sur l'étudiant à chaque étape — parce que nous croyons que les vrais progrès ne se font que quand l'étudiant se sent impliqué, compris et challengé de la bonne façon.</p>
+    <div class="approach-grid">
+      <div class="approach-card">
+        <div class="approach-icon">🎯</div>
+        <h3>Centré sur l'étudiant dès le premier jour</h3>
+        <p>Chaque étudiant arrive avec un objectif différent — un meilleur résultat au Bac, un entretien d'embauche, une promotion, un rêve d'étudier à l'étranger. Nous partons de là. Nos professeurs adaptent le cours à l'étudiant, et non l'inverse.</p>
       </div>
-      <div class="testimonial-card">
-        <div class="testimonial-header">
-          <img class="testimonial-avatar" src="/assets/img/testimonial-karim.jpg" alt="Karim M." width="54" height="54" loading="lazy">
-          <div class="testimonial-author">
-            <span class="testimonial-name">Karim M.</span>
-            <span class="testimonial-badge">Étudiant Anglais des affaires</span>
-          </div>
-        </div>
-        <div class="testimonial-stars">★★★★★</div>
-        <div class="testimonial-quote">"</div>
-        <p class="testimonial-text">Je me sens enfin à l'aise en réunion. Le cours d'anglais des affaires m'a donné du vocabulaire réel que j'utilise chaque jour.</p>
+      <div class="approach-card">
+        <div class="approach-icon">💬</div>
+        <h3>L'anglais en contexte, pas en isolation</h3>
+        <p>Les règles de grammaire s'oublient facilement. Les vraies conversations, non. Nous construisons les cours autour de situations réelles — présenter en réunion, rédiger des emails, parler de ses passions — pour que la langue reste gravée parce qu'elle a du sens.</p>
       </div>
-      <div class="testimonial-card">
-        <div class="testimonial-header">
-          <img class="testimonial-avatar" src="/assets/img/testimonial-nadia.png" alt="Nadia F." width="54" height="54" loading="lazy">
-          <div class="testimonial-author">
-            <span class="testimonial-name">Nadia F.</span>
-            <span class="testimonial-badge">Parent · Anglais général</span>
-          </div>
-        </div>
-        <div class="testimonial-stars">★★★★★</div>
-        <div class="testimonial-quote">"</div>
-        <p class="testimonial-text">La prononciation de ma fille s'est nettement améliorée. Les professeurs sont patients et la plateforme facilite le suivi de sa progression.</p>
+      <div class="approach-card">
+        <div class="approach-icon">👥</div>
+        <h3>Petits groupes, vraies voix</h3>
+        <p>Avec 9 à 12 étudiants par groupe, personne ne se cache au fond. Tout le monde parle. Tout le monde est entendu. Ce format crée un environnement sans pression où les étudiants osent utiliser la langue — et c'est là que les vrais progrès se font.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-icon">📈</div>
+        <h3>Des progrès visibles</h3>
+        <p>Les étudiants suivent leurs présences, leurs notes et leurs résumés de cours directement sur leur tableau de bord après chaque séance. L'apprentissage ressemble moins à un cours et plus à un parcours avec une direction claire.</p>
       </div>
     </div>
   </div>
