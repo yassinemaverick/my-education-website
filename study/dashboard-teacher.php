@@ -2272,6 +2272,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.nav-item').forEach(el => {
     el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
   });
+  // Close overlays when clicking anywhere in settings page so panels never block the password form
+  document.getElementById('page-settings').addEventListener('click', () => {
+    closeNotifPanel();
+    profileMenuOpen = false;
+    document.getElementById('profile-menu').classList.remove('open');
+  });
 });
 
 /* ── LIVE STUDENT FETCH ── */
