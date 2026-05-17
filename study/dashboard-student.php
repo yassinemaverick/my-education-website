@@ -962,7 +962,7 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
             </div>
           </div>
           <div>
-            <div style="font-family:var(--font);font-size:1.5rem;font-weight:700;">20 <span style="font-size:1rem;color:var(--muted);font-weight:400;" id="hrs-of">/ 29 hrs</span></div>
+            <div style="font-family:var(--font);font-size:1.5rem;font-weight:700;"><span id="sessions-present">0</span> <span style="font-size:1rem;color:var(--muted);font-weight:400;" id="hrs-of"></span></div>
             <div style="color:var(--muted);font-size:.83rem;margin:.3rem 0;" id="course-session">General English · Session 2</div>
             <div style="font-size:.78rem;background:var(--green-glow);color:var(--green);border:1px solid rgba(62,207,120,.3);padding:.25rem .65rem;border-radius:100px;display:inline-block;font-family:var(--font);font-weight:600;" id="on-track">On track 🎯</div>
           </div>
@@ -1186,7 +1186,7 @@ const T = {
     noQuizAvail:'Aucun quiz disponible pour l\'instant.', noQuizDone:'Aucun quiz complété pour l\'instant.',
     quizPageTitle:'Quiz', quizPageSub:'Testez vos connaissances avec des quiz chronométrés',
     progPageTitle:'Progression', progPageSub:'Suivez votre parcours module par module',
-    overallTitle:'Progression globale', doneLbl:'fait', hrsOf:'/ 29 hrs', courseSession:'Anglais Général · Session 2', onTrack:'En bonne voie 🎯',
+    overallTitle:'Progression globale', doneLbl:'fait',
     scoresTitle:'Performance des devoirs', progSubmitted:'devoirs soumis', progGraded:'corrigé(s)', progAvgScore:'Score moyen', progNoData:'Aucun devoir pour l\'instant.',
     modulesTitle:'Progression par matière', noSubjects:'Aucun devoir avec matière pour l\'instant.',
     howtoTitle:'Comment utiliser la plateforme ?', howtoSub:'Regardez ces courtes vidéos pour découvrir chaque fonctionnalité.',
@@ -1245,7 +1245,7 @@ const T = {
     noQuizAvail:'No quizzes available yet.', noQuizDone:'No completed quizzes yet.',
     quizPageTitle:'Quizzes', quizPageSub:'Test your knowledge with timed quizzes',
     progPageTitle:'Progress', progPageSub:'Track your learning journey module by module',
-    overallTitle:'Overall progress', doneLbl:'done', hrsOf:'/ 29 hrs', courseSession:'General English · Session 2', onTrack:'On track 🎯',
+    overallTitle:'Overall progress', doneLbl:'done',
     scoresTitle:'Assignment performance', progSubmitted:'assignments submitted', progGraded:'graded', progAvgScore:'Average score', progNoData:'No assignments yet.',
     modulesTitle:'Progress by subject', noSubjects:'No assignments with subjects yet.',
     howtoTitle:'How to use the platform?', howtoSub:'Watch these short videos to discover each feature.',
@@ -1371,9 +1371,7 @@ function applyTranslations() {
   document.getElementById('prog-page-sub').textContent = tr.progPageSub;
   document.getElementById('overall-title').textContent = tr.overallTitle;
   document.getElementById('done-lbl').textContent = tr.doneLbl;
-  document.getElementById('hrs-of').textContent = tr.hrsOf;
-  document.getElementById('course-session').textContent = tr.courseSession;
-  document.getElementById('on-track').textContent = tr.onTrack;
+  updateProgressHeader();
   document.getElementById('scores-title').textContent = tr.scoresTitle;
   document.getElementById('modules-title').textContent = tr.modulesTitle;
   // How-to page
@@ -2262,6 +2260,54 @@ function updateAssignSubtitle() {
   sub.textContent = `${p} ${tr.tabPending.toLowerCase()} · ${o} ${tr.badgeOverdue.toLowerCase()} · ${s} ${tr.badgeSubmitted.toLowerCase()}`;
 }
 
+/* ── PROGRESS PAGE HEADER ── */
+function updateProgressHeader() {
+  const lang    = currentLang;
+  const present = LIVE.att_present || 0;
+  const total   = LIVE.att_total   || 0;
+  const c       = LIVE.course;
+
+  const sp = document.getElementById('sessions-present');
+  if (sp) sp.textContent = present;
+
+  const hrsEl = document.getElementById('hrs-of');
+  if (hrsEl) hrsEl.textContent = total > 0
+    ? `/ ${total} ${lang === 'fr' ? 'séances' : 'sessions'}`
+    : '';
+
+  const ot = document.getElementById('on-track');
+  if (ot) {
+    let txt, color, bg, border;
+    if (total === 0) {
+      txt = lang === 'fr' ? 'Aucune séance' : 'No sessions yet';
+      color = 'var(--muted)'; bg = 'rgba(255,255,255,.06)'; border = 'var(--border)';
+    } else {
+      const rate = present / total;
+      if (rate >= 0.8) {
+        txt = lang === 'fr' ? 'En bonne voie 🎯' : 'On track 🎯';
+        color = 'var(--green)'; bg = 'var(--green-glow)'; border = 'rgba(62,207,120,.3)';
+      } else if (rate >= 0.6) {
+        txt = lang === 'fr' ? 'Continuez 💪' : 'Keep it up 💪';
+        color = '#f59e0b'; bg = 'rgba(245,158,11,.15)'; border = 'rgba(245,158,11,.3)';
+      } else {
+        txt = lang === 'fr' ? 'À améliorer ⚠️' : 'Needs improvement ⚠️';
+        color = '#f87171'; bg = 'rgba(248,113,113,.15)'; border = 'rgba(248,113,113,.3)';
+      }
+    }
+    ot.textContent = txt;
+    ot.style.color = color;
+    ot.style.background = bg;
+    ot.style.borderColor = border;
+  }
+
+  const cs = document.getElementById('course-session');
+  if (cs && c) {
+    cs.textContent = lang === 'en'
+      ? (c.label_en || c.label_fr)
+      : (c.label_fr || c.label_en);
+  }
+}
+
 /* ── LIVE DATA HYDRATION ── */
 function hydrateLiveData() {
   const c    = LIVE.course;
@@ -2281,16 +2327,15 @@ function hydrateLiveData() {
   // (attendance rate is shown on My Class page; progress circle is driven
   //  by updateProgress() which uses real assignment completion data)
 
-  // ── 5. Course name on progress page ─────────────────────────────────────
+  // ── 5. Settings role + progress header ──────────────────────────────────
   if (c) {
     const courseName = lang === 'en'
       ? (c.label_en || c.label_fr)
-      : (c.label_fr || c.label_ar);
-    const cs = document.getElementById('course-session');
-    if (cs) cs.textContent = courseName;
+      : (c.label_fr || c.label_en);
     const sr = document.getElementById('settings-role');
     if (sr) sr.textContent = T[lang].roleLabel + ' · ' + courseName;
   }
+  updateProgressHeader();
 
   // ── 6. Assignment page subtitle ──────────────────────────────────────────
   updateAssignSubtitle();
