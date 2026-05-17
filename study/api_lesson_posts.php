@@ -147,7 +147,44 @@ try {
                 VALUES (?,?,?,?,?,?,?)
             ");
             $stmt->execute([$uid, $courseId ?: 0, $groupId ?: null, $title, $date, $link, $notes]);
-            echo json_encode(['ok' => true, 'id' => (int)$pdo->lastInsertId()], JSON_UNESCAPED_UNICODE);
+            $postId = (int)$pdo->lastInsertId();
+
+            // ── Notify students in the group ──────────────────────────────────────
+            try {
+                $studentIds = [];
+                if ($groupId) {
+                    $sStmt = $pdo->prepare("
+                        SELECT m.user_id FROM class_group_members m
+                        JOIN users u ON u.id = m.user_id
+                        WHERE m.group_id = ? AND u.role = 'student'
+                    ");
+                    $sStmt->execute([$groupId]);
+                    $studentIds = array_column($sStmt->fetchAll(), 'user_id');
+                } elseif ($courseId) {
+                    $sStmt = $pdo->prepare("SELECT student_id FROM student_courses WHERE course_id = ?");
+                    $sStmt->execute([$courseId]);
+                    $studentIds = array_column($sStmt->fetchAll(), 'student_id');
+                }
+                if ($studentIds) {
+                    $ins = $pdo->prepare("
+                        INSERT INTO notifications (user_id, type, title_fr, title_ar, title_en, body_fr, body_ar, body_en)
+                        VALUES (?, 'lesson_note', ?, ?, ?, ?, ?, ?)
+                    ");
+                    foreach ($studentIds as $sid) {
+                        $ins->execute([
+                            (int)$sid,
+                            '📝 Nouvelle note de cours',
+                            '📝 ملاحظة درس جديدة',
+                            '📝 New lesson note',
+                            $title,
+                            $title,
+                            $title,
+                        ]);
+                    }
+                }
+            } catch (Throwable $e) { /* notifications are best-effort */ }
+
+            echo json_encode(['ok' => true, 'id' => $postId], JSON_UNESCAPED_UNICODE);
 
         } elseif ($action === 'update' && $isTeacher) {
             $id    = (int)($bodyData['id'] ?? 0);

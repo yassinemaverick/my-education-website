@@ -34,14 +34,18 @@ try {
             type       VARCHAR(40) NOT NULL DEFAULT 'info',
             title_fr   VARCHAR(200) NOT NULL DEFAULT '',
             title_ar   VARCHAR(200) NOT NULL DEFAULT '',
+            title_en   VARCHAR(200) NOT NULL DEFAULT '',
             body_fr    VARCHAR(400) NOT NULL DEFAULT '',
             body_ar    VARCHAR(400) NOT NULL DEFAULT '',
+            body_en    VARCHAR(400) NOT NULL DEFAULT '',
             is_read    TINYINT(1) NOT NULL DEFAULT 0,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             INDEX idx_user (user_id),
             INDEX idx_read (user_id, is_read)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
+    try { $pdo->exec("ALTER TABLE notifications ADD COLUMN title_en VARCHAR(200) NOT NULL DEFAULT ''"); } catch(Throwable $e) {}
+    try { $pdo->exec("ALTER TABLE notifications ADD COLUMN body_en  VARCHAR(400) NOT NULL DEFAULT ''"); } catch(Throwable $e) {}
 
     // ── CSRF check for all mutating POST requests ────────────────────────────
     if ($method === 'POST') csrf_verify();

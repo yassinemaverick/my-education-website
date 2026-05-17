@@ -661,6 +661,7 @@ body.ar .notif-panel { right:auto; left:1rem; }
 .notif-icon.announcement { background:rgba(251,146,60,.1); }
 .notif-icon.quiz { background:rgba(167,139,250,.1); }
 .notif-icon.message { background:rgba(62,207,120,.1); }
+.notif-icon.lesson_note { background:rgba(99,102,241,.1); }
 .notif-content { flex:1; min-width:0; }
 .notif-title { font-family:var(--font); font-size:.8rem; font-weight:600; margin-bottom:.15rem; color:var(--white); }
 .notif-body { font-size:.78rem; color:var(--muted); line-height:1.4; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px; }
@@ -2698,6 +2699,7 @@ const NOTIF_ICONS = {
   announcement: '📢',
   quiz: '🧠',
   message: '💬',
+  lesson_note: '📝',
 };
 const NOTIF_T = {
   fr: { title:'Notifications', markAll:'Tout lire', empty:'Aucune notification', justNow:'À l\'instant', minAgo:'min', hrsAgo:'h', daysAgo:'j' },
@@ -2814,8 +2816,8 @@ function renderNotifList() {
   const lang = currentLang;
   list.innerHTML = notifData.map(n => {
     const icon  = NOTIF_ICONS[n.type] || '🔔';
-    const title = lang === 'ar' ? n.title_ar : n.title_fr;
-    const body  = lang === 'ar' ? n.body_ar  : n.body_fr;
+    const title = lang === 'en' ? (n.title_en || n.title_fr) : lang === 'ar' ? n.title_ar : n.title_fr;
+    const body  = lang === 'en' ? (n.body_en  || n.body_fr)  : lang === 'ar' ? n.body_ar  : n.body_fr;
     // Strip the internal #id reference from display
     const bodyClean = body.replace(/ #\d+$/, '');
     const ago   = timeAgo(parseInt(n.age_min) || 0);
@@ -2844,7 +2846,7 @@ function updateNotifBadge(count) {
 
 async function markAllRead() {
   try {
-    await fetch('api_notifications.php', { method:'POST', body: new URLSearchParams({ action:'mark_read' }) });
+    await fetch('api_notifications.php', { method:'POST', headers:{'X-CSRF-Token':_csrf}, body: new URLSearchParams({ action:'mark_read' }) });
     notifData.forEach(n => n.is_read = 1);
     renderNotifList();
     updateNotifBadge(0);
@@ -2853,7 +2855,7 @@ async function markAllRead() {
 
 async function markOneRead(id, el) {
   try {
-    await fetch('api_notifications.php', { method:'POST', body: new URLSearchParams({ action:'mark_one', id }) });
+    await fetch('api_notifications.php', { method:'POST', headers:{'X-CSRF-Token':_csrf}, body: new URLSearchParams({ action:'mark_one', id }) });
     el.classList.remove('unread');
     const dot = el.querySelector('.notif-unread-dot');
     if (dot) dot.remove();
