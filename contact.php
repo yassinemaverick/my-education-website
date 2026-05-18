@@ -79,16 +79,16 @@ use PHPMailer\PHPMailer\Exception;
 $mail = new PHPMailer(true);
 try {
     $mail->isSMTP();
-    $mail->Host       = $_ENV['MAIL_HOST'] ?? 'smtp.hostinger.com';
+    $mail->Host       = $_ENV['MAIL_HOST'] ?? '';
     $mail->SMTPAuth   = true;
-    $mail->Username   = $_ENV['MAIL_USER'] ?? 'admin@upskill-edu.com';
+    $mail->Username   = $_ENV['MAIL_USER'] ?? '';
     $mail->Password   = $_ENV['MAIL_PASS'] ?? '';
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // SSL port 465
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
     $mail->Port       = (int)($_ENV['MAIL_PORT'] ?? 465);
     $mail->CharSet    = 'UTF-8';
 
-    $mail->setFrom($_ENV['MAIL_USER'] ?? 'admin@upskill-edu.com', 'Upskill Education');
-    $mail->addAddress('admin@upskill-edu.com', 'Upskill Admin');
+    $mail->setFrom($_ENV['MAIL_USER'] ?? '', 'Upskill Education');
+    $mail->addAddress($_ENV['MAIL_TO'] ?? '', 'Upskill Admin');
     $mail->addReplyTo($email, $name);
 
     $mail->Subject = "[Upskill Contact] Message de {$name}";

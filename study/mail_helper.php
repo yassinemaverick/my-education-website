@@ -7,7 +7,7 @@
 function upskill_send_email(string $to, string $subject, string $bodyHtml): bool {
     if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
 
-    $from = 'admin@upskill-edu.com';
+    $from = $_ENV['MAIL_USER'] ?? '';
 
     $headers  = "From: Upskill Education <{$from}>\r\n";
     $headers .= "Reply-To: {$from}\r\n";
