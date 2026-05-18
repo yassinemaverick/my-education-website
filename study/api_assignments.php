@@ -109,10 +109,8 @@ function logActivity(PDO $pdo, int $userId, string $type, string $desc): void {
     } catch(Throwable $e) {}
 }
 
-// Helper: get display title from a row (prefer fr, fallback ar)
-function assignTitle(array $row, string $lang = 'fr'): string {
-    if ($lang === 'ar') return $row['title_ar'] ?: $row['title_fr'] ?: '';
-    return $row['title_fr'] ?: $row['title_ar'] ?: '';
+function assignTitle(array $row): string {
+    return $row['title_fr'] ?: '';
 }
 
 try {

@@ -58,32 +58,16 @@ $phone   = trim($_POST['phone']   ?? '');
 
 $errors = [];
 if ($name === '' || mb_strlen($name) > 120) {
-    $errors[] = match($lang) {
-        'ar' => 'يرجى إدخال اسمك الكامل (120 حرفاً كحد أقصى).',
-        'en' => 'Please enter your full name (max 120 characters).',
-        default => 'Veuillez entrer votre nom complet (120 caractères max).',
-    };
+    $errors[] = $lang === 'en' ? 'Please enter your full name (max 120 characters).' : 'Veuillez entrer votre nom complet (120 caractères max).';
 }
 if (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 180) {
-    $errors[] = match($lang) {
-        'ar' => 'يرجى إدخال بريد إلكتروني صالح.',
-        'en' => 'Please enter a valid email address.',
-        default => 'Veuillez entrer une adresse e-mail valide.',
-    };
+    $errors[] = $lang === 'en' ? 'Please enter a valid email address.' : 'Veuillez entrer une adresse e-mail valide.';
 }
 if ($phone !== '' && (!preg_match('/^[+\d\s\-(). ]{1,30}$/', $phone))) {
-    $errors[] = match($lang) {
-        'ar' => 'رقم الهاتف غير صالح.',
-        'en' => 'Invalid phone number.',
-        default => 'Numéro de téléphone invalide.',
-    };
+    $errors[] = $lang === 'en' ? 'Invalid phone number.' : 'Numéro de téléphone invalide.';
 }
 if ($message === '' || mb_strlen($message) > 2000) {
-    $errors[] = match($lang) {
-        'ar' => 'يرجى كتابة رسالتك (2000 حرف كحد أقصى).',
-        'en' => 'Please enter your message (max 2000 characters).',
-        default => 'Veuillez entrer votre message (2000 caractères max).',
-    };
+    $errors[] = $lang === 'en' ? 'Please enter your message (max 2000 characters).' : 'Veuillez entrer votre message (2000 caractères max).';
 }
 if ($errors) {
     http_response_code(422);
@@ -121,22 +105,14 @@ try {
     $mail->send();
 
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    $msg = match($lang) {
-        'ar'    => 'تم إرسال رسالتك! سنرد عليك قريباً.',
-        'en'    => "Message sent! We'll get back to you soon.",
-        default => 'Message envoyé ! Nous vous répondrons bientôt.',
-    };
+    $msg = $lang === 'en' ? "Message sent! We'll get back to you soon." : 'Message envoyé ! Nous vous répondrons bientôt.';
     ob_clean();
     echo json_encode(['ok' => true, 'message' => $msg]);
 
 } catch (Exception $e) {
     error_log('contact.php PHPMailer error: ' . $mail->ErrorInfo);
     http_response_code(500);
-    $err = match($lang) {
-        'ar'    => 'فشل الإرسال. يرجى المحاولة مرة أخرى.',
-        'en'    => 'Failed to send. Please try again.',
-        default => "Échec de l'envoi. Veuillez réessayer.",
-    };
+    $err = $lang === 'en' ? 'Failed to send. Please try again.' : "Échec de l'envoi. Veuillez réessayer.";
     ob_clean();
     echo json_encode(['ok' => false, 'error' => $err]);
 }

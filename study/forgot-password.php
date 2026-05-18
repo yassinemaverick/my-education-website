@@ -95,22 +95,6 @@ $T = [
         'err_email'   => 'Adresse email invalide.',
         'err_invalid' => 'Identifiant trop long.',
     ],
-    'ar' => [
-        'title'       => 'نسيت كلمة المرور',
-        'heading'     => 'إعادة تعيين كلمة المرور',
-        'sub'         => 'أدخل اسم المستخدم وعنوان بريدك الإلكتروني. ستتلقى رابط إعادة التعيين.',
-        'lbl_id'      => 'اسم المستخدم',
-        'ph_id'       => 'اسم المستخدم',
-        'lbl_email'   => 'البريد الإلكتروني',
-        'ph_email'    => 'your@email.com',
-        'btn'         => 'إرسال الرابط ←',
-        'back'        => 'العودة إلى تسجيل الدخول →',
-        'sent_h'      => 'تم الإرسال !',
-        'sent_p'      => 'إذا تطابق حساب مع هذه المعلومات، فقد تم إرسال رابط إعادة التعيين. تحقق من بريدك الوارد والبريد العشوائي.',
-        'err_empty'   => 'يرجى ملء جميع الحقول.',
-        'err_email'   => 'عنوان البريد الإلكتروني غير صالح.',
-        'err_invalid' => 'اسم المستخدم طويل جداً.',
-    ],
     'en' => [
         'title'       => 'Forgot Password',
         'heading'     => 'Reset your password',
@@ -129,12 +113,11 @@ $T = [
     ],
 ];
 $tr = $T[$lang] ?? $T['fr'];
-$dir = $lang === 'ar' ? 'rtl' : 'ltr';
 $loginPage = $lang === 'en' ? 'index2.php' : 'index2-fr.php';
 $errMsg = $error === 'empty' ? $tr['err_empty'] : ($error === 'invalid_email' ? $tr['err_email'] : ($error ? $tr['err_invalid'] : ''));
 ?>
 <!DOCTYPE html>
-<html lang="<?= $lang ?>" dir="<?= $dir ?>">
+<html lang="<?= $lang ?>" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

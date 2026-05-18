@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $lang  = trim($_POST['lang'] ?? 'en');
 $role  = trim($_POST['role'] ?? 'student');
-$pages = ['en' => 'index2.php', 'fr' => 'index2-fr.php', 'ar' => 'index2-ar.php', 'teacher' => 'login-teacher.php'];
+$pages = ['en' => 'index2.php', 'fr' => 'index2-fr.php', 'teacher' => 'login-teacher.php'];
 $back  = $pages[$lang] ?? 'index2.php';
 
 $redirect = function(string $err) use ($back, $role, $lang) {

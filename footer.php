@@ -3,11 +3,10 @@
  * partials/footer.php
  * Expects $lang and $t (translations array).
  */
-$isRtl = ($lang === 'ar');
 ?>
 <footer>
   <div class="footer-logo"><em>Up</em>skill Education</div>
-  <div class="footer-links" <?= $isRtl ? 'style="flex-direction:row-reverse;"' : '' ?>>
+  <div class="footer-links">
     <a href="#courses"><?= $t['nav_courses'] ?></a>
     <a href="#enroll"><?= $t['nav_enroll'] ?></a>
     <a href="<?= $t['portal_url'] ?>"><?= $t['footer_portal'] ?></a>

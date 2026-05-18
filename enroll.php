@@ -77,46 +77,26 @@ $email  = trim($_POST['email']  ?? '');
 $phone  = trim($_POST['phone']  ?? '');
 $course = trim($_POST['course'] ?? '');
 $level  = trim($_POST['level']  ?? '');
-$lang   = trim($_POST['lang']   ?? 'en'); // 'en' | 'fr' | 'ar'
+$lang   = trim($_POST['lang']   ?? 'en'); // 'en' | 'fr'
 
 // ── Validation ───────────────────────────────────────────────────────────────
 $errors = [];
 
 if ($name === '' || strlen($name) > 120) {
-    $errors[] = match($lang) {
-        'fr' => 'Veuillez entrer votre nom complet.',
-        'ar' => 'يرجى إدخال اسمك الكامل.',
-        default => 'Please enter your full name.',
-    };
+    $errors[] = $lang === 'fr' ? 'Veuillez entrer votre nom complet.' : 'Please enter your full name.';
 }
 if (!filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($email) > 180) {
-    $errors[] = match($lang) {
-        'fr' => 'Adresse e-mail invalide.',
-        'ar' => 'البريد الإلكتروني غير صالح.',
-        default => 'Please enter a valid email address.',
-    };
+    $errors[] = $lang === 'fr' ? 'Adresse e-mail invalide.' : 'Please enter a valid email address.';
 }
 if ($phone === '' || strlen($phone) > 30) {
-    $errors[] = match($lang) {
-        'fr' => 'Veuillez entrer votre numéro de téléphone.',
-        'ar' => 'يرجى إدخال رقم هاتفك.',
-        default => 'Please enter your phone number.',
-    };
+    $errors[] = $lang === 'fr' ? 'Veuillez entrer votre numéro de téléphone.' : 'Please enter your phone number.';
 }
 if ($course === '' || strlen($course) > 120) {
-    $errors[] = match($lang) {
-        'fr' => 'Veuillez sélectionner un cours.',
-        'ar' => 'يرجى اختيار دورة.',
-        default => 'Please select a course.',
-    };
+    $errors[] = $lang === 'fr' ? 'Veuillez sélectionner un cours.' : 'Please select a course.';
 }
 $allowed_levels = ['Kids', 'Beginner', 'Elementary', 'Intermediate', 'Advanced', 'Baccalaureate Student'];
 if ($level !== '' && !in_array($level, $allowed_levels, true)) {
-    $errors[] = match($lang) {
-        'fr' => 'Niveau sélectionné invalide.',
-        'ar' => 'المستوى المحدد غير صالح.',
-        default => 'Invalid level selected.',
-    };
+    $errors[] = $lang === 'fr' ? 'Niveau sélectionné invalide.' : 'Invalid level selected.';
 }
 
 if ($errors) {
@@ -170,21 +150,15 @@ try {
     // Rotate CSRF token after successful submission
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 
-    $success = match($lang) {
-        'fr' => 'Demande reçue ! Notre équipe vous contactera dans les 24 heures.',
-        'ar' => 'تم استلام طلبك! سيتواصل معك فريقنا خلال 24 ساعة.',
-        default => 'Request received! Our team will contact you within 24 hours.',
-    };
+    $success = $lang === 'fr'
+        ? 'Demande reçue ! Notre équipe vous contactera dans les 24 heures.'
+        : 'Request received! Our team will contact you within 24 hours.';
 
     echo json_encode(['ok' => true, 'message' => $success]);
 
 } catch (PDOException $e) {
     error_log('Enrollment insert failed: ' . $e->getMessage());
     http_response_code(500);
-    $err = match($lang) {
-        'fr' => 'Une erreur est survenue. Veuillez réessayer.',
-        'ar' => 'حدث خطأ. يرجى المحاولة مرة أخرى.',
-        default => 'Something went wrong. Please try again.',
-    };
+    $err = $lang === 'fr' ? 'Une erreur est survenue. Veuillez réessayer.' : 'Something went wrong. Please try again.';
     echo json_encode(['ok' => false, 'error' => $err]);
 }

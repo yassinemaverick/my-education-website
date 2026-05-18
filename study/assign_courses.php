@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * assign_courses.php — Admin endpoint : assigner des cours aux professeurs
  * ─────────────────────────────────────────────────────────────────────────
@@ -53,11 +53,10 @@ function json_ok(array $data): void {
     echo json_encode(array_merge(['ok' => true], $data), JSON_UNESCAPED_UNICODE);
     exit;
 }
-function json_err(string $fr, string $ar, int $http = 400): void {
+function json_err(string $fr, int $http = 400): void {
     ob_end_clean();
     http_response_code($http);
-    echo json_encode(['ok' => false, 'error' => ['fr' => $fr, 'ar' => $ar]],
-                     JSON_UNESCAPED_UNICODE);
+    echo json_encode(['ok' => false, 'error' => $fr], JSON_UNESCAPED_UNICODE);
     exit;
 }
 function get_db(): PDO {
@@ -74,15 +73,14 @@ function get_db(): PDO {
             PDO::ATTR_EMULATE_PREPARES   => false,
         ]);
     } catch (PDOException $e) {
-        json_err('Erreur de connexion DB.', 'خطأ في الاتصال بقاعدة البيانات.', 500);
+        json_err('Erreur de connexion DB.', 500);
     }
     return $pdo;
 }
 
 /* Auth guard */
 if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
-    json_err('Accès refusé. Réservé aux administrateurs.',
-             'الوصول مرفوض. للمسؤولين فقط.', 403);
+    json_err('Accès refusé. Réservé aux administrateurs.', 403);
 }
 csrf_verify();
 $admin_id = (int)$_SESSION['user_id'];
@@ -91,7 +89,7 @@ $action   = $_GET['action'] ?? '';
 try {
     $db = get_db();
 } catch (Throwable $e) {
-    json_err('Erreur de connexion DB: ' . $e->getMessage(), 'خطأ في الاتصال بقاعدة البيانات.', 500);
+    json_err('Erreur de connexion DB: ' . $e->getMessage(), 500);
 }
 
 try {
@@ -130,7 +128,7 @@ switch ($action) {
 
     case 'teacher_courses': {
         $tid = filter_input(INPUT_GET, 'teacher_id', FILTER_VALIDATE_INT);
-        if (!$tid) json_err('teacher_id invalide.', 'معرف الأستاذ غير صالح.');
+        if (!$tid) json_err('teacher_id invalide.');
         $stmt = $db->prepare("
             SELECT c.id, c.group_name_fr, c.group_name_ar,
                    c.subject_fr, c.subject_ar, c.level, c.students_count,
@@ -149,18 +147,18 @@ switch ($action) {
 
     case 'assign': {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            json_err('Méthode non autorisée.', 'الطريقة غير مسموح بها.', 405);
+            json_err('Méthode non autorisée.', 405);
         $body = json_decode(file_get_contents('php://input'), true) ?? [];
         $tid  = filter_var($body['teacher_id'] ?? null, FILTER_VALIDATE_INT);
         $cid  = filter_var($body['course_id']  ?? null, FILTER_VALIDATE_INT);
         if (!$tid || !$cid)
-            json_err('teacher_id et course_id sont requis.', 'teacher_id و course_id مطلوبان.');
+            json_err('teacher_id et course_id sont requis.');
         $c = $db->prepare("SELECT id FROM users WHERE id=:id AND role='teacher'");
         $c->execute([':id' => $tid]);
-        if (!$c->fetch()) json_err('Professeur introuvable.', 'الأستاذ غير موجود.', 404);
+        if (!$c->fetch()) json_err('Professeur introuvable.', 404);
         $c2 = $db->prepare("SELECT id FROM courses WHERE id=:id");
         $c2->execute([':id' => $cid]);
-        if (!$c2->fetch()) json_err('Cours introuvable.', 'الدرس غير موجود.', 404);
+        if (!$c2->fetch()) json_err('Cours introuvable.', 404);
         $c3 = $db->prepare("SELECT teacher_id FROM teacher_courses WHERE course_id=:cid");
         $c3->execute([':cid' => $cid]);
         $ex = $c3->fetch();
@@ -172,40 +170,39 @@ switch ($action) {
         $ins = $db->prepare("INSERT INTO teacher_courses(teacher_id,course_id,assigned_by)
             VALUES(:tid,:cid,:adm) ON DUPLICATE KEY UPDATE assigned_by=VALUES(assigned_by),assigned_at=CURRENT_TIMESTAMP");
         $ins->execute([':tid'=>$tid,':cid'=>$cid,':adm'=>$admin_id]);
-        json_ok(['message'=>['fr'=>'Cours assigné avec succès.','ar'=>'تم تعيين الدرس بنجاح.'],
+        json_ok(['message'=>['fr'=>'Cours assigné avec succès.'],
                  'teacher_id'=>$tid,'course_id'=>$cid]);
     }
 
     case 'unassign': {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            json_err('Méthode non autorisée.', 'الطريقة غير مسموح بها.', 405);
+            json_err('Méthode non autorisée.', 405);
         $body = json_decode(file_get_contents('php://input'), true) ?? [];
         $tid  = filter_var($body['teacher_id'] ?? null, FILTER_VALIDATE_INT);
         $cid  = filter_var($body['course_id']  ?? null, FILTER_VALIDATE_INT);
         if (!$tid || !$cid)
-            json_err('teacher_id et course_id sont requis.', 'teacher_id و course_id مطلوبان.');
+            json_err('teacher_id et course_id sont requis.');
         $del = $db->prepare("DELETE FROM teacher_courses WHERE teacher_id=:tid AND course_id=:cid");
         $del->execute([':tid'=>$tid,':cid'=>$cid]);
         if ($del->rowCount() === 0)
-            json_err('Aucune assignation trouvée.', 'لم يُعثر على تعيين.', 404);
-        json_ok(['message'=>['fr'=>'Cours retiré avec succès.','ar'=>'تم إلغاء التعيين بنجاح.'],
+            json_err('Aucune assignation trouvée.', 404);
+        json_ok(['message'=>['fr'=>'Cours retiré avec succès.'],
                  'teacher_id'=>$tid,'course_id'=>$cid]);
     }
 
     case 'bulk_assign': {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            json_err('Méthode non autorisée.', 'الطريقة غير مسموح بها.', 405);
+            json_err('Méthode non autorisée.', 405);
         $body = json_decode(file_get_contents('php://input'), true) ?? [];
         $tid  = filter_var($body['teacher_id'] ?? null, FILTER_VALIDATE_INT);
         $cids = $body['course_ids'] ?? [];
         if (!$tid || !is_array($cids) || empty($cids))
-            json_err('teacher_id et course_ids[] sont requis.',
-                     'teacher_id و course_ids[] مطلوبان.');
+            json_err('teacher_id et course_ids[] sont requis.');
         $cids = array_values(array_filter(array_map('intval', $cids)));
-        if (empty($cids)) json_err('Aucun course_id valide.', 'لا يوجد course_id صالح.');
+        if (empty($cids)) json_err('Aucun course_id valide.');
         $c = $db->prepare("SELECT id FROM users WHERE id=:id AND role='teacher'");
         $c->execute([':id' => $tid]);
-        if (!$c->fetch()) json_err('Professeur introuvable.', 'الأستاذ غير موجود.', 404);
+        if (!$c->fetch()) json_err('Professeur introuvable.', 404);
         $assigned = []; $skipped = [];
         $db->beginTransaction();
         try {
@@ -229,10 +226,9 @@ switch ($action) {
             $db->commit();
         } catch (PDOException $e) {
             $db->rollBack();
-            json_err("Erreur lors de l'assignation en lot.", 'خطأ أثناء التعيين الجماعي.', 500);
+            json_err("Erreur lors de l'assignation en lot.", 500);
         }
-        json_ok(['message'=>['fr'=>count($assigned).' cours assigné(s).',
-                             'ar'=>'تم تعيين '.count($assigned).' درس/دروس.'],
+        json_ok(['message'=>count($assigned).' cours assigné(s).',
                  'teacher_id'=>$tid,'assigned'=>$assigned,'skipped'=>$skipped]);
     }
 
@@ -244,7 +240,7 @@ switch ($action) {
 
     case 'student_courses': {
         $sid = filter_input(INPUT_GET, 'student_id', FILTER_VALIDATE_INT);
-        if (!$sid) json_err('student_id invalide.', 'معرف الطالب غير صالح.');
+        if (!$sid) json_err('student_id invalide.');
         $db->exec("CREATE TABLE IF NOT EXISTS student_courses (
             id INT AUTO_INCREMENT PRIMARY KEY,
             student_id INT NOT NULL, course_id INT NOT NULL,
@@ -270,18 +266,18 @@ switch ($action) {
 
     case 'enroll_student': {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            json_err('Méthode non autorisée.', 'الطريقة غير مسموح بها.', 405);
+            json_err('Méthode non autorisée.', 405);
         $body = json_decode(file_get_contents('php://input'), true) ?? [];
         $sid  = filter_var($body['student_id'] ?? null, FILTER_VALIDATE_INT);
         $cid  = filter_var($body['course_id']  ?? null, FILTER_VALIDATE_INT);
         if (!$sid || !$cid)
-            json_err('student_id et course_id sont requis.', 'student_id و course_id مطلوبان.');
+            json_err('student_id et course_id sont requis.');
         $c = $db->prepare("SELECT id FROM users WHERE id=:id AND role='student'");
         $c->execute([':id' => $sid]);
-        if (!$c->fetch()) json_err('Étudiant introuvable.', 'الطالب غير موجود.', 404);
+        if (!$c->fetch()) json_err('Étudiant introuvable.', 404);
         $c2 = $db->prepare("SELECT id FROM courses WHERE id=:id");
         $c2->execute([':id' => $cid]);
-        if (!$c2->fetch()) json_err('Cours introuvable.', 'الدرس غير موجود.', 404);
+        if (!$c2->fetch()) json_err('Cours introuvable.', 404);
         $db->exec("CREATE TABLE IF NOT EXISTS student_courses (
             id INT AUTO_INCREMENT PRIMARY KEY,
             student_id INT NOT NULL, course_id INT NOT NULL,
@@ -298,42 +294,41 @@ switch ($action) {
 
     case 'unenroll_student': {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            json_err('Méthode non autorisée.', 'الطريقة غير مسموح بها.', 405);
+            json_err('Méthode non autorisée.', 405);
         $body = json_decode(file_get_contents('php://input'), true) ?? [];
         $sid  = filter_var($body['student_id'] ?? null, FILTER_VALIDATE_INT);
         $cid  = filter_var($body['course_id']  ?? null, FILTER_VALIDATE_INT);
         if (!$sid || !$cid)
-            json_err('student_id et course_id sont requis.', 'student_id و course_id مطلوبان.');
+            json_err('student_id et course_id sont requis.');
         $del = $db->prepare("DELETE FROM student_courses WHERE student_id=:sid AND course_id=:cid");
         $del->execute([':sid' => $sid, ':cid' => $cid]);
         if ($del->rowCount() === 0)
-            json_err('Aucune inscription trouvée.', 'لم يُعثر على تسجيل.', 404);
+            json_err('Aucune inscription trouvée.', 404);
         json_ok(['message' => ['fr' => 'Inscription retirée.', 'ar' => 'تم إلغاء التسجيل.'],
                  'student_id' => $sid, 'course_id' => $cid]);
     }
 
     case 'update_schedule': {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            json_err('Méthode non autorisée.', 'الطريقة غير مسموح بها.', 405);
+            json_err('Méthode non autorisée.', 405);
         $body    = json_decode(file_get_contents('php://input'), true) ?? [];
         $cid     = filter_var($body['course_id'] ?? null, FILTER_VALIDATE_INT);
         $slots   = $body['schedule'] ?? [];
         if (!$cid)
-            json_err('course_id invalide.', 'معرف الدرس غير صالح.');
+            json_err('course_id invalide.');
         if (!is_array($slots))
-            json_err('schedule doit être un tableau.', 'يجب أن يكون schedule مصفوفة.');
+            json_err('schedule doit être un tableau.');
 
         // Validate and sanitise each slot
         $clean = [];
         foreach ($slots as $s) {
             $dayFr = trim($s['day_fr'] ?? '');
-            $dayAr = trim($s['day_ar'] ?? '');
             $time  = trim($s['time']   ?? '');
             $room  = trim($s['room']   ?? '');
             if ($dayFr === '') continue; // skip empty rows
-            if (strlen($dayFr) > 40 || strlen($dayAr) > 40 || strlen($time) > 20 || strlen($room) > 80)
-                json_err('Données de session trop longues.', 'بيانات الجلسة طويلة جداً.');
-            $clean[] = ['day_fr' => $dayFr, 'day_ar' => $dayAr, 'time' => $time, 'room' => $room];
+            if (strlen($dayFr) > 40 || strlen($time) > 20 || strlen($room) > 80)
+                json_err('Données de session trop longues.');
+            $clean[] = ['day_fr' => $dayFr, 'time' => $time, 'room' => $room];
         }
 
         $json = count($clean) > 0 ? json_encode($clean, JSON_UNESCAPED_UNICODE) : null;
@@ -343,7 +338,7 @@ switch ($action) {
             // rowCount can be 0 if value didn't change — verify course exists
             $chk = $db->prepare("SELECT id FROM courses WHERE id = ?");
             $chk->execute([$cid]);
-            if (!$chk->fetch()) json_err('Cours introuvable.', 'الدرس غير موجود.', 404);
+            if (!$chk->fetch()) json_err('Cours introuvable.', 404);
         }
         json_ok(['course_id' => $cid, 'slots' => count($clean)]);
     }
@@ -353,5 +348,5 @@ switch ($action) {
                  "إجراء غير معروف: \"{$action}\".", 400);
 }
 } catch (Throwable $e) {
-    json_err('Erreur serveur: ' . $e->getMessage(), 'خطأ في الخادم: ' . $e->getMessage(), 500);
+    json_err('Erreur serveur: ' . $e->getMessage(), 500);
 }

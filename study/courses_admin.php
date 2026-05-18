@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * courses_admin.php — Admin endpoint : gérer les cours (CRUD)
  * ─────────────────────────────────────────────────────────────
@@ -29,10 +29,10 @@ function json_ok(array $data): void {
     echo json_encode(array_merge(['ok' => true], $data), JSON_UNESCAPED_UNICODE);
     exit;
 }
-function json_err(string $fr, string $ar, int $http = 400): void {
+function json_err(string $fr, int $http = 400): void {
     ob_end_clean();
     http_response_code($http);
-    echo json_encode(['ok' => false, 'error' => ['fr' => $fr, 'ar' => $ar]], JSON_UNESCAPED_UNICODE);
+    echo json_encode(['ok' => false, 'error' => $fr], JSON_UNESCAPED_UNICODE);
     exit;
 }
 function get_db(): PDO {
@@ -49,14 +49,14 @@ function get_db(): PDO {
             PDO::ATTR_EMULATE_PREPARES   => false,
         ]);
     } catch (PDOException $e) {
-        json_err('Erreur de connexion DB.', 'خطأ في الاتصال بقاعدة البيانات.', 500);
+        json_err('Erreur de connexion DB.', 500);
     }
     return $pdo;
 }
 
 /* Auth guard — admin only */
 if (empty($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
-    json_err('Accès refusé. Réservé aux administrateurs.', 'الوصول مرفوض. للمسؤولين فقط.', 403);
+    json_err('Accès refusé. Réservé aux administrateurs.', 403);
 }
 
 csrf_verify();
@@ -66,7 +66,7 @@ $action = $_GET['action'] ?? '';
 try {
     $db = get_db();
 } catch (Throwable $e) {
-    json_err('Erreur de connexion DB: ' . $e->getMessage(), 'خطأ في الاتصال بقاعدة البيانات.', 500);
+    json_err('Erreur de connexion DB: ' . $e->getMessage(), 500);
 }
 
 try {
@@ -99,12 +99,12 @@ switch ($action) {
 
     case 'create': {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            json_err('Méthode non autorisée.', 'الطريقة غير مسموح بها.', 405);
+            json_err('Méthode non autorisée.', 405);
         $body = json_decode(file_get_contents('php://input'), true) ?? [];
         $gfr  = trim($body['group_name_fr'] ?? '');
         $gar  = trim($body['group_name_ar'] ?? '');
         if (!$gfr && !$gar)
-            json_err('Le nom du groupe (FR ou AR) est requis.', 'اسم المجموعة مطلوب.');
+            json_err('Le nom du groupe (FR ou AR) est requis.');
         $sfr  = trim($body['subject_fr']     ?? '');
         $sar  = trim($body['subject_ar']     ?? '');
         $lvl  = trim($body['level']          ?? 'A1');
@@ -116,22 +116,22 @@ switch ($action) {
         ");
         $stmt->execute([':gfr'=>$gfr,':gar'=>$gar,':sfr'=>$sfr,':sar'=>$sar,':lvl'=>$lvl,':sc'=>$sc,':sj'=>$sj]);
         $newId = (int)$db->lastInsertId();
-        json_ok(['message'=>['fr'=>'Cours créé avec succès.','ar'=>'تم إنشاء الدرس بنجاح.'], 'id'=>$newId]);
+        json_ok(['message'=>['fr'=>'Cours créé avec succès.'], 'id'=>$newId]);
     }
 
     case 'update': {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            json_err('Méthode non autorisée.', 'الطريقة غير مسموح بها.', 405);
+            json_err('Méthode non autorisée.', 405);
         $body = json_decode(file_get_contents('php://input'), true) ?? [];
         $id   = filter_var($body['id'] ?? null, FILTER_VALIDATE_INT);
-        if (!$id) json_err('ID de cours invalide.', 'معرف الدرس غير صالح.');
+        if (!$id) json_err('ID de cours invalide.');
         $chk  = $db->prepare("SELECT id FROM courses WHERE id=:id");
         $chk->execute([':id'=>$id]);
-        if (!$chk->fetch()) json_err('Cours introuvable.', 'الدرس غير موجود.', 404);
+        if (!$chk->fetch()) json_err('Cours introuvable.', 404);
         $gfr  = trim($body['group_name_fr']  ?? '');
         $gar  = trim($body['group_name_ar']  ?? '');
         if (!$gfr && !$gar)
-            json_err('Le nom du groupe (FR ou AR) est requis.', 'اسم المجموعة مطلوب.');
+            json_err('Le nom du groupe (FR ou AR) est requis.');
         $sfr  = trim($body['subject_fr']     ?? '');
         $sar  = trim($body['subject_ar']     ?? '');
         $lvl  = trim($body['level']          ?? 'A1');
@@ -146,26 +146,25 @@ switch ($action) {
             WHERE id=:id
         ");
         $stmt->execute([':gfr'=>$gfr,':gar'=>$gar,':sfr'=>$sfr,':sar'=>$sar,':lvl'=>$lvl,':sc'=>$sc,':sj'=>$sj,':id'=>$id]);
-        json_ok(['message'=>['fr'=>'Cours mis à jour.','ar'=>'تم تحديث الدرس.'], 'id'=>$id]);
+        json_ok(['message'=>['fr'=>'Cours mis à jour.'], 'id'=>$id]);
     }
 
     case 'delete': {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST')
-            json_err('Méthode non autorisée.', 'الطريقة غير مسموح بها.', 405);
+            json_err('Méthode non autorisée.', 405);
         $body = json_decode(file_get_contents('php://input'), true) ?? [];
         $id   = filter_var($body['id'] ?? null, FILTER_VALIDATE_INT);
-        if (!$id) json_err('ID de cours invalide.', 'معرف الدرس غير صالح.');
+        if (!$id) json_err('ID de cours invalide.');
         $stmt = $db->prepare("DELETE FROM courses WHERE id=:id");
         $stmt->execute([':id'=>$id]);
         if ($stmt->rowCount() === 0)
-            json_err('Cours introuvable.', 'الدرس غير موجود.', 404);
-        json_ok(['message'=>['fr'=>'Cours supprimé.','ar'=>'تم حذف الدرس.'], 'id'=>$id]);
+            json_err('Cours introuvable.', 404);
+        json_ok(['message'=>['fr'=>'Cours supprimé.'], 'id'=>$id]);
     }
 
     default:
-        json_err("Action inconnue: \"{$action}\". Disponibles: list, create, update, delete.",
-                 "إجراء غير معروف: \"{$action}\".", 400);
+        json_err("Action inconnue: \"{$action}\". Disponibles: list, create, update, delete.", 400);
 }
 } catch (Throwable $e) {
-    json_err('Erreur serveur: ' . $e->getMessage(), 'خطأ في الخادم: ' . $e->getMessage(), 500);
+    json_err('Erreur serveur: ' . $e->getMessage(), 500);
 }

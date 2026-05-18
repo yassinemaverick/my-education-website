@@ -76,29 +76,6 @@ $T = [
         'err_db'    => 'Erreur serveur. Veuillez réessayer.',
         'strength'  => ['Très faible','Faible','Moyen','Fort','Très fort'],
     ],
-    'ar' => [
-        'title'     => 'كلمة مرور جديدة',
-        'heading'   => 'اختر كلمة مرور جديدة',
-        'sub'       => 'الرابط صالح. اختر كلمة مرور آمنة.',
-        'lbl_pw'    => 'كلمة المرور الجديدة',
-        'lbl_pw2'   => 'تأكيد كلمة المرور',
-        'ph_pw'     => '8 أحرف على الأقل',
-        'ph_pw2'    => 'أعد كتابة كلمة المرور',
-        'btn'       => 'حفظ كلمة المرور ←',
-        'back'      => 'العودة إلى تسجيل الدخول →',
-        'ok_h'      => 'تم تغيير كلمة المرور !',
-        'ok_p'      => 'تم تحديث كلمة مرورك. يمكنك الآن تسجيل الدخول.',
-        'ok_btn'    => 'تسجيل الدخول ←',
-        'inv_h'     => 'الرابط غير صالح أو منتهي الصلاحية',
-        'inv_p'     => 'هذا الرابط لم يعد صالحاً. اطلب رابطاً جديداً.',
-        'inv_btn'   => 'طلب جديد ←',
-        'err_empty' => 'يرجى ملء الحقلين.',
-        'err_short' => 'يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل.',
-        'err_long'  => 'كلمة المرور طويلة جداً.',
-        'err_mismatch'=> 'كلمتا المرور غير متطابقتين.',
-        'err_db'    => 'خطأ في الخادم. حاول مرة أخرى.',
-        'strength'  => ['ضعيف جداً','ضعيف','متوسط','قوي','قوي جداً'],
-    ],
     'en' => [
         'title'     => 'New Password',
         'heading'   => 'Choose a new password',
@@ -124,7 +101,6 @@ $T = [
     ],
 ];
 $tr = $T[$lang] ?? $T['fr'];
-$dir = $lang === 'ar' ? 'rtl' : 'ltr';
 $loginPage   = $lang === 'en' ? 'index2.php' : 'index2-fr.php';
 $forgotPage  = "forgot-password.php?lang={$lang}";
 
@@ -132,7 +108,7 @@ $errMsgMap = ['empty'=>'err_empty','short'=>'err_short','long'=>'err_long','mism
 $errMsg = $error ? ($tr[$errMsgMap[$error]] ?? '') : '';
 ?>
 <!DOCTYPE html>
-<html lang="<?= $lang ?>" dir="<?= $dir ?>">
+<html lang="<?= $lang ?>" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">

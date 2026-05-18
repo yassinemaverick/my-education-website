@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/session.php';
 
-$pages = ['en' => 'index2.php', 'fr' => 'index2-fr.php', 'ar' => 'index2-ar.php'];
+$pages = ['en' => 'index2.php', 'fr' => 'index2-fr.php'];
 $lang  = $_SESSION['lang'] ?? 'fr';
 $back  = $pages[$lang] ?? 'index2-fr.php';
 
