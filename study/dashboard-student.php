@@ -346,7 +346,7 @@ $dinoAvatarSvg = '<svg class="av-dino" id="%ID%" xmlns="http://www.w3.org/2000/s
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="csrf-token" content="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
 <meta name="robots" content="noindex,nofollow">
-<link rel="icon" type="image/svg+xml" href="https://upskill-edu.com/assets/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <title>Upskill – Student Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
