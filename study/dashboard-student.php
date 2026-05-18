@@ -1554,8 +1554,8 @@ function renderGroupSection() {
     const endDate   = fmtDate(g.end_date);
     const dateHtml  = (startDate || endDate) ? `
       <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.55rem;">
-        ${startDate ? `<span style="font-size:.75rem;color:var(--muted);"><span style="color:var(--muted2);font-weight:600;">${startLbl}:</span> ${startDate}</span>` : ''}
-        ${endDate   ? `<span style="font-size:.75rem;color:var(--muted);"><span style="color:var(--muted2);font-weight:600;">${endLbl}:</span> ${endDate}</span>` : ''}
+        ${startDate ? `<span style="font-size:.75rem;color:var(--white);"><span style="font-weight:600;">${startLbl}:</span> ${startDate}</span>` : ''}
+        ${endDate   ? `<span style="font-size:.75rem;color:var(--white);"><span style="font-weight:600;">${endLbl}:</span> ${endDate}</span>` : ''}
       </div>` : '';
     return `<div>
       <span style="display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;background:rgba(62,207,120,.1);border:1px solid rgba(62,207,120,.3);border-radius:100px;font-family:var(--font);font-size:.85rem;font-weight:700;color:var(--green);">

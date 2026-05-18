@@ -2608,7 +2608,7 @@ function _tcRenderGroups() {
     const fmtD = (d) => { if (!d) return ''; const [y,m,day]=d.split('-'); return lang==='en'?`${m}/${day}/${y}`:`${day}/${m}/${y}`; };
     const sd = fmtD(g.start_date), ed = fmtD(g.end_date);
     const dateHtml = (sd || ed)
-      ? `<div style="font-size:.72rem;color:var(--muted);margin-top:.25rem;">🗓 ${sd && ed ? `${sd} → ${ed}` : sd || ed}</div>`
+      ? `<div style="font-size:.72rem;color:var(--white);margin-top:.25rem;">🗓 ${sd && ed ? `${sd} → ${ed}` : sd || ed}</div>`
       : '';
 
     return `<div class="course-card" onclick="openGroupDetail(${g.group_id})">
@@ -2837,7 +2837,7 @@ async function openGroupDetail(groupId) {
   if (!dateEl) {
     dateEl = document.createElement('div');
     dateEl.id = 'cd-date-row';
-    dateEl.style.cssText = 'display:flex;flex-wrap:wrap;gap:.75rem;margin:.2rem 0 .8rem;font-size:.8rem;color:var(--muted);';
+    dateEl.style.cssText = 'display:flex;flex-wrap:wrap;gap:.75rem;margin:.2rem 0 .8rem;font-size:.8rem;color:var(--white);';
     schedEl.parentNode.insertBefore(dateEl, schedEl.nextSibling);
   }
   if (sd || ed) {
@@ -3225,7 +3225,7 @@ function renderTodayClasses() {
             ${sessionInfo ? `<span>🕐 ${sessionInfo}</span>` : ''}
             <span style="${sessionInfo?'margin-left:.75rem':''}">👥 ${c.student_count || 0} ${tr.todayStudents}</span>
             ${hasZoom ? `<span style="margin-left:.75rem;color:var(--green);font-size:.73rem;">● Zoom ✓</span>` : `<span style="margin-left:.75rem;color:var(--yellow);font-size:.73rem;">${lang==='en'?'● Zoom link missing':'● Zoom manquant'}</span>`}
-            ${dateStr2 ? `<span style="margin-left:.75rem;">🗓 ${dateStr2}</span>` : ''}
+            ${dateStr2 ? `<span style="margin-left:.75rem;color:var(--white);">🗓 ${dateStr2}</span>` : ''}
           </div>
         </div>
         <svg id="today-chevron-${gid}" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="flex-shrink:0;color:var(--muted);transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
