@@ -1030,8 +1030,8 @@ const T = {
     schStartDate:'Date de début', schEndDate:'Date de fin',
     schNoSlots:'Aucune séance configurée.',
     schDays:[
-      {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
-      {fr:'Jeudi',en:'Thursday',ar:'الخميس'},{fr:'Vendredi',en:'Friday',ar:'الجمعة'},{fr:'Samedi',en:'Saturday',ar:'السبت'}
+      {fr:'Lundi',en:'Monday'},{fr:'Mardi',en:'Tuesday'},{fr:'Mercredi',en:'Wednesday'},
+      {fr:'Jeudi',en:'Thursday'},{fr:'Vendredi',en:'Friday'},{fr:'Samedi',en:'Saturday'}
     ],
     topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes', schedule:'Horaires des groupes', announcements:'Annonces', placement:'Tests de placement' },
     assigningStudentsTitle:'Étudiants', assigningTeachersTitle:'Professeurs',
@@ -1126,8 +1126,8 @@ const T = {
     schStartDate:'Start date', schEndDate:'End date',
     schNoSlots:'No sessions configured.',
     schDays:[
-      {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
-      {fr:'Jeudi',en:'Thursday',ar:'الخميس'},{fr:'Vendredi',en:'Friday',ar:'الجمعة'},{fr:'Samedi',en:'Saturday',ar:'السبت'}
+      {fr:'Lundi',en:'Monday'},{fr:'Mardi',en:'Tuesday'},{fr:'Mercredi',en:'Wednesday'},
+      {fr:'Jeudi',en:'Thursday'},{fr:'Vendredi',en:'Friday'},{fr:'Samedi',en:'Saturday'}
     ],
     topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments', schedule:'Allocate dates & times', announcements:'Announcements', placement:'Placement Tests' },
     assigningStudentsTitle:'Students', assigningTeachersTitle:'Teachers',
@@ -1288,8 +1288,8 @@ function applyTranslations() {
   set('lbl-au-password', t.lblAuPassword);
   const auPw = document.getElementById('au-password'); if (auPw) auPw.placeholder = t.auPwPlaceholder;
   set('au-cancel-btn', t.auCancelBtn); set('au-submit-btn', t.auSubmitBtn);
-  set('au-role-student', currentLang==='en'?'Student':currentLang==='ar'?'طالب':'Étudiant');
-  set('au-role-teacher', currentLang==='en'?'Teacher':currentLang==='ar'?'أستاذ':'Professeur');
+  set('au-role-student', currentLang==='en'?'Student':'Étudiant');
+  set('au-role-teacher', currentLang==='en'?'Teacher':'Professeur');
   // Reset password modal
   set('modal-reset-title', t.modalResetTitle);
   // reset-pw-sub contains a <strong> child — update only the text node, not innerHTML
@@ -1348,7 +1348,7 @@ async function api(url, method='GET', body=null) {
   if (body) opts.body = JSON.stringify(body);
   const res  = await fetch(url, opts);
   const json = await res.json();
-  if (!json.ok) throw new Error(json.error?.[currentLang] || json.error || (currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'));
+  if (!json.ok) throw new Error(json.error?.[currentLang] || json.error || (currentLang==='en'?'Error':'Erreur'));
   return json;
 }
 
@@ -1367,7 +1367,7 @@ async function loadUsers() {
     renderUsersTable();
   } catch(e) {
     const tbody = document.getElementById('users-tbody');
-    const loadErrMsg = currentLang==='en'?'Loading error':currentLang==='ar'?'خطأ في التحميل':'Erreur de chargement';
+    const loadErrMsg = currentLang==='en'?'Loading error':'Erreur de chargement';
     if (tbody) tbody.innerHTML = `<tr><td colspan="5" class="td-empty">${loadErrMsg}</td></tr>`;
   }
 }
@@ -1396,11 +1396,11 @@ function renderUsersTable() {
 
   if (rows.length === 0) {
     tbody.innerHTML = '<tr><td colspan="5" class="td-empty">'
-      + (lang==='en' ? 'No users found' : lang==='ar' ? 'لا توجد نتائج' : 'Aucun utilisateur trouvé') + '</td></tr>';
+      + (lang==='en' ? 'No users found' : 'Aucun utilisateur trouvé') + '</td></tr>';
     return;
   }
 
-  const roleLabel = { student: lang==='en'?'Student':lang==='ar'?'طالب':'Étudiant', teacher: lang==='en'?'Teacher':lang==='ar'?'أستاذ':'Professeur', admin: lang==='ar'?'مشرف':'Admin' };
+  const roleLabel = { student: lang==='en'?'Student':'Étudiant', teacher: lang==='en'?'Teacher':'Professeur', admin: 'Admin' };
   const roleColor = { student:'var(--blue)', teacher:'var(--green)', admin:'var(--orange)' };
 
   tbody.innerHTML = rows.map(u => {
@@ -1408,8 +1408,8 @@ function renderUsersTable() {
     const emailHtml = `<span class="email-cell" data-uid="${u.id}" data-email="${escHtml(u.email||'')}"
       onclick="editEmailInline(this)"
       style="cursor:pointer;color:${u.email ? 'var(--white)' : 'var(--muted)'};border-bottom:1px dashed var(--border);padding-bottom:1px;"
-      title="${lang==='en'?'Click to edit':lang==='ar'?'انقر للتعديل':'Cliquer pour modifier'}">
-      ${u.email ? escHtml(u.email) : (lang==='en'?'+ Add email':lang==='ar'?'+ إضافة بريد':'+ Ajouter email')}
+      title="${lang==='en'?'Click to edit':'Cliquer pour modifier'}">
+      ${u.email ? escHtml(u.email) : (lang==='en'?'+ Add email':'+ Ajouter email')}
     </span>`;
     return `<tr style="border-bottom:1px solid var(--border2);transition:background .15s;" onmouseenter="this.style.background='rgba(255,255,255,.03)'" onmouseleave="this.style.background=''">
       <td style="padding:.85rem 1.2rem;">
@@ -1428,8 +1428,8 @@ function renderUsersTable() {
           style="font-size:.78rem;font-family:var(--font);font-weight:600;padding:.3rem .7rem;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:.2s;"
           onmouseenter="this.style.color='var(--white)';this.style.borderColor='rgba(255,255,255,.3)'"
           onmouseleave="this.style.color='var(--muted)';this.style.borderColor='var(--border)'"
-          title="${lang==='en'?'Reset password':lang==='ar'?'إعادة تعيين كلمة المرور':'Réinitialiser le mot de passe'}">
-          🔑 ${lang==='en'?'Password':lang==='ar'?'كلمة المرور':'Mot de passe'}
+          title="${lang==='en'?'Reset password':'Réinitialiser le mot de passe'}">
+          🔑 ${lang==='en'?'Password':'Mot de passe'}
         </button>
       </td>
     </tr>`;
@@ -1457,10 +1457,10 @@ function editEmailInline(span) {
       // Update local cache
       const u = allUsers.find(u => String(u.id) === String(uid));
       if (u) u.email = newEmail;
-      showToast(currentLang==='en'?'Email updated ✓':currentLang==='ar'?'تم تحديث البريد ✓':'Email mis à jour ✓', 'success');
+      showToast(currentLang==='en'?'Email updated ✓':'Email mis à jour ✓', 'success');
       renderUsersTable();
     } catch(err) {
-      showToast(err.message || (currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'), 'error');
+      showToast(err.message || (currentLang==='en'?'Error':'Erreur'), 'error');
       renderUsersTable();
     }
   };
@@ -1485,17 +1485,17 @@ async function submitResetPassword() {
   const errEl= document.getElementById('reset-pw-error');
 
   const _rlang = currentLang;
-  if (!pw1 || pw1.length < 8) { errEl.textContent = _rlang==='en'?'Password must be at least 8 characters.':_rlang==='ar'?'يجب أن تكون كلمة المرور 8 أحرف على الأقل.':'Le mot de passe doit contenir au moins 8 caractères.'; errEl.style.display=''; return; }
-  if (pw1 !== pw2)             { errEl.textContent = _rlang==='en'?'Passwords do not match.':_rlang==='ar'?'كلمتا المرور غير متطابقتين.':'Les mots de passe ne correspondent pas.'; errEl.style.display=''; return; }
+  if (!pw1 || pw1.length < 8) { errEl.textContent = _rlang==='en'?'Password must be at least 8 characters.':'Le mot de passe doit contenir au moins 8 caractères.'; errEl.style.display=''; return; }
+  if (pw1 !== pw2)             { errEl.textContent = _rlang==='en'?'Passwords do not match.':'Les mots de passe ne correspondent pas.'; errEl.style.display=''; return; }
 
   try {
     document.getElementById('rp-submit-btn').textContent = '…';
     await api('api_students.php?action=reset_password', 'POST', { user_id: uid, password: pw1 });
     closeModal('reset-pw');
-    showToast(currentLang==='en'?'Password updated ✓':currentLang==='ar'?'تم تحديث كلمة المرور ✓':'Mot de passe mis à jour ✓', 'success');
-    addActivity((currentLang==='en'?'Password reset — ':currentLang==='ar'?'إعادة تعيين كلمة المرور — ':'Mot de passe réinitialisé — ') + document.getElementById('reset-pw-name').textContent);
+    showToast(currentLang==='en'?'Password updated ✓':'Mot de passe mis à jour ✓', 'success');
+    addActivity((currentLang==='en'?'Password reset — ':'Mot de passe réinitialisé — ') + document.getElementById('reset-pw-name').textContent);
   } catch(err) {
-    errEl.textContent = err.message || (currentLang==='en'?'Server error':currentLang==='ar'?'خطأ في الخادم':'Erreur serveur'); errEl.style.display = '';
+    errEl.textContent = err.message || (currentLang==='en'?'Server error':'Erreur serveur'); errEl.style.display = '';
   } finally {
     document.getElementById('rp-submit-btn').textContent = tr().rpSubmitBtn;
   }
@@ -1528,9 +1528,9 @@ async function submitAddUser() {
   const errEl    = document.getElementById('au-error');
 
   const _lang = currentLang;
-  if (!fullname || !username || !password) { errEl.textContent=_lang==='en'?'Name, username and password are required.':_lang==='ar'?'الاسم والمعرف وكلمة المرور مطلوبة.':'Nom, identifiant et mot de passe sont requis.'; errEl.style.display=''; return; }
-  if (password.length < 8) { errEl.textContent=_lang==='en'?'Password must be at least 8 characters.':_lang==='ar'?'يجب أن تكون كلمة المرور 8 أحرف على الأقل.':'Le mot de passe doit contenir au moins 8 caractères.'; errEl.style.display=''; return; }
-  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent=_lang==='en'?'Invalid email.':_lang==='ar'?'بريد إلكتروني غير صالح.':'Email invalide.'; errEl.style.display=''; return; }
+  if (!fullname || !username || !password) { errEl.textContent=_lang==='en'?'Name, username and password are required.':'Nom, identifiant et mot de passe sont requis.'; errEl.style.display=''; return; }
+  if (password.length < 8) { errEl.textContent=_lang==='en'?'Password must be at least 8 characters.':'Le mot de passe doit contenir au moins 8 caractères.'; errEl.style.display=''; return; }
+  if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent=_lang==='en'?'Invalid email.':'Email invalide.'; errEl.style.display=''; return; }
 
   try {
     document.getElementById('au-submit-btn').textContent = '…';
@@ -1541,12 +1541,12 @@ async function submitAddUser() {
       try { await api('api_students.php?action=update_enrollment_status', 'POST', { id: enrollId, status: 'accepted' }); } catch(e){}
     }
     closeModal('add-user');
-    showToast(currentLang==='en'?'User created ✓':currentLang==='ar'?'تم إنشاء المستخدم ✓':'Utilisateur créé ✓', 'success');
-    addActivity((currentLang==='en'?'New user created — ':currentLang==='ar'?'مستخدم جديد — ':'Nouvel utilisateur créé — ') + fullname);
+    showToast(currentLang==='en'?'User created ✓':'Utilisateur créé ✓', 'success');
+    addActivity((currentLang==='en'?'New user created — ':'Nouvel utilisateur créé — ') + fullname);
     await loadUsers();
     if (enrollId) await loadEnrollments(); // refresh inscriptions tab too
   } catch(err) {
-    errEl.textContent = err.message || (currentLang==='en'?'Server error':currentLang==='ar'?'خطأ في الخادم':'Erreur serveur'); errEl.style.display='';
+    errEl.textContent = err.message || (currentLang==='en'?'Server error':'Erreur serveur'); errEl.style.display='';
   } finally {
     document.getElementById('au-submit-btn').textContent = tr().auSubmitBtn;
   }
@@ -1648,7 +1648,7 @@ async function loadEnrollments() {
     if (badge) { badge.textContent = c.new||0; badge.style.display = (c.new||0)>0?'':'none'; }
     renderEnrollmentsTable();
   } catch(e) {
-    const errLbl = currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur';
+    const errLbl = currentLang==='en'?'Error':'Erreur';
     tbody.innerHTML = `<tr><td colspan="6" style="padding:1.5rem;color:var(--red);">${errLbl}: ${e.message||''}</td></tr>`;
   }
 }
@@ -1659,7 +1659,7 @@ function renderEnrollmentsTable() {
 
   // All tabs now use enrollmentsData (enrollment form submissions)
   if (!enrollmentsData.length) {
-    const noReqMsg = currentLang==='en' ? 'No requests found.' : currentLang==='ar' ? 'لم يُعثر على أي طلب.' : 'Aucune demande trouvée.';
+    const noReqMsg = currentLang==='en' ? 'No requests found.' : 'Aucune demande trouvée.';
     tbody.innerHTML = `<tr><td colspan="6" class="td-empty">${noReqMsg}</td></tr>`;
     return;
   }
@@ -1670,7 +1670,7 @@ function renderEnrollmentsTable() {
   };
   tbody.innerHTML = enrollmentsData.map(row => {
     const sc  = statusConfig[row.status] || statusConfig.new;
-    const dt  = new Date(row.created_at).toLocaleDateString(currentLang==='ar'?'ar-MA':'fr-FR',{day:'2-digit',month:'short',year:'numeric'});
+    const dt  = new Date(row.created_at).toLocaleDateString(currentLang==='en'?'en-GB':'fr-FR',{day:'2-digit',month:'short',year:'numeric'});
     const initials = row.name.trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase()||'?';
     return `<tr style="border-bottom:1px solid var(--border2);"
               onmouseenter="this.style.background='rgba(255,255,255,.02)'"
@@ -1726,7 +1726,7 @@ async function updateEnrollmentStatus(id, status) {
   try {
     await api('api_students.php?action=update_enrollment_status', 'POST', { id, status });
     showToast(tr().toastStatusUpdated, 'success');
-    addActivity((currentLang==='en'?'Enrollment #':currentLang==='ar'?'تسجيل #':'Inscription #') + id + ' → ' + status);
+    addActivity((currentLang==='en'?'Enrollment #':'Inscription #') + id + ' → ' + status);
     await loadEnrollments(); // reload to refresh counts
   } catch(e) {
     showToast(e.message || tr().errNetwork, 'error');
@@ -1878,14 +1878,14 @@ let classesAllUsers  = []; // separate from allUsers (Users page)
 
 // Fixed type definitions (mirrors PHP CLASS_TYPES)
 const CLASS_TYPE_DEFS = [
-  {key:'beginners',          label_fr:'Débutants',           label_en:'Beginners',          label_ar:'مبتدئون',         levels:3, icon:'🌱'},
-  {key:'pre_intermediate',   label_fr:'Pré-intermédiaire',   label_en:'Pre-intermediate',   label_ar:'ما قبل المتوسط',  levels:3, icon:'📗'},
-  {key:'intermediate',       label_fr:'Intermédiaire',       label_en:'Intermediate',       label_ar:'متوسط',            levels:3, icon:'📘'},
-  {key:'upper_intermediate', label_fr:'Upper-intermédiaire', label_en:'Upper-intermediate', label_ar:'فوق المتوسط',     levels:3, icon:'📙'},
-  {key:'advanced',           label_fr:'Avancé',              label_en:'Advanced',           label_ar:'متقدم',            levels:3, icon:'🔥'},
-  {key:'baccalaureate',      label_fr:'Baccalauréat',        label_en:'Baccalaureate',      label_ar:'البكالوريا',       levels:0, icon:'🎓'},
-  {key:'business',           label_fr:'Business',            label_en:'Business',           label_ar:'الأعمال',          levels:0, icon:'💼'},
-  {key:'kids',               label_fr:'Kids',                label_en:'Kids',               label_ar:'أطفال',            levels:0, icon:'🧒'},
+  {key:'beginners',          label_fr:'Débutants',           label_en:'Beginners',          levels:3, icon:'🌱'},
+  {key:'pre_intermediate',   label_fr:'Pré-intermédiaire',   label_en:'Pre-intermediate',   levels:3, icon:'📗'},
+  {key:'intermediate',       label_fr:'Intermédiaire',       label_en:'Intermediate',       levels:3, icon:'📘'},
+  {key:'upper_intermediate', label_fr:'Upper-intermédiaire', label_en:'Upper-intermediate', levels:3, icon:'📙'},
+  {key:'advanced',           label_fr:'Avancé',              label_en:'Advanced',           levels:3, icon:'🔥'},
+  {key:'baccalaureate',      label_fr:'Baccalauréat',        label_en:'Baccalaureate',      levels:0, icon:'🎓'},
+  {key:'business',           label_fr:'Business',            label_en:'Business',           levels:0, icon:'💼'},
+  {key:'kids',               label_fr:'Kids',                label_en:'Kids',               levels:0, icon:'🧒'},
 ];
 
 async function renderClassesPage() {
@@ -1906,7 +1906,7 @@ async function renderClassesPage() {
     await Promise.all([renderTypesGrid(), loadCoursesPanel()]);
 
   } else if (classesView === 'levels') {
-    const typeNameL = currentLang==='en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+    const typeNameL = currentLang==='en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : classesTypeMeta.label_fr;
     document.getElementById('classes-page-sub').textContent = typeNameL;
     bc.style.display = '';
     bc.innerHTML = `<span class="bc-link" onclick="classesGoTypes()">Classes</span>`
@@ -1921,7 +1921,7 @@ async function renderClassesPage() {
     bc.style.display = '';
     let bcHtml = `<span class="bc-link" onclick="classesGoTypes()">Classes</span><span class="bc-sep">›</span>`;
     if (classesTypeMeta.levels > 0) {
-      const typeNameG = currentLang==='en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+      const typeNameG = currentLang==='en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : classesTypeMeta.label_fr;
       bcHtml += `<span class="bc-link" onclick="classesGoLevels()">${typeNameG}</span><span class="bc-sep">›</span>`;
     }
     bcHtml += `<span class="bc-cur">${label}</span>`;
@@ -1933,7 +1933,7 @@ async function renderClassesPage() {
 }
 
 function buildGroupLabel() {
-  const name = currentLang==='en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : currentLang==='ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+  const name = currentLang==='en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : classesTypeMeta.label_fr;
   return classesLevel ? name + ' ' + classesLevel : name;
 }
 
@@ -1942,10 +1942,10 @@ async function renderTypesGrid() {
 
   // Render immediately from local definitions so cards are always clickable
   const render = (counts) => {
-    const niveauxWord = currentLang==='en' ? 'level(s)' : currentLang==='ar' ? 'مستوى' : 'niveaux';
-    const groupsWord  = currentLang==='en' ? 'group(s)' : currentLang==='ar' ? 'مجموعة' : 'groupe(s)';
+    const niveauxWord = currentLang==='en' ? 'level(s)' : 'niveaux';
+    const groupsWord  = currentLang==='en' ? 'group(s)' : 'groupe(s)';
     grid.innerHTML = CLASS_TYPE_DEFS.map(def => {
-      const name = currentLang === 'en' ? (def.label_en||def.label_fr) : currentLang === 'ar' ? def.label_ar : def.label_fr;
+      const name = currentLang === 'en' ? (def.label_en||def.label_fr) : def.label_fr;
       let sub = def.levels > 0 ? def.levels + ' ' + niveauxWord : '';
       if (counts) {
         const t = counts.find(c => c.key === def.key);
@@ -1980,7 +1980,7 @@ async function renderTypesGrid() {
 
 function renderLevelCards() {
   const container = document.getElementById('classes-view-levels');
-  const baseName  = currentLang === 'en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : currentLang === 'ar' ? classesTypeMeta.label_ar : classesTypeMeta.label_fr;
+  const baseName  = currentLang === 'en' ? (classesTypeMeta.label_en||classesTypeMeta.label_fr) : classesTypeMeta.label_fr;
   const levels    = classesTypeMeta.levels || 0;
   // Build level list: use API data if available, otherwise fall back to count from def
   const apiType   = allClassTypes.find(t => t.key === classesTypeKey);
@@ -1989,7 +1989,7 @@ function renderLevelCards() {
     const gc   = apiType ? ((apiType.level_groups || []).find(lg => lg.level === lvl)?.group_count ?? 0) : null;
     return { level: lvl, group_count: gc };
   });
-  const groupsWord2 = currentLang==='en' ? 'group(s)' : currentLang==='ar' ? 'مجموعة' : 'groupe(s)';
+  const groupsWord2 = currentLang==='en' ? 'group(s)' : 'groupe(s)';
   container.innerHTML = rows.map(lg => {
     const name = baseName + ' ' + lg.level;
     const sub  = lg.group_count !== null ? lg.group_count + ' ' + groupsWord2 : '';
@@ -2007,7 +2007,7 @@ async function loadGroupChips() {
   let url = `api_classes.php?action=list_groups&type_key=${classesTypeKey}`;
   if (classesLevel) url += `&level=${classesLevel}`;
   let data;
-  const loadErrMsg2 = currentLang==='en'?'Loading error':currentLang==='ar'?'خطأ في التحميل':'Erreur de chargement';
+  const loadErrMsg2 = currentLang==='en'?'Loading error':'Erreur de chargement';
   try { data = await api(url); } catch(e) { container.innerHTML = `<p style="color:var(--red);font-size:.85rem;grid-column:1/-1;">${loadErrMsg2}</p>`; return; }
 
   const groups = data.groups || [];
@@ -2015,10 +2015,10 @@ async function loadGroupChips() {
     container.innerHTML = `<p style="color:var(--muted);font-size:.85rem;grid-column:1/-1;">${tr().noGroups}</p>`;
     return;
   }
-  const groupWord   = currentLang==='en' ? 'Group' : currentLang==='ar' ? 'مجموعة' : 'Groupe';
-  const noStudents  = currentLang==='en' ? 'No students' : currentLang==='ar' ? 'لا طلاب' : 'Aucun élève';
-  const deleteTitle = currentLang==='en' ? 'Delete' : currentLang==='ar' ? 'حذف' : 'Supprimer';
-  const noCourse    = currentLang==='en' ? 'No course linked' : currentLang==='ar' ? 'بدون مقرر' : 'Aucun cours lié';
+  const groupWord   = currentLang==='en' ? 'Group' : 'Groupe';
+  const noStudents  = currentLang==='en' ? 'No students' : 'Aucun élève';
+  const deleteTitle = currentLang==='en' ? 'Delete' : 'Supprimer';
+  const noCourse    = currentLang==='en' ? 'No course linked' : 'Aucun cours lié';
   container.innerHTML = groups.map(g => {
     const members  = g.members || [];
     const teachers = members.filter(m => m.role === 'teacher');
@@ -2029,7 +2029,7 @@ async function loadGroupChips() {
     const studentHtml = students.length
       ? `<div class="gc-students">${students.map(s => s.name).join(' · ')}</div>`
       : `<div class="gc-students gc-empty">${noStudents}</div>`;
-    const courseName = currentLang==='ar' ? (g.course_name_ar || g.course_name_fr) : g.course_name_fr;
+    const courseName = g.course_name_fr;
     const courseHtml = g.course_id
       ? `<div class="gc-course linked" title="${courseName||''}">📚 ${(courseName||'').split(' ').slice(0,4).join(' ')}</div>`
       : `<div class="gc-course unlinked">📚 ${noCourse}</div>`;
@@ -2128,8 +2128,8 @@ let _allCourses = null;
 // Manage members modal
 async function openManageGroupModal(groupId, groupLetter, currentCourseId) {
   classesGroupId = groupId;
-  const gWord = currentLang==='en' ? 'Group' : currentLang==='ar' ? 'مجموعة' : 'Groupe';
-  const mWord = currentLang==='en' ? 'Members' : currentLang==='ar' ? 'الأعضاء' : 'Membres';
+  const gWord = currentLang==='en' ? 'Group' : 'Groupe';
+  const mWord = currentLang==='en' ? 'Members' : 'Membres';
   document.getElementById('modal-members-title').textContent = gWord + ' ' + groupLetter + ' – ' + mWord;
   document.getElementById('member-add-error').style.display = 'none';
   document.getElementById('course-link-status').textContent = '';
@@ -2150,10 +2150,10 @@ async function loadCourseSelect(currentCourseId) {
     } catch(e) { _allCourses = []; }
   }
 
-  const noneLabel = currentLang==='en' ? '— No course —' : currentLang==='ar' ? '— بدون مقرر —' : '— Aucun cours —';
+  const noneLabel = currentLang==='en' ? '— No course —' : '— Aucun cours —';
   sel.innerHTML = `<option value="">${noneLabel}</option>` +
     _allCourses.map(c => {
-      const name = currentLang==='ar' ? (c.group_name_ar || c.group_name_fr) : c.group_name_fr;
+      const name = c.group_name_fr;
       return `<option value="${c.id}">${name}</option>`;
     }).join('');
 
@@ -2161,13 +2161,12 @@ async function loadCourseSelect(currentCourseId) {
 
   if (currentCourseId) {
     const linked = _allCourses.find(c => c.id == currentCourseId);
-    const name   = linked ? (currentLang==='ar' ? (linked.group_name_ar || linked.group_name_fr) : linked.group_name_fr) : '—';
+    const name   = linked ? linked.group_name_fr : '—';
     status.style.color = 'var(--green)';
     status.textContent = '✅ ' + name;
   } else {
     status.style.color = 'var(--muted)';
     status.textContent = currentLang==='en' ? 'No course linked yet — assignments won\'t reach students until linked.'
-                       : currentLang==='ar' ? 'لا يوجد مقرر مرتبط — لن تصل الواجبات للطلاب.'
                        : 'Aucun cours lié — les devoirs n\'atteindront pas les élèves.';
   }
   sel.disabled = false;
@@ -2180,16 +2179,16 @@ async function saveCourseLink() {
   btn.disabled   = true;
   try {
     await api('api_classes.php', 'POST', {action:'link_course', group_id:classesGroupId, course_id:courseId ? parseInt(courseId) : null});
-    const successMsg = currentLang==='en' ? 'Saved! Existing members synced.' : currentLang==='ar' ? 'تم الحفظ! تمت مزامنة الأعضاء.' : 'Enregistré ! Membres synchronisés.';
+    const successMsg = currentLang==='en' ? 'Saved! Existing members synced.' : 'Enregistré ! Membres synchronisés.';
     showToast(successMsg, 'success');
     if (courseId) {
       const linked = (_allCourses||[]).find(c=>c.id==courseId);
-      const name   = linked ? (currentLang==='ar' ? (linked.group_name_ar || linked.group_name_fr) : linked.group_name_fr) : '—';
+      const name   = linked ? linked.group_name_fr : '—';
       status.style.color = 'var(--green)';
       status.textContent = '✅ ' + name;
     } else {
       status.style.color = 'var(--muted)';
-      status.textContent = currentLang==='en' ? 'Unlinked.' : currentLang==='ar' ? 'تم إلغاء الربط.' : 'Dissocié.';
+      status.textContent = currentLang==='en' ? 'Unlinked.' : 'Dissocié.';
     }
     // Refresh group cards to update badge
     await loadGroupChips();
@@ -2207,13 +2206,13 @@ async function loadCoursesPanel() {
     const d = await api('api_classes.php?action=list_courses');
     _allCourses = d.courses || [];
   } catch(e) {
-    container.innerHTML = `<p style="color:var(--red);font-size:.85rem;padding:.75rem 0;">${currentLang==='en'?'Failed to load courses':currentLang==='ar'?'فشل تحميل المقررات':'Erreur de chargement'}</p>`;
+    container.innerHTML = `<p style="color:var(--red);font-size:.85rem;padding:.75rem 0;">${currentLang==='en'?'Failed to load courses':'Erreur de chargement'}</p>`;
     return;
   }
 
-  const saveLabel  = currentLang==='en' ? 'Save'   : currentLang==='ar' ? 'حفظ'         : 'Enregistrer';
-  const addLabel   = currentLang==='en' ? '+ Add'  : currentLang==='ar' ? '+ إضافة'     : '+ Ajouter';
-  const namePh     = currentLang==='en' ? 'Course name (EN / FR)' : currentLang==='ar' ? 'اسم المقرر' : 'Nom du cours (FR / EN)';
+  const saveLabel  = currentLang==='en' ? 'Save'   : 'Enregistrer';
+  const addLabel   = currentLang==='en' ? '+ Add'  : '+ Ajouter';
+  const namePh     = currentLang==='en' ? 'Course name (EN / FR)' : 'Nom du cours (FR / EN)';
   const inputStyle = `width:100%;padding:.6rem .9rem;background:rgba(255,255,255,.05);border:1px solid var(--border);
                       border-radius:9px;color:var(--white);font-family:var(--font-body);font-size:.86rem;outline:none;box-sizing:border-box;`;
 
@@ -2222,10 +2221,6 @@ async function loadCoursesPanel() {
       <div style="flex:1;min-width:0;">
         <input type="text" class="course-name-fr" value="${(c.group_name_fr||'').replace(/"/g,'&quot;')}"
           placeholder="${namePh}" style="${inputStyle}">
-      </div>
-      <div style="flex:1;min-width:0;">
-        <input type="text" class="course-name-ar" value="${(c.group_name_ar||'').replace(/"/g,'&quot;')}"
-          placeholder="اسم المقرر (عربي)" dir="rtl" style="${inputStyle}">
       </div>
       <button class="btn-primary btn-sm" onclick="saveCourseRename(${c.id}, this)">${saveLabel}</button>
       <span class="course-save-status" style="font-size:.75rem;min-width:3rem;"></span>
@@ -2239,9 +2234,6 @@ async function loadCoursesPanel() {
         <div style="flex:1;min-width:0;">
           <input type="text" id="new-course-fr" placeholder="${namePh}" style="${inputStyle}">
         </div>
-        <div style="flex:1;min-width:0;">
-          <input type="text" id="new-course-ar" placeholder="اسم المقرر (عربي)" dir="rtl" style="${inputStyle}">
-        </div>
         <button class="btn-secondary btn-sm" onclick="addNewCourse(this)">${addLabel}</button>
         <span id="course-add-status" style="font-size:.75rem;min-width:3rem;"></span>
       </div>
@@ -2251,19 +2243,18 @@ async function loadCoursesPanel() {
 async function saveCourseRename(courseId, btn) {
   const row    = btn.closest('.course-rename-row');
   const nameFr = row.querySelector('.course-name-fr').value.trim();
-  const nameAr = row.querySelector('.course-name-ar').value.trim();
   const status = row.querySelector('.course-save-status');
   if (!nameFr) { status.style.color='var(--red)'; status.textContent='⚠'; return; }
   btn.disabled = true;
   status.textContent = '…';
   try {
-    await api('api_classes.php', 'POST', {action:'update_course', course_id:courseId, name_fr:nameFr, name_ar:nameAr});
+    await api('api_classes.php', 'POST', {action:'update_course', course_id:courseId, name_fr:nameFr});
     status.style.color = 'var(--green)';
     status.textContent = '✅';
     // Update cache so group cards pick up new name immediately
     if (_allCourses) {
       const c = _allCourses.find(x => x.id == courseId);
-      if (c) { c.group_name_fr = nameFr; c.group_name_ar = nameAr || nameFr; }
+      if (c) { c.group_name_fr = nameFr; }
     }
     // Refresh group chips if currently visible
     if (classesView === 'groups') loadGroupChips();
@@ -2277,16 +2268,15 @@ async function saveCourseRename(courseId, btn) {
 
 async function addNewCourse(btn) {
   const nameFr = document.getElementById('new-course-fr').value.trim();
-  const nameAr = document.getElementById('new-course-ar').value.trim();
   const status = document.getElementById('course-add-status');
   if (!nameFr) { status.style.color='var(--red)'; status.textContent='⚠'; return; }
   btn.disabled = true;
   status.textContent = '…';
   try {
-    const d = await api('api_classes.php', 'POST', {action:'create_course', name_fr:nameFr, name_ar:nameAr});
+    const d = await api('api_classes.php', 'POST', {action:'create_course', name_fr:nameFr});
     // Reload the whole panel so the new course appears as an editable row
     await loadCoursesPanel();
-    showToast(currentLang==='en'?'Course added':currentLang==='ar'?'تمت إضافة المقرر':'Cours ajouté', 'success');
+    showToast(currentLang==='en'?'Course added':'Cours ajouté', 'success');
   } catch(e) {
     status.style.color = 'var(--red)';
     status.textContent = '✗';
@@ -2305,9 +2295,9 @@ async function loadMembersList() {
     list.innerHTML = members.map(m => {
       const init = (m.name||m.username||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
       const isTeacher = m.role === 'teacher';
-      const teacherLabel  = currentLang==='en'?'Teacher':currentLang==='ar'?'أستاذ':'Prof';
-      const studentLabel  = currentLang==='en'?'Student':currentLang==='ar'?'طالب':'Étudiant';
-      const removeLabel   = currentLang==='en'?'Remove':currentLang==='ar'?'إزالة':'Retirer';
+      const teacherLabel  = currentLang==='en'?'Teacher':'Prof';
+      const studentLabel  = currentLang==='en'?'Student':'Étudiant';
+      const removeLabel   = currentLang==='en'?'Remove':'Retirer';
       const roleBadge = isTeacher
         ? `<span style="font-size:.7rem;background:rgba(62,207,120,.12);color:var(--green);border:1px solid rgba(62,207,120,.3);padding:.1rem .45rem;border-radius:100px;font-family:var(--font);font-weight:700;">${teacherLabel}</span>`
         : `<span style="font-size:.7rem;background:rgba(91,156,246,.12);color:var(--blue);border:1px solid rgba(91,156,246,.3);padding:.1rem .45rem;border-radius:100px;font-family:var(--font);font-weight:700;">${studentLabel}</span>`;
@@ -2323,7 +2313,7 @@ async function loadMembersList() {
         <button class="btn-secondary btn-sm" onclick="removeMember(${m.id})">${removeLabel}</button>
       </div>`;
     }).join('');
-  } catch(e) { list.innerHTML = `<p style="color:var(--red);font-size:.85rem;">${currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'}</p>`; }
+  } catch(e) { list.innerHTML = `<p style="color:var(--red);font-size:.85rem;">${currentLang==='en'?'Error':'Erreur'}</p>`; }
 }
 
 async function loadUsersForSelect() {
@@ -2408,7 +2398,7 @@ async function loadAssigningClasses() {
     groupsWrap.innerHTML = `<p style="padding:1.25rem 1.5rem;color:var(--muted);font-size:.85rem;font-style:italic;">${t.noGroupsAssigned}</p>`;
   } else {
     groupsWrap.innerHTML = groups.map(g => {
-      const label = lang === 'en' ? g.label_en : g.label_fr;
+      const label = lang === 'en' ? (g.label_en || g.label_fr) : g.label_fr;
       const studentRows = g.students.map(s => {
         const init = (s.name || s.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
         return `<div style="display:flex;align-items:center;gap:.55rem;padding:.45rem 1.5rem;">
@@ -2468,7 +2458,7 @@ async function loadAssigningClasses() {
     const init = (u.name || u.username || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
     const groupTags = u.groups.length
       ? u.groups.map(g =>
-          `<span style="display:inline-block;margin:.15rem .2rem;padding:.15rem .55rem;background:rgba(62,207,120,.08);border:1px solid rgba(62,207,120,.2);border-radius:100px;font-size:.72rem;color:var(--green);font-family:var(--font);font-weight:600;">${lang === 'en' ? g.label_en : g.label_fr}</span>`
+          `<span style="display:inline-block;margin:.15rem .2rem;padding:.15rem .55rem;background:rgba(62,207,120,.08);border:1px solid rgba(62,207,120,.2);border-radius:100px;font-size:.72rem;color:var(--green);font-family:var(--font);font-weight:600;">${lang === 'en' ? (g.label_en || g.label_fr) : g.label_fr}</span>`
         ).join('')
       : `<span style="font-size:.75rem;color:var(--muted);font-style:italic;">${t.noAssignments}</span>`;
     return `<tr>
@@ -2670,7 +2660,7 @@ async function createAnnouncement() {
   const target = document.getElementById('ann-target-select').value;
   const status = document.getElementById('ann-send-status');
   const btn    = document.getElementById('btn-send-ann');
-  if (!title || !body) { status.style.color='var(--red)'; status.textContent='⚠ ' + (currentLang==='en'?'Title and message required':currentLang==='ar'?'العنوان والرسالة مطلوبان':'Titre et message requis'); return; }
+  if (!title || !body) { status.style.color='var(--red)'; status.textContent='⚠ ' + (currentLang==='en'?'Title and message required':'Titre et message requis'); return; }
   btn.disabled = true; status.textContent = '…';
   try {
     await api('api_announcements.php', 'POST', {action:'create', title, body, target});
@@ -2855,7 +2845,7 @@ function renderPlacement(data) {
     return '';
   };
   tbody.innerHTML = data.map(r => {
-    const dt   = new Date(r.created_at).toLocaleDateString(currentLang === 'ar' ? 'ar-MA' : currentLang === 'en' ? 'en-GB' : 'fr-FR', { day:'2-digit', month:'short', year:'numeric' });
+    const dt   = new Date(r.created_at).toLocaleDateString(currentLang === 'en' ? 'en-GB' : 'fr-FR', { day:'2-digit', month:'short', year:'numeric' });
     const contact = [r.email, r.phone].filter(Boolean).join(' / ') || '—';
     const pct  = Math.round(parseInt(r.score) / 60 * 100);
     const barColor = pct >= 75 ? 'var(--green)' : pct >= 45 ? 'var(--blue)' : pct >= 25 ? 'var(--yellow)' : 'var(--red)';
@@ -2940,7 +2930,7 @@ async function loadSchedulePage() {
       headers: { 'X-CSRF-Token': csrf }
     });
     const data = await res.json();
-    if (!data.ok) throw new Error(data.error || (currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'));
+    if (!data.ok) throw new Error(data.error || (currentLang==='en'?'Error':'Erreur'));
     // Parse schedule_json string → schedule array for each group
     _schedCourses = (data.groups || []).map(g => ({
       ...g,
@@ -2968,7 +2958,7 @@ function renderScheduleCards() {
   for (const c of _schedCourses) {
     const key = c.type_key + '|' + (c.level_number ?? '');
     if (!classMap.has(key)) {
-      const fullLabel = lang === 'en' ? (c.label_en || c.label_fr) : lang === 'ar' ? (c.label_ar || c.label_fr) : c.label_fr;
+      const fullLabel = lang === 'en' ? (c.label_en || c.label_fr) : c.label_fr;
       const classLabel = fullLabel.split(' – ')[0].trim();
       classMap.set(key, { label: classLabel, groups: [] });
     }
@@ -2978,7 +2968,7 @@ function renderScheduleCards() {
   grid.innerHTML = Array.from(classMap.values()).map(cls => {
     const cardsHtml = cls.groups.map(c => {
       const gid      = c.group_id;
-      const fullName = lang === 'en' ? (c.label_en || c.label_fr) : lang === 'ar' ? (c.label_ar || c.label_fr) : c.label_fr;
+      const fullName = lang === 'en' ? (c.label_en || c.label_fr) : c.label_fr;
       const groupPart = fullName.split(' – ')[1] || fullName;
       const slots    = c.schedule || [];
       const slotHtml = slots.length === 0
@@ -3049,8 +3039,8 @@ function renderScheduleCards() {
 
 function schedSlotRow(courseId, idx, slot, t) {
   const days = (t.schDays || []).map(d => {
-    const label = currentLang === 'en' ? (d.en || d.fr) : currentLang === 'ar' ? (d.ar || d.fr) : d.fr;
-    return `<option value="${d.fr}" data-ar="${d.ar}" ${d.fr === slot.day_fr ? 'selected' : ''}>${label}</option>`;
+    const label = currentLang === 'en' ? (d.en || d.fr) : d.fr;
+    return `<option value="${d.fr}" ${d.fr === slot.day_fr ? 'selected' : ''}>${label}</option>`;
   }).join('');
   const timeStyle = `width:100%;padding:.5rem .4rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;transition:border-color .2s;color-scheme:dark;`;
   return `
@@ -3061,16 +3051,16 @@ function schedSlotRow(courseId, idx, slot, t) {
       <option value="">—</option>${days}
     </select>
     <input type="time" id="slot-time-${courseId}-${idx}" value="${escHtml(slot.time||'')}"
-      style="${timeStyle}" title="${currentLang==='en'?'From':currentLang==='ar'?'من':'De'}"
+      style="${timeStyle}" title="${currentLang==='en'?'From':'De'}"
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
     <input type="time" id="slot-time-end-${courseId}-${idx}" value="${escHtml(slot.time_end||'')}"
-      style="${timeStyle}" title="${currentLang==='en'?'To':currentLang==='ar'?'إلى':'À'}"
+      style="${timeStyle}" title="${currentLang==='en'?'To':'À'}"
       onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
     <button onclick="removeScheduleSlot(${courseId},${idx})"
       style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;padding:.2rem;border-radius:6px;transition:color .15s,background .15s;text-align:center;"
       onmouseover="this.style.color='var(--red)';this.style.background='rgba(232,93,117,.1)'"
       onmouseout="this.style.color='var(--muted)';this.style.background='none'"
-      title="${currentLang==='en'?'Delete':currentLang==='ar'?'حذف':'Supprimer'}">✕</button>
+      title="${currentLang==='en'?'Delete':'Supprimer'}">✕</button>
   </div>`;
 }
 
@@ -3079,7 +3069,7 @@ function addScheduleSlot(courseId) {
   if (!c) return;
   if (!c.schedule) c.schedule = [];
   const idx  = c.schedule.length;
-  c.schedule.push({ day_fr:'', day_ar:'', time:'', time_end:'' });
+  c.schedule.push({ day_fr:'', time:'', time_end:'' });
   const container = document.getElementById(`sched-slots-${courseId}`);
   if (!container) return;
   // Remove the "no slots" placeholder if present
@@ -3122,8 +3112,7 @@ async function saveSchedule(courseId) {
     const time    = (document.getElementById(`slot-time-${courseId}-${i}`)?.value || '').trim();
     const timeEnd = (document.getElementById(`slot-time-end-${courseId}-${i}`)?.value || '').trim();
     if (!dayFr) return;
-    const match = dayNames.find(d => d.fr === dayFr);
-    schedule.push({ day_fr: dayFr, day_ar: match?.ar || '', time, time_end: timeEnd });
+    schedule.push({ day_fr: dayFr, time, time_end: timeEnd });
   });
 
   if (btn) { btn.textContent = t.schSaving; btn.disabled = true; }
@@ -3138,11 +3127,11 @@ async function saveSchedule(courseId) {
       body: JSON.stringify({ group_id: courseId, schedule, start_date: startDate, end_date: endDate })
     });
     const data = await res.json();
-    if (!data.ok) throw new Error(data.error || (currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'));
+    if (!data.ok) throw new Error(data.error || (currentLang==='en'?'Error':'Erreur'));
 
     // Warn if server rejected all slots (e.g. missing day or invalid time)
     if (data.saved === 0 && schedule.length > 0) {
-      const noSaveMsg = currentLang==='en' ? 'No sessions saved — ensure each row has a day and time selected.' : currentLang==='ar' ? 'لم يتم حفظ أي جلسة — تأكد من تحديد يوم وساعة لكل صف.' : 'Aucune séance sauvegardée — vérifiez que chaque ligne a un jour et une heure sélectionnés.';
+      const noSaveMsg = currentLang==='en' ? 'No sessions saved — ensure each row has a day and time selected.' : 'Aucune séance sauvegardée — vérifiez que chaque ligne a un jour et une heure sélectionnés.';
       throw new Error(noSaveMsg);
     }
 
@@ -3213,7 +3202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (actList && enrollments.length > 0) {
       const colors = ['green','blue','orange','purple','green'];
       actList.innerHTML = enrollments.slice(0, 5).map((e, i) => {
-        const name = e.full_name || e.name || (currentLang==='en'?'Student':currentLang==='ar'?'طالب':'Étudiant');
+        const name = e.full_name || e.name || (currentLang==='en'?'Student':'Étudiant');
         const course = e.course || e.program || '';
         const when = e.submitted_at ? new Date(e.submitted_at).toLocaleDateString('fr-FR') : '';
         return `<div class="activity-item">
@@ -3223,7 +3212,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>`;
       }).join('');
     } else if (actList) {
-      const noRecentMsg = currentLang==='en' ? 'No recent enrollments' : currentLang==='ar' ? 'لا توجد تسجيلات حديثة' : 'Aucune inscription récente';
+      const noRecentMsg = currentLang==='en' ? 'No recent enrollments' : 'Aucune inscription récente';
       actList.innerHTML = `<div class="activity-item"><div class="activity-dot orange"></div><div><div class="activity-text" style="color:var(--muted)">${noRecentMsg}</div></div></div>`;
     }
 

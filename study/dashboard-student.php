@@ -122,11 +122,6 @@ try {
                 'intermediate'=>'Intermédiaire','upper_intermediate'=>'Upper-intermédiaire',
                 'advanced'=>'Avancé','baccalaureate'=>'Baccalauréat','business'=>'Business','kids'=>'Kids'
             ];
-            $typeLabelsAr = [
-                'beginners'=>'مبتدئون','pre_intermediate'=>'ما قبل المتوسط',
-                'intermediate'=>'متوسط','upper_intermediate'=>'فوق المتوسط',
-                'advanced'=>'متقدم','baccalaureate'=>'البكالوريا','business'=>'الأعمال','kids'=>'أطفال'
-            ];
             $typeLabelsEn = [
                 'beginners'=>'Beginners','pre_intermediate'=>'Pre-intermediate',
                 'intermediate'=>'Intermediate','upper_intermediate'=>'Upper-intermediate',
@@ -136,7 +131,6 @@ try {
             $tk   = $row['type_key'];
             $gl   = $row['group_letter'];
             $row['label_fr'] = ($typeLabelsFr[$tk] ?? $tk) . ($lvl ? ' ' . $lvl : '') . ' – Groupe ' . $gl;
-            $row['label_ar'] = ($typeLabelsAr[$tk] ?? $tk) . ($lvl ? ' ' . $lvl : '') . ' – مجموعة ' . $gl;
             $row['label_en'] = ($typeLabelsEn[$tk] ?? $tk) . ($lvl ? ' ' . $lvl : '') . ' – Group ' . $gl;
         }
         $liveData['course'] = $row;
@@ -209,10 +203,8 @@ try {
                 'color'   => 'green',
                 'label_fr'=> 'Séance assistée',
                 'label_en'=> 'Session attended',
-                'label_ar'=> 'جلسة حضرت',
                 'detail_fr'=> 'Séance n°' . $r['session_num'],
                 'detail_en'=> 'Session #' . $r['session_num'],
-                'detail_ar'=> 'جلسة رقم ' . $r['session_num'],
                 'time'    => $r['ts'],
             ];
         }
@@ -233,10 +225,8 @@ try {
                 'color'   => 'green',
                 'label_fr'=> 'Devoir soumis',
                 'label_en'=> 'Assignment submitted',
-                'label_ar'=> 'واجب مُسلَّم',
                 'detail_fr'=> $r['title_fr'],
                 'detail_en'=> $r['title_fr'],
-                'detail_ar'=> $r['title_ar'],
                 'time'    => $r['ts'],
             ];
         }
@@ -248,10 +238,8 @@ try {
                 'color'   => 'red',
                 'label_fr'=> 'Devoir en retard',
                 'label_en'=> 'Overdue assignment',
-                'label_ar'=> 'واجب متأخر',
                 'detail_fr'=> $r['title_fr'],
                 'detail_en'=> $r['title_fr'],
-                'detail_ar'=> $r['title_ar'],
                 'time'    => null,
             ];
         }
@@ -421,7 +409,7 @@ html { scroll-behavior:smooth; }
   --white:#1e1b4b; --muted:rgba(30,27,75,0.55); --muted2:rgba(30,27,75,0.40);
   --border:rgba(0,0,0,0.09); --border2:rgba(0,0,0,0.05);
   --yellow:#f59e0b; --red:#ef4444; --blue:#3b82f6; --orange:#f59e0b;
-  --font:'Sora',sans-serif; --font-body:'DM Sans',sans-serif; --font-ar:'Cairo',sans-serif;
+  --font:'Sora',sans-serif; --font-body:'DM Sans',sans-serif;
   --sidebar-w:240px;
 }
 body { background:var(--navy); color:var(--white); font-family:var(--font-body); min-height:100vh; display:flex; overflow-x:hidden; }
@@ -1492,7 +1480,7 @@ function renderLeaderboard() {
   el.innerHTML = CLASS_ACT.map(item => {
     const parts = (item.full_name || '').trim().split(/\s+/);
     const init  = ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase() || '?';
-    const title = item.title_fr || item.title_ar;
+    const title = item.title_fr;
     const time  = item.submitted_at ? formatRelativeTime(item.submitted_at, lang) : '';
     return `<div class="lb-item">
       <div class="lb-av">${e(init)}</div>
@@ -1873,7 +1861,7 @@ async function startQuiz(quizId, title) {
   const lang = currentLang; const tr = T[lang];
   let d;
   try { d = await fetch(`api_quiz.php?action=get_quiz&id=${quizId}`).then(r=>r.json()); } catch(e) { showToast('Error loading quiz'); return; }
-  if (d.already_done) { showToast(lang==='en'?'You already completed this quiz':lang==='ar'?'لقد أكملت هذا الاختبار بالفعل':'Vous avez déjà complété ce quiz'); return; }
+  if (d.already_done) { showToast(lang==='en'?'You already completed this quiz':'Vous avez déjà complété ce quiz'); return; }
   if (!d.ok) { showToast(d.error||'Error'); return; }
   _activeQuizId = quizId;
   const questions = d.questions || [];
@@ -1903,8 +1891,8 @@ async function startQuiz(quizId, title) {
               </label>`).join('')}
           </div>`).join('')}
         <div style="display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;flex-wrap:wrap;">
-          <button type="button" onclick="closeQuizOverlay()" style="padding:.7rem 1.4rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--muted);cursor:pointer;font-family:var(--font);">${lang==='en'?'Cancel':lang==='ar'?'إلغاء':'Annuler'}</button>
-          <button type="button" onclick="submitStudentQuiz()" style="padding:.7rem 1.6rem;background:var(--green);border:none;border-radius:10px;color:var(--navy);font-family:var(--font);font-weight:700;cursor:pointer;">${lang==='en'?'Submit':lang==='ar'?'إرسال':'Soumettre'}</button>
+          <button type="button" onclick="closeQuizOverlay()" style="padding:.7rem 1.4rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--muted);cursor:pointer;font-family:var(--font);">${lang==='en'?'Cancel':'Annuler'}</button>
+          <button type="button" onclick="submitStudentQuiz()" style="padding:.7rem 1.6rem;background:var(--green);border:none;border-radius:10px;color:var(--navy);font-family:var(--font);font-weight:700;cursor:pointer;">${lang==='en'?'Submit':'Soumettre'}</button>
         </div>
         <div id="quiz-submit-error" style="color:var(--red);font-size:.82rem;text-align:right;min-height:1rem;margin-top:.5rem;"></div>
       </form>
@@ -1963,10 +1951,10 @@ async function submitStudentQuiz() {
     const color = d.pct>=60?'var(--green)':'var(--red)';
     dlg.innerHTML = `<div class="modal" style="text-align:center;padding:2.5rem 2rem;max-width:360px;">
       <div style="font-size:3.5rem;margin-bottom:.75rem;">${d.pct>=60?'🎉':'💪'}</div>
-      <h3 style="font-family:var(--font);font-size:1.3rem;margin-bottom:.5rem;">${lang==='en'?'Quiz Complete!':lang==='ar'?'اكتمل الاختبار!':'Quiz terminé !'}</h3>
+      <h3 style="font-family:var(--font);font-size:1.3rem;margin-bottom:.5rem;">${lang==='en'?'Quiz Complete!':'Quiz terminé !'}</h3>
       <div style="font-size:3rem;font-weight:800;font-family:var(--font);color:${color};margin:1rem 0;">${d.pct}%</div>
-      <div style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem;">${d.score} / ${d.total} ${lang==='en'?'correct':lang==='ar'?'إجابة صحيحة':'correct(s)'}</div>
-      <button class="btn-primary" onclick="this.closest('.modal-overlay').remove();renderQuizzes();" style="width:100%;">${lang==='en'?'Done':lang==='ar'?'تم':'Terminer'}</button>
+      <div style="color:var(--muted);font-size:.9rem;margin-bottom:1.5rem;">${d.score} / ${d.total} ${lang==='en'?'correct':'correct(s)'}</div>
+      <button class="btn-primary" onclick="this.closest('.modal-overlay').remove();renderQuizzes();" style="width:100%;">${lang==='en'?'Done':'Terminer'}</button>
     </div>`;
     dlg.addEventListener('click', e=>{ if(e.target===dlg){ dlg.remove(); renderQuizzes(); }});
     document.body.appendChild(dlg); dlg.classList.add('open');
@@ -2146,7 +2134,7 @@ function renderFeed(posts) {
   }
   list.innerHTML = posts.map(p => {
     const lang       = currentLang;
-    const courseName = p.group_name_fr || p.group_name_ar;
+    const courseName = p.group_name_fr;
     const dateStr    = p.session_date ? new Date(p.session_date + 'T00:00:00').toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', { day:'numeric', month:'long', year:'numeric' }) : '';
     const linkBtn    = p.link ? `<a href="${e(p.link)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.45rem;margin-top:.75rem;padding:.5rem 1rem;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:8px;font-size:.82rem;font-weight:600;color:var(--blue);text-decoration:none;font-family:var(--font);transition:background .2s;" onmouseover="this.style.background='rgba(59,130,246,.18)'" onmouseout="this.style.background='rgba(59,130,246,.1)'"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>${e(tr.feedOpenLink)}</a>` : '';
     const notesHtml  = p.notes ? `<div style="margin-top:.75rem;padding:.85rem 1rem;background:rgba(30,27,75,.04);border-radius:10px;border-left:3px solid rgba(59,130,246,.4);"><p style="color:var(--muted);font-size:.87rem;white-space:pre-wrap;line-height:1.7;margin:0;">${e(p.notes)}</p></div>` : '';
@@ -2769,10 +2757,6 @@ function toggleNotifPanel() {
     panel.style.top  = (rect.bottom + 8) + 'px';
     panel.style.right = (window.innerWidth - rect.right) + 'px';
     panel.style.left  = 'auto';
-    if (document.body.classList.contains('ar')) {
-      panel.style.left  = rect.left + 'px';
-      panel.style.right = 'auto';
-    }
     loadNotifications();
   }
   panel.classList.toggle('open', notifOpen);

@@ -20,7 +20,7 @@ $admin_name = htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username'] ?
 <title>Upskill – Gestion des cours</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cairo:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
@@ -31,13 +31,11 @@ $admin_name = htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username'] ?
   --white: #ffffff; --muted: rgba(255,255,255,0.55); --muted2: rgba(255,255,255,0.35);
   --border: rgba(255,255,255,0.1); --border2: rgba(255,255,255,0.07);
   --yellow: #f5c542; --red: #e85d75; --blue: #5b9cf6; --purple: #a78bfa;
-  --font: 'Sora', sans-serif; --font-body: 'DM Sans', sans-serif; --font-ar: 'Cairo', sans-serif;
+  --font: 'Sora', sans-serif; --font-body: 'DM Sans', sans-serif;
 }
 html { scroll-behavior: smooth; }
 body { background: var(--navy); color: var(--white); font-family: var(--font-body);
        min-height: 100vh; }
-body.ar { font-family: var(--font-ar); direction: rtl; }
-
 /* ── TOPBAR ── */
 .topbar {
   background: rgba(15,29,46,.95); backdrop-filter: blur(12px);
@@ -46,9 +44,7 @@ body.ar { font-family: var(--font-ar); direction: rtl; }
   justify-content: space-between; position: sticky; top: 0; z-index: 100;
   gap: 1rem; flex-wrap: wrap;
 }
-body.ar .topbar { flex-direction: row-reverse; }
 .topbar-left { display: flex; align-items: center; gap: 1rem; }
-body.ar .topbar-left { flex-direction: row-reverse; }
 .back-btn {
   display: inline-flex; align-items: center; gap: .5rem;
   background: rgba(255,255,255,.06); border: 1px solid var(--border);
@@ -57,11 +53,8 @@ body.ar .topbar-left { flex-direction: row-reverse; }
   transition: all .2s;
 }
 .back-btn:hover { border-color: rgba(255,255,255,.2); color: var(--white); }
-body.ar .back-btn { flex-direction: row-reverse; }
 .page-title { font-family: var(--font); font-size: 1rem; font-weight: 600; }
-body.ar .page-title { font-family: var(--font-ar); }
 .topbar-right { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
-body.ar .topbar-right { flex-direction: row-reverse; }
 .lang-toggle { display: flex; gap: .4rem; }
 .lang-pill {
   font-size: .7rem; font-family: var(--font); font-weight: 600;
@@ -91,26 +84,21 @@ body.ar .topbar-right { flex-direction: row-reverse; }
 .stat-icon.blue   { background: rgba(91,156,246,.1); }
 .stat-val { font-family: var(--font); font-size: 1.7rem; font-weight: 700; letter-spacing: -.03em; line-height: 1; }
 .stat-lbl { font-size: .78rem; color: var(--muted); margin-top: .15rem; }
-body.ar .stat-lbl { font-family: var(--font-ar); }
 
 /* ── TOOLBAR ── */
 .toolbar {
   display: flex; align-items: center; justify-content: space-between;
   gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;
 }
-body.ar .toolbar { flex-direction: row-reverse; }
 .toolbar-left { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
-body.ar .toolbar-left { flex-direction: row-reverse; }
 .search-wrap { position: relative; }
 .search-wrap svg { position: absolute; left: .75rem; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--muted); pointer-events: none; }
-body.ar .search-wrap svg { left: auto; right: .75rem; }
 .search-input {
   background: rgba(255,255,255,.05); border: 1px solid var(--border);
   border-radius: 10px; color: var(--white); font-family: var(--font-body);
   font-size: .85rem; height: 38px; padding: 0 1rem 0 2.3rem; outline: none;
   transition: border-color .2s; width: 240px;
 }
-body.ar .search-input { font-family: var(--font-ar); padding: 0 2.3rem 0 1rem; }
 .search-input:focus { border-color: rgba(167,139,250,.4); }
 .search-input::placeholder { color: var(--muted2); }
 .filter-select {
@@ -118,10 +106,8 @@ body.ar .search-input { font-family: var(--font-ar); padding: 0 2.3rem 0 1rem; }
   border-radius: 10px; color: var(--white); font-family: var(--font-body);
   font-size: .82rem; height: 38px; padding: 0 .9rem; outline: none; cursor: pointer;
 }
-body.ar .filter-select { font-family: var(--font-ar); }
 .filter-select option { background: var(--navy-mid); }
 .toolbar-right { display: flex; gap: .6rem; flex-wrap: wrap; }
-body.ar .toolbar-right { flex-direction: row-reverse; }
 
 /* ── BUTTONS ── */
 .btn {
@@ -130,7 +116,6 @@ body.ar .toolbar-right { flex-direction: row-reverse; }
   font-size: .82rem; font-weight: 600; cursor: pointer; border: 1px solid;
   transition: all .2s; height: 38px;
 }
-body.ar .btn { font-family: var(--font-ar); flex-direction: row-reverse; }
 .btn-secondary { background: rgba(255,255,255,.06); border-color: var(--border); color: var(--muted); }
 .btn-secondary:hover { border-color: rgba(255,255,255,.2); color: var(--white); }
 .btn-primary { background: var(--purple); border-color: var(--purple); color: var(--white); }
@@ -153,12 +138,10 @@ thead th {
   letter-spacing: .07em; text-transform: uppercase; color: var(--muted2);
   background: rgba(255,255,255,.02); border-bottom: 1px solid var(--border);
 }
-body.ar thead th { text-align: right; font-family: var(--font-ar); letter-spacing: 0; }
 tbody td {
   padding: .9rem 1.2rem; font-size: .86rem; border-bottom: 1px solid var(--border2);
   vertical-align: middle;
 }
-body.ar tbody td { text-align: right; font-family: var(--font-ar); }
 tbody tr:last-child td { border-bottom: none; }
 tbody tr:hover td { background: rgba(167,139,250,.03); }
 
@@ -174,7 +157,6 @@ tbody tr:hover td { background: rgba(167,139,250,.03); }
 
 /* ── TEACHER PILL ── */
 .teacher-pill { display: inline-flex; align-items: center; gap: .45rem; }
-body.ar .teacher-pill { flex-direction: row-reverse; }
 .t-avatar {
   width: 24px; height: 24px; border-radius: 50%;
   background: rgba(167,139,250,.15); border: 1.5px solid rgba(167,139,250,.35);
@@ -190,7 +172,6 @@ body.ar .teacher-pill { flex-direction: row-reverse; }
 
 /* ── ACTION BTNS ── */
 .action-cell { display: flex; align-items: center; gap: .35rem; justify-content: flex-end; }
-body.ar .action-cell { flex-direction: row-reverse; }
 .icon-btn {
   width: 30px; height: 30px; border-radius: 8px;
   background: rgba(255,255,255,.04); border: 1px solid var(--border2);
@@ -227,9 +208,7 @@ body.ar .action-cell { flex-direction: row-reverse; }
   display: flex; align-items: center; justify-content: space-between;
   padding: 1.3rem 1.6rem; border-bottom: 1px solid var(--border);
 }
-body.ar .modal-head { flex-direction: row-reverse; }
 .modal-head h3 { font-family: var(--font); font-size: 1.05rem; font-weight: 700; }
-body.ar .modal-head h3 { font-family: var(--font-ar); }
 .btn-x {
   background: none; border: none; color: var(--muted); cursor: pointer;
   font-size: 1.2rem; line-height: 1; transition: color .2s;
@@ -240,7 +219,6 @@ body.ar .modal-head h3 { font-family: var(--font-ar); }
   display: flex; gap: .65rem; justify-content: flex-end;
   padding: 1rem 1.6rem; border-top: 1px solid var(--border);
 }
-body.ar .modal-foot { flex-direction: row-reverse; }
 .form-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
 .form-group { margin-bottom: .9rem; }
 .form-group:last-child { margin-bottom: 0; }
@@ -249,15 +227,11 @@ body.ar .modal-foot { flex-direction: row-reverse; }
   letter-spacing: .07em; text-transform: uppercase; color: var(--muted);
   margin-bottom: .35rem;
 }
-body.ar .form-group label { font-family: var(--font-ar); letter-spacing: 0; text-align: right; }
 .form-group input, .form-group select, .form-group textarea {
   width: 100%; padding: .7rem 1rem; background: rgba(255,255,255,.05);
   border: 1px solid var(--border); border-radius: 10px; color: var(--white);
   font-family: var(--font-body); font-size: .88rem; outline: none;
   transition: border-color .2s; resize: vertical;
-}
-body.ar .form-group input, body.ar .form-group select, body.ar .form-group textarea {
-  font-family: var(--font-ar); text-align: right;
 }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
   border-color: var(--purple); background: rgba(167,139,250,.04);
@@ -266,7 +240,6 @@ body.ar .form-group input, body.ar .form-group select, body.ar .form-group texta
 
 /* ── SCHEDULE BUILDER ── */
 .sched-row { display: flex; gap: .5rem; align-items: center; margin-bottom: .5rem; flex-wrap: wrap; }
-body.ar .sched-row { flex-direction: row-reverse; }
 .sched-row input { flex: 1; min-width: 70px; }
 .btn-rm { background: none; border: 1px solid var(--border2); border-radius: 7px; color: var(--muted); cursor: pointer; width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; transition: all .15s; }
 .btn-rm:hover { border-color: rgba(232,93,117,.4); color: var(--red); background: rgba(232,93,117,.08); }
@@ -281,7 +254,6 @@ body.ar .sched-row { flex-direction: row-reverse; }
   z-index: 9999; transform: translateY(80px); opacity: 0;
   transition: all .3s; display: flex; align-items: center; gap: .6rem;
 }
-body.ar .toast { right: auto; left: 2rem; font-family: var(--font-ar); }
 .toast.show { transform: translateY(0); opacity: 1; }
 .toast-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
 .toast-dot.red { background: var(--red); }
@@ -314,12 +286,11 @@ body.ar .toast { right: auto; left: 2rem; font-family: var(--font-ar); }
       <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       <span id="back-lbl">Retour</span>
     </a>
-    <div class="page-title" id="page-title-lbl">Gestion des cours / إدارة الدروس</div>
+    <div class="page-title" id="page-title-lbl">Gestion des cours</div>
   </div>
   <div class="topbar-right">
     <div class="lang-toggle">
       <div class="lang-pill active" id="pill-fr" onclick="setLang('fr')">🇫🇷 FR</div>
-      <div class="lang-pill" id="pill-ar" onclick="setLang('ar')">🇲🇦 AR</div>
     </div>
     <div class="admin-chip" id="admin-chip-lbl">Admin</div>
   </div>
@@ -393,18 +364,10 @@ body.ar .toast { right: auto; left: 2rem; font-family: var(--font-ar); }
       <button class="btn-x" onclick="closeModal('course')">✕</button>
     </div>
     <div class="modal-body">
-      <div class="form-grid2">
-        <div class="form-group"><label id="lbl-group-fr">Groupe (FR)</label>
-          <input id="f-group-fr" placeholder="ex: Groupe A – Débutant"></div>
-        <div class="form-group"><label id="lbl-group-ar">Groupe (AR)</label>
-          <input id="f-group-ar" placeholder="مثال: المجموعة أ" dir="rtl"></div>
-      </div>
-      <div class="form-grid2">
-        <div class="form-group"><label id="lbl-subject-fr">Matière (FR)</label>
-          <input id="f-subject-fr" placeholder="ex: Anglais Général"></div>
-        <div class="form-group"><label id="lbl-subject-ar">Matière (AR)</label>
-          <input id="f-subject-ar" placeholder="مثال: الإنجليزية العامة" dir="rtl"></div>
-      </div>
+      <div class="form-group"><label id="lbl-group-fr">Groupe (FR)</label>
+        <input id="f-group-fr" placeholder="ex: Groupe A – Débutant"></div>
+      <div class="form-group"><label id="lbl-subject-fr">Matière (FR)</label>
+        <input id="f-subject-fr" placeholder="ex: Anglais Général"></div>
       <div class="form-grid2">
         <div class="form-group"><label id="lbl-level">Niveau</label>
           <select id="f-level">
@@ -482,20 +445,20 @@ body.ar .toast { right: auto; left: 2rem; font-family: var(--font-ar); }
    DATA  (replace with API calls in production)
    ══════════════════════════════════════════════════ */
 let courses = [
-  { id:1, group_name_fr:'Groupe A – Débutant', group_name_ar:'المجموعة أ – مبتدئ',
-    subject_fr:'Anglais Général', subject_ar:'الإنجليزية العامة',
+  { id:1, group_name_fr:'Groupe A – Débutant',
+    subject_fr:'Anglais Général',
     level:'A1–A2', students_count:14, teacher_id:1,
-    schedule:[{day_fr:'Lundi',day_ar:'الاثنين',time:'09:00–11:00',room:'Salle 12'},
-              {day_fr:'Mercredi',day_ar:'الأربعاء',time:'09:00–11:00',room:'Salle 12'}] },
-  { id:2, group_name_fr:'Groupe B – Intermédiaire', group_name_ar:'المجموعة ب – متوسط',
-    subject_fr:'Rédaction & Communication', subject_ar:'الكتابة والتواصل',
+    schedule:[{day_fr:'Lundi',time:'09:00–11:00',room:'Salle 12'},
+              {day_fr:'Mercredi',time:'09:00–11:00',room:'Salle 12'}] },
+  { id:2, group_name_fr:'Groupe B – Intermédiaire',
+    subject_fr:'Rédaction & Communication',
     level:'B1', students_count:18, teacher_id:2,
-    schedule:[{day_fr:'Mardi',day_ar:'الثلاثاء',time:'14:00–16:00',room:'Labo 3'},
-              {day_fr:'Jeudi',day_ar:'الخميس',time:'14:00–16:00',room:'Labo 3'}] },
-  { id:3, group_name_fr:'Groupe C – Avancé', group_name_ar:'المجموعة ج – متقدم',
-    subject_fr:'Expression Orale & Présentation', subject_ar:'التعبير الشفهي والعرض',
+    schedule:[{day_fr:'Mardi',time:'14:00–16:00',room:'Labo 3'},
+              {day_fr:'Jeudi',time:'14:00–16:00',room:'Labo 3'}] },
+  { id:3, group_name_fr:'Groupe C – Avancé',
+    subject_fr:'Expression Orale & Présentation',
     level:'B2–C1', students_count:10, teacher_id:null,
-    schedule:[{day_fr:'Vendredi',day_ar:'الجمعة',time:'10:00–12:00',room:'Amphi B'}] },
+    schedule:[{day_fr:'Vendredi',time:'10:00–12:00',room:'Amphi B'}] },
 ];
 
 let teachers = [
@@ -552,7 +515,7 @@ let schedN    = 0;
    ══════════════════════════════════════════════════ */
 const TR = {
   fr: {
-    pageTitle: 'Gestion des cours / إدارة الدروس',
+    pageTitle: 'Gestion des cours',
     back: 'Retour', adminChip: 'Admin',
     statTotal: 'Cours total', statAssigned: 'Assignés',
     statUnassigned: 'Non assignés', statTeachers: 'Professeurs',
@@ -564,8 +527,7 @@ const TR = {
     thTeacher: 'Professeur', thSchedule: 'Horaire',
     thStudents: 'Élèves',
     addTitle: 'Nouveau cours', editTitle: 'Modifier le cours',
-    lblGroupFr: 'Groupe (FR)', lblGroupAr: 'Groupe (AR)',
-    lblSubjectFr: 'Matière (FR)', lblSubjectAr: 'Matière (AR)',
+    lblGroupFr: 'Groupe', lblSubjectFr: 'Matière',
     lblLevel: 'Niveau', lblStudents: "Nombre d'élèves",
     lblSchedule: 'Horaires', btnAddSched: '+ Ajouter un créneau',
     lblTeacher: 'Professeur assigné', lblNoTeacher: '— Non assigné —',
@@ -592,47 +554,6 @@ const TR = {
     placeholderRoom: 'Salle 12',
     dayLabel: 'Jour', timeLabel: 'Heure', roomLabel: 'Salle',
   },
-  ar: {
-    pageTitle: 'إدارة الدروس / Gestion des cours',
-    back: 'رجوع', adminChip: 'مسؤول',
-    statTotal: 'إجمالي الدروس', statAssigned: 'المعيّنة',
-    statUnassigned: 'غير معيّنة', statTeachers: 'الأساتذة',
-    searchPlaceholder: 'البحث…',
-    allLevels: 'كل المستويات', allAssign: 'الكل',
-    optAssigned: 'المعيّنة', optUnassigned: 'غير معيّنة',
-    btnAssign: 'تعيين أستاذ', btnNew: 'درس جديد',
-    thGroup: 'المجموعة', thSubject: 'المادة', thLevel: 'المستوى',
-    thTeacher: 'الأستاذ', thSchedule: 'الجدول',
-    thStudents: 'الطلاب',
-    addTitle: 'درس جديد', editTitle: 'تعديل الدرس',
-    lblGroupFr: 'المجموعة (FR)', lblGroupAr: 'المجموعة (AR)',
-    lblSubjectFr: 'المادة (FR)', lblSubjectAr: 'المادة (AR)',
-    lblLevel: 'المستوى', lblStudents: 'عدد الطلاب',
-    lblSchedule: 'الجدول الزمني', btnAddSched: '+ إضافة وقت',
-    lblTeacher: 'الأستاذ المعيّن', lblNoTeacher: '— غير معيّن —',
-    cancel: 'إلغاء', save: 'حفظ', update: 'تحديث',
-    assignTitle: 'تعيين أستاذ',
-    lblACourse: 'الدرس', lblATeacher: 'الأستاذ',
-    selectCourse: '— اختر درساً —',
-    selectTeacher: '— اختر أستاذاً —',
-    assignBtn: 'تعيين',
-    delTitle: 'حذف الدرس',
-    delBody: 'حذف الدرس ',
-    delBody2: ' نهائياً؟ لا يمكن التراجع عن هذا.',
-    delConfirm: 'حذف',
-    loading: 'جارِ التحميل…', noResults: 'لا يوجد دروس.',
-    toastCreated: 'تم إنشاء الدرس بنجاح.',
-    toastUpdated: 'تم تحديث الدرس.',
-    toastDeleted: 'تم حذف الدرس.',
-    toastAssigned: 'تم تعيين الأستاذ بنجاح.',
-    toastUnassigned: 'تم إلغاء التعيين.',
-    toastError: 'خطأ. تحقق من الحقول.',
-    unassigned: 'غير معيّن',
-    placeholderDay: 'الاثنين…',
-    placeholderTime: '09:00–11:00',
-    placeholderRoom: 'قاعة 12',
-    dayLabel: 'اليوم', timeLabel: 'الوقت', roomLabel: 'القاعة',
-  }
 };
 const t = k => TR[lang][k] || k;
 
@@ -640,14 +561,11 @@ const t = k => TR[lang][k] || k;
    LANG
    ══════════════════════════════════════════════════ */
 function setLang(l) {
+  if (l !== 'fr' && l !== 'en') l = 'fr';
   lang = l;
   sessionStorage.setItem('upskill_lang', l);
-  const body = document.getElementById('body');
-  body.className = l === 'ar' ? 'ar' : '';
   document.documentElement.setAttribute('lang', l);
-  document.documentElement.setAttribute('dir', l === 'ar' ? 'rtl' : 'ltr');
   document.getElementById('pill-fr').className = 'lang-pill' + (l === 'fr' ? ' active' : '');
-  document.getElementById('pill-ar').className = 'lang-pill' + (l === 'ar' ? ' active' : '');
   applyTr();
 }
 
@@ -666,9 +584,7 @@ function applyTr() {
   s('th-schedule',      t('thSchedule'));
   s('th-students',      t('thStudents'));
   s('lbl-group-fr',     t('lblGroupFr'));
-  s('lbl-group-ar',     t('lblGroupAr'));
   s('lbl-subject-fr',   t('lblSubjectFr'));
-  s('lbl-subject-ar',   t('lblSubjectAr'));
   s('lbl-level',        t('lblLevel'));
   s('lbl-students',     t('lblStudents'));
   s('lbl-schedule',     t('lblSchedule'));
@@ -732,8 +648,8 @@ function renderTable() {
   const asg = document.getElementById('filter-assign').value;
 
   let list = courses.filter(c => {
-    const gfr = (lang === 'ar' ? c.group_name_ar : c.group_name_fr).toLowerCase();
-    const sfr = (lang === 'ar' ? c.subject_ar    : c.subject_fr   ).toLowerCase();
+    const gfr = c.group_name_fr.toLowerCase();
+    const sfr = c.subject_fr.toLowerCase();
     const tch = teachers.find(t => t.id === c.teacher_id);
     const tname = tch ? tch.full_name.toLowerCase() : '';
     const matchQ   = !q || gfr.includes(q) || sfr.includes(q) || tname.includes(q) || c.level.toLowerCase().includes(q);
@@ -749,12 +665,11 @@ function renderTable() {
   }
 
   tbody.innerHTML = list.map(c => {
-    const gname   = lang === 'ar' ? c.group_name_ar : c.group_name_fr;
-    const gsub    = lang === 'ar' ? c.group_name_fr : c.group_name_ar;
-    const subject = lang === 'ar' ? c.subject_ar    : c.subject_fr;
+    const gname   = c.group_name_fr;
+    const subject = c.subject_fr;
     const tch     = teachers.find(tt => tt.id === c.teacher_id);
     const sched   = c.schedule.slice(0, 2).map(s =>
-      (lang === 'ar' ? s.day_ar : s.day_fr) + ' ' + (s.time ? s.time.split('–')[0] : '')
+      s.day_fr + ' ' + (s.time ? s.time.split('–')[0] : '')
     ).join(', ') + (c.schedule.length > 2 ? '…' : '');
 
     const teacherCell = tch
@@ -764,7 +679,6 @@ function renderTable() {
     return '<tr>'
       + '<td>'
         + '<div style="font-family:var(--font);font-size:.88rem;font-weight:600;">' + gname + '</div>'
-        + '<div style="font-size:.72rem;color:var(--muted2);' + (lang === 'ar' ? '' : 'direction:rtl;') + 'margin-top:.1rem;">' + gsub + '</div>'
       + '</td>'
       + '<td>' + subject + '</td>'
       + '<td><span class="lvl-badge ' + levelClass(c.level) + '">' + c.level + '</span></td>'
@@ -795,14 +709,13 @@ function filterTable() { renderTable(); }
 /* ══════════════════════════════════════════════════
    SCHEDULE BUILDER
    ══════════════════════════════════════════════════ */
-function addSchedRow(dayFr = '', dayAr = '', time = '', room = '') {
+function addSchedRow(dayFr = '', time = '', room = '') {
   const id = 'sr-' + (schedN++);
   const cont = document.getElementById('sched-container');
   const div = document.createElement('div');
   div.className = 'sched-row'; div.id = id;
   div.innerHTML =
-    '<input placeholder="' + t('placeholderDay') + '" value="' + dayFr + '" style="max-width:80px" title="Jour FR">'
-    + '<input placeholder="مثال: الاثنين" value="' + dayAr + '" style="max-width:90px" dir="rtl" title="Jour AR">'
+    '<input placeholder="' + t('placeholderDay') + '" value="' + dayFr + '" style="max-width:80px" title="Jour">'
     + '<input placeholder="' + t('placeholderTime') + '" value="' + time + '" style="max-width:120px" title="Heure">'
     + '<input placeholder="' + t('placeholderRoom') + '" value="' + room + '" style="max-width:90px" title="Salle">'
     + '<button type="button" class="btn-rm" onclick="this.parentElement.remove()" aria-label="Supprimer">×</button>';
@@ -812,8 +725,8 @@ function addSchedRow(dayFr = '', dayAr = '', time = '', room = '') {
 function getSchedFromForm() {
   return Array.from(document.getElementById('sched-container').children).map(row => {
     const inputs = row.querySelectorAll('input');
-    return { day_fr: inputs[0].value.trim(), day_ar: inputs[1].value.trim(),
-             time: inputs[2].value.trim(), room: inputs[3].value.trim() };
+    return { day_fr: inputs[0].value.trim(),
+             time: inputs[1].value.trim(), room: inputs[2].value.trim() };
   }).filter(s => s.day_fr || s.time);
 }
 
@@ -833,7 +746,7 @@ function openAddModal() {
   editingId = null;
   document.getElementById('course-modal-title').textContent = t('addTitle');
   document.getElementById('modal-save-lbl').textContent     = t('save');
-  ['f-group-fr','f-group-ar','f-subject-fr','f-subject-ar','f-students'].forEach(id => document.getElementById(id).value = '');
+  ['f-group-fr','f-subject-fr','f-students'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-level').value = 'A1';
   document.getElementById('sched-container').innerHTML = '';
   schedN = 0;
@@ -849,15 +762,13 @@ function openEditModal(id) {
   document.getElementById('course-modal-title').textContent = t('editTitle');
   document.getElementById('modal-save-lbl').textContent     = t('update');
   document.getElementById('f-group-fr').value   = c.group_name_fr;
-  document.getElementById('f-group-ar').value   = c.group_name_ar;
   document.getElementById('f-subject-fr').value = c.subject_fr;
-  document.getElementById('f-subject-ar').value = c.subject_ar;
   document.getElementById('f-level').value      = c.level;
   document.getElementById('f-students').value   = c.students_count;
   document.getElementById('sched-container').innerHTML = '';
   schedN = 0;
   if (c.schedule && c.schedule.length) {
-    c.schedule.forEach(s => addSchedRow(s.day_fr, s.day_ar, s.time, s.room));
+    c.schedule.forEach(s => addSchedRow(s.day_fr, s.time, s.room));
   } else {
     addSchedRow();
   }
@@ -872,9 +783,7 @@ function saveCourse() {
 
   const data = {
     group_name_fr: gfr,
-    group_name_ar: document.getElementById('f-group-ar').value.trim(),
     subject_fr:    sfr,
-    subject_ar:    document.getElementById('f-subject-ar').value.trim(),
     level:         document.getElementById('f-level').value,
     students_count: parseInt(document.getElementById('f-students').value) || 0,
     teacher_id:    parseInt(document.getElementById('f-teacher').value) || null,
@@ -908,7 +817,7 @@ function saveCourse() {
 function openAssignModal() {
   const sel = document.getElementById('a-course-sel');
   sel.innerHTML = '<option value="">' + t('selectCourse') + '</option>'
-    + courses.map(c => '<option value="' + c.id + '">' + (lang === 'ar' ? c.group_name_ar : c.group_name_fr) + '</option>').join('');
+    + courses.map(c => '<option value="' + c.id + '">' + c.group_name_fr + '</option>').join('');
   const tsel = document.getElementById('a-teacher-sel');
   tsel.innerHTML = '<option value="">' + t('selectTeacher') + '</option>'
     + teachers.map(tt => '<option value="' + tt.id + '">' + tt.full_name + '</option>').join('');
@@ -955,7 +864,7 @@ function openUnassignPrompt(id) {
 function openDeleteModal(id) {
   deleteId = id;
   const c = courses.find(x => x.id === id);
-  const name = c ? (lang === 'ar' ? c.group_name_ar : c.group_name_fr) : '';
+  const name = c ? c.group_name_fr : '';
   document.getElementById('del-modal-body').innerHTML = t('delBody') + '<strong>' + name + '</strong>' + t('delBody2');
   document.getElementById('del-modal-title').textContent = t('delTitle');
   document.getElementById('del-confirm-lbl').textContent = t('delConfirm');
@@ -1000,7 +909,8 @@ function showToast(msg, isError = false) {
 function refresh() { renderStats(); renderTable(); }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const savedLang = sessionStorage.getItem('upskill_lang') || 'fr';
+  const _sl = sessionStorage.getItem('upskill_lang');
+  const savedLang = (_sl === 'fr' || _sl === 'en') ? _sl : 'fr';
   setLang(savedLang);
   refresh();
 });
