@@ -1026,6 +1026,7 @@ const T = {
     schNoGroups:'Aucun groupe trouvé.', schAddSlot:'+ Ajouter une séance', schSave:'Enregistrer', schSaving:'…',
     schSaved:'✔ Enregistré', schTeacher:'Prof.', schStudents:'étudiant(s)',
     schDayLabel:'Jour', schTimeFromLabel:'De', schTimeToLabel:'À',
+    schStartDate:'Date de début', schEndDate:'Date de fin',
     schNoSlots:'Aucune séance configurée.',
     schDays:[
       {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
@@ -1121,6 +1122,7 @@ const T = {
     schNoGroups:'No groups found.', schAddSlot:'+ Add session', schSave:'Save', schSaving:'…',
     schSaved:'✔ Saved', schTeacher:'Teacher:', schStudents:'student(s)',
     schDayLabel:'Day', schTimeFromLabel:'From', schTimeToLabel:'To',
+    schStartDate:'Start date', schEndDate:'End date',
     schNoSlots:'No sessions configured.',
     schDays:[
       {fr:'Lundi',en:'Monday',ar:'الاثنين'},{fr:'Mardi',en:'Tuesday',ar:'الثلاثاء'},{fr:'Mercredi',en:'Wednesday',ar:'الأربعاء'},
@@ -2987,6 +2989,22 @@ function renderScheduleCards() {
         </div>
       </div>
 
+      <!-- Date range -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem;">
+        <div>
+          <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem;">${t.schStartDate}</div>
+          <input type="date" id="sched-start-${gid}" value="${c.start_date || ''}"
+            style="width:100%;padding:.5rem .7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;color-scheme:dark;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <div>
+          <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem;">${t.schEndDate}</div>
+          <input type="date" id="sched-end-${gid}" value="${c.end_date || ''}"
+            style="width:100%;padding:.5rem .7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;color-scheme:dark;"
+            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+      </div>
+
       <!-- Column headers -->
       <div style="display:grid;grid-template-columns:1fr 90px 90px 28px;gap:.4rem;margin-bottom:.35rem;padding:0 .1rem;">
         <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schDayLabel}</div>
@@ -3090,10 +3108,12 @@ async function saveSchedule(courseId) {
   statusEl.style.display = 'none';
 
   try {
+    const startDate = (document.getElementById(`sched-start-${courseId}`)?.value || '').trim();
+    const endDate   = (document.getElementById(`sched-end-${courseId}`)?.value   || '').trim();
     const res  = await fetch('api_classes.php?action=update_schedule', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrf },
-      body: JSON.stringify({ group_id: courseId, schedule })
+      body: JSON.stringify({ group_id: courseId, schedule, start_date: startDate, end_date: endDate })
     });
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || (currentLang==='en'?'Error':currentLang==='ar'?'خطأ':'Erreur'));
@@ -3106,7 +3126,7 @@ async function saveSchedule(courseId) {
 
     // Update cached schedule
     const c = _schedCourses.find(x => x.group_id == courseId);
-    if (c) c.schedule = schedule;
+    if (c) { c.schedule = schedule; c.start_date = startDate || null; c.end_date = endDate || null; }
 
     statusEl.textContent   = t.schSaved;
     statusEl.style.color   = 'var(--green)';

@@ -40,6 +40,8 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS class_groups (
 // Add columns if they don't exist yet
 try { $pdo->exec("ALTER TABLE class_groups ADD COLUMN schedule_json TEXT DEFAULT NULL"); } catch(Throwable $e) {}
 try { $pdo->exec("ALTER TABLE class_groups ADD COLUMN zoom_url VARCHAR(500) DEFAULT NULL"); } catch(Throwable $e) {}
+try { $pdo->exec("ALTER TABLE class_groups ADD COLUMN start_date DATE DEFAULT NULL"); } catch(Throwable $e) {}
+try { $pdo->exec("ALTER TABLE class_groups ADD COLUMN end_date   DATE DEFAULT NULL"); } catch(Throwable $e) {}
 // Sync bridge: optional link to old courses table so student/teacher_courses stay in sync
 try { $pdo->exec("ALTER TABLE class_groups ADD COLUMN course_id INT UNSIGNED NULL DEFAULT NULL"); } catch(Throwable $e) {}
 
@@ -562,7 +564,7 @@ if ($action === 'list_all_groups') {
 
   $stmt = $pdo->query(
     "SELECT g.id AS group_id, g.type_key, g.level_number, g.group_letter,
-            g.schedule_json, g.zoom_url,
+            g.schedule_json, g.zoom_url, g.start_date, g.end_date,
             (SELECT u.full_name
                FROM class_group_members m2
                JOIN users u ON u.id = m2.user_id
@@ -629,8 +631,14 @@ if ($action === 'update_schedule') {
     }
   }
 
+  $startDate = trim($body['start_date'] ?? '');
+  $endDate   = trim($body['end_date']   ?? '');
+  if ($startDate && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDate)) $startDate = '';
+  if ($endDate   && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate))   $endDate   = '';
+
   $json = count($clean) > 0 ? json_encode($clean, JSON_UNESCAPED_UNICODE) : null;
-  $pdo->prepare("UPDATE class_groups SET schedule_json = ? WHERE id = ?")->execute([$json, $groupId]);
+  $pdo->prepare("UPDATE class_groups SET schedule_json = ?, start_date = ?, end_date = ? WHERE id = ?")
+      ->execute([$json, $startDate ?: null, $endDate ?: null, $groupId]);
   jsonOut(['ok'=>true, 'saved'=>count($clean)]);
 }
 
