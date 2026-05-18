@@ -305,22 +305,22 @@ $t = [
     <h2 class="section-title" style="text-align:center;">On n'enseigne pas l'anglais.<br>On aide les étudiants à le vivre.</h2>
     <p style="color:rgba(255,255,255,0.55);font-size:1rem;line-height:1.75;max-width:580px;margin:.75rem auto 3rem;text-align:center;font-weight:300;">Notre pédagogie est centrée sur l'étudiant à chaque étape — parce que nous croyons que les vrais progrès ne se font que quand l'étudiant se sent impliqué, compris et challengé de la bonne façon.</p>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;">
-      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
+      <div class="dark-card" style="border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
         <div style="font-size:1.75rem;line-height:1;">🎯</div>
         <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;line-height:1.3;margin:0;">Centré sur l'étudiant dès le premier jour</h3>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Chaque étudiant arrive avec un objectif différent — un meilleur résultat au Bac, un entretien d'embauche, une promotion, un rêve d'étudier à l'étranger. Nous partons de là. Nos professeurs adaptent le cours à l'étudiant, et non l'inverse.</p>
       </div>
-      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
+      <div class="dark-card" style="border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
         <div style="font-size:1.75rem;line-height:1;">💬</div>
         <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;line-height:1.3;margin:0;">L'anglais en contexte, pas en isolation</h3>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Les règles de grammaire s'oublient facilement. Les vraies conversations, non. Nous construisons les cours autour de situations réelles — présenter en réunion, rédiger des emails, parler de ses passions — pour que la langue reste gravée parce qu'elle a du sens.</p>
       </div>
-      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
+      <div class="dark-card" style="border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
         <div style="font-size:1.75rem;line-height:1;">👥</div>
         <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;line-height:1.3;margin:0;">Petits groupes, vraies voix</h3>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Avec 9 à 12 étudiants par groupe, personne ne se cache au fond. Tout le monde parle. Tout le monde est entendu. Ce format crée un environnement sans pression où les étudiants osent utiliser la langue — et c'est là que les vrais progrès se font.</p>
       </div>
-      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
+      <div class="dark-card" style="border-radius:16px;padding:1.8rem;display:flex;flex-direction:column;gap:.75rem;">
         <div style="font-size:1.75rem;line-height:1;">📈</div>
         <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;line-height:1.3;margin:0;">Des progrès visibles</h3>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Les étudiants suivent leurs présences, leurs notes et leurs résumés de cours directement sur leur tableau de bord après chaque séance. L'apprentissage ressemble moins à un cours et plus à un parcours avec une direction claire.</p>
@@ -336,32 +336,32 @@ $t = [
     <h2 class="section-title" style="text-align:center;margin-bottom:3rem;">Questions fréquentes</h2>
     <div style="display:flex;flex-direction:column;gap:.75rem;">
 
-      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+      <details class="dark-card" style="border-radius:14px;overflow:hidden;">
         <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Faut-il un ordinateur ou peut-on utiliser son téléphone ?</summary>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Il vous suffit d'avoir Zoom — n'importe quel appareil fonctionne : ordinateur, tablette ou smartphone. Une connexion internet stable est tout ce dont vous avez besoin.</p>
       </details>
 
-      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+      <details class="dark-card" style="border-radius:14px;overflow:hidden;">
         <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Que se passe-t-il si je rate une séance ?</summary>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Votre professeur publie les notes et ressources de chaque séance sur votre tableau de bord étudiant, pour que vous puissiez rattraper à tout moment.</p>
       </details>
 
-      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+      <details class="dark-card" style="border-radius:14px;overflow:hidden;">
         <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Comment savoir quel est mon niveau ?</summary>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Indiquez votre niveau approximatif lors de votre inscription — notre équipe confirmera le groupe adapté. Vous pouvez également passer notre test de placement gratuit après avoir soumis votre demande.</p>
       </details>
 
-      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+      <details class="dark-card" style="border-radius:14px;overflow:hidden;">
         <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Quand puis-je commencer après mon inscription ?</summary>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Notre équipe vous contacte sous 24 heures pour confirmer votre place et vous envoyer vos identifiants. De nouveaux groupes démarrent régulièrement — nous vous informerons de la prochaine session disponible.</p>
       </details>
 
-      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+      <details class="dark-card" style="border-radius:14px;overflow:hidden;">
         <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Peut-on payer en plusieurs fois ?</summary>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Les modalités de paiement sont précisées lors de la prise de contact de notre équipe. N'hésitez pas à nous écrire sur WhatsApp si vous avez des questions avant de vous inscrire.</p>
       </details>
 
-      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+      <details class="dark-card" style="border-radius:14px;overflow:hidden;">
         <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Y a-t-il un engagement à long terme ?</summary>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Chaque session dure 2,5 mois (~30 heures). Il n'y a aucun contrat à long terme — vous décidez si vous souhaitez continuer à l'issue de chaque session.</p>
       </details>
