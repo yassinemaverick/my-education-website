@@ -399,6 +399,7 @@ $t = [
           <label for="level">NIVEAU ACTUEL</label>
           <select id="level" required>
             <option value="">— Sélectionnez votre niveau —</option>
+            <option value="Kids">Enfant (inscription pour mineur)</option>
             <option value="Beginner">Débutant — peu ou pas d'anglais</option>
             <option value="Elementary">Élémentaire — expressions et vocabulaire de base</option>
             <option value="Intermediate">Intermédiaire — conversations simples possibles</option>

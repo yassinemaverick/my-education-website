@@ -399,6 +399,7 @@ $t = [
           <label for="level">CURRENT LEVEL</label>
           <select id="level" required>
             <option value="">— Select your level —</option>
+            <option value="Kids">Kids (child enrollment)</option>
             <option value="Beginner">Beginner — little or no English</option>
             <option value="Elementary">Elementary — basic phrases and vocabulary</option>
             <option value="Intermediate">Intermediate — can hold simple conversations</option>

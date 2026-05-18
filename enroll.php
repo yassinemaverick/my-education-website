@@ -110,7 +110,7 @@ if ($course === '' || strlen($course) > 120) {
         default => 'Please select a course.',
     };
 }
-$allowed_levels = ['Beginner', 'Elementary', 'Intermediate', 'Advanced', 'Baccalaureate Student'];
+$allowed_levels = ['Kids', 'Beginner', 'Elementary', 'Intermediate', 'Advanced', 'Baccalaureate Student'];
 if ($level !== '' && !in_array($level, $allowed_levels, true)) {
     $errors[] = match($lang) {
         'fr' => 'Niveau sélectionné invalide.',
