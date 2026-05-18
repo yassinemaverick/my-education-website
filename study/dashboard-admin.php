@@ -80,6 +80,27 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 .topbar-actions { display:flex; align-items:center; gap:.75rem; }
 .btn-icon { width:36px; height:36px; border-radius:9px; background:rgba(255,255,255,.05); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); transition:all .2s; }
 .btn-icon:hover { border-color:var(--orange); color:var(--orange); background:rgba(251,146,60,.1); }
+/* NOTIFICATION PANEL */
+.notif-panel { position:fixed; top:64px; right:1rem; width:320px; background:var(--navy-mid); border:1px solid var(--border); border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,.35); z-index:9100; overflow:hidden; display:none; animation:fadeIn .15s ease; }
+.notif-panel.open { display:block; }
+.notif-panel-hd { display:flex; align-items:center; justify-content:space-between; padding:.9rem 1.1rem; border-bottom:1px solid var(--border); }
+.notif-panel-title { font-family:var(--font); font-size:.82rem; font-weight:700; }
+.notif-mark-all { font-family:var(--font); font-size:.72rem; color:var(--orange); cursor:pointer; background:none; border:none; padding:0; }
+.notif-mark-all:hover { text-decoration:underline; }
+.notif-list { max-height:320px; overflow-y:auto; }
+.notif-item { display:flex; gap:.75rem; padding:.85rem 1.1rem; border-bottom:1px solid var(--border2); cursor:pointer; transition:background .15s; align-items:flex-start; }
+.notif-item:hover { background:rgba(251,146,60,.06); }
+.notif-item.unread { background:rgba(251,146,60,.04); border-left:3px solid var(--orange); }
+.notif-icon-w { width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:.95rem; flex-shrink:0; }
+.notif-icon-w.new_enrollment { background:rgba(62,207,120,.12); }
+.notif-icon-w.new_placement  { background:rgba(91,156,246,.12); }
+.notif-cnt { flex:1; min-width:0; }
+.notif-ttl { font-family:var(--font); font-size:.8rem; font-weight:600; margin-bottom:.1rem; }
+.notif-bdy { font-size:.76rem; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px; }
+.notif-tme { font-size:.7rem; color:var(--muted2); margin-top:.15rem; }
+.notif-badge { position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; background:var(--red); color:#fff; font-size:.58rem; font-weight:700; border-radius:100px; display:none; align-items:center; justify-content:center; font-family:var(--font); padding:0 3px; }
+.notif-badge.show { display:flex; }
+.notif-empty { padding:2rem; text-align:center; color:var(--muted); font-size:.85rem; }
 .page { padding:2rem; display:none; animation:fadeIn .25s ease; }
 .page.active { display:block; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -372,6 +393,12 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
       <div class="topbar-title" id="topbar-title">Tableau de bord Admin</div>
     </div>
     <div class="topbar-actions">
+      <div style="position:relative;">
+        <button class="btn-icon" id="notif-btn" onclick="toggleNotifPanel()" title="Notifications" style="cursor:pointer;">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <span class="notif-badge" id="notif-badge"></span>
+        </button>
+      </div>
       <div class="avatar" id="topbar-avatar" style="cursor:default;">AD</div>
     </div>
   </div>
@@ -943,6 +970,16 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
   </div>
 </div>
 
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notif-panel" onclick="event.stopPropagation()">
+  <div class="notif-panel-hd">
+    <span class="notif-panel-title" id="notif-panel-title">Notifications</span>
+    <button class="notif-mark-all" id="notif-mark-all-btn" onclick="markAllNotifRead()">Tout lire</button>
+  </div>
+  <div class="notif-list" id="notif-list">
+    <div class="notif-empty">Chargement…</div>
+  </div>
+</div>
 <!-- SIDEBAR BACKDROP -->
 <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
 <!-- TOAST -->
@@ -1068,6 +1105,8 @@ const T = {
     placementEmpty:'Aucun test de placement pour l\'instant.',
     confirmDeletePlacement:'Supprimer ce résultat ?',
     placementDeleted:'Résultat supprimé.',
+    notifTitle:'Notifications', notifMarkAll:'Tout lire', notifEmpty:'Aucune notification',
+    notifJustNow:'À l\'instant',
   },
   en: {
     adminChip:'Admin', roleLabel:'Administrator',
@@ -1161,6 +1200,8 @@ const T = {
     placementEmpty:'No placement tests yet.',
     confirmDeletePlacement:'Delete this result?',
     placementDeleted:'Result deleted.',
+    notifTitle:'Notifications', notifMarkAll:'Mark all read', notifEmpty:'No notifications',
+    notifJustNow:'Just now',
   }
 };
 const tr = () => T[currentLang] || T.fr;
@@ -1224,6 +1265,9 @@ function applyTranslations() {
   set('settings-role', t.settingsRole);
   set('lbl-fullname', t.lblFullname); set('save-btn', t.saveBtn);
   set('pref-title', t.prefTitle); set('pref-txt', t.prefTxt);
+  // Notification panel
+  set('notif-panel-title', t.notifTitle);
+  set('notif-mark-all-btn', t.notifMarkAll);
   // Greeting
   set('welcome-greeting', t.greeting);
   // Schedule loading placeholder
@@ -2657,6 +2701,102 @@ function logout() {
 }
 
 /* ══════════════════════════════════════════════════════
+   NOTIFICATIONS
+══════════════════════════════════════════════════════ */
+let notifPanelOpen = false;
+const NOTIF_ICONS = { new_enrollment:'📋', new_placement:'🎯' };
+
+function toggleNotifPanel() {
+  notifPanelOpen = !notifPanelOpen;
+  document.getElementById('notif-panel').classList.toggle('open', notifPanelOpen);
+  if (notifPanelOpen) loadNotifications();
+}
+
+function closeNotifPanel() {
+  notifPanelOpen = false;
+  document.getElementById('notif-panel').classList.remove('open');
+}
+
+function updateNotifBadge(n) {
+  const badge = document.getElementById('notif-badge');
+  if (!badge) return;
+  badge.textContent = n > 9 ? '9+' : (n > 0 ? String(n) : '');
+  badge.classList.toggle('show', n > 0);
+}
+
+async function loadNotifBadge() {
+  try {
+    const data = await api('api_notifications.php?action=list');
+    if (data.ok) updateNotifBadge(data.unread || 0);
+  } catch(e) {}
+}
+
+async function loadNotifications() {
+  const list = document.getElementById('notif-list');
+  if (!list) return;
+  const t = tr();
+  list.innerHTML = `<div class="notif-empty">${t.schLoading}</div>`;
+  try {
+    const data = await api('api_notifications.php?action=list');
+    if (!data.ok) return;
+    if (data.unread > 0) {
+      fetch('api_notifications.php?action=mark_read', { method:'POST', headers:{'X-CSRF-Token':_csrfToken} });
+      updateNotifBadge(0);
+    }
+    if (!data.notifications || !data.notifications.length) {
+      list.innerHTML = `<div class="notif-empty">${t.notifEmpty}</div>`;
+      return;
+    }
+    const lang = currentLang;
+    list.innerHTML = data.notifications.map(n => {
+      const title = lang === 'en' ? (n.title_en || n.title_fr) : n.title_fr;
+      const body  = lang === 'en' ? (n.body_en  || n.body_fr)  : n.body_fr;
+      const icon  = NOTIF_ICONS[n.type] || '🔔';
+      const age   = parseInt(n.age_min) || 0;
+      const timeStr = age < 1 ? t.notifJustNow
+                    : age < 60  ? `${age} min`
+                    : age < 1440 ? `${Math.floor(age/60)}h`
+                    : `${Math.floor(age/1440)}d`;
+      return `<div class="notif-item${parseInt(n.is_read) ? '' : ' unread'}" onclick="markOneNotifRead(${n.id},this,'${escHtml(n.type)}')">
+        <div class="notif-icon-w ${n.type}">${icon}</div>
+        <div class="notif-cnt">
+          <div class="notif-ttl">${escHtml(title)}</div>
+          ${body ? `<div class="notif-bdy">${escHtml(body)}</div>` : ''}
+          <div class="notif-tme">${timeStr}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    if (list) list.innerHTML = `<div class="notif-empty" style="color:var(--red);">${tr().errNetwork}</div>`;
+  }
+}
+
+function markAllNotifRead() {
+  fetch('api_notifications.php?action=mark_read', { method:'POST', headers:{'X-CSRF-Token':_csrfToken} });
+  updateNotifBadge(0);
+  document.querySelectorAll('#notif-list .notif-item.unread').forEach(el => el.classList.remove('unread'));
+}
+
+function markOneNotifRead(id, el, type) {
+  el.classList.remove('unread');
+  fetch('api_notifications.php?action=mark_one', {
+    method:'POST', headers:{'X-CSRF-Token':_csrfToken},
+    body: new URLSearchParams({ id })
+  }).catch(() => {});
+  closeNotifPanel();
+  if (type === 'new_enrollment') navigate('inscriptions', document.getElementById('nav-inscriptions'));
+  else if (type === 'new_placement') navigate('placement', document.getElementById('nav-placement'));
+}
+
+setInterval(() => { if (!notifPanelOpen) loadNotifBadge(); }, 60000);
+
+document.addEventListener('click', function(e) {
+  if (notifPanelOpen && !document.getElementById('notif-btn').contains(e.target) && !document.getElementById('notif-panel').contains(e.target)) {
+    closeNotifPanel();
+  }
+});
+
+/* ══════════════════════════════════════════════════════
    PLACEMENT TESTS PAGE
 ══════════════════════════════════════════════════════ */
 let _placementData = [];
@@ -3047,6 +3187,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   } catch(e) { }
 
+  loadNotifBadge();
   setLang(lang);
 
   // Restore last active page after refresh

@@ -202,6 +202,57 @@ try {
         } catch (Throwable $e) {}
     }
 
+    // ── Generate notifications from DB events (admin) ────────────────────────
+    if ($role === 'admin') {
+        // New enrollment requests (status = 'new', last 7 days)
+        try {
+            $rows = $pdo->prepare("
+                SELECT e.id, e.name, e.course
+                FROM enrollments e
+                WHERE e.status = 'new'
+                  AND e.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                  AND NOT EXISTS (
+                    SELECT 1 FROM notifications n
+                    WHERE n.user_id = ? AND n.type = 'new_enrollment'
+                    AND n.body_fr LIKE CONCAT('%#', e.id, '%')
+                  )
+                ORDER BY e.created_at DESC LIMIT 10
+            ");
+            $rows->execute([$uid]);
+            foreach ($rows->fetchAll() as $r) {
+                $course = $r['course'] ? ' · ' . $r['course'] : '';
+                $body   = $r['name'] . $course . ' #' . $r['id'];
+                $pdo->prepare("
+                    INSERT IGNORE INTO notifications (user_id, type, title_fr, title_ar, title_en, body_fr, body_ar, body_en)
+                    VALUES (?, 'new_enrollment', ?, ?, ?, ?, ?, ?)
+                ")->execute([$uid, 'Nouvelle inscription', 'تسجيل جديد', 'New enrollment', $body, $body, $body]);
+            }
+        } catch (Throwable $e) {}
+
+        // New placement test results (last 7 days)
+        try {
+            $rows = $pdo->prepare("
+                SELECT pr.id, pr.name, pr.placement
+                FROM placement_results pr
+                WHERE pr.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                  AND NOT EXISTS (
+                    SELECT 1 FROM notifications n
+                    WHERE n.user_id = ? AND n.type = 'new_placement'
+                    AND n.body_fr LIKE CONCAT('%#', pr.id, '%')
+                  )
+                ORDER BY pr.created_at DESC LIMIT 10
+            ");
+            $rows->execute([$uid]);
+            foreach ($rows->fetchAll() as $r) {
+                $body = $r['name'] . ' → ' . $r['placement'] . ' #' . $r['id'];
+                $pdo->prepare("
+                    INSERT IGNORE INTO notifications (user_id, type, title_fr, title_ar, title_en, body_fr, body_ar, body_en)
+                    VALUES (?, 'new_placement', ?, ?, ?, ?, ?, ?)
+                ")->execute([$uid, 'Test de niveau', 'اختبار المستوى', 'Placement test', $body, $body, $body]);
+            }
+        } catch (Throwable $e) {}
+    }
+
     // ── Remove exact duplicates (same user + type + body_fr), keep oldest ────
     $pdo->prepare("
         DELETE n1 FROM notifications n1
