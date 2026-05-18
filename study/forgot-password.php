@@ -2,6 +2,7 @@
 session_set_cookie_params(['lifetime'=>0,'path'=>'/','secure'=>isset($_SERVER['HTTPS']),'httponly'=>true,'samesite'=>'Lax']);
 session_start();
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/rate_limit.php';
 
 // Ensure password_resets table and email column exist
 try {
@@ -23,6 +24,9 @@ $error   = '';
 $lang    = $_GET['lang'] ?? 'fr';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    api_rate_limit('forgot_pw:ip:' . $ip, 5, 900);
+
     $identifier = trim($_POST['identifier'] ?? '');
     $email_in   = trim($_POST['email']      ?? '');
 
@@ -45,11 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Invalidate old tokens
             $pdo->prepare("UPDATE password_resets SET used=1 WHERE user_id=? AND used=0")->execute([$user['id']]);
 
-            // Generate secure token
-            $token   = bin2hex(random_bytes(32));
+            // Generate secure token — store only the SHA-256 hash; send the raw token in the URL
+            $token       = bin2hex(random_bytes(32));
+            $tokenHash   = hash('sha256', $token);
             $expires = date('Y-m-d H:i:s', time() + 3600); // 1 hour
             $pdo->prepare("INSERT INTO password_resets (user_id, token, expires_at) VALUES (?,?,?)")
-                ->execute([$user['id'], $token, $expires]);
+                ->execute([$user['id'], $tokenHash, $expires]);
 
             // Build reset URL
             $protocol = isset($_SERVER['HTTPS']) ? 'https' : 'http';
@@ -125,7 +130,7 @@ $T = [
 ];
 $tr = $T[$lang] ?? $T['fr'];
 $dir = $lang === 'ar' ? 'rtl' : 'ltr';
-$loginPage = ['fr'=>'index2-fr.php','ar'=>'index2-ar.php','en'=>'index2.php'][$lang] ?? 'index2.php';
+$loginPage = $lang === 'en' ? 'index2.php' : 'index2-fr.php';
 $errMsg = $error === 'empty' ? $tr['err_empty'] : ($error === 'invalid_email' ? $tr['err_email'] : ($error ? $tr['err_invalid'] : ''));
 ?>
 <!DOCTYPE html>

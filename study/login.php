@@ -55,6 +55,7 @@ if ($user['role'] !== $role) { $redirect('role'); }
 try { $pdo->prepare("DELETE FROM login_attempts WHERE ip=?")->execute([$ip]); } catch (PDOException $e) {}
 
 session_regenerate_id(true);
+$_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 $_SESSION['user_id']   = $user['id'];
 $_SESSION['username']  = $user['username'];
 $_SESSION['full_name'] = $user['full_name'];

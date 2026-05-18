@@ -19,7 +19,7 @@ if ($token !== '') {
             WHERE  pr.token = ? AND pr.used = 0 AND pr.expires_at > NOW()
             LIMIT  1
         ");
-        $stmt->execute([$token]);
+        $stmt->execute([hash('sha256', $token)]);
         $tokenData = $stmt->fetch() ?: null;
     } catch (Throwable $e) {}
 }
@@ -125,7 +125,7 @@ $T = [
 ];
 $tr = $T[$lang] ?? $T['fr'];
 $dir = $lang === 'ar' ? 'rtl' : 'ltr';
-$loginPage   = ['fr'=>'index2-fr.php','ar'=>'index2-ar.php','en'=>'index2.php'][$lang] ?? 'index2.php';
+$loginPage   = $lang === 'en' ? 'index2.php' : 'index2-fr.php';
 $forgotPage  = "forgot-password.php?lang={$lang}";
 
 $errMsgMap = ['empty'=>'err_empty','short'=>'err_short','long'=>'err_long','mismatch'=>'err_mismatch','db'=>'err_db'];

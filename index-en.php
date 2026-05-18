@@ -479,7 +479,7 @@ $t = [
 <div id="toast"></div>
 
 <script>
-  const CSRF_TOKEN = <?= json_encode($csrf) ?>;
+  const CSRF_TOKEN = <?= json_encode($csrf, JSON_HEX_TAG | JSON_HEX_AMP) ?>;
   let selectedCourse = '';
 
   function selectCourse(card) {
