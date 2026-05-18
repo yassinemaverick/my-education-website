@@ -87,6 +87,15 @@ $t = [
       "educationalLevel": "Lycée",
       "inLanguage": "en",
       "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
+    },
+    {
+      "@type": "Course",
+      "name": "Anglais pour enfants",
+      "description": "Cours d'anglais interactifs pour les enfants de 7 à 14 ans — vocabulaire, expression orale et confiance à travers jeux, histoires et activités créatives.",
+      "provider": { "@type": "Organization", "name": "Upskill Education" },
+      "educationalLevel": "Primaire",
+      "inLanguage": "en",
+      "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
     }
   ]
 }
@@ -138,7 +147,7 @@ $t = [
 </div>
 
 <div class="stats">
-  <div class="stat"><div class="stat-num">3<span>+</span></div><div class="stat-label">Programmes spécialisés</div></div>
+  <div class="stat"><div class="stat-num">4<span>+</span></div><div class="stat-label">Programmes spécialisés</div></div>
   <div class="stat"><div class="stat-num">599<span> Dh</span></div><div class="stat-label">Pour 2,5 mois</div></div>
   <div class="stat"><div class="stat-num">30<span>h</span></div><div class="stat-label">Heures d'enseignement</div></div>
   <div class="stat"><div class="stat-num">9–12</div><div class="stat-label">Étudiants par classe</div></div>
@@ -181,7 +190,7 @@ $t = [
   <div class="courses-header">
     <div class="section-label">Nos programmes</div>
     <h2 class="section-title">Trouvez le cours<br>qui vous correspond.</h2>
-    <p class="section-sub">Trois programmes ciblés, chacun conçu autour d'un objectif précis. Choisissez celui qui correspond à votre projet.</p>
+    <p class="section-sub">Quatre programmes ciblés, chacun conçu autour d'un objectif précis. Choisissez celui qui correspond à votre projet.</p>
   </div>
   <div class="courses-grid">
 
@@ -248,6 +257,28 @@ $t = [
         <li>Exercices, devoirs et évaluations</li>
       </ul>
       <div class="course-tags"><span class="tag">Prépa examen</span><span class="tag">Sujets corrigés</span><span class="tag">Oral</span><span class="tag">Rédaction</span></div>
+    </div>
+
+    <div class="course-card" data-course="Anglais pour enfants" onclick="selectCourse(this)" tabindex="0" role="button" onkeydown="if(event.key==='Enter'||event.key===' '){selectCourse(this);event.preventDefault();}">
+      <div class="course-header">
+        <div class="course-icon">🎨</div>
+        <div class="course-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 4" stroke="#0f1d2e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="course-title">Anglais pour enfants</div>
+      <div class="course-desc">Des cours d'anglais ludiques et interactifs conçus pour les enfants de 7 à 14 ans. Construisez le vocabulaire, la confiance et une vraie passion pour la langue à travers des jeux, des histoires et des activités créatives.</div>
+      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2,5 mois</span></div>
+      <hr class="course-divider">
+      <div class="features-label">Ce qui est inclus</div>
+      <ul class="course-features">
+        <li>Cours interactifs à travers jeux, histoires et jeux de rôle</li>
+        <li>Expression orale, écoute et enrichissement du vocabulaire</li>
+        <li>Supports adaptés à l'âge des enfants</li>
+        <li>~30 heures d'enseignement (deux séances de 1h30 par semaine)</li>
+        <li>9 à 12 étudiants par classe — séances Zoom en direct</li>
+        <li>Exercices, devoirs et évaluations</li>
+        <li>Certificat à l'issue du cours</li>
+      </ul>
+      <div class="course-tags"><span class="tag">7–14 ans</span><span class="tag">Jeux &amp; Histoires</span><span class="tag">Vocabulaire</span><span class="tag">Expression orale</span></div>
     </div>
 
   </div>
@@ -357,6 +388,7 @@ $t = [
             <option value="Anglais des affaires">Anglais des affaires</option>
             <option value="Anglais général">Anglais général</option>
             <option value="Anglais Baccalauréat">Anglais Baccalauréat</option>
+            <option value="Anglais pour enfants">Anglais pour enfants</option>
           </select>
         </div>
         <div class="form-group">

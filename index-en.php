@@ -87,6 +87,15 @@ $t = [
       "educationalLevel": "Secondary",
       "inLanguage": "en",
       "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
+    },
+    {
+      "@type": "Course",
+      "name": "English for Kids",
+      "description": "Interactive English lessons for children aged 7–14 — vocabulary, speaking, and confidence through games, stories, and creative activities.",
+      "provider": { "@type": "Organization", "name": "Upskill Education" },
+      "educationalLevel": "Primary",
+      "inLanguage": "en",
+      "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
     }
   ]
 }
@@ -138,7 +147,7 @@ $t = [
 </div>
 
 <div class="stats">
-  <div class="stat"><div class="stat-num">3<span>+</span></div><div class="stat-label">Specialized programs</div></div>
+  <div class="stat"><div class="stat-num">4<span>+</span></div><div class="stat-label">Specialized programs</div></div>
   <div class="stat"><div class="stat-num">599<span> Dh</span></div><div class="stat-label">Per 2.5 months</div></div>
   <div class="stat"><div class="stat-num">30<span>h</span></div><div class="stat-label">Hours of instruction</div></div>
   <div class="stat"><div class="stat-num">9–12</div><div class="stat-label">Students per class</div></div>
@@ -181,7 +190,7 @@ $t = [
   <div class="courses-header">
     <div class="section-label">Our Programs</div>
     <h2 class="section-title">Find the right<br>course for you.</h2>
-    <p class="section-sub">Three focused programs, each built around a specific goal. Select the one that matches where you're headed.</p>
+    <p class="section-sub">Four focused programs, each built around a specific goal. Select the one that matches where you're headed.</p>
   </div>
   <div class="courses-grid">
 
@@ -248,6 +257,28 @@ $t = [
         <li>Exercises, homework, and tests</li>
       </ul>
       <div class="course-tags"><span class="tag">Exam Prep</span><span class="tag">Past Papers</span><span class="tag">Oral Practice</span><span class="tag">Writing</span></div>
+    </div>
+
+    <div class="course-card" data-course="English for Kids" onclick="selectCourse(this)" tabindex="0" role="button" onkeydown="if(event.key==='Enter'||event.key===' '){selectCourse(this);event.preventDefault();}">
+      <div class="course-header">
+        <div class="course-icon">🎨</div>
+        <div class="course-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 4" stroke="#0f1d2e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="course-title">English for Kids</div>
+      <div class="course-desc">Fun, interactive English lessons designed for children aged 7–14. Build vocabulary, confidence, and a genuine love for the language through games, stories, and creative activities.</div>
+      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2.5 months</span></div>
+      <hr class="course-divider">
+      <div class="features-label">What's included</div>
+      <ul class="course-features">
+        <li>Interactive lessons through games, stories and role-play</li>
+        <li>Speaking, listening and vocabulary building</li>
+        <li>Age-appropriate materials designed for children</li>
+        <li>~30 hours of instruction (two 1.5-hour sessions per week)</li>
+        <li>9 to 12 students per class — live Zoom sessions</li>
+        <li>Exercises, homework, and tests</li>
+        <li>Certificate upon completion</li>
+      </ul>
+      <div class="course-tags"><span class="tag">Ages 7–14</span><span class="tag">Games &amp; Stories</span><span class="tag">Vocabulary</span><span class="tag">Speaking</span></div>
     </div>
 
   </div>
@@ -357,6 +388,7 @@ $t = [
             <option value="Business English">Business English</option>
             <option value="General English">General English</option>
             <option value="English for Baccalaureate">English for Baccalaureate</option>
+            <option value="English for Kids">English for Kids</option>
           </select>
         </div>
         <div class="form-group">
