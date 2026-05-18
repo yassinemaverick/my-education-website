@@ -173,16 +173,16 @@ $t = [
     <h2 class="section-title">Your classroom, anywhere in the world.</h2>
   </div>
   <div class="photos-track">
-    <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
-    <div class="photo-item"><img src="assets/img/3.png" alt="Students studying together" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn anywhere</span></div>
-    <div class="photo-item"><img src="assets/img/10.png" alt="Individual student learning" width="300" height="220" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
-    <div class="photo-item"><img src="assets/img/4.png" alt="Online lesson on screen" width="300" height="220" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
-    <div class="photo-item"><img src="assets/img/2.png" alt="Students collaborating online" width="300" height="220" loading="lazy"><span class="photo-item-caption">Live sessions</span></div>
-    <div class="photo-item" aria-hidden="true"><img src="assets/img/5.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
-    <div class="photo-item" aria-hidden="true"><img src="assets/img/3.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn anywhere</span></div>
-    <div class="photo-item" aria-hidden="true"><img src="assets/img/10.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
-    <div class="photo-item" aria-hidden="true"><img src="assets/img/4.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
-    <div class="photo-item" aria-hidden="true"><img src="assets/img/2.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Live sessions</span></div>
+    <div class="photo-item"><picture><source srcset="assets/img/5.webp" type="image/webp"><img src="assets/img/5.png" alt="Student in online class" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Learn from home</span></div>
+    <div class="photo-item"><picture><source srcset="assets/img/3.webp" type="image/webp"><img src="assets/img/3.png" alt="Students studying together" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Learn anywhere</span></div>
+    <div class="photo-item"><picture><source srcset="assets/img/10.webp" type="image/webp"><img src="assets/img/10.png" alt="Individual student learning" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Expert teachers</span></div>
+    <div class="photo-item"><picture><source srcset="assets/img/4.webp" type="image/webp"><img src="assets/img/4.png" alt="Online lesson on screen" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Focused study</span></div>
+    <div class="photo-item"><picture><source srcset="assets/img/2.webp" type="image/webp"><img src="assets/img/2.png" alt="Students collaborating online" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Live sessions</span></div>
+    <div class="photo-item" aria-hidden="true"><picture><source srcset="assets/img/5.webp" type="image/webp"><img src="assets/img/5.png" alt="" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Learn from home</span></div>
+    <div class="photo-item" aria-hidden="true"><picture><source srcset="assets/img/3.webp" type="image/webp"><img src="assets/img/3.png" alt="" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Learn anywhere</span></div>
+    <div class="photo-item" aria-hidden="true"><picture><source srcset="assets/img/10.webp" type="image/webp"><img src="assets/img/10.png" alt="" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Expert teachers</span></div>
+    <div class="photo-item" aria-hidden="true"><picture><source srcset="assets/img/4.webp" type="image/webp"><img src="assets/img/4.png" alt="" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Focused study</span></div>
+    <div class="photo-item" aria-hidden="true"><picture><source srcset="assets/img/2.webp" type="image/webp"><img src="assets/img/2.png" alt="" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Live sessions</span></div>
   </div>
 </div>
 

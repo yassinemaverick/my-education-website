@@ -173,16 +173,16 @@ $t = [
     <h2 class="section-title">Votre salle de classe, où que vous soyez.</h2>
   </div>
   <div class="photos-track">
-    <div class="photo-item"><img src="assets/img/5.png" alt="Petit groupe en ligne" width="300" height="220" loading="lazy"><span class="photo-item-caption">Apprenez chez vous</span></div>
-    <div class="photo-item"><img src="assets/img/3.png" alt="Groupe d'étudiants" width="300" height="220" loading="lazy"><span class="photo-item-caption">Apprenez partout</span></div>
-    <div class="photo-item"><img src="assets/img/10.png" alt="Étudiant avec ordinateur" width="300" height="220" loading="lazy"><span class="photo-item-caption">Professeurs experts</span></div>
-    <div class="photo-item"><img src="assets/img/4.png" alt="Cours en ligne sur écran" width="300" height="220" loading="lazy"><span class="photo-item-caption">Étude ciblée</span></div>
-    <div class="photo-item"><img src="assets/img/2.png" alt="Étudiants en cours en ligne" width="300" height="220" loading="lazy"><span class="photo-item-caption">Séances en direct</span></div>
-    <div class="photo-item" aria-hidden="true"><img src="assets/img/5.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Apprenez chez vous</span></div>
-    <div class="photo-item" aria-hidden="true"><img src="assets/img/3.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Apprenez partout</span></div>
-    <div class="photo-item" aria-hidden="true"><img src="assets/img/10.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Professeurs experts</span></div>
-    <div class="photo-item" aria-hidden="true"><img src="assets/img/4.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Étude ciblée</span></div>
-    <div class="photo-item" aria-hidden="true"><img src="assets/img/2.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Séances en direct</span></div>
+    <div class="photo-item"><picture><source srcset="assets/img/5.webp" type="image/webp"><img src="assets/img/5.png" alt="Petit groupe en ligne" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Apprenez chez vous</span></div>
+    <div class="photo-item"><picture><source srcset="assets/img/3.webp" type="image/webp"><img src="assets/img/3.png" alt="Groupe d'étudiants" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Apprenez partout</span></div>
+    <div class="photo-item"><picture><source srcset="assets/img/10.webp" type="image/webp"><img src="assets/img/10.png" alt="Étudiant avec ordinateur" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Professeurs experts</span></div>
+    <div class="photo-item"><picture><source srcset="assets/img/4.webp" type="image/webp"><img src="assets/img/4.png" alt="Cours en ligne sur écran" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Étude ciblée</span></div>
+    <div class="photo-item"><picture><source srcset="assets/img/2.webp" type="image/webp"><img src="assets/img/2.png" alt="Étudiants en cours en ligne" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Séances en direct</span></div>
+    <div class="photo-item" aria-hidden="true"><picture><source srcset="assets/img/5.webp" type="image/webp"><img src="assets/img/5.png" alt="" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Apprenez chez vous</span></div>
+    <div class="photo-item" aria-hidden="true"><picture><source srcset="assets/img/3.webp" type="image/webp"><img src="assets/img/3.png" alt="" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Apprenez partout</span></div>
+    <div class="photo-item" aria-hidden="true"><picture><source srcset="assets/img/10.webp" type="image/webp"><img src="assets/img/10.png" alt="" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Professeurs experts</span></div>
+    <div class="photo-item" aria-hidden="true"><picture><source srcset="assets/img/4.webp" type="image/webp"><img src="assets/img/4.png" alt="" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Étude ciblée</span></div>
+    <div class="photo-item" aria-hidden="true"><picture><source srcset="assets/img/2.webp" type="image/webp"><img src="assets/img/2.png" alt="" width="300" height="220" loading="lazy"></picture><span class="photo-item-caption">Séances en direct</span></div>
   </div>
 </div>
 
