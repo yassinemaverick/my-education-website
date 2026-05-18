@@ -23,6 +23,8 @@ $action = trim($_GET['action'] ?? ($body['action'] ?? 'list'));
 if ($method === 'POST') csrf_verify();
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/rate_limit.php';
+api_rate_limit('ann:' . $uid, 120, 60);
 
 try {
     $pdo = db();

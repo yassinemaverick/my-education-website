@@ -9,6 +9,9 @@ if (empty($_SESSION['user_id']) || !in_array($_SESSION['role'], ['student','teac
     exit;
 }
 
+require_once __DIR__ . '/rate_limit.php';
+api_rate_limit('profile:' . (int)$_SESSION['user_id'], 10, 60);
+
 // ── Avatar upload (multipart/form-data) ────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_FILES['avatar'])) {
     $token = $_POST['csrf_token'] ?? '';

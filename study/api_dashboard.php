@@ -19,9 +19,11 @@ if (empty($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
 }
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/rate_limit.php';
 
 $studentId = (int) $_SESSION['user_id'];
 $action    = trim($_GET['action'] ?? 'overview');
+api_rate_limit('dashboard:' . $studentId, 120, 60);
 
 try {
     $pdo = db();

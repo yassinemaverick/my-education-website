@@ -22,6 +22,9 @@ $role   = $_SESSION['role']  ?? '';
 $userId = (int)($_SESSION['user_id'] ?? 0);
 if (!$userId) err('Non authentifié', 401);
 
+require_once __DIR__ . '/rate_limit.php';
+api_rate_limit('classes:' . $userId, 60, 60);
+
 // CSRF for POST — delegates to the shared csrf.php implementation
 if ($_SERVER['REQUEST_METHOD'] === 'POST') csrf_verify();
 

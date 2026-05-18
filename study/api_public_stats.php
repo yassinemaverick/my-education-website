@@ -10,6 +10,10 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: public, max-age=3600'); // cache 1 hour
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/rate_limit.php';
+
+$rl_ip = trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0')[0]);
+api_rate_limit('public_stats:ip:' . $rl_ip, 30, 60);
 
 try {
     $pdo = db();

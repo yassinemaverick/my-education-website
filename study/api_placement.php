@@ -11,6 +11,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/rate_limit.php';
 
 // ── Ensure table exists ────────────────────────────────────────────────────
 function ensurePlacementTable(): void {
@@ -37,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode(['ok'=>false,'error'=>'Forbidden']);
         exit;
     }
+    api_rate_limit('placement:' . (int)$_SESSION['user_id'], 30, 60);
     try {
         ensurePlacementTable();
         $rows = db()->query("SELECT id, name, email, phone, score, placement, created_at FROM placement_results ORDER BY created_at DESC LIMIT 500")->fetchAll();
@@ -86,6 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $ip  = $xff !== '' ? trim(explode(',', $xff)[0]) : ($_SERVER['REMOTE_ADDR'] ?? '');
     $ip  = substr($ip, 0, 100);
 
+    api_rate_limit('placement:ip:' . $ip, 5, 3600);
+
     try {
         ensurePlacementTable();
         $st = db()->prepare("INSERT INTO placement_results (name, email, phone, score, placement, ip) VALUES (?,?,?,?,?,?)");
@@ -105,6 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     if (empty($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
         http_response_code(403); echo json_encode(['ok'=>false,'error'=>'Forbidden']); exit;
     }
+    api_rate_limit('placement:' . (int)$_SESSION['user_id'], 30, 60);
     $raw = json_decode(file_get_contents('php://input'), true);
     $id  = (int)($raw['id'] ?? 0);
     if ($id < 1) { http_response_code(422); echo json_encode(['ok'=>false,'error'=>'Invalid id']); exit; }

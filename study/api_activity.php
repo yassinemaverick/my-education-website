@@ -25,6 +25,8 @@ if (!$uid || $role !== 'admin') {
 }
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/rate_limit.php';
+api_rate_limit('activity:' . $uid, 60, 60);
 
 // ── Schema bootstrap ─────────────────────────────────────────────────────────
 function ensureActivityLog(PDO $pdo): void {

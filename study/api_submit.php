@@ -34,8 +34,10 @@ if (in_array($action, ['submit','unsubmit']) && !hash_equals($sessionToken, $csr
 }
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/rate_limit.php';
 $pdo       = db();
 $studentId = (int) $_SESSION['user_id'];
+api_rate_limit('submit:' . $studentId, 20, 60);
 
 // Ensure submissions table has all columns
 try {

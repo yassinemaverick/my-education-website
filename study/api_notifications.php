@@ -17,11 +17,13 @@ if (empty($_SESSION['user_id'])) {
 }
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/rate_limit.php';
 
 $uid    = (int) $_SESSION['user_id'];
 $role   = $_SESSION['role'] ?? '';
 $action = trim($_GET['action'] ?? $_POST['action'] ?? 'list');
 $method = $_SERVER['REQUEST_METHOD'];
+api_rate_limit('notifications:' . $uid, 120, 60);
 
 try {
     $pdo = db();

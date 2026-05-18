@@ -23,6 +23,8 @@ $action = trim($_GET['action'] ?? ($body['action'] ?? ''));
 if ($method === 'POST') csrf_verify();
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/rate_limit.php';
+api_rate_limit('quiz:' . $uid, 60, 60);
 
 function qErr(string $msg, int $code = 400): void {
     http_response_code($code);

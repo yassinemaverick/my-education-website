@@ -35,6 +35,8 @@ if (!$uid || (!$isTeacher && !$isStudent && !$isAdmin)) {
 }
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/rate_limit.php';
+api_rate_limit('assignments:' . $uid, 60, 60);
 
 // ── Read request body ONCE ───────────────────────────────────────────────────
 $bodyData = json_decode(file_get_contents('php://input'), true) ?? [];

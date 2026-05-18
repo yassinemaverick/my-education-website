@@ -33,9 +33,11 @@ if (empty($_SESSION['user_id']) || (!$isAdmin && !$isTeacher)) {
 }
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/rate_limit.php';
 
 $teacherId = (int) $_SESSION['user_id'];
 $action    = trim($_GET['action'] ?? 'list');
+api_rate_limit('students:' . $teacherId, 60, 60);
 
 function initials(string $name): string {
     $parts = preg_split('/\s+/', trim($name));
