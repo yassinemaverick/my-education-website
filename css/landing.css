@@ -106,14 +106,7 @@ section { padding: 6rem 2rem; max-width: 1100px; margin: 0 auto; }
 .success-msg h3 { font-family: var(--font); font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem; }
 .success-msg p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
 .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
-.step { padding: 1.8rem; border: 1px solid var(--border); border-radius: 16px; background: var(--card-bg); position: relative; overflow: hidden; transition: border-color 0.25s, transform 0.25s, background 0.25s; }
-.step::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--green), transparent); opacity: 0; transition: opacity 0.3s; }
-.step:hover { border-color: rgba(62,207,120,0.4); transform: translateY(-4px); background: rgba(255,255,255,0.06); }
-.step:hover::before { opacity: 1; }
-.dark-card { position: relative; transition: border-color 0.25s, transform 0.25s, background 0.25s; }
-.dark-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--green), transparent); opacity: 0; transition: opacity 0.3s; }
-.dark-card:hover { border-color: rgba(62,207,120,0.4) !important; transform: translateY(-4px); background: rgba(255,255,255,0.06) !important; }
-.dark-card:hover::before { opacity: 1; }
+.step { padding: 1.8rem; border: 1px solid var(--border); border-radius: 16px; background: var(--card-bg); }
 .step-num { font-family: var(--font); font-size: 0.75rem; font-weight: 600; color: var(--green); letter-spacing: 0.05em; margin-bottom: 1rem; }
 .step h3 { font-family: var(--font); font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
 .step p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; font-weight: 300; }
