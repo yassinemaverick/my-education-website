@@ -246,7 +246,6 @@ $t = [
         <li>~30 heures d'enseignement (deux séances de 1h30 par semaine)</li>
         <li>9 à 12 étudiants par classe — séances Zoom en direct</li>
         <li>Exercices, devoirs et évaluations</li>
-        <li>Certificat à l'issue du cours</li>
       </ul>
       <div class="course-tags"><span class="tag">Prépa examen</span><span class="tag">Sujets corrigés</span><span class="tag">Oral</span><span class="tag">Rédaction</span></div>
     </div>
