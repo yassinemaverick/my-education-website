@@ -618,7 +618,7 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
         <p class="page-sub" id="schedule-page-sub">Définissez les jours et horaires de sessions pour chaque groupe</p>
       </div>
     </div>
-    <div id="schedule-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem;">
+    <div id="schedule-cards-grid" style="display:flex;flex-direction:column;gap:2.5rem;">
       <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--muted);font-size:.88rem;">
         <div class="spinner" style="margin:0 auto 1rem;"></div><span id="sched-loading-lbl">Loading…</span>
       </div>
@@ -1024,7 +1024,7 @@ const T = {
     assigningPageTitle:'Assignation des classes', assigningPageSub:'Aperçu des groupes assignés aux étudiants et professeurs',
     schedulePageTitle:'Horaires des groupes', schedulePageSub:'Définissez les jours et horaires de sessions pour chaque groupe',
     schNoGroups:'Aucun groupe trouvé.', schAddSlot:'+ Ajouter une séance', schSave:'Enregistrer', schSaving:'…',
-    schSaved:'✔ Enregistré', schTeacher:'Prof.', schStudents:'étudiant(s)',
+    schSaved:'✔ Enregistré', schTeacher:'Prof.', schStudents:'étudiant(s)', schGroupsLabel:'groupe(s)',
     schDayLabel:'Jour', schTimeFromLabel:'De', schTimeToLabel:'À',
     schStartDate:'Date de début', schEndDate:'Date de fin',
     schNoSlots:'Aucune séance configurée.',
@@ -1120,7 +1120,7 @@ const T = {
     assigningPageTitle:'Class assignments', assigningPageSub:'Overview of groups assigned to students and teachers',
     schedulePageTitle:'Allocate dates & times', schedulePageSub:'Set session days and times for each group',
     schNoGroups:'No groups found.', schAddSlot:'+ Add session', schSave:'Save', schSaving:'…',
-    schSaved:'✔ Saved', schTeacher:'Teacher:', schStudents:'student(s)',
+    schSaved:'✔ Saved', schTeacher:'Teacher:', schStudents:'student(s)', schGroupsLabel:'group(s)',
     schDayLabel:'Day', schTimeFromLabel:'From', schTimeToLabel:'To',
     schStartDate:'Start date', schEndDate:'End date',
     schNoSlots:'No sessions configured.',
@@ -2958,69 +2958,90 @@ function renderScheduleCards() {
   const lang = currentLang;
 
   if (_schedCourses.length === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1;color:var(--muted);text-align:center;padding:2rem;">${t.schNoGroups}</div>`;
+    grid.innerHTML = `<div style="color:var(--muted);text-align:center;padding:2rem;">${t.schNoGroups}</div>`;
     return;
   }
 
-  grid.innerHTML = _schedCourses.map(c => {
-    const gid   = c.group_id;
-    const name  = lang === 'en' ? (c.label_en || c.label_fr || c.label_ar) : lang === 'ar' ? (c.label_ar || c.label_fr) : (c.label_fr || c.label_ar);
-    const slots = c.schedule || [];
-    const slotHtml = slots.length === 0
-      ? `<div style="color:var(--muted);font-size:.82rem;font-style:italic;padding:.4rem 0 .6rem;">${t.schNoSlots}</div>`
-      : slots.map((s, i) => schedSlotRow(gid, i, s, t)).join('');
+  // Group by type_key + level_number into class buckets
+  const classMap = new Map();
+  for (const c of _schedCourses) {
+    const key = c.type_key + '|' + (c.level_number ?? '');
+    if (!classMap.has(key)) {
+      const fullLabel = lang === 'en' ? (c.label_en || c.label_fr) : lang === 'ar' ? (c.label_ar || c.label_fr) : c.label_fr;
+      const classLabel = fullLabel.split(' – ')[0].trim();
+      classMap.set(key, { label: classLabel, groups: [] });
+    }
+    classMap.get(key).groups.push(c);
+  }
 
-    return `
-    <div class="card" style="display:flex;flex-direction:column;gap:0;" id="sched-card-${gid}">
-      <!-- Card header -->
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:1rem;">
-        <div>
-          <div style="font-family:var(--font);font-weight:700;font-size:1rem;color:var(--white);margin-bottom:.2rem;">${escHtml(name)}</div>
-          <div style="font-size:.78rem;color:var(--muted);">
-            <span>${c.student_count || 0} ${t.schStudents}</span>
-            ${c.teacher_name ? `<span style="margin-left:.5rem;">· ${t.schTeacher} ${escHtml(c.teacher_name)}</span>` : ''}
+  grid.innerHTML = Array.from(classMap.values()).map(cls => {
+    const cardsHtml = cls.groups.map(c => {
+      const gid      = c.group_id;
+      const fullName = lang === 'en' ? (c.label_en || c.label_fr) : lang === 'ar' ? (c.label_ar || c.label_fr) : c.label_fr;
+      const groupPart = fullName.split(' – ')[1] || fullName;
+      const slots    = c.schedule || [];
+      const slotHtml = slots.length === 0
+        ? `<div style="color:var(--muted);font-size:.82rem;font-style:italic;padding:.4rem 0 .6rem;">${t.schNoSlots}</div>`
+        : slots.map((s, i) => schedSlotRow(gid, i, s, t)).join('');
+
+      return `
+      <div class="card" style="display:flex;flex-direction:column;gap:0;" id="sched-card-${gid}">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:1rem;">
+          <div>
+            <div style="font-family:var(--font);font-weight:700;font-size:1rem;color:var(--white);margin-bottom:.2rem;">${escHtml(groupPart)}</div>
+            <div style="font-size:.78rem;color:var(--muted);">
+              <span>${c.student_count || 0} ${t.schStudents}</span>
+              ${c.teacher_name ? `<span style="margin-left:.5rem;">· ${t.schTeacher} ${escHtml(c.teacher_name)}</span>` : ''}
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0;">
+            <span id="sched-status-${gid}" style="display:none;font-size:.75rem;color:var(--green);font-family:var(--font);font-weight:600;"></span>
+            <button onclick="saveSchedule(${gid})" id="sched-save-${gid}"
+              style="padding:.45rem .9rem;background:var(--blue);border:none;border-radius:8px;color:white;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;transition:opacity .15s;"
+              onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t.schSave}</button>
           </div>
         </div>
-        <div style="display:flex;align-items:center;gap:.5rem;flex-shrink:0;">
-          <span id="sched-status-${gid}" style="display:none;font-size:.75rem;color:var(--green);font-family:var(--font);font-weight:600;"></span>
-          <button onclick="saveSchedule(${gid})" id="sched-save-${gid}"
-            style="padding:.45rem .9rem;background:var(--blue);border:none;border-radius:8px;color:white;font-family:var(--font);font-size:.78rem;font-weight:600;cursor:pointer;transition:opacity .15s;"
-            onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">${t.schSave}</button>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem;">
+          <div>
+            <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem;">${t.schStartDate}</div>
+            <input type="date" id="sched-start-${gid}" value="${c.start_date || ''}"
+              style="width:100%;padding:.5rem .7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;color-scheme:dark;"
+              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
+          <div>
+            <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem;">${t.schEndDate}</div>
+            <input type="date" id="sched-end-${gid}" value="${c.end_date || ''}"
+              style="width:100%;padding:.5rem .7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;color-scheme:dark;"
+              onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+          </div>
         </div>
-      </div>
 
-      <!-- Date range -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1rem;">
-        <div>
-          <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem;">${t.schStartDate}</div>
-          <input type="date" id="sched-start-${gid}" value="${c.start_date || ''}"
-            style="width:100%;padding:.5rem .7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;color-scheme:dark;"
-            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
+        <div style="display:grid;grid-template-columns:1fr 90px 90px 28px;gap:.4rem;margin-bottom:.35rem;padding:0 .1rem;">
+          <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schDayLabel}</div>
+          <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schTimeFromLabel}</div>
+          <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schTimeToLabel}</div>
+          <div></div>
         </div>
-        <div>
-          <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.3rem;">${t.schEndDate}</div>
-          <input type="date" id="sched-end-${gid}" value="${c.end_date || ''}"
-            style="width:100%;padding:.5rem .7rem;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-family:var(--font-body);font-size:.83rem;outline:none;color-scheme:dark;"
-            onfocus="this.style.borderColor='var(--blue)'" onblur="this.style.borderColor='var(--border)'">
-        </div>
+
+        <div id="sched-slots-${gid}">${slotHtml}</div>
+
+        <button onclick="addScheduleSlot(${gid})"
+          style="margin-top:.6rem;display:flex;align-items:center;gap:.4rem;background:none;border:1px dashed var(--border);border-radius:8px;color:var(--muted);font-family:var(--font);font-size:.8rem;font-weight:500;padding:.45rem .75rem;cursor:pointer;transition:all .2s;width:100%;justify-content:center;"
+          onmouseover="this.style.borderColor='rgba(91,156,246,.5)';this.style.color='var(--blue)'"
+          onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">${t.schAddSlot}</button>
+      </div>`;
+    }).join('');
+
+    return `
+    <div>
+      <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);">
+        <h3 style="font-family:var(--font);font-size:1.05rem;font-weight:700;color:var(--white);margin:0;">${escHtml(cls.label)}</h3>
+        <span style="font-size:.73rem;color:var(--muted);background:rgba(255,255,255,.07);padding:.2rem .65rem;border-radius:20px;">${cls.groups.length} ${t.schGroupsLabel}</span>
       </div>
-
-      <!-- Column headers -->
-      <div style="display:grid;grid-template-columns:1fr 90px 90px 28px;gap:.4rem;margin-bottom:.35rem;padding:0 .1rem;">
-        <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schDayLabel}</div>
-        <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schTimeFromLabel}</div>
-        <div style="font-family:var(--font);font-size:.65rem;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">${t.schTimeToLabel}</div>
-        <div></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem;">
+        ${cardsHtml}
       </div>
-
-      <!-- Slots -->
-      <div id="sched-slots-${gid}">${slotHtml}</div>
-
-      <!-- Add session button -->
-      <button onclick="addScheduleSlot(${gid})"
-        style="margin-top:.6rem;display:flex;align-items:center;gap:.4rem;background:none;border:1px dashed var(--border);border-radius:8px;color:var(--muted);font-family:var(--font);font-size:.8rem;font-weight:500;padding:.45rem .75rem;cursor:pointer;transition:all .2s;width:100%;justify-content:center;"
-        onmouseover="this.style.borderColor='rgba(91,156,246,.5)';this.style.color='var(--blue)'"
-        onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">${t.schAddSlot}</button>
     </div>`;
   }).join('');
 }
