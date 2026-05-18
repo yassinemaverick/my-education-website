@@ -59,7 +59,7 @@ $t = [
       "name": "Upskill Education",
       "url": "https://upskill-edu.com",
       "logo": "https://upskill-edu.com/assets/img/logo.png",
-      "contactPoint": { "@type": "ContactPoint", "contactType": "service client", "availableLanguage": ["French","English"] }
+      "contactPoint": { "@type": "ContactPoint", "contactType": "customer service", "availableLanguage": ["French","English"] }
     },
     {
       "@type": "Course",
@@ -67,7 +67,7 @@ $t = [
       "description": "Anglais professionnel pour le monde du travail — emails, réunions, présentations.",
       "provider": { "@type": "Organization", "name": "Upskill Education" },
       "educationalLevel": "Intermédiaire à Avancé",
-      "inLanguage": "fr",
+      "inLanguage": "en",
       "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
     },
     {
@@ -76,7 +76,7 @@ $t = [
       "description": "Anglais conversationnel et écrit pour la communication quotidienne.",
       "provider": { "@type": "Organization", "name": "Upskill Education" },
       "educationalLevel": "Débutant à Intermédiaire",
-      "inLanguage": "fr",
+      "inLanguage": "en",
       "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
     },
     {
@@ -85,7 +85,7 @@ $t = [
       "description": "Préparation ciblée pour l'examen du Bac marocain — grammaire, lecture et rédaction.",
       "provider": { "@type": "Organization", "name": "Upskill Education" },
       "educationalLevel": "Lycée",
-      "inLanguage": "fr",
+      "inLanguage": "en",
       "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
     }
   ]
@@ -169,11 +169,11 @@ $t = [
     <div class="photo-item"><img src="assets/img/10.png" alt="Étudiant avec ordinateur" width="300" height="220" loading="lazy"><span class="photo-item-caption">Professeurs experts</span></div>
     <div class="photo-item"><img src="assets/img/4.png" alt="Cours en ligne sur écran" width="300" height="220" loading="lazy"><span class="photo-item-caption">Étude ciblée</span></div>
     <div class="photo-item"><img src="assets/img/2.png" alt="Étudiants en cours en ligne" width="300" height="220" loading="lazy"><span class="photo-item-caption">Séances en direct</span></div>
-    <div class="photo-item"><img src="assets/img/5.png" alt="Petit groupe en ligne" width="300" height="220" loading="lazy"><span class="photo-item-caption">Apprenez chez vous</span></div>
-    <div class="photo-item"><img src="assets/img/3.png" alt="Groupe d'étudiants" width="300" height="220" loading="lazy"><span class="photo-item-caption">Apprenez partout</span></div>
-    <div class="photo-item"><img src="assets/img/10.png" alt="Étudiant avec ordinateur" width="300" height="220" loading="lazy"><span class="photo-item-caption">Professeurs experts</span></div>
-    <div class="photo-item"><img src="assets/img/4.png" alt="Cours en ligne sur écran" width="300" height="220" loading="lazy"><span class="photo-item-caption">Étude ciblée</span></div>
-    <div class="photo-item"><img src="assets/img/2.png" alt="Étudiants en cours en ligne" width="300" height="220" loading="lazy"><span class="photo-item-caption">Séances en direct</span></div>
+    <div class="photo-item" aria-hidden="true"><img src="assets/img/5.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Apprenez chez vous</span></div>
+    <div class="photo-item" aria-hidden="true"><img src="assets/img/3.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Apprenez partout</span></div>
+    <div class="photo-item" aria-hidden="true"><img src="assets/img/10.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Professeurs experts</span></div>
+    <div class="photo-item" aria-hidden="true"><img src="assets/img/4.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Étude ciblée</span></div>
+    <div class="photo-item" aria-hidden="true"><img src="assets/img/2.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Séances en direct</span></div>
   </div>
 </div>
 
@@ -304,7 +304,7 @@ $t = [
     <h2 class="section-title text-center" style="text-align:center;">Prêt à commencer ?</h2>
     <p class="section-sub" style="margin:0 auto;text-align:center;">Remplissez le formulaire et nous vous recontacterons sous 24 heures pour confirmer votre place.</p>
     <div class="form-card">
-      <div id="form-area">
+      <form id="form-area" onsubmit="submitForm(event)">
         <div id="selected-pill" style="display:none;" class="selected-course-pill">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1.5 6L4.5 9L10.5 3" stroke="#3ecf78" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span id="pill-text">Anglais des affaires</span>
@@ -320,7 +320,7 @@ $t = [
         </div>
         <div class="form-group">
           <label for="name">NOM COMPLET</label>
-          <input type="text" id="name" placeholder="Votre nom complet" maxlength="120" required>
+          <input type="text" id="name" placeholder="Votre nom complet" maxlength="120" autocomplete="name" required>
         </div>
         <div class="form-group">
           <label for="level">NIVEAU ACTUEL</label>
@@ -336,16 +336,16 @@ $t = [
         <div class="form-grid">
           <div class="form-group">
             <label for="email">ADRESSE E-MAIL</label>
-            <input type="email" id="email" placeholder="vous@exemple.com" maxlength="180" required>
+            <input type="email" id="email" placeholder="vous@exemple.com" maxlength="180" autocomplete="email" required>
           </div>
           <div class="form-group">
             <label for="phone">NUMÉRO DE TÉLÉPHONE</label>
-            <input type="tel" id="phone" placeholder="+212 6XX XXX XXX" maxlength="30" required>
+            <input type="tel" id="phone" placeholder="+212 6XX XXX XXX" maxlength="30" autocomplete="tel" required>
           </div>
         </div>
-        <button class="btn-submit" onclick="submitForm()">Envoyer ma demande d'inscription →</button>
+        <button type="submit" class="btn-submit">Envoyer ma demande d'inscription →</button>
         <p class="form-notice">Vos informations sont enregistrées de manière sécurisée et transmises directement à notre équipe. Nous vous contacterons sous 24 heures.</p>
-      </div>
+      </form>
       <div class="success-msg" id="success-msg">
         <div class="success-icon">✓</div>
         <h3>Demande reçue !</h3>
@@ -436,7 +436,8 @@ $t = [
     setTimeout(() => t.classList.remove('show'), 3500);
   }
 
-  async function submitForm() {
+  async function submitForm(event) {
+    event.preventDefault();
     const name   = document.getElementById('name').value.trim();
     const email  = document.getElementById('email').value.trim();
     const phone  = document.getElementById('phone').value.trim();
@@ -446,7 +447,7 @@ $t = [
     if (!course) { showToast('Veuillez d\'abord choisir un cours.'); return; }
     if (!name)   { showToast('Veuillez saisir votre nom complet.'); return; }
     if (!level)  { showToast('Veuillez sélectionner votre niveau actuel.'); return; }
-    if (!email || !email.includes('@')) { showToast('Veuillez saisir une adresse e-mail valide.'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Veuillez saisir une adresse e-mail valide.'); return; }
     if (!phone)  { showToast('Veuillez saisir votre numéro de téléphone.'); return; }
 
     const btn = document.querySelector('.btn-submit');

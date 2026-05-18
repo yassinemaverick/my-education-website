@@ -169,11 +169,11 @@ $t = [
     <div class="photo-item"><img src="assets/img/10.png" alt="Individual student learning" width="300" height="220" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
     <div class="photo-item"><img src="assets/img/4.png" alt="Online lesson on screen" width="300" height="220" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
     <div class="photo-item"><img src="assets/img/2.png" alt="Students collaborating online" width="300" height="220" loading="lazy"><span class="photo-item-caption">Live sessions</span></div>
-    <div class="photo-item"><img src="assets/img/5.png" alt="Student in online class" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
-    <div class="photo-item"><img src="assets/img/3.png" alt="Students studying together" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn anywhere</span></div>
-    <div class="photo-item"><img src="assets/img/10.png" alt="Individual student learning" width="300" height="220" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
-    <div class="photo-item"><img src="assets/img/4.png" alt="Online lesson on screen" width="300" height="220" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
-    <div class="photo-item"><img src="assets/img/2.png" alt="Students collaborating online" width="300" height="220" loading="lazy"><span class="photo-item-caption">Live sessions</span></div>
+    <div class="photo-item" aria-hidden="true"><img src="assets/img/5.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn from home</span></div>
+    <div class="photo-item" aria-hidden="true"><img src="assets/img/3.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Learn anywhere</span></div>
+    <div class="photo-item" aria-hidden="true"><img src="assets/img/10.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Expert teachers</span></div>
+    <div class="photo-item" aria-hidden="true"><img src="assets/img/4.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Focused study</span></div>
+    <div class="photo-item" aria-hidden="true"><img src="assets/img/2.png" alt="" width="300" height="220" loading="lazy"><span class="photo-item-caption">Live sessions</span></div>
   </div>
 </div>
 
@@ -304,7 +304,7 @@ $t = [
     <h2 class="section-title text-center" style="text-align:center;">Ready to start?</h2>
     <p class="section-sub" style="margin:0 auto;text-align:center;">Fill in your details and we'll be in touch within 24 hours to confirm your place.</p>
     <div class="form-card">
-      <div id="form-area">
+      <form id="form-area" onsubmit="submitForm(event)">
         <div id="selected-pill" style="display:none;" class="selected-course-pill">
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1.5 6L4.5 9L10.5 3" stroke="#3ecf78" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
           <span id="pill-text">Business English</span>
@@ -320,7 +320,7 @@ $t = [
         </div>
         <div class="form-group">
           <label for="name">FULL NAME</label>
-          <input type="text" id="name" placeholder="Your full name" maxlength="120" required>
+          <input type="text" id="name" placeholder="Your full name" maxlength="120" autocomplete="name" required>
         </div>
         <div class="form-group">
           <label for="level">CURRENT LEVEL</label>
@@ -336,16 +336,16 @@ $t = [
         <div class="form-grid">
           <div class="form-group">
             <label for="email">EMAIL ADDRESS</label>
-            <input type="email" id="email" placeholder="you@example.com" maxlength="180" required>
+            <input type="email" id="email" placeholder="you@example.com" maxlength="180" autocomplete="email" required>
           </div>
           <div class="form-group">
             <label for="phone">PHONE NUMBER</label>
-            <input type="tel" id="phone" placeholder="+212 6XX XXX XXX" maxlength="30" required>
+            <input type="tel" id="phone" placeholder="+212 6XX XXX XXX" maxlength="30" autocomplete="tel" required>
           </div>
         </div>
-        <button class="btn-submit" onclick="submitForm()">Send Enrollment Request →</button>
+        <button type="submit" class="btn-submit">Send Enrollment Request →</button>
         <p class="form-notice">Your information is saved securely and sent directly to our admin team. We'll contact you within 24 hours.</p>
-      </div>
+      </form>
       <div class="success-msg" id="success-msg">
         <div class="success-icon">✓</div>
         <h3>Request received!</h3>
@@ -436,7 +436,8 @@ $t = [
     setTimeout(() => t.classList.remove('show'), 3500);
   }
 
-  async function submitForm() {
+  async function submitForm(event) {
+    event.preventDefault();
     const name   = document.getElementById('name').value.trim();
     const email  = document.getElementById('email').value.trim();
     const phone  = document.getElementById('phone').value.trim();
@@ -446,7 +447,7 @@ $t = [
     if (!course) { showToast('Please select a course first.'); return; }
     if (!name)   { showToast('Please enter your full name.'); return; }
     if (!level)  { showToast('Please select your current level.'); return; }
-    if (!email || !email.includes('@')) { showToast('Please enter a valid email address.'); return; }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Please enter a valid email address.'); return; }
     if (!phone)  { showToast('Please enter your phone number.'); return; }
 
     const btn = document.querySelector('.btn-submit');
