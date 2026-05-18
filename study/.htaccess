@@ -34,12 +34,9 @@ RewriteRule ^ /en [R=301,L]
 RewriteCond %{THE_REQUEST} \ /index-fr\.php [NC]
 RewriteRule ^ /fr [R=301,L]
 
-RewriteCond %{THE_REQUEST} \ /index-ar\.php [NC]
-RewriteRule ^ /ar [R=301,L]
-
 # ── Redirect other .php URLs to clean versions (skip POST endpoints & API files) ──
 RewriteCond %{THE_REQUEST} \ /([^/]+)\.php [NC]
-RewriteCond %1 !^index(-en|-fr|-ar)?$ [NC]
+RewriteCond %1 !^index(-en|-fr)?$ [NC]
 RewriteCond %1 !^login$ [NC]
 RewriteCond %1 !^logout$ [NC]
 RewriteCond %1 !^enroll$ [NC]
@@ -63,4 +60,3 @@ RewriteRule ^([^\.]+)$ $1.php [NC,L]
 # ── Clean language URL routing ────────────────────────────────────────────────
 RewriteRule ^en$ /index-en.php [L]
 RewriteRule ^fr$ /index-fr.php [L]
-RewriteRule ^ar$ /index-ar.php [L]

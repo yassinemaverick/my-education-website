@@ -1,13 +1,12 @@
 <?php
 /**
  * partials/nav.php
- * Expects $lang ('en'|'fr'|'ar') and $t (translations array) to be set by the caller.
+ * Expects $lang ('en'|'fr') and $t (translations array) to be set by the caller.
  */
-$isRtl = ($lang === 'ar');
 ?>
 <nav>
-  <div style="display:flex;align-items:center;gap:0.75rem;<?= $isRtl ? 'flex-direction:row-reverse;' : '' ?>">
-    <a href="<?= $lang === 'en' ? 'index.php' : ($lang === 'fr' ? 'index-fr.php' : 'index-ar.php') ?>" class="nav-logo">
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="<?= $lang === 'fr' ? 'index-fr.php' : 'index.php' ?>" class="nav-logo">
       <svg viewBox="0 0 160 50" fill="none" xmlns="http://www.w3.org/2000/svg">
         <text x="36" y="36" font-family="Sora, sans-serif" font-size="28" font-weight="700" fill="white">pskill</text>
         <path d="M14 12 Q14 28 26 28 Q38 28 38 12" stroke="#3ecf78" stroke-width="3.5" fill="none" stroke-linecap="round"/>
@@ -20,7 +19,6 @@ $isRtl = ($lang === 'ar');
     $langLinks = [
       'en' => ['href' => 'index.php',    'label' => '🇬🇧 EN'],
       'fr' => ['href' => 'index-fr.php', 'label' => '🇫🇷 FR'],
-      'ar' => ['href' => 'index-ar.php', 'label' => '🇲🇦 عربي'],
     ];
     foreach ($langLinks as $code => $link):
       $active = ($code === $lang);
@@ -34,16 +32,9 @@ $isRtl = ($lang === 'ar');
     <?php endforeach; ?>
   </div>
   <div class="nav-links">
-    <?php if ($isRtl): ?>
-      <a href="<?= $t['portal_url'] ?>" class="nav-cta"><?= $t['nav_login'] ?></a>
-      <a href="#enroll"><?= $t['nav_enroll'] ?></a>
-      <a href="#how"><?= $t['nav_how'] ?></a>
-      <a href="#courses"><?= $t['nav_courses'] ?></a>
-    <?php else: ?>
-      <a href="#courses"><?= $t['nav_courses'] ?></a>
-      <a href="#how"><?= $t['nav_how'] ?></a>
-      <a href="#enroll"><?= $t['nav_enroll'] ?></a>
-      <a href="<?= $t['portal_url'] ?>" class="nav-cta"><?= $t['nav_login'] ?></a>
-    <?php endif; ?>
+    <a href="#courses"><?= $t['nav_courses'] ?></a>
+    <a href="#how"><?= $t['nav_how'] ?></a>
+    <a href="#enroll"><?= $t['nav_enroll'] ?></a>
+    <a href="<?= $t['portal_url'] ?>" class="nav-cta"><?= $t['nav_login'] ?></a>
   </div>
 </nav>
