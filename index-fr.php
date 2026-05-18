@@ -133,7 +133,7 @@ $t = [
   <p>Des cours d'anglais animés par des experts, conçus pour des résultats concrets — que vous construisiez votre carrière, prépariez le Baccalauréat ou souhaitiez simplement progresser.</p>
   <div class="hero-actions">
     <a href="#courses" class="btn-primary">Découvrir les cours</a>
-    <a target="_blank" rel="noopener noreferrer" href="https://wa.me/212702099967" class="btn-outline">Plus d'informations →</a>
+    <a target="_blank" rel="noopener noreferrer" href="https://wa.me/212702099967" class="btn-outline">Plus d'informations sur WhatsApp →</a>
   </div>
 </div>
 
@@ -261,7 +261,7 @@ $t = [
     <div class="steps">
       <div class="step"><div class="step-num">01</div><h3>Choisissez votre cours</h3><p>Parcourez nos trois programmes et sélectionnez celui qui correspond à vos objectifs et à votre niveau actuel.</p></div>
       <div class="step"><div class="step-num">02</div><h3>Soumettez vos informations</h3><p>Renseignez votre nom, e-mail et téléphone. Notre équipe vous contactera sous 24 heures pour confirmer votre inscription.</p></div>
-      <div class="step"><div class="step-num">03</div><h3>Recevez vos identifiants</h3><p>Vous recevrez vos identifiants personnels pour accéder à la plateforme étudiant depuis notre équipe administrative.</p></div>
+      <div class="step"><div class="step-num">03</div><h3>Recevez vos identifiants</h3><p>Vous recevrez vos identifiants personnels pour accéder à la plateforme étudiant de notre équipe administrative — par WhatsApp ou e-mail dans les 24 heures.</p></div>
       <div class="step"><div class="step-num">04</div><h3>Commencez à apprendre</h3><p>Connectez-vous à votre tableau de bord, accédez aux ressources, devoirs et suivez votre progression en temps réel.</p></div>
     </div>
   </div>
@@ -294,6 +294,47 @@ $t = [
         <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;line-height:1.3;margin:0;">Des progrès visibles</h3>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Les étudiants suivent leurs présences, leurs notes et leurs résumés de cours directement sur leur tableau de bord après chaque séance. L'apprentissage ressemble moins à un cours et plus à un parcours avec une direction claire.</p>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div style="padding:6rem 2rem;background:#0f1d2e;">
+  <div style="max-width:760px;margin:0 auto;">
+    <div class="section-label" style="text-align:center;">FAQ</div>
+    <h2 class="section-title" style="text-align:center;margin-bottom:3rem;">Questions fréquentes</h2>
+    <div style="display:flex;flex-direction:column;gap:.75rem;">
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Faut-il un ordinateur ou peut-on utiliser son téléphone ?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Il vous suffit d'avoir Zoom — n'importe quel appareil fonctionne : ordinateur, tablette ou smartphone. Une connexion internet stable est tout ce dont vous avez besoin.</p>
+      </details>
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Que se passe-t-il si je rate une séance ?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Votre professeur publie les notes et ressources de chaque séance sur votre tableau de bord étudiant, pour que vous puissiez rattraper à tout moment.</p>
+      </details>
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Comment savoir quel est mon niveau ?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Indiquez votre niveau approximatif lors de votre inscription — notre équipe confirmera le groupe adapté. Vous pouvez également passer notre test de placement gratuit après avoir soumis votre demande.</p>
+      </details>
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Quand puis-je commencer après mon inscription ?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Notre équipe vous contacte sous 24 heures pour confirmer votre place et vous envoyer vos identifiants. De nouveaux groupes démarrent régulièrement — nous vous informerons de la prochaine session disponible.</p>
+      </details>
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Peut-on payer en plusieurs fois ?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Les modalités de paiement sont précisées lors de la prise de contact de notre équipe. N'hésitez pas à nous écrire sur WhatsApp si vous avez des questions avant de vous inscrire.</p>
+      </details>
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Y a-t-il un engagement à long terme ?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Chaque session dure 2,5 mois (~30 heures). Il n'y a aucun contrat à long terme — vous décidez si vous souhaitez continuer à l'issue de chaque session.</p>
+      </details>
+
     </div>
   </div>
 </div>
@@ -585,7 +626,7 @@ document.addEventListener('click', e => {
 </script>
 
 <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer"
-   style="position:fixed;bottom:2rem;left:2rem;z-index:998;background:#25d366;color:white;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s;"
+   style="position:fixed;bottom:2rem;right:2rem;z-index:998;background:#25d366;color:white;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s;"
    onmouseenter="this.style.transform='scale(1.12)'" onmouseleave="this.style.transform=''"
    title="Contacter sur WhatsApp">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">

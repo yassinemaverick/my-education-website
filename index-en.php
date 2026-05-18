@@ -133,7 +133,7 @@ $t = [
   <p>Expert-led English courses designed for real results — whether you're building a career, acing your Baccalaureate, or simply leveling up.</p>
   <div class="hero-actions">
     <a href="#courses" class="btn-primary">Explore Courses</a>
-    <a target="_blank" rel="noopener noreferrer" href="https://wa.me/212702099967" class="btn-outline">More Information →</a>
+    <a target="_blank" rel="noopener noreferrer" href="https://wa.me/212702099967" class="btn-outline">More information on WhatsApp →</a>
   </div>
 </div>
 
@@ -261,7 +261,7 @@ $t = [
     <div class="steps">
       <div class="step"><div class="step-num">01</div><h3>Choose your course</h3><p>Browse our three programs and select the one that fits your goals and current level.</p></div>
       <div class="step"><div class="step-num">02</div><h3>Submit your details</h3><p>Fill in your name, email and phone. Our team will reach out within 24 hours to confirm your enrollment.</p></div>
-      <div class="step"><div class="step-num">03</div><h3>Get your login</h3><p>Receive your personal credentials for the student platform from our admin team.</p></div>
+      <div class="step"><div class="step-num">03</div><h3>Get your login</h3><p>Receive your personal credentials for the student platform from our admin team — via WhatsApp or email within 24 hours.</p></div>
       <div class="step"><div class="step-num">04</div><h3>Start learning</h3><p>Log in to your dashboard, access materials, assignments, and track your progress live.</p></div>
     </div>
   </div>
@@ -294,6 +294,47 @@ $t = [
         <h3 style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;line-height:1.3;margin:0;">Progress you can see</h3>
         <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;">Students track their attendance, grades, and lesson notes directly on their dashboard after every session. Learning feels less like a course and more like a journey with a clear direction.</p>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div style="padding:6rem 2rem;background:#0f1d2e;">
+  <div style="max-width:760px;margin:0 auto;">
+    <div class="section-label" style="text-align:center;">FAQ</div>
+    <h2 class="section-title" style="text-align:center;margin-bottom:3rem;">Common questions</h2>
+    <div style="display:flex;flex-direction:column;gap:.75rem;">
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Do I need a computer, or can I use my phone?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">You just need Zoom — any device works: computer, tablet, or smartphone. A stable internet connection is all you need.</p>
+      </details>
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">What happens if I miss a session?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Your teacher posts session notes and materials to your student dashboard after every class, so you can catch up at any time.</p>
+      </details>
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">How do I know which level I am?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Select your approximate level when you enroll — our team will confirm the right group for you. You can also take our free placement test after submitting your enrollment request.</p>
+      </details>
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">How soon can I start?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Our team contacts you within 24 hours to confirm your place and share your login credentials. New groups start regularly — we'll let you know when the next one begins.</p>
+      </details>
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Can I pay in instalments?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Payment options are confirmed when our admin team reaches out after your enrollment. Message us on WhatsApp before enrolling if you have questions.</p>
+      </details>
+
+      <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
+        <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Is there a long-term commitment?</summary>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Each session is 2.5 months (~30 hours). There is no long-term contract — you decide whether to continue at the end of each session.</p>
+      </details>
+
     </div>
   </div>
 </div>
@@ -585,7 +626,7 @@ document.addEventListener('click', e => {
 </script>
 
 <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer"
-   style="position:fixed;bottom:2rem;left:2rem;z-index:998;background:#25d366;color:white;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s;"
+   style="position:fixed;bottom:2rem;right:2rem;z-index:998;background:#25d366;color:white;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s;"
    onmouseenter="this.style.transform='scale(1.12)'" onmouseleave="this.style.transform=''"
    title="Chat on WhatsApp">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
