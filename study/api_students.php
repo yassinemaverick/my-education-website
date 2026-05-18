@@ -170,7 +170,9 @@ try {
             // Migrate ENUM → VARCHAR if table was previously created by enroll.php
             try { $pdo->exec("ALTER TABLE enrollments MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'new'"); } catch(Throwable $e){}
 
-            $status = trim($_GET['status'] ?? 'all');
+            $status = in_array(trim($_GET['status'] ?? ''), ['all','new','accepted','refused','new_refused'])
+                ? trim($_GET['status'])
+                : 'all';
             $search = substr(trim($_GET['search'] ?? ''), 0, 100);
             $where  = []; $params = [];
             if ($status === 'new_refused') {
