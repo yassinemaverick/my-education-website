@@ -615,7 +615,8 @@ async function sendContact() {
   errEl.style.display = 'none';
 
   if (!name)  { errEl.textContent = 'Veuillez saisir votre nom.'; errEl.style.display = ''; return; }
-  if (!email || !email.includes('@')) { errEl.textContent = 'Adresse e-mail invalide.'; errEl.style.display = ''; return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'Adresse e-mail invalide.'; errEl.style.display = ''; return; }
+  if (phone && !/^[+\d\s\-(). ]{1,30}$/.test(phone)) { errEl.textContent = 'Numéro de téléphone invalide.'; errEl.style.display = ''; return; }
   if (!msg)   { errEl.textContent = 'Veuillez saisir votre message.'; errEl.style.display = ''; return; }
 
   const btn = document.getElementById('c-btn');

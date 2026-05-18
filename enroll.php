@@ -76,6 +76,7 @@ $name   = trim($_POST['name']   ?? '');
 $email  = trim($_POST['email']  ?? '');
 $phone  = trim($_POST['phone']  ?? '');
 $course = trim($_POST['course'] ?? '');
+$level  = trim($_POST['level']  ?? '');
 $lang   = trim($_POST['lang']   ?? 'en'); // 'en' | 'fr' | 'ar'
 
 // ── Validation ───────────────────────────────────────────────────────────────
@@ -109,6 +110,14 @@ if ($course === '' || strlen($course) > 120) {
         default => 'Please select a course.',
     };
 }
+$allowed_levels = ['Beginner', 'Elementary', 'Intermediate', 'Advanced', 'Baccalaureate Student'];
+if ($level !== '' && !in_array($level, $allowed_levels, true)) {
+    $errors[] = match($lang) {
+        'fr' => 'Niveau sélectionné invalide.',
+        'ar' => 'المستوى المحدد غير صالح.',
+        default => 'Invalid level selected.',
+    };
+}
 
 if ($errors) {
     http_response_code(422);
@@ -125,6 +134,7 @@ try {
             email      VARCHAR(180)  NOT NULL,
             phone      VARCHAR(30)   NOT NULL,
             course     VARCHAR(120)  NOT NULL,
+            level      VARCHAR(80)   DEFAULT NULL,
             lang       VARCHAR(5)    NOT NULL DEFAULT 'en',
             status     VARCHAR(20) NOT NULL DEFAULT 'new',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -141,15 +151,19 @@ try {
         exit;
     }
 
+    // Add level column to existing tables that pre-date this field
+    try { enroll_db()->exec("ALTER TABLE enrollments ADD COLUMN level VARCHAR(80) DEFAULT NULL"); } catch(Throwable $e) {}
+
     $stmt = enroll_db()->prepare("
-        INSERT INTO enrollments (name, email, phone, course, lang)
-        VALUES (:name, :email, :phone, :course, :lang)
+        INSERT INTO enrollments (name, email, phone, course, level, lang)
+        VALUES (:name, :email, :phone, :course, :level, :lang)
     ");
     $stmt->execute([
         ':name'   => $name,
         ':email'  => $email,
         ':phone'  => $phone,
         ':course' => $course,
+        ':level'  => $level ?: null,
         ':lang'   => $lang,
     ]);
 

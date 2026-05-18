@@ -56,15 +56,39 @@ $email   = trim($_POST['email'] ?? '');
 $message = trim($_POST['message'] ?? '');
 $phone   = trim($_POST['phone']   ?? '');
 
-if (!$name || !filter_var($email, FILTER_VALIDATE_EMAIL) || !$message) {
+$errors = [];
+if ($name === '' || mb_strlen($name) > 120) {
+    $errors[] = match($lang) {
+        'ar' => 'يرجى إدخال اسمك الكامل (120 حرفاً كحد أقصى).',
+        'en' => 'Please enter your full name (max 120 characters).',
+        default => 'Veuillez entrer votre nom complet (120 caractères max).',
+    };
+}
+if (!filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($email) > 180) {
+    $errors[] = match($lang) {
+        'ar' => 'يرجى إدخال بريد إلكتروني صالح.',
+        'en' => 'Please enter a valid email address.',
+        default => 'Veuillez entrer une adresse e-mail valide.',
+    };
+}
+if ($phone !== '' && (!preg_match('/^[+\d\s\-(). ]{1,30}$/', $phone))) {
+    $errors[] = match($lang) {
+        'ar' => 'رقم الهاتف غير صالح.',
+        'en' => 'Invalid phone number.',
+        default => 'Numéro de téléphone invalide.',
+    };
+}
+if ($message === '' || mb_strlen($message) > 2000) {
+    $errors[] = match($lang) {
+        'ar' => 'يرجى كتابة رسالتك (2000 حرف كحد أقصى).',
+        'en' => 'Please enter your message (max 2000 characters).',
+        default => 'Veuillez entrer votre message (2000 caractères max).',
+    };
+}
+if ($errors) {
     http_response_code(422);
     ob_clean();
-    $err = match($lang) {
-        'ar' => 'يرجى ملء جميع الحقول بشكل صحيح.',
-        'en' => 'Please fill all fields correctly.',
-        default => 'Veuillez remplir tous les champs correctement.',
-    };
-    echo json_encode(['ok' => false, 'error' => $err]);
+    echo json_encode(['ok' => false, 'error' => implode(' ', $errors)]);
     exit;
 }
 

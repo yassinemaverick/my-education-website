@@ -61,14 +61,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $score     = (int)($raw['score']    ?? -1);
     $placement = trim($raw['placement'] ?? '');
 
-    if ($name === '') {
+    if ($name === '' || mb_strlen($name) > 120) {
         http_response_code(422);
-        echo json_encode(['ok'=>false,'error'=>'Name is required']);
+        echo json_encode(['ok'=>false,'error'=>'Name is required (max 120 characters)']);
         exit;
     }
     if ($email === '' && $phone === '') {
         http_response_code(422);
         echo json_encode(['ok'=>false,'error'=>'Email or phone is required']);
+        exit;
+    }
+    if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(422);
+        echo json_encode(['ok'=>false,'error'=>'Invalid email address']);
+        exit;
+    }
+    if ($phone !== '' && mb_strlen($phone) > 40) {
+        http_response_code(422);
+        echo json_encode(['ok'=>false,'error'=>'Phone number too long']);
         exit;
     }
     if ($score < 0 || $score > 60) {

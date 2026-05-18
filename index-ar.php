@@ -528,7 +528,8 @@ async function sendContact() {
   errEl.style.display = 'none';
 
   if (!name)  { errEl.textContent = 'يرجى إدخال اسمك.'; errEl.style.display = ''; return; }
-  if (!email || !email.includes('@')) { errEl.textContent = 'بريد إلكتروني غير صالح.'; errEl.style.display = ''; return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'بريد إلكتروني غير صالح.'; errEl.style.display = ''; return; }
+  if (phone && !/^[+\d\s\-(). ]{1,30}$/.test(phone)) { errEl.textContent = 'رقم الهاتف غير صالح.'; errEl.style.display = ''; return; }
   if (!msg)   { errEl.textContent = 'يرجى كتابة رسالتك.'; errEl.style.display = ''; return; }
 
   const btn = document.getElementById('c-btn');
