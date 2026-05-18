@@ -2824,11 +2824,33 @@ async function openGroupDetail(groupId) {
   if (!schedEl) {
     schedEl = document.createElement('div');
     schedEl.id = 'cd-schedule-row';
-    schedEl.style.cssText = 'display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0 .8rem;';
+    schedEl.style.cssText = 'display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0 .4rem;';
     const metaEl = document.getElementById('course-detail-meta');
     if (metaEl && metaEl.parentNode) metaEl.parentNode.insertBefore(schedEl, metaEl.nextSibling);
   }
   schedEl.innerHTML = schedHtml;
+
+  /* ── Date range ── */
+  const fmtDt = (d) => { if (!d) return ''; const [y,m,day]=d.split('-'); return lang==='en'?`${m}/${day}/${y}`:`${day}/${m}/${y}`; };
+  const sd = fmtDt(g.start_date), ed = fmtDt(g.end_date);
+  let dateEl = document.getElementById('cd-date-row');
+  if (!dateEl) {
+    dateEl = document.createElement('div');
+    dateEl.id = 'cd-date-row';
+    dateEl.style.cssText = 'display:flex;flex-wrap:wrap;gap:.75rem;margin:.2rem 0 .8rem;font-size:.8rem;color:var(--muted);';
+    schedEl.parentNode.insertBefore(dateEl, schedEl.nextSibling);
+  }
+  if (sd || ed) {
+    const startLbl = lang === 'en' ? 'Start' : 'Début';
+    const endLbl   = lang === 'en' ? 'End'   : 'Fin';
+    dateEl.style.display = '';
+    dateEl.innerHTML = `
+      ${sd ? `<span>📅 <span style="font-weight:600;color:var(--muted2);">${startLbl}:</span> ${sd}</span>` : ''}
+      ${ed ? `<span>🏁 <span style="font-weight:600;color:var(--muted2);">${endLbl}:</span> ${ed}</span>` : ''}`;
+  } else {
+    dateEl.style.display = 'none';
+    dateEl.innerHTML = '';
+  }
 
   const listEl = document.getElementById('cd-students-list');
   listEl.innerHTML = '<div class="loading-overlay" style="position:relative;height:60px;"><div class="spinner"></div></div>';
