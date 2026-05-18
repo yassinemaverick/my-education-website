@@ -266,14 +266,14 @@ $t = [
       </div>
       <div class="course-title">English for Kids</div>
       <div class="course-desc">Fun, interactive English lessons designed for children aged 7–14. Build vocabulary, confidence, and a genuine love for the language through games, stories, and creative activities.</div>
-      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2.5 months</span></div>
+      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 3 months</span></div>
       <hr class="course-divider">
       <div class="features-label">What's included</div>
       <ul class="course-features">
         <li>Interactive lessons through games, stories and role-play</li>
         <li>Speaking, listening and vocabulary building</li>
         <li>Age-appropriate materials designed for children</li>
-        <li>~30 hours of instruction (two 1.5-hour sessions per week)</li>
+        <li>~30 hours of instruction (two 1h15 sessions per week)</li>
         <li>9 to 12 students per class — live Zoom sessions</li>
         <li>Exercises, homework, and tests</li>
         <li>Certificate upon completion</li>

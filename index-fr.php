@@ -266,14 +266,14 @@ $t = [
       </div>
       <div class="course-title">Anglais pour enfants</div>
       <div class="course-desc">Des cours d'anglais ludiques et interactifs conçus pour les enfants de 7 à 14 ans. Construisez le vocabulaire, la confiance et une vraie passion pour la langue à travers des jeux, des histoires et des activités créatives.</div>
-      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2,5 mois</span></div>
+      <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 3 mois</span></div>
       <hr class="course-divider">
       <div class="features-label">Ce qui est inclus</div>
       <ul class="course-features">
         <li>Cours interactifs à travers jeux, histoires et jeux de rôle</li>
         <li>Expression orale, écoute et enrichissement du vocabulaire</li>
         <li>Supports adaptés à l'âge des enfants</li>
-        <li>~30 heures d'enseignement (deux séances de 1h30 par semaine)</li>
+        <li>~30 heures d'enseignement (deux séances de 1h15 par semaine)</li>
         <li>9 à 12 étudiants par classe — séances Zoom en direct</li>
         <li>Exercices, devoirs et évaluations</li>
         <li>Certificat à l'issue du cours</li>
