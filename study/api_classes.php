@@ -432,7 +432,8 @@ if ($action === 'list_assignments') {
 // my_group: student/teacher sees their own group(s)
 if ($action === 'my_group') {
   $stmt = $pdo->prepare(
-    "SELECT g.id AS group_id, g.type_key, g.level_number, g.group_letter
+    "SELECT g.id AS group_id, g.type_key, g.level_number, g.group_letter,
+            g.start_date, g.end_date
      FROM class_group_members m
      JOIN class_groups g ON g.id = m.group_id
      WHERE m.user_id = ?"
@@ -451,6 +452,8 @@ if ($action === 'my_group') {
       'type_key'    => $g['type_key'],
       'level_number'=> $lvl ? (int)$lvl : null,
       'group_letter'=> $g['group_letter'],
+      'start_date'  => $g['start_date'],
+      'end_date'    => $g['end_date'],
       'label_fr'    => $typeLabels[$g['type_key']]['fr'] . ($lvl ? ' ' . $lvl : '') . ' – Groupe ' . $g['group_letter'],
       'label_en'    => $typeLabels[$g['type_key']]['en'] . ($lvl ? ' ' . $lvl : '') . ' – Group ' . $g['group_letter'],
       'label_ar'    => $typeLabels[$g['type_key']]['ar'] . ($lvl ? ' ' . $lvl : '') . ' – مجموعة ' . $g['group_letter'],
@@ -489,7 +492,7 @@ if ($action === 'teacher_groups') {
 
   $stmt = $pdo->prepare(
     "SELECT g.id AS group_id, g.type_key, g.level_number, g.group_letter,
-            g.schedule_json, g.zoom_url, g.course_id,
+            g.schedule_json, g.zoom_url, g.course_id, g.start_date, g.end_date,
             (SELECT COUNT(*) FROM class_group_members m2
              JOIN users u2 ON u2.id=m2.user_id
              WHERE m2.group_id=g.id AND u2.role='student') AS student_count

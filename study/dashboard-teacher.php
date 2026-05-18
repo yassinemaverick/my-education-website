@@ -2605,13 +2605,19 @@ function _tcRenderGroups() {
       ? `<div style="font-size:.72rem;color:var(--muted);margin-top:.25rem;">🔁 ${slotCount} ${lang==='en'?(slotCount===1?'session/week':'sessions/week'):(slotCount===1?'séance/semaine':'séances/semaine')}</div>`
       : '';
 
+    const fmtD = (d) => { if (!d) return ''; const [y,m,day]=d.split('-'); return lang==='en'?`${m}/${day}/${y}`:`${day}/${m}/${y}`; };
+    const sd = fmtD(g.start_date), ed = fmtD(g.end_date);
+    const dateHtml = (sd || ed)
+      ? `<div style="font-size:.72rem;color:var(--muted);margin-top:.25rem;">🗓 ${sd && ed ? `${sd} → ${ed}` : sd || ed}</div>`
+      : '';
+
     return `<div class="course-card" onclick="openGroupDetail(${g.group_id})">
       <div class="course-card-header">
         <div class="course-icon ${iconCls}">${icon}</div>
         <div style="flex:1;min-width:0;">
           <div class="course-group-name">${groupWord} ${g.group_letter}</div>
           <div style="font-size:.75rem;color:var(--muted);margin-top:.15rem;">👥 ${g.student_count || 0} ${studentLbl}</div>
-          ${schedHtml}${sessionsHtml}
+          ${schedHtml}${sessionsHtml}${dateHtml}
         </div>
       </div>
     </div>`;
@@ -3180,6 +3186,9 @@ function renderTodayClasses() {
     const btnId     = `zoom-btn-${gid}`;
     const statusId  = `zoom-status-${gid}`;
     const detailId  = `today-detail-${gid}`;
+    const fmtD2 = (d) => { if (!d) return ''; const [y,m,day]=d.split('-'); return lang==='en'?`${m}/${day}/${y}`:`${day}/${m}/${y}`; };
+    const sd2 = fmtD2(c.start_date), ed2 = fmtD2(c.end_date);
+    const dateStr2 = (sd2 || ed2) ? (sd2 && ed2 ? `${sd2} → ${ed2}` : sd2 || ed2) : '';
 
     return `
     <div style="border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:.85rem;">
@@ -3194,6 +3203,7 @@ function renderTodayClasses() {
             ${sessionInfo ? `<span>🕐 ${sessionInfo}</span>` : ''}
             <span style="${sessionInfo?'margin-left:.75rem':''}">👥 ${c.student_count || 0} ${tr.todayStudents}</span>
             ${hasZoom ? `<span style="margin-left:.75rem;color:var(--green);font-size:.73rem;">● Zoom ✓</span>` : `<span style="margin-left:.75rem;color:var(--yellow);font-size:.73rem;">${lang==='en'?'● Zoom link missing':'● Zoom manquant'}</span>`}
+            ${dateStr2 ? `<span style="margin-left:.75rem;">🗓 ${dateStr2}</span>` : ''}
           </div>
         </div>
         <svg id="today-chevron-${gid}" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="flex-shrink:0;color:var(--muted);transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>

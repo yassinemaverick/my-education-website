@@ -1541,17 +1541,32 @@ function renderGroupSection() {
   const section = document.getElementById('myclass-group-section');
   if (!section || !LIVE.myGroups || !LIVE.myGroups.length) return;
   const lang = currentLang;
+  const fmtDate = (d) => {
+    if (!d) return '';
+    const [y, m, day] = d.split('-');
+    return lang === 'en' ? `${m}/${day}/${y}` : `${day}/${m}/${y}`;
+  };
+  const startLbl = lang === 'en' ? 'Start' : 'Début';
+  const endLbl   = lang === 'en' ? 'End'   : 'Fin';
   const badges = LIVE.myGroups.map(g => {
-    const label = lang === 'en' ? (g.label_en || g.label_fr) : g.label_fr;
-    return `<span style="display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;background:rgba(62,207,120,.1);border:1px solid rgba(62,207,120,.3);border-radius:100px;font-family:var(--font);font-size:.85rem;font-weight:700;color:var(--green);">
-      🏫 ${label}
-    </span>`;
+    const label     = lang === 'en' ? (g.label_en || g.label_fr) : g.label_fr;
+    const startDate = fmtDate(g.start_date);
+    const endDate   = fmtDate(g.end_date);
+    const dateHtml  = (startDate || endDate) ? `
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.55rem;">
+        ${startDate ? `<span style="font-size:.75rem;color:var(--muted);"><span style="color:var(--muted2);font-weight:600;">${startLbl}:</span> ${startDate}</span>` : ''}
+        ${endDate   ? `<span style="font-size:.75rem;color:var(--muted);"><span style="color:var(--muted2);font-weight:600;">${endLbl}:</span> ${endDate}</span>` : ''}
+      </div>` : '';
+    return `<div>
+      <span style="display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;background:rgba(62,207,120,.1);border:1px solid rgba(62,207,120,.3);border-radius:100px;font-family:var(--font);font-size:.85rem;font-weight:700;color:var(--green);">
+        🏫 ${label}
+      </span>
+      ${dateHtml}
+    </div>`;
   }).join('');
-  section.innerHTML = `<div class="card" style="padding:1rem 1.25rem;background:linear-gradient(135deg,rgba(62,207,120,.05),rgba(91,156,246,.03));border-color:rgba(62,207,120,.2);display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-    <div>
-      <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">${T[lang].myclassYourGroup}</div>
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap;">${badges}</div>
-    </div>
+  section.innerHTML = `<div class="card" style="padding:1rem 1.25rem;background:linear-gradient(135deg,rgba(62,207,120,.05),rgba(91,156,246,.03));border-color:rgba(62,207,120,.2);">
+    <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;">${T[lang].myclassYourGroup}</div>
+    <div style="display:flex;flex-direction:column;gap:.6rem;">${badges}</div>
   </div>`;
 }
 
