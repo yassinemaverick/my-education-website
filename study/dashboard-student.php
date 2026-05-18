@@ -2353,7 +2353,7 @@ function hydrateLiveData() {
   const lang = currentLang;
 
   // ── 1. User name & initials ──────────────────────────────────────────────
-  const fn = <?= json_encode($_SESSION['full_name'] ?? $_SESSION['username'] ?? '') ?>;
+  const fn = <?= json_encode($_SESSION['full_name'] ?? $_SESSION['username'] ?? '', JSON_HEX_TAG | JSON_HEX_AMP) ?>;
   if (fn) {
     const parts = fn.trim().split(/\s+/);
     const sn = document.getElementById('sidebar-name'); if (sn) sn.textContent = fn;

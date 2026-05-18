@@ -2368,7 +2368,7 @@ async function loadLiveStudents() {
 
 /* ── TEACHER INFO HYDRATION ── */
 function hydrateTeacherInfo() {
-  const fn = <?= json_encode($_SESSION['full_name'] ?? $_SESSION['username'] ?? '') ?>;
+  const fn = <?= json_encode($_SESSION['full_name'] ?? $_SESSION['username'] ?? '', JSON_HEX_TAG | JSON_HEX_AMP) ?>;
   if (!fn) return;
   const sn = document.getElementById('sidebar-name'); if (sn) sn.textContent = fn;
   const nm = document.getElementById('settings-name'); if (nm) nm.textContent = fn;

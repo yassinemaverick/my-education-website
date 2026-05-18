@@ -63,12 +63,11 @@ try {
             ->execute([$uid, $title, $text, $target]);
         $annId = (int)$pdo->lastInsertId();
         // Push notifications
-        $whereRole = match($target) {
-            'students' => "role='student'",
-            'teachers' => "role='teacher'",
-            default    => "role IN ('student','teacher')",
-        };
-        $users = $pdo->query("SELECT id FROM users WHERE $whereRole")->fetchAll(PDO::FETCH_COLUMN);
+        $users = match($target) {
+            'students' => $pdo->query("SELECT id FROM users WHERE role='student'"),
+            'teachers' => $pdo->query("SELECT id FROM users WHERE role='teacher'"),
+            default    => $pdo->query("SELECT id FROM users WHERE role IN ('student','teacher')"),
+        }->fetchAll(PDO::FETCH_COLUMN);
         $ni = $pdo->prepare("INSERT IGNORE INTO notifications (user_id,type,title_fr,title_ar,body_fr,body_ar) VALUES (?,'announcement',?,?,?,?)");
         foreach ($users as $userId) {
             $ni->execute([$userId, '📢 ' . $title, '📢 ' . $title, $text, $text]);

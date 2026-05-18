@@ -123,9 +123,10 @@ try {
             // Safely add columns if missing — IF NOT EXISTS not supported on older MySQL
             try { $pdo->exec("ALTER TABLE users ADD COLUMN email VARCHAR(180) DEFAULT NULL"); } catch(Throwable $e){}
             try { $pdo->exec("ALTER TABLE users ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP"); } catch(Throwable $e){}
-            $search = trim($_GET['search'] ?? '');
+            $search = substr(trim($_GET['search'] ?? ''), 0, 100);
             if ($search) {
-                $like = "%{$search}%";
+                $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
+                $like = "%{$escaped}%";
                 $stmt = $pdo->prepare("SELECT id, full_name, username,
                     COALESCE(email,'') AS email,
                     COALESCE(created_at,'') AS created_at
@@ -168,7 +169,7 @@ try {
             try { $pdo->exec("ALTER TABLE enrollments MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'new'"); } catch(Throwable $e){}
 
             $status = trim($_GET['status'] ?? 'all');
-            $search = trim($_GET['search'] ?? '');
+            $search = substr(trim($_GET['search'] ?? ''), 0, 100);
             $where  = []; $params = [];
             if ($status === 'new_refused') {
                 $where[] = "status IN ('new','refused')";
@@ -177,7 +178,8 @@ try {
             }
             if ($search !== '') {
                 $where[] = '(name LIKE ? OR email LIKE ? OR phone LIKE ?)';
-                $like = "%{$search}%";
+                $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
+                $like = "%{$escaped}%";
                 array_push($params, $like, $like, $like);
             }
             $sql = "SELECT * FROM enrollments" . ($where ? " WHERE " . implode(' AND ', $where) : '') . " ORDER BY created_at DESC";

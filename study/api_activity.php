@@ -56,7 +56,7 @@ try {
         $limit  = min((int)($_GET['limit']  ?? 50), 200);
         $offset = max((int)($_GET['offset'] ?? 0),  0);
         $type   = trim($_GET['type'] ?? 'all');
-        $search = trim($_GET['search'] ?? '');
+        $search = substr(trim($_GET['search'] ?? ''), 0, 100);
 
         $where  = [];
         $params = [];
@@ -67,7 +67,8 @@ try {
         }
         if ($search !== '') {
             $where[]  = '(l.description LIKE ? OR u.full_name LIKE ? OR u.username LIKE ?)';
-            $like     = "%{$search}%";
+            $escaped  = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $search);
+            $like     = "%{$escaped}%";
             array_push($params, $like, $like, $like);
         }
 
