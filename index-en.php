@@ -246,7 +246,6 @@ $t = [
         <li>~30 hours of instruction (two 1.5-hour sessions per week)</li>
         <li>9 to 12 students per class — live Zoom sessions</li>
         <li>Exercises, homework, and tests</li>
-        <li>Certificate upon completion</li>
       </ul>
       <div class="course-tags"><span class="tag">Exam Prep</span><span class="tag">Past Papers</span><span class="tag">Oral Practice</span><span class="tag">Writing</span></div>
     </div>
