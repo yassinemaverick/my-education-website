@@ -578,7 +578,19 @@ if ($action === 'list_all_groups') {
                JOIN users u3 ON u3.id = m3.user_id
               WHERE m3.group_id = g.id AND u3.role = 'student') AS student_count
      FROM class_groups g
-     ORDER BY g.type_key, g.level_number, g.group_letter"
+     ORDER BY
+       CASE g.type_key
+         WHEN 'beginners'          THEN 1
+         WHEN 'pre_intermediate'   THEN 2
+         WHEN 'intermediate'       THEN 3
+         WHEN 'upper_intermediate' THEN 4
+         WHEN 'advanced'           THEN 5
+         WHEN 'baccalaureate'      THEN 6
+         WHEN 'business'           THEN 7
+         WHEN 'kids'               THEN 8
+         ELSE 9
+       END,
+       g.level_number, g.group_letter"
   );
   $groups = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
