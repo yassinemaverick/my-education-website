@@ -82,11 +82,14 @@ try {
             ->execute([$uid, $title, $text, $target]);
         $annId = (int)$pdo->lastInsertId();
         // Push notifications
-        $users = match($target) {
-            'students' => $pdo->query("SELECT id FROM users WHERE role='student'"),
-            'teachers' => $pdo->query("SELECT id FROM users WHERE role='teacher'"),
-            default    => $pdo->query("SELECT id FROM users WHERE role IN ('student','teacher')"),
-        }->fetchAll(PDO::FETCH_COLUMN);
+        if ($target === 'students') {
+            $usersStmt = $pdo->query("SELECT id FROM users WHERE role='student'");
+        } elseif ($target === 'teachers') {
+            $usersStmt = $pdo->query("SELECT id FROM users WHERE role='teacher'");
+        } else {
+            $usersStmt = $pdo->query("SELECT id FROM users WHERE role IN ('student','teacher')");
+        }
+        $users = $usersStmt->fetchAll(PDO::FETCH_COLUMN);
         $ni = $pdo->prepare("INSERT INTO notifications (user_id,type,message) VALUES (?,'announcement',?)");
         foreach ($users as $userId) {
             try { $ni->execute([$userId, '📢 ' . $title . ': ' . mb_substr($text, 0, 200)]); }
