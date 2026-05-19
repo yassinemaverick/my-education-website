@@ -2560,9 +2560,9 @@ async function loadAnnouncements() {
   try {
     const res  = await fetch('api_announcements.php?action=list');
     const text = await res.text();
-    if (!text.trim()) throw new Error(tr.serverError || 'Server error');
+    if (!text.trim()) throw new Error('[HTTP ' + res.status + '] Empty response from server');
     let data;
-    try { data = JSON.parse(text); } catch(_) { throw new Error(tr.serverError || 'Server error'); }
+    try { data = JSON.parse(text); } catch(_) { throw new Error('[HTTP ' + res.status + '] ' + text.slice(0, 200)); }
     if (!data.ok) throw new Error(data.error || 'Error');
     const items = (data.announcements || []).filter(a => a.target === 'all' || a.target === 'students');
     if (!items.length) {
