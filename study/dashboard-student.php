@@ -644,6 +644,44 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 .av-upload-btn { position:absolute; bottom:-3px; right:-3px; width:24px; height:24px; background:#3b82f6; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#fff; border:2px solid var(--navy); transition:background .2s; }
 .av-upload-btn:hover { background:#2563eb; }
 
+/* ── MOBILE BOTTOM NAV ── */
+.bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; background:#3d3890; border-top:1px solid rgba(255,255,255,.1); z-index:300; padding-bottom:env(safe-area-inset-bottom); }
+.bn-items { display:flex; align-items:stretch; justify-content:space-around; height:58px; }
+.bn-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; color:rgba(255,255,255,.5); font-size:.58rem; font-family:var(--font); font-weight:600; letter-spacing:.02em; transition:color .2s; position:relative; -webkit-tap-highlight-color:transparent; user-select:none; min-width:0; padding:0 2px; }
+.bn-item.active { color:#f59e0b; }
+.bn-item svg { flex-shrink:0; }
+.bn-item span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+.bn-badge-dot { position:absolute; top:7px; right:calc(50% - 15px); min-width:15px; height:15px; background:#ef4444; color:#fff; font-size:.55rem; font-weight:700; border-radius:100px; display:flex; align-items:center; justify-content:center; font-family:var(--font); padding:0 3px; border:2px solid #3d3890; }
+
+/* ── RESPONSIVE OVERRIDES ── */
+@media(max-width:768px){
+  /* Show bottom nav, add body padding so content isn't hidden behind it */
+  .bottom-nav { display:block; }
+  body { padding-bottom:calc(58px + env(safe-area-inset-bottom)); }
+  /* Tabs: horizontal scroll, no wrap */
+  .tabs { overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-bottom:1px; }
+  .tabs::-webkit-scrollbar { display:none; }
+  .tab { white-space:nowrap; flex-shrink:0; }
+  /* Toast above bottom nav */
+  .toast { right:1rem; left:1rem; bottom:calc(58px + env(safe-area-inset-bottom) + .75rem); text-align:center; justify-content:center; }
+  /* Notif panel: full-width */
+  .notif-panel { left:.5rem !important; right:.5rem !important; width:auto !important; max-width:calc(100vw - 1rem); }
+  /* Profile menu: pin to right edge */
+  .profile-menu { right:.5rem; left:auto; }
+  /* Prevent any horizontal bleed */
+  .main, .page, .card { max-width:100%; }
+  /* Assignment card meta: wrap on small screens */
+  .assign-meta { flex-wrap:wrap; gap:.5rem; }
+}
+@media(max-width:600px){
+  /* Bottom-sheet modals */
+  .modal-overlay.open { align-items:flex-end !important; padding:0 !important; }
+  .modal { border-radius:20px 20px 0 0; width:100%; max-width:100% !important; padding:1.5rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom)); max-height:90dvh; overflow-y:auto; }
+  .modal-header { margin-bottom:1.1rem; }
+  /* Profile menu at bottom too */
+  .profile-menu { position:fixed; top:auto !important; bottom:calc(58px + env(safe-area-inset-bottom) + .5rem); right:.75rem; }
+}
+
 </style>
 <style id="lang-hide">body{visibility:hidden}</style>
 </head>
@@ -1054,6 +1092,33 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
   </div>
 </main>
 
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottom-nav" aria-label="Mobile navigation">
+  <div class="bn-items">
+    <div class="bn-item active" id="bn-home" role="button" tabindex="0" onclick="navigate('home',null)">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span id="bn-home-lbl">Home</span>
+    </div>
+    <div class="bn-item" id="bn-myclass" role="button" tabindex="0" onclick="navigate('myclass',null)">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span id="bn-myclass-lbl">My Class</span>
+    </div>
+    <div class="bn-item" id="bn-assign" role="button" tabindex="0" onclick="navigate('assignments',null)">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span class="bn-badge-dot" id="bn-assign-badge" style="display:none;"></span>
+      <span id="bn-assign-lbl">Assignments</span>
+    </div>
+    <div class="bn-item" id="bn-progress" role="button" tabindex="0" onclick="navigate('progress',null)">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span id="bn-progress-lbl">Progress</span>
+    </div>
+    <div class="bn-item" id="bn-settings" role="button" tabindex="0" onclick="navigate('settings',null)">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span id="bn-settings-lbl">Settings</span>
+    </div>
+  </div>
+</nav>
+
 <!-- TOAST -->
 <div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg"></span></div>
 
@@ -1406,6 +1471,12 @@ function applyTranslations() {
   renderStars();
   renderLeaderboard();
   renderActivityFeed();
+  // Bottom nav labels
+  st('bn-home-lbl',     tr.navHome);
+  st('bn-myclass-lbl',  tr.navMyclass);
+  st('bn-assign-lbl',   tr.navAssign);
+  st('bn-progress-lbl', tr.navProgress);
+  st('bn-settings-lbl', tr.navSet);
   const _lh = document.getElementById('lang-hide'); if (_lh) _lh.remove();
 }
 
@@ -1433,6 +1504,14 @@ function navigate(page, el) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-backdrop').classList.remove('open');
   }
+  syncBottomNav(page);
+}
+
+function syncBottomNav(page) {
+  const map = { home:'bn-home', myclass:'bn-myclass', assignments:'bn-assign', progress:'bn-progress', settings:'bn-settings' };
+  document.querySelectorAll('.bn-item').forEach(i => i.classList.remove('active'));
+  const id = map[page];
+  if (id) { const el = document.getElementById(id); if (el) el.classList.add('active'); }
 }
 
 function filterTab(el, filter, type) {
@@ -2374,6 +2453,11 @@ function hydrateLiveData() {
     if (pending > 0) { navBadge.textContent = pending; navBadge.style.display = ''; }
     else { navBadge.style.display = 'none'; }
   }
+  const bnBadge = document.getElementById('bn-assign-badge');
+  if (bnBadge) {
+    if (pending > 0) { bnBadge.textContent = pending; bnBadge.style.display = ''; }
+    else { bnBadge.style.display = 'none'; }
+  }
 }/* ══════════════════════════════════════════════════════
    ASSIGNMENT SUBMISSION
 ══════════════════════════════════════════════════════ */
@@ -2715,6 +2799,7 @@ async function submitEmail() {
 
 // Show popup on load if student has no email and hasn't dismissed this session
 document.addEventListener('DOMContentLoaded', () => {
+  syncBottomNav(activePage);
   if (!HAS_EMAIL && !sessionStorage.getItem('email_popup_dismissed')) {
     // Small delay so dashboard loads first
     setTimeout(showEmailPopup, 800);
@@ -2754,9 +2839,15 @@ function toggleNotifPanel() {
   const btn   = document.getElementById('notif-btn');
   if (notifOpen) {
     const rect = btn.getBoundingClientRect();
-    panel.style.top  = (rect.bottom + 8) + 'px';
-    panel.style.right = (window.innerWidth - rect.right) + 'px';
-    panel.style.left  = 'auto';
+    if (window.innerWidth > 600) {
+      panel.style.top   = (rect.bottom + 8) + 'px';
+      panel.style.right = (window.innerWidth - rect.right) + 'px';
+      panel.style.left  = 'auto';
+    } else {
+      panel.style.top   = (rect.bottom + 8) + 'px';
+      panel.style.right = '';
+      panel.style.left  = '';
+    }
     loadNotifications();
   }
   panel.classList.toggle('open', notifOpen);
