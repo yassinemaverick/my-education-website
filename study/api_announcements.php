@@ -3,6 +3,23 @@
  * api_announcements.php — Admin announcements
  * Actions: list, create (admin), delete (admin)
  */
+
+// Catch fatal errors that occur before the try/catch block
+ob_start();
+register_shutdown_function(function () {
+    $err = error_get_last();
+    if ($err && ($err['type'] & (E_ERROR | E_PARSE | E_CORE_ERROR | E_COMPILE_ERROR | E_USER_ERROR))) {
+        ob_end_clean();
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=UTF-8');
+            http_response_code(500);
+        }
+        echo json_encode(['ok' => false, 'error' => 'FATAL: ' . $err['message'] . ' (' . basename($err['file']) . ':' . $err['line'] . ')']);
+    } else {
+        ob_end_flush();
+    }
+});
+
 require_once __DIR__ . '/session.php';
 require_once __DIR__ . '/csrf.php';
 header('Content-Type: application/json; charset=UTF-8');
