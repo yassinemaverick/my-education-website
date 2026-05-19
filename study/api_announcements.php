@@ -12,7 +12,7 @@ register_shutdown_function(function () {
         ob_end_clean();
         if (!headers_sent()) {
             header('Content-Type: application/json; charset=UTF-8');
-            http_response_code(500);
+            http_response_code(200);
         }
         echo json_encode(['ok' => false, 'error' => 'FATAL: ' . $err['message'] . ' (' . basename($err['file']) . ':' . $err['line'] . ')']);
     } else {
@@ -111,6 +111,6 @@ try {
 
 } catch (Throwable $e) {
     error_log('api_announcements.php error: ' . $e->getMessage());
-    http_response_code(500);
+    http_response_code(200);
     echo json_encode(['ok'=>false,'error'=>'DEBUG: ' . $e->getMessage()]);
 }
