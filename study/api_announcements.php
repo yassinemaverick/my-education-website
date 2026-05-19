@@ -24,9 +24,9 @@ if ($method === 'POST') csrf_verify();
 
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/rate_limit.php';
-api_rate_limit('ann:' . $uid, 120, 60);
 
 try {
+    api_rate_limit('ann:' . $uid, 120, 60);
     $pdo = db();
 
     $pdo->exec("CREATE TABLE IF NOT EXISTS announcements (
@@ -70,9 +70,10 @@ try {
             'teachers' => $pdo->query("SELECT id FROM users WHERE role='teacher'"),
             default    => $pdo->query("SELECT id FROM users WHERE role IN ('student','teacher')"),
         }->fetchAll(PDO::FETCH_COLUMN);
-        $ni = $pdo->prepare("INSERT IGNORE INTO notifications (user_id,type,title_fr,title_ar,body_fr,body_ar) VALUES (?,'announcement',?,?,?,?)");
+        $ni = $pdo->prepare("INSERT INTO notifications (user_id,type,message) VALUES (?,'announcement',?)");
         foreach ($users as $userId) {
-            $ni->execute([$userId, '📢 ' . $title, '📢 ' . $title, $text, $text]);
+            try { $ni->execute([$userId, '📢 ' . $title . ': ' . mb_substr($text, 0, 200)]); }
+            catch (Throwable $_e) {}
         }
         echo json_encode(['ok'=>true,'id'=>$annId]);
         exit;

@@ -2559,7 +2559,10 @@ async function loadAnnouncements() {
   list.innerHTML = `<p style="color:var(--muted);font-size:.85rem;">${tr.annLoading}</p>`;
   try {
     const res  = await fetch('api_announcements.php?action=list');
-    const data = await res.json();
+    const text = await res.text();
+    if (!text.trim()) throw new Error(tr.serverError || 'Server error');
+    let data;
+    try { data = JSON.parse(text); } catch(_) { throw new Error(tr.serverError || 'Server error'); }
     if (!data.ok) throw new Error(data.error || 'Error');
     const items = (data.announcements || []).filter(a => a.target === 'all' || a.target === 'students');
     if (!items.length) {
