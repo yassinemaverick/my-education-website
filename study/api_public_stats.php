@@ -7,7 +7,8 @@ ini_set('display_errors', 0);
 error_reporting(0);
 
 header('Content-Type: application/json; charset=utf-8');
-header('Cache-Control: public, max-age=3600'); // cache 1 hour
+header('Cache-Control: public, max-age=3600');
+header('Access-Control-Allow-Origin: *');
 
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/rate_limit.php';
