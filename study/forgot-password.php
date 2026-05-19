@@ -3,6 +3,7 @@ session_set_cookie_params(['lifetime'=>0,'path'=>'/','secure'=>isset($_SERVER['H
 session_start();
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/rate_limit.php';
+require_once __DIR__ . '/mailer.php';
 
 // Ensure password_resets table and email column exist
 try {
@@ -61,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $host     = $_SERVER['HTTP_HOST'];
             $resetUrl = "{$protocol}://{$host}/reset-password.php?token={$token}&lang={$lang}";
 
-            // Send email
+            // Send email via SMTP
             $name    = $user['full_name'] ?: $user['username'];
             $subject = 'Réinitialisation de votre mot de passe – Upskill Education';
             $body    = "Bonjour {$name},\r\n\r\n"
@@ -69,9 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                      . "Cliquez sur ce lien (valable 1 heure) :\r\n{$resetUrl}\r\n\r\n"
                      . "Si vous n'avez pas fait cette demande, ignorez cet email.\r\n\r\n"
                      . "— L'équipe Upskill Education";
-            $headers = "From: noreply@upskill-edu.com\r\nReply-To: noreply@upskill-edu.com\r\nX-Mailer: PHP/" . phpversion();
 
-            mail($sendTo, $subject, $body, $headers);
+            smtp_send($sendTo, $subject, $body);
         }
         // Always show "sent" — never reveal whether user exists
         $step = 'sent';
