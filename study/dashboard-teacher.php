@@ -2512,6 +2512,9 @@ async function loadTeacherGroups() {
   renderTeacherGroups();
   renderCourses();
   populateAttGroupSelect();
+  // Update settings role now that groups are known
+  const roleEl = document.getElementById('settings-role');
+  if (roleEl) roleEl.textContent = getSettingsRoleLine();
 }
 
 const TYPE_ICONS = {
@@ -2891,13 +2894,13 @@ async function openGroupDetail(groupId) {
   document.getElementById('cd-students-title').textContent = T[lang].groupStudentsTitle;
   document.getElementById('back-courses-lbl').textContent = T[lang].backCourses2;
 
-  // Message All button
+  // Message All button — insert right after the title, before the student list
   let msgAllBtn = document.getElementById('cd-msg-all-btn');
   if (!msgAllBtn) {
     msgAllBtn = document.createElement('button');
     msgAllBtn.id = 'cd-msg-all-btn';
-    msgAllBtn.style.cssText = 'margin-left:auto;background:rgba(91,156,246,.12);border:1px solid rgba(91,156,246,.25);color:var(--blue);border-radius:8px;padding:.35rem .75rem;cursor:pointer;font-size:.78rem;font-family:var(--font);white-space:nowrap;';
-    document.getElementById('cd-students-title')?.parentElement?.appendChild(msgAllBtn);
+    msgAllBtn.style.cssText = 'display:block;margin:-0.4rem 0 .85rem;background:rgba(91,156,246,.1);border:1px solid rgba(91,156,246,.25);color:var(--blue);border-radius:8px;padding:.35rem .75rem;cursor:pointer;font-size:.78rem;font-family:var(--font);white-space:nowrap;';
+    document.getElementById('cd-students-title')?.insertAdjacentElement('afterend', msgAllBtn);
   }
   msgAllBtn.textContent = '📢 ' + (T[lang].broadcastAll || 'Message all');
   msgAllBtn.onclick = () => openBroadcastModal(groupId, label);
