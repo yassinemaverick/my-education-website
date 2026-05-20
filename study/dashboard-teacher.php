@@ -319,6 +319,14 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 /* Session header labels */
 .sess-num-chip { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:rgba(245,158,11,.12); color:#b45309; font-family:var(--font); font-size:.65rem; font-weight:700; }
 .sess-date-lbl { display:block; font-size:.5rem; font-weight:600; color:var(--muted); margin-top:3px; text-align:center; white-space:nowrap; letter-spacing:0; }
+.sess-date-lbl.sess-date-override { color:var(--primary); }
+.att-th-sess[onclick] { cursor:pointer; }
+.att-th-sess[onclick]:hover { background:rgba(245,158,11,.1); border-radius:6px; }
+#sess-date-popover { position:fixed; z-index:9999; display:none; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:.9rem 1rem; box-shadow:0 8px 28px rgba(0,0,0,.16); min-width:210px; }
+#sess-date-popover input[type=date] { width:100%; font-family:var(--font); font-size:.8rem; padding:.35rem .5rem; border:1px solid var(--border); border-radius:6px; background:var(--bg); color:var(--text); margin-bottom:.55rem; box-sizing:border-box; }
+#sess-date-pop-actions { display:flex; gap:.4rem; }
+#sess-date-pop-actions button { flex:1; font-family:var(--font); font-size:.72rem; padding:.32rem .6rem; border-radius:6px; cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); }
+#sess-date-pop-actions button.primary { background:var(--primary); color:#fff; border-color:var(--primary); }
 
 /* Save banner */
 .att-save-banner { display:none; align-items:center; justify-content:space-between; background:rgba(62,207,120,.08); border:1px solid rgba(62,207,120,.25); border-radius:12px; padding:.8rem 1.2rem; margin-bottom:1rem; }
@@ -2251,7 +2259,10 @@ const ATT_SESSIONS = 20;
 const attData = {};
 let attDirty = false;
 let attSaving = false;
-let attSessionDates = []; // array of YYYY-MM-DD strings per session, populated when a group is selected
+let attSessionDates = [];         // final display dates (override > computed), one per session
+let attSessionDateOverrides = {}; // { session_num: "YYYY-MM-DD" } overrides saved by teacher
+let attCurrentGroupId = null;     // group currently filtered in attendance view
+let _datePopoverSess = null;      // session number whose popover is open
 
 function computeSessionDates(startDate, scheduleJson) {
   if (!startDate || !scheduleJson) return [];
@@ -2279,6 +2290,78 @@ function formatShortDate(dateStr) {
   const d = new Date(dateStr + 'T00:00:00');
   const locale = currentLang === 'fr' ? 'fr-FR' : 'en-GB';
   return d.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+}
+
+function _rebuildAttSessionDates() {
+  if (!attCurrentGroupId) { attSessionDates = []; return; }
+  const grp = teacherGroups.find(g => g.group_id == attCurrentGroupId);
+  const computed = (grp && grp.start_date && grp.schedule_json)
+    ? computeSessionDates(grp.start_date, grp.schedule_json)
+    : [];
+  attSessionDates = [];
+  for (let i = 1; i <= ATT_SESSIONS; i++) {
+    attSessionDates[i - 1] = attSessionDateOverrides[i] || computed[i - 1] || null;
+  }
+}
+
+function attOpenDatePicker(el, sessNum) {
+  _datePopoverSess = sessNum;
+  const pop      = document.getElementById('sess-date-popover');
+  const inp      = document.getElementById('sess-date-input');
+  const numEl    = document.getElementById('sess-date-pop-num');
+  const resetBtn = document.getElementById('sess-date-reset-btn');
+  if (numEl) numEl.textContent = sessNum;
+  inp.value = attSessionDateOverrides[sessNum] || attSessionDates[sessNum - 1] || '';
+  if (resetBtn) resetBtn.style.display = attSessionDateOverrides[sessNum] ? '' : 'none';
+  const rect = el.getBoundingClientRect();
+  pop.style.top  = (rect.bottom + 6) + 'px';
+  pop.style.left = Math.max(4, Math.min(rect.left, window.innerWidth - 224)) + 'px';
+  pop.style.display = 'block';
+  setTimeout(() => inp.focus(), 0);
+}
+
+async function attSaveDateOverride() {
+  const inp  = document.getElementById('sess-date-input');
+  const date = inp.value;
+  if (!date || !_datePopoverSess || !attCurrentGroupId) return;
+  try {
+    const res  = await fetch('session_date_overrides.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content ?? '' },
+      body: JSON.stringify({ group_id: attCurrentGroupId, session_num: _datePopoverSess, date })
+    });
+    const json = await res.json();
+    if (json.ok) {
+      attSessionDateOverrides[_datePopoverSess] = date;
+      _rebuildAttSessionDates();
+      renderAttendance();
+      const resetBtn = document.getElementById('sess-date-reset-btn');
+      if (resetBtn) resetBtn.style.display = '';
+    }
+  } catch(e) {}
+}
+
+async function attResetDate() {
+  if (!_datePopoverSess || !attCurrentGroupId) return;
+  try {
+    const res  = await fetch('session_date_overrides.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]')?.content ?? '' },
+      body: JSON.stringify({ group_id: attCurrentGroupId, session_num: _datePopoverSess, date: '' })
+    });
+    const json = await res.json();
+    if (json.ok) {
+      delete attSessionDateOverrides[_datePopoverSess];
+      _rebuildAttSessionDates();
+      renderAttendance();
+      attCloseDatePicker();
+    }
+  } catch(e) {}
+}
+
+function attCloseDatePicker() {
+  document.getElementById('sess-date-popover').style.display = 'none';
+  _datePopoverSess = null;
 }
 
 async function initAttData() {
@@ -2311,8 +2394,19 @@ function renderAttendance() {
   let headerCells = '';
   for (let i = 1; i <= ATT_SESSIONS; i++) {
     const sepCls = (i % 5 === 1 && i > 1) ? ' grp-start' : '';
-    const dateLabel = attSessionDates[i - 1] ? `<span class="sess-date-lbl">${formatShortDate(attSessionDates[i - 1])}</span>` : '';
-    headerCells += `<th class="att-th-sess${sepCls}"><span class="sess-num-chip">${i}</span>${dateLabel}</th>`;
+    let thContent, thAttrs = '';
+    if (attCurrentGroupId) {
+      const isOverride = !!attSessionDateOverrides[i];
+      const dateStr    = attSessionDates[i - 1];
+      const overrideCls = isOverride ? ' sess-date-override' : '';
+      const dateLbl    = `<span class="sess-date-lbl${overrideCls}">${dateStr ? formatShortDate(dateStr) : '—'}</span>`;
+      thContent = `<span class="sess-num-chip">${i}</span>${dateLbl}`;
+      thAttrs   = ` onclick="attOpenDatePicker(this,${i})" title="${currentLang==='fr'?'Modifier la date':'Edit session date'}"`;
+    } else {
+      const dateLbl = attSessionDates[i - 1] ? `<span class="sess-date-lbl">${formatShortDate(attSessionDates[i - 1])}</span>` : '';
+      thContent = `<span class="sess-num-chip">${i}</span>${dateLbl}`;
+    }
+    headerCells += `<th class="att-th-sess${sepCls}"${thAttrs}>${thContent}</th>`;
   }
   sessHeaderRow.innerHTML = `<th class="att-th-name" style="background:transparent;border-right:1px solid var(--border2);"></th>${headerCells}<th class="att-th-total" style="background:transparent;"></th>`;
 
@@ -2785,8 +2879,10 @@ async function attSelectGroup(groupId) {
   if (loadingEl) loadingEl.style.display = '';
 
   if (!groupId) {
-    // Restore all students — clear session dates since multiple groups may have different schedules
-    attSessionDates = [];
+    // Restore all students — clear per-group state
+    attCurrentGroupId       = null;
+    attSessionDateOverrides = {};
+    attSessionDates         = [];
     await loadLiveStudents();
     renderAttendance();
     if (loadingEl) loadingEl.style.display = 'none';
@@ -2794,19 +2890,20 @@ async function attSelectGroup(groupId) {
   }
 
   try {
-    const data = await fetch(`api_classes.php?action=group_students&group_id=${groupId}`).then(r=>r.json());
-    const apiStudents = (data.ok && data.students) ? data.students : [];
+    const [studentsData, overridesData] = await Promise.all([
+      fetch(`api_classes.php?action=group_students&group_id=${groupId}`).then(r=>r.json()),
+      fetch(`session_date_overrides.php?group_id=${groupId}`).then(r=>r.json()),
+    ]);
+    const apiStudents = (studentsData.ok && studentsData.students) ? studentsData.students : [];
     STUDENTS = apiStudents.map(s => ({
       id:       s.id,
       name:     s.name || s.username,
       init:     (s.name||s.username||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
       progress: 0, assigns: 0, avg: 0, status: 'good', sessions: 0, present: 0,
     }));
-    // Compute session dates from this group's schedule
-    const grp = teacherGroups.find(g => g.group_id == groupId);
-    attSessionDates = (grp && grp.start_date && grp.schedule_json)
-      ? computeSessionDates(grp.start_date, grp.schedule_json)
-      : [];
+    attCurrentGroupId       = groupId;
+    attSessionDateOverrides = (overridesData.ok && overridesData.overrides) ? overridesData.overrides : {};
+    _rebuildAttSessionDates();
     renderAttendance();
   } catch(e) {
   } finally {
@@ -3833,7 +3930,23 @@ document.addEventListener('click', function(e) {
     notifPanelOpen = false;
     document.getElementById('notif-panel').classList.remove('open');
   }
+  const pop = document.getElementById('sess-date-popover');
+  if (pop && pop.style.display !== 'none' && !pop.contains(e.target) && !e.target.closest('.att-th-sess[onclick]')) {
+    attCloseDatePicker();
+  }
 });
 </script>
+
+<!-- Session date override popover -->
+<div id="sess-date-popover">
+  <div style="font-family:var(--font);font-size:.72rem;font-weight:700;color:var(--muted2);margin-bottom:.55rem;">
+    Session <span id="sess-date-pop-num"></span>
+  </div>
+  <input type="date" id="sess-date-input" onchange="attSaveDateOverride()">
+  <div id="sess-date-pop-actions">
+    <button id="sess-date-reset-btn" onclick="attResetDate()">↩ Reset</button>
+    <button class="primary" onclick="attCloseDatePicker()">✓ Done</button>
+  </div>
+</div>
 </body>
 </html>

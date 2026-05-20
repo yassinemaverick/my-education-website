@@ -65,3 +65,18 @@ function ensureAttendanceTable(): void {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     ");
 }
+
+// ── Per-teacher per-group session date overrides ─────────────────────────────
+function ensureSessionDateOverridesTable(): void {
+    db()->exec("
+        CREATE TABLE IF NOT EXISTS session_date_overrides (
+            id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+            teacher_id  INT UNSIGNED NOT NULL,
+            group_id    INT UNSIGNED NOT NULL,
+            session_num TINYINT UNSIGNED NOT NULL,
+            actual_date DATE NOT NULL,
+            updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            UNIQUE KEY uq_sdo (teacher_id, group_id, session_num)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ");
+}
