@@ -840,6 +840,9 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
       <p class="hero-sub" id="welcome-sub">Your learning dashboard</p>
     </div>
 
+    <div id="urgency-banner" style="max-width:860px;margin:0 auto .5rem;"></div>
+    <div id="next-class-wrap"></div>
+
     <!-- Stars of the Month + Leaderboard -->
     <div class="home-cards">
       <div class="stars-card">
@@ -872,6 +875,8 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
         <div id="activity-feed"></div>
       </div>
     </div>
+
+    <div id="quiz-snapshot-wrap" style="max-width:860px;margin:1.5rem auto 0;"></div>
   </div>
 
   <!-- MY CLASS PAGE -->
@@ -992,6 +997,10 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
             <div style="font-family:var(--font);font-size:1.5rem;font-weight:700;"><span id="sessions-present">0</span> <span style="font-size:1rem;color:var(--muted);font-weight:400;" id="hrs-of"></span></div>
             <div style="color:var(--muted);font-size:.83rem;margin:.3rem 0;" id="course-session">General English · Session 2</div>
             <div style="font-size:.78rem;background:var(--green-glow);color:var(--green);border:1px solid rgba(62,207,120,.3);padding:.25rem .65rem;border-radius:100px;display:inline-block;font-family:var(--font);font-weight:600;" id="on-track">On track 🎯</div>
+            <div id="prog-att-row" style="margin-top:.75rem;display:none;">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:.78rem;color:var(--muted);margin-bottom:.28rem;"><span id="prog-att-lbl">Attendance rate</span><span style="font-family:var(--font);font-weight:700;color:var(--green);" id="prog-att-pct"></span></div>
+              <div class="progress-bar"><div class="progress-fill" id="prog-att-bar" style="width:0%;"></div></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1108,9 +1117,9 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
       <span class="bn-badge-dot" id="bn-assign-badge" style="display:none;"></span>
       <span id="bn-assign-lbl">Assignments</span>
     </div>
-    <div class="bn-item" id="bn-progress" role="button" tabindex="0" onclick="navigate('progress',null)">
-      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      <span id="bn-progress-lbl">Progress</span>
+    <div class="bn-item" id="bn-quiz" role="button" tabindex="0" onclick="navigate('quizzes',null)">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      <span id="bn-quiz-lbl">Challenge</span>
     </div>
     <div class="bn-item" id="bn-settings" role="button" tabindex="0" onclick="navigate('settings',null)">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1297,6 +1306,10 @@ const T = {
     annPageTitle:'Annonces', annPageSub:'Messages de l\'école',
     annEmpty:'Aucune annonce pour l\'instant.', annLoading:'Chargement…',
     annBy:'Par', annTarget:{ all:'Tout le monde', students:'Étudiants', teachers:'Professeurs' },
+    nextClassLbl:'Prochain cours', nextClassToday:"Aujourd'hui", nextClassTomorrow:'Demain', nextClassDays:'Dans %d jours',
+    urgentOverdue:'devoir(s) en retard', urgentDueSoon:'devoir(s) bientôt dû(s)',
+    lastQuizLbl:'Dernier quiz', quizSeeAll:'Voir tout →',
+    joinBtn:'Rejoindre',
   },
   en: {
     topbarTitle: { home:'Dashboard', myclass:'My Class', assignments:'Assignments', feed:'Lesson Notes', quizzes:'Challenge', progress:'Progress', howto:'How-to', settings:'Settings' },
@@ -1356,6 +1369,10 @@ const T = {
     annPageTitle:'Announcements', annPageSub:'Messages from the school',
     annEmpty:'No announcements yet.', annLoading:'Loading…',
     annBy:'By', annTarget:{ all:'Everyone', students:'Students', teachers:'Teachers' },
+    nextClassLbl:'Next class', nextClassToday:'Today', nextClassTomorrow:'Tomorrow', nextClassDays:'In %d days',
+    urgentOverdue:'overdue assignment(s)', urgentDueSoon:'due soon',
+    lastQuizLbl:'Last quiz result', quizSeeAll:'See all →',
+    joinBtn:'Join',
   }
 };
 
@@ -1455,7 +1472,12 @@ function applyTranslations() {
   // Settings page
   st('settings-title', tr.settingsTitle);
   st('profile-title', tr.profileTitle);
-  st('settings-role', tr.settingsRole);
+  if (LIVE.course) {
+    const _cn = currentLang === 'en' ? (LIVE.course.label_en || LIVE.course.label_fr) : LIVE.course.label_fr;
+    st('settings-role', T[currentLang].roleLabel + ' · ' + _cn);
+  } else {
+    st('settings-role', tr.settingsRole);
+  }
   st('lbl-fullname', tr.lblFullname);
   st('save-btn-text', tr.saveBtn);
   st('pref-title', tr.prefTitle);
@@ -1471,12 +1493,16 @@ function applyTranslations() {
   renderStars();
   renderLeaderboard();
   renderActivityFeed();
+  renderNextClass();
+  renderUrgencyBanner();
+  renderQuizSnapshot();
+  updateProgress();
   // Bottom nav labels
-  st('bn-home-lbl',     tr.navHome);
-  st('bn-myclass-lbl',  tr.navMyclass);
-  st('bn-assign-lbl',   tr.navAssign);
-  st('bn-progress-lbl', tr.navProgress);
-  st('bn-settings-lbl', tr.navSet);
+  st('bn-home-lbl',    tr.navHome);
+  st('bn-myclass-lbl', tr.navMyclass);
+  st('bn-assign-lbl',  tr.navAssign);
+  st('bn-quiz-lbl',    tr.navQuiz);
+  st('bn-settings-lbl',tr.navSet);
   const _lh = document.getElementById('lang-hide'); if (_lh) _lh.remove();
 }
 
@@ -1508,7 +1534,7 @@ function navigate(page, el) {
 }
 
 function syncBottomNav(page) {
-  const map = { home:'bn-home', myclass:'bn-myclass', assignments:'bn-assign', progress:'bn-progress', settings:'bn-settings' };
+  const map = { home:'bn-home', myclass:'bn-myclass', assignments:'bn-assign', quizzes:'bn-quiz', settings:'bn-settings' };
   document.querySelectorAll('.bn-item').forEach(i => i.classList.remove('active'));
   const id = map[page];
   if (id) { const el = document.getElementById(id); if (el) el.classList.add('active'); }
@@ -1528,6 +1554,19 @@ function renderStars() {
   const tr = T[currentLang];
   const ranks = ['🥇','🥈','🥉','4️⃣','5️⃣'];
   if (!STARS || STARS.length === 0) {
+    if (CLASS_ACT && CLASS_ACT.length > 0) {
+      const counts = {};
+      CLASS_ACT.forEach(item => { counts[item.full_name] = (counts[item.full_name] || 0) + 1; });
+      const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      const medals = ['🥇','🥈','🥉','4️⃣','5️⃣'];
+      el.innerHTML = sorted.map(([name, cnt], i) => {
+        const parts = name.trim().split(/\s+/);
+        const init = ((parts[0]?.[0]??'')+(parts[1]?.[0]??'')).toUpperCase()||'?';
+        const sub = cnt + ' ' + (currentLang==='fr' ? (cnt>1?'devoirs':'devoir') : (cnt>1?'assignments':'assignment'));
+        return `<div class="star-item"><div class="star-rank">${medals[i]||i+1}</div><div class="star-av">${e(init)}</div><div class="star-name">${e(name)}</div><div class="star-pct">${sub}</div></div>`;
+      }).join('');
+      return;
+    }
     el.innerHTML = `<div class="stars-empty">${e(tr.starsEmpty)}</div>`;
     return;
   }
@@ -1559,7 +1598,7 @@ function renderLeaderboard() {
   el.innerHTML = CLASS_ACT.map(item => {
     const parts = (item.full_name || '').trim().split(/\s+/);
     const init  = ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase() || '?';
-    const title = item.title_fr;
+    const title = item.title_fr || item.title_ar || '';
     const time  = item.submitted_at ? formatRelativeTime(item.submitted_at, lang) : '';
     return `<div class="lb-item">
       <div class="lb-av">${e(init)}</div>
@@ -2081,13 +2120,40 @@ function updateProgress() {
   const graded    = assignments.filter(a => a.score !== null);
   const pct       = total > 0 ? Math.round(submitted / total * 100) : 0;
 
-  // Update circle
+  // Circle: prefer attendance rate when sessions exist, fall back to assignment completion
+  const circleVal = (LIVE.att_rate !== null && LIVE.att_total > 0) ? LIVE.att_rate : pct;
   const circumference = 238.76;
-  const offset = circumference * (1 - pct / 100);
+  const offset = circumference * (1 - circleVal / 100);
   const circle = document.getElementById('prog-circle');
-  if (circle) circle.setAttribute('stroke-dashoffset', offset.toFixed(1));
+  if (circle) {
+    circle.setAttribute('stroke-dashoffset', offset.toFixed(1));
+    const cColor = circleVal >= 80 ? '#3ecf78' : circleVal >= 60 ? '#f59e0b' : '#ef4444';
+    circle.setAttribute('stroke', cColor);
+  }
   const pctEl = document.getElementById('prog-circle-pct');
-  if (pctEl) pctEl.textContent = pct + '%';
+  if (pctEl) pctEl.textContent = circleVal + '%';
+  const doneEl = document.getElementById('done-lbl');
+  if (doneEl) doneEl.textContent = (LIVE.att_total > 0 && LIVE.att_rate !== null)
+    ? (currentLang === 'fr' ? 'présent' : 'present')
+    : T[currentLang].doneLbl;
+
+  // Attendance bar in overall-progress card
+  const attRow = document.getElementById('prog-att-row');
+  if (attRow) {
+    if (LIVE.att_total > 0 && LIVE.att_rate !== null) {
+      const ar = LIVE.att_rate;
+      const arColor = ar >= 80 ? 'var(--green)' : ar >= 60 ? 'var(--yellow)' : 'var(--red)';
+      attRow.style.display = '';
+      const attBar = document.getElementById('prog-att-bar');
+      if (attBar) { attBar.style.width = ar + '%'; attBar.style.background = arColor; }
+      const attPct = document.getElementById('prog-att-pct');
+      if (attPct) { attPct.textContent = ar + '%'; attPct.style.color = arColor; }
+      const attLbl = document.getElementById('prog-att-lbl');
+      if (attLbl) attLbl.textContent = currentLang === 'fr' ? 'Taux de présence' : 'Attendance rate';
+    } else {
+      attRow.style.display = 'none';
+    }
+  }
 
   // Update assignment performance card
   const statsEl = document.getElementById('progress-assign-stats');
@@ -2183,6 +2249,130 @@ async function changePassword() {
     btnText.textContent = T[currentLang].pwdBtn;
     document.getElementById('pwd-btn').disabled = false;
   }
+}
+
+/* ── NEXT CLASS CARD ── */
+function renderNextClass() {
+  const wrap = document.getElementById('next-class-wrap');
+  if (!wrap) return;
+  const c = LIVE.course;
+  if (!c || !c.schedule_json) { wrap.innerHTML = ''; return; }
+  let sched;
+  try { sched = JSON.parse(c.schedule_json); } catch(_e) { wrap.innerHTML = ''; return; }
+  if (!Array.isArray(sched) || !sched.length) { wrap.innerHTML = ''; return; }
+
+  const DAY_NUM = { Lundi:1, Mardi:2, Mercredi:3, Jeudi:4, Vendredi:5, Samedi:6, Dimanche:0 };
+  const DAY_EN  = { Lundi:'Monday', Mardi:'Tuesday', Mercredi:'Wednesday', Jeudi:'Thursday', Vendredi:'Friday', Samedi:'Saturday', Dimanche:'Sunday' };
+  const now = new Date();
+  const todayNum = now.getDay();
+  const nowMins  = now.getHours() * 60 + now.getMinutes();
+
+  let best = null, bestMins = Infinity;
+  sched.forEach(slot => {
+    const dayNum = DAY_NUM[slot.day_fr] ?? -1;
+    if (dayNum < 0) return;
+    const [h, m] = (slot.time || '00:00').split(':').map(Number);
+    const slotMins = h * 60 + m;
+    let daysAway = (dayNum - todayNum + 7) % 7;
+    if (daysAway === 0 && slotMins <= nowMins) daysAway = 7;
+    const total = daysAway * 1440 + slotMins;
+    if (total < bestMins) { bestMins = total; best = { slot, daysAway }; }
+  });
+
+  if (!best) { wrap.innerHTML = ''; return; }
+  const lang = currentLang;
+  const { slot, daysAway } = best;
+  const dayLabel   = lang === 'en' ? (DAY_EN[slot.day_fr] || slot.day_fr) : slot.day_fr;
+  const timeStr    = slot.time + (slot.time_end ? ' – ' + slot.time_end : '');
+  const isToday    = daysAway === 0;
+  const isTomorrow = daysAway === 1;
+  const whenLabel  = isToday
+    ? T[lang].nextClassToday
+    : isTomorrow
+      ? T[lang].nextClassTomorrow
+      : (T[lang].nextClassDays || 'In %d days').replace('%d', daysAway);
+  const accent   = isToday ? 'rgba(62,207,120,' : 'rgba(59,130,246,';
+  const tagColor = isToday ? 'var(--green)' : 'var(--blue)';
+
+  wrap.innerHTML = `<div style="max-width:860px;margin:0 auto 1.25rem;">
+    <div style="background:linear-gradient(135deg,${accent}.07),${accent}.03));border:1px solid ${accent}.18);border-radius:16px;padding:.95rem 1.4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;">
+      <div style="display:flex;align-items:center;gap:.85rem;">
+        <div style="width:42px;height:42px;background:${accent}.12);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">📹</div>
+        <div>
+          <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);">${T[lang].nextClassLbl||'Next class'}</div>
+          <div style="font-family:var(--font);font-size:.95rem;font-weight:700;color:var(--white);">${e(dayLabel)} · ${e(timeStr)}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;">
+        <span style="font-family:var(--font);font-size:.82rem;font-weight:700;padding:.28rem .8rem;background:${accent}.1);border:1px solid ${accent}.25);border-radius:100px;color:${tagColor};">${e(whenLabel)}</span>
+        ${c.zoom_url ? `<a href="${e(c.zoom_url)}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.4rem;padding:.35rem .9rem;background:var(--blue);border:none;border-radius:8px;color:#fff;font-family:var(--font);font-size:.78rem;font-weight:700;text-decoration:none;"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>${T[lang].joinBtn||'Join'}</a>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ── URGENCY BANNER ── */
+function renderUrgencyBanner() {
+  const wrap = document.getElementById('urgency-banner');
+  if (!wrap) return;
+  const assignments = LIVE.assignments || [];
+  const lang = currentLang;
+  const overdue = assignments.filter(a => a.status === 'overdue').length;
+  const dueSoon = assignments.filter(a => {
+    if (a.status !== 'pending' || !a.due_date) return false;
+    const diff = (new Date(a.due_date + 'T00:00:00') - new Date()) / 86400000;
+    return diff >= 0 && diff <= 2;
+  }).length;
+
+  if (overdue === 0 && dueSoon === 0) { wrap.innerHTML = ''; return; }
+
+  const parts = [];
+  if (overdue > 0) parts.push(`<span style="font-weight:700;color:var(--red);">⚠️ ${overdue} ${T[lang].urgentOverdue||'overdue'}</span>`);
+  if (dueSoon > 0) parts.push(`<span style="font-weight:700;color:var(--yellow);">⏰ ${dueSoon} ${T[lang].urgentDueSoon||'due soon'}</span>`);
+
+  wrap.innerHTML = `<div style="background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.2);border-radius:14px;padding:.75rem 1.2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
+    <div style="font-size:.88rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">${parts.join('')}</div>
+    <button onclick="navigate('assignments')" style="font-family:var(--font);font-size:.78rem;font-weight:600;padding:.3rem .8rem;background:transparent;border:1px solid rgba(239,68,68,.3);border-radius:8px;color:var(--red);cursor:pointer;white-space:nowrap;" onmouseover="this.style.background='rgba(239,68,68,.08)'" onmouseout="this.style.background='transparent'">${lang==='en'?'View assignments →':'Voir les devoirs →'}</button>
+  </div>`;
+}
+
+/* ── HOME QUIZ SNAPSHOT ── */
+async function loadHomeQuizSnapshot() {
+  if (_studentQuizzes.length > 0) { renderQuizSnapshot(); return; }
+  try {
+    const d = await fetch('api_quiz.php?action=list_quizzes').then(r => r.json());
+    _studentQuizzes = d.quizzes || [];
+  } catch(_e) { return; }
+  renderQuizSnapshot();
+}
+
+function renderQuizSnapshot() {
+  const wrap = document.getElementById('quiz-snapshot-wrap');
+  if (!wrap) return;
+  const done = (_studentQuizzes || [])
+    .filter(q => q.attempted_at)
+    .sort((a, b) => (b.attempted_at || '').localeCompare(a.attempted_at || ''));
+  if (done.length === 0) { wrap.innerHTML = ''; return; }
+  const lang = currentLang;
+  const last = done[0];
+  const pct  = last.total > 0 ? Math.round(last.score / last.total * 100) : (last.score || 0);
+  const color = pct >= 60 ? 'var(--green)' : 'var(--red)';
+  wrap.innerHTML = `<div class="card" style="background:linear-gradient(135deg,rgba(167,139,250,.07),rgba(124,58,237,.03));border-color:rgba(167,139,250,.18);">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;">
+      <div style="display:flex;align-items:center;gap:.85rem;">
+        <div style="font-size:1.7rem;">🧠</div>
+        <div>
+          <div style="font-family:var(--font);font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);">${T[lang].lastQuizLbl||'Last quiz'}</div>
+          <div style="font-family:var(--font);font-size:.93rem;font-weight:700;color:var(--white);margin-top:.1rem;">${e(last.title)}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;">
+        <div style="font-family:var(--font);font-size:1.5rem;font-weight:800;color:${color};">${pct}%</div>
+        <div style="font-size:.78rem;color:var(--muted);">${last.score}/${last.total}</div>
+        <button onclick="navigate('quizzes')" style="font-family:var(--font);font-size:.78rem;font-weight:600;padding:.35rem .85rem;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.25);border-radius:8px;color:#a78bfa;cursor:pointer;" onmouseover="this.style.background='rgba(167,139,250,.18)'" onmouseout="this.style.background='rgba(167,139,250,.1)'">${T[lang].quizSeeAll||'See all →'}</button>
+      </div>
+    </div>
+  </div>`;
 }
 
 /* ── LESSON FEED ── */
@@ -2344,6 +2534,9 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAssignments();
   renderHowTo();
   loadSavedAvatar();
+  renderNextClass();
+  renderUrgencyBanner();
+  loadHomeQuizSnapshot();
   const validPages = ['home','myclass','assignments','feed','quizzes','progress','howto','settings','announcements'];
   const savedPage = sessionStorage.getItem('upskill_page_s');
   if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
