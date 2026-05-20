@@ -282,7 +282,7 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 .att-table thead tr:last-child th  { background:rgba(245,158,11,.03); border-bottom:2px solid rgba(245,158,11,.18); }
 
 .att-th-name { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted2); padding:.75rem 1.2rem; text-align:left; white-space:nowrap; min-width:180px; position:sticky; left:0; z-index:2; background:rgba(245,158,11,.06); }
-.att-th-sess { font-family:var(--font); font-size:.68rem; font-weight:700; color:var(--muted2); padding:.5rem .35rem; text-align:center; white-space:nowrap; min-width:34px; }
+.att-th-sess { font-family:var(--font); font-size:.68rem; font-weight:700; color:var(--muted2); padding:.5rem .35rem; text-align:center; white-space:nowrap; min-width:38px; }
 .att-th-total { font-family:var(--font); font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted2); padding:.5rem 1rem; text-align:center; white-space:nowrap; position:sticky; right:0; z-index:2; background:rgba(245,158,11,.06); }
 
 /* Group-of-5 visual separators */
@@ -318,6 +318,7 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 
 /* Session header labels */
 .sess-num-chip { display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:rgba(245,158,11,.12); color:#b45309; font-family:var(--font); font-size:.65rem; font-weight:700; }
+.sess-date-lbl { display:block; font-size:.5rem; font-weight:600; color:var(--muted); margin-top:3px; text-align:center; white-space:nowrap; letter-spacing:0; }
 
 /* Save banner */
 .att-save-banner { display:none; align-items:center; justify-content:space-between; background:rgba(62,207,120,.08); border:1px solid rgba(62,207,120,.25); border-radius:12px; padding:.8rem 1.2rem; margin-bottom:1rem; }
@@ -2250,6 +2251,35 @@ const ATT_SESSIONS = 20;
 const attData = {};
 let attDirty = false;
 let attSaving = false;
+let attSessionDates = []; // array of YYYY-MM-DD strings per session, populated when a group is selected
+
+function computeSessionDates(startDate, scheduleJson) {
+  if (!startDate || !scheduleJson) return [];
+  let slots;
+  try { slots = typeof scheduleJson === 'string' ? JSON.parse(scheduleJson) : scheduleJson; }
+  catch(e) { return []; }
+  if (!Array.isArray(slots) || slots.length === 0) return [];
+  const DAY_MAP = { dimanche:0, lundi:1, mardi:2, mercredi:3, jeudi:4, vendredi:5, samedi:6 };
+  const slotDays = [...new Set(
+    slots.map(s => DAY_MAP[(s.day_fr||'').toLowerCase()]).filter(d => d !== undefined)
+  )].sort((a, b) => a - b);
+  if (slotDays.length === 0) return [];
+  const dates = [];
+  const cursor = new Date(startDate + 'T00:00:00');
+  let limit = 400;
+  while (dates.length < ATT_SESSIONS && limit-- > 0) {
+    if (slotDays.includes(cursor.getDay())) dates.push(cursor.toISOString().slice(0, 10));
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return dates;
+}
+
+function formatShortDate(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  const locale = currentLang === 'fr' ? 'fr-FR' : 'en-GB';
+  return d.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+}
 
 async function initAttData() {
   STUDENTS.forEach(s => {
@@ -2281,7 +2311,8 @@ function renderAttendance() {
   let headerCells = '';
   for (let i = 1; i <= ATT_SESSIONS; i++) {
     const sepCls = (i % 5 === 1 && i > 1) ? ' grp-start' : '';
-    headerCells += `<th class="att-th-sess${sepCls}"><span class="sess-num-chip">${i}</span></th>`;
+    const dateLabel = attSessionDates[i - 1] ? `<span class="sess-date-lbl">${formatShortDate(attSessionDates[i - 1])}</span>` : '';
+    headerCells += `<th class="att-th-sess${sepCls}"><span class="sess-num-chip">${i}</span>${dateLabel}</th>`;
   }
   sessHeaderRow.innerHTML = `<th class="att-th-name" style="background:transparent;border-right:1px solid var(--border2);"></th>${headerCells}<th class="att-th-total" style="background:transparent;"></th>`;
 
@@ -2754,7 +2785,8 @@ async function attSelectGroup(groupId) {
   if (loadingEl) loadingEl.style.display = '';
 
   if (!groupId) {
-    // Restore all students
+    // Restore all students — clear session dates since multiple groups may have different schedules
+    attSessionDates = [];
     await loadLiveStudents();
     renderAttendance();
     if (loadingEl) loadingEl.style.display = 'none';
@@ -2770,6 +2802,11 @@ async function attSelectGroup(groupId) {
       init:     (s.name||s.username||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(),
       progress: 0, assigns: 0, avg: 0, status: 'good', sessions: 0, present: 0,
     }));
+    // Compute session dates from this group's schedule
+    const grp = teacherGroups.find(g => g.group_id == groupId);
+    attSessionDates = (grp && grp.start_date && grp.schedule_json)
+      ? computeSessionDates(grp.start_date, grp.schedule_json)
+      : [];
     renderAttendance();
   } catch(e) {
   } finally {
