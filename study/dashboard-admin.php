@@ -370,6 +370,10 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
       <span id="nav-placement-lbl">Tests de placement</span>
       <span class="nav-badge" id="nav-placement-badge" style="display:none"></span>
     </div>
+    <div class="nav-item" onclick="navigate('attendance',this)" id="nav-attendance">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span id="nav-attendance-lbl">Suivi des présences</span>
+    </div>
     <div class="nav-section-label" id="nav-account-label">Compte</div>
     <div class="nav-item" onclick="navigate('settings',this)" id="nav-settings">
       <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -731,6 +735,84 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
     </div>
   </div>
 
+  <!-- ── ATTENDANCE TRACKING PAGE ── -->
+  <div class="page" id="page-attendance">
+    <div class="page-hdr">
+      <div>
+        <h2 class="page-h2" id="att-admin-page-title">Suivi des présences</h2>
+        <p class="page-sub" id="att-admin-page-sub">Taux de présence des étudiants et avancement des sessions par groupe</p>
+      </div>
+    </div>
+
+    <!-- Summary stat cards -->
+    <div class="grid-4" style="margin-bottom:1.5rem;">
+      <div class="card">
+        <div class="stat-icon green"><span aria-hidden="true">✅</span></div>
+        <div class="stat-value" id="att-stat-avg-rate">—</div>
+        <div class="stat-label" id="att-stat-avg-rate-lbl">Taux de présence moyen</div>
+      </div>
+      <div class="card">
+        <div class="stat-icon blue"><span aria-hidden="true">📅</span></div>
+        <div class="stat-value" id="att-stat-sessions">—</div>
+        <div class="stat-label" id="att-stat-sessions-lbl">Sessions effectuées</div>
+      </div>
+      <div class="card">
+        <div class="stat-icon orange"><span aria-hidden="true">👨‍🏫</span></div>
+        <div class="stat-value" id="att-stat-teachers-ok">—</div>
+        <div class="stat-label" id="att-stat-teachers-ok-lbl">Professeurs à jour</div>
+      </div>
+      <div class="card">
+        <div class="stat-icon" style="background:rgba(232,93,117,.1);"><span aria-hidden="true">⚠️</span></div>
+        <div class="stat-value" id="att-stat-at-risk">—</div>
+        <div class="stat-label" id="att-stat-at-risk-lbl">Étudiants à risque</div>
+      </div>
+    </div>
+
+    <!-- Groups table -->
+    <div class="card card-flush">
+      <div class="tbl-scroll">
+        <table class="tbl-full">
+          <thead>
+            <tr class="tr-sep">
+              <th class="th-col" id="att-th-group">Groupe</th>
+              <th class="th-col" id="att-th-teacher">Professeur</th>
+              <th class="th-col" id="att-th-students-col">Étudiants</th>
+              <th class="th-col" id="att-th-sessions-col">Sessions</th>
+              <th class="th-col" id="att-th-avg-att">Présence moy.</th>
+              <th class="th-col" id="att-th-at-risk-col">À risque</th>
+              <th class="th-col" id="att-th-status-col">Statut prof.</th>
+            </tr>
+          </thead>
+          <tbody id="att-admin-tbody">
+            <tr><td colspan="7" class="td-empty"><div class="spinner" style="margin:0 auto;"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Drilldown panel -->
+    <div id="att-drilldown" style="display:none;margin-top:1.5rem;">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <div class="card-title" id="att-drilldown-title">Détail du groupe</div>
+          <button onclick="closeAttDrilldown()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;line-height:1;" aria-label="Close">✕</button>
+        </div>
+        <div id="att-drilldown-sessions" style="margin-bottom:1.25rem;"></div>
+        <table class="tbl-full">
+          <thead>
+            <tr class="tr-sep">
+              <th class="th-col" id="att-dth-student">Étudiant</th>
+              <th class="th-col" id="att-dth-present">Présences</th>
+              <th class="th-col" id="att-dth-absent">Absences</th>
+              <th class="th-col" id="att-dth-rate">Taux</th>
+            </tr>
+          </thead>
+          <tbody id="att-drilldown-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- ── SETTINGS PAGE ── -->
   <div class="page" id="page-settings">
     <div style="margin-bottom:1.5rem;">
@@ -990,7 +1072,7 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 /* ══════════════════════════════════════════════════════
    PAGE PERSISTENCE — runs synchronously before first paint
 ══════════════════════════════════════════════════════ */
-const ADMIN_VALID_PAGES = ['home','users','inscriptions','classes','assigning-classes','schedule','settings','placement','announcements'];
+const ADMIN_VALID_PAGES = ['home','users','inscriptions','classes','assigning-classes','schedule','settings','placement','announcements','attendance'];
 (function() {
   const _saved = sessionStorage.getItem('upskill_admin_page');
   if (_saved && ADMIN_VALID_PAGES.includes(_saved) && _saved !== 'home') {
@@ -1033,7 +1115,14 @@ const T = {
       {fr:'Lundi',en:'Monday'},{fr:'Mardi',en:'Tuesday'},{fr:'Mercredi',en:'Wednesday'},
       {fr:'Jeudi',en:'Thursday'},{fr:'Vendredi',en:'Friday'},{fr:'Samedi',en:'Saturday'}
     ],
-    topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes', schedule:'Horaires des groupes', announcements:'Annonces', placement:'Tests de placement' },
+    topbar:{ home:'Tableau de bord Admin', users:'Utilisateurs', inscriptions:'Inscriptions', settings:'Paramètres', classes:'Classes', 'assigning-classes':'Assignation des classes', schedule:'Horaires des groupes', announcements:'Annonces', placement:'Tests de placement', attendance:'Suivi des présences' },
+    navAttendance:'Suivi des présences',
+    attAdminPageTitle:'Suivi des présences', attAdminPageSub:'Taux de présence des étudiants et avancement des sessions par groupe',
+    attStatAvgRate:'Taux de présence moyen', attStatSessions:'Sessions effectuées', attStatTeachersOk:'Professeurs à jour', attStatAtRisk:'Étudiants à risque',
+    attThGroup:'Groupe', attThTeacher:'Professeur', attThStudents:'Étudiants', attThSessions:'Sessions', attThAvgAtt:'Présence moy.', attThAtRisk:'À risque', attThStatus:'Statut prof.',
+    attStatusOk:'À jour', attStatusBehind:'séance(s) de retard',
+    attDrilldownTitle:'Détail du groupe', attDthStudent:'Étudiant', attDthPresent:'Présences', attDthAbsent:'Absences', attDthRate:'Taux',
+    attSessionProgress:'Avancement des sessions', attAdminEmpty:'Aucun groupe trouvé.',
     assigningStudentsTitle:'Étudiants', assigningTeachersTitle:'Professeurs',
     ath_student:'Étudiant', ath_group:'Groupe(s)', ath_teacher:'Professeur', ath_teacher_group:'Groupe(s)',
     classesGroupsOf:'Groupes de', noGroups:'Aucun groupe. Cliquez sur + pour en créer un.',
@@ -1129,7 +1218,14 @@ const T = {
       {fr:'Lundi',en:'Monday'},{fr:'Mardi',en:'Tuesday'},{fr:'Mercredi',en:'Wednesday'},
       {fr:'Jeudi',en:'Thursday'},{fr:'Vendredi',en:'Friday'},{fr:'Samedi',en:'Saturday'}
     ],
-    topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments', schedule:'Allocate dates & times', announcements:'Announcements', placement:'Placement Tests' },
+    topbar:{ home:'Admin Dashboard', users:'Users', inscriptions:'Enrollments', settings:'Settings', classes:'Classes', 'assigning-classes':'Class assignments', schedule:'Allocate dates & times', announcements:'Announcements', placement:'Placement Tests', attendance:'Attendance Tracking' },
+    navAttendance:'Attendance Tracking',
+    attAdminPageTitle:'Attendance Tracking', attAdminPageSub:'Student attendance rates and teacher session completion by group',
+    attStatAvgRate:'Avg. attendance rate', attStatSessions:'Sessions completed', attStatTeachersOk:'Teachers on track', attStatAtRisk:'At-risk students',
+    attThGroup:'Group', attThTeacher:'Teacher', attThStudents:'Students', attThSessions:'Sessions', attThAvgAtt:'Avg. attendance', attThAtRisk:'At risk', attThStatus:'Teacher status',
+    attStatusOk:'On track', attStatusBehind:'session(s) behind',
+    attDrilldownTitle:'Group detail', attDthStudent:'Student', attDthPresent:'Present', attDthAbsent:'Absent', attDthRate:'Rate',
+    attSessionProgress:'Session progress', attAdminEmpty:'No groups found.',
     assigningStudentsTitle:'Students', assigningTeachersTitle:'Teachers',
     ath_student:'Student', ath_group:'Group(s)', ath_teacher:'Teacher', ath_teacher_group:'Group(s)',
     classesGroupsOf:'Groups of', noGroups:'No groups. Click + to create one.',
@@ -1236,6 +1332,16 @@ function applyTranslations() {
   set('nav-users-lbl', t.navUsers); set('nav-inscriptions-lbl', t.navInscriptions);
   set('nav-classes-lbl', t.navClasses); set('nav-assigning-classes-lbl', t.navAssigningClasses); set('nav-schedule-lbl', t.navSchedule);
   set('nav-announcements-lbl', t.navAnnouncements);
+  set('nav-attendance-lbl', t.navAttendance);
+  set('att-admin-page-title', t.attAdminPageTitle); set('att-admin-page-sub', t.attAdminPageSub);
+  set('att-stat-avg-rate-lbl', t.attStatAvgRate); set('att-stat-sessions-lbl', t.attStatSessions);
+  set('att-stat-teachers-ok-lbl', t.attStatTeachersOk); set('att-stat-at-risk-lbl', t.attStatAtRisk);
+  set('att-th-group', t.attThGroup); set('att-th-teacher', t.attThTeacher); set('att-th-students-col', t.attThStudents);
+  set('att-th-sessions-col', t.attThSessions); set('att-th-avg-att', t.attThAvgAtt);
+  set('att-th-at-risk-col', t.attThAtRisk); set('att-th-status-col', t.attThStatus);
+  set('att-drilldown-title', t.attDrilldownTitle);
+  set('att-dth-student', t.attDthStudent); set('att-dth-present', t.attDthPresent);
+  set('att-dth-absent', t.attDthAbsent); set('att-dth-rate', t.attDthRate);
   set('ann-page-title', t.annPageTitle); set('ann-page-sub', t.annPageSub);
   set('ann-compose-title', t.annComposeTitle); set('ann-lbl-title', t.annLblTitle); set('ann-lbl-body', t.annLblBody); set('ann-lbl-target', t.annLblTarget);
   set('ann-opt-all', t.annOptAll); set('ann-opt-students', t.annOptStudents); set('ann-opt-teachers', t.annOptTeachers);
@@ -1327,6 +1433,7 @@ function navigate(page, el) {
   if (page === 'schedule') loadSchedulePage();
   if (page === 'announcements') loadAnnouncements();
   if (page === 'placement') loadPlacement();
+  if (page === 'attendance') loadAttendanceOverview();
   if (window.innerWidth <= 768) toggleSidebar();
 }
 
@@ -2913,6 +3020,112 @@ function exportPlacementCSV() {
 
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── ATTENDANCE TRACKING (admin) ── */
+let attAdminData = [];
+
+async function loadAttendanceOverview() {
+  const tbody = document.getElementById('att-admin-tbody');
+  if (tbody) tbody.innerHTML = `<tr><td colspan="7" class="td-empty"><div class="spinner" style="margin:0 auto;"></div></td></tr>`;
+  document.getElementById('att-drilldown').style.display = 'none';
+  try {
+    const data = await api('api_attendance_admin.php?action=overview');
+    attAdminData = data.groups || [];
+    const s = data.summary || {};
+    const el = id => document.getElementById(id);
+    const avgRate = s.avg_attendance != null ? s.avg_attendance + '%' : '—';
+    if (el('att-stat-avg-rate'))    el('att-stat-avg-rate').textContent    = avgRate;
+    if (el('att-stat-sessions'))    el('att-stat-sessions').textContent    = `${s.total_sessions_conducted ?? 0}/${s.total_sessions_due ?? 0}`;
+    if (el('att-stat-teachers-ok')) el('att-stat-teachers-ok').textContent = `${s.teachers_on_track ?? 0}/${s.total_teachers ?? 0}`;
+    if (el('att-stat-at-risk'))     el('att-stat-at-risk').textContent     = s.at_risk_students ?? 0;
+    renderAttAdminTable();
+  } catch(e) {
+    if (tbody) tbody.innerHTML = `<tr><td colspan="7" class="td-empty" style="color:var(--red);">${escHtml(e.message)}</td></tr>`;
+  }
+}
+
+function renderAttAdminTable() {
+  const tbody = document.getElementById('att-admin-tbody');
+  if (!tbody) return;
+  const t = tr();
+  if (!attAdminData.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="td-empty">${t.attAdminEmpty}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = attAdminData.map(g => {
+    const sessDone  = g.sessions_conducted;
+    const sessDue   = g.sessions_due;
+    const sessBar   = sessDue > 0 ? Math.round((sessDone / sessDue) * 100) : 0;
+    const attPct    = g.avg_attendance_pct;
+    const attColor  = attPct == null ? 'var(--muted)' : attPct >= 80 ? 'var(--green)' : attPct >= 60 ? 'var(--yellow)' : 'var(--red)';
+    const attTxt    = attPct != null ? attPct + '%' : '—';
+    const behindBy  = Math.max(0, sessDue - sessDone);
+    const statusHtml = behindBy === 0
+      ? `<span style="color:var(--green);font-size:.8rem;font-weight:600;">✓ ${t.attStatusOk}</span>`
+      : `<span style="color:var(--red);font-size:.8rem;font-weight:600;">⚠ ${behindBy} ${t.attStatusBehind}</span>`;
+    return `<tr style="cursor:pointer;transition:background .15s;" onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background=''" onclick="loadAttendanceGroup(${g.group_id},${JSON.stringify(escHtml(g.label))})">
+      <td style="padding:.85rem 1.2rem;font-weight:600;font-size:.85rem;">${escHtml(g.label)}</td>
+      <td style="padding:.85rem 1.2rem;font-size:.85rem;">${escHtml(g.teacher_name || '—')}</td>
+      <td style="padding:.85rem 1.2rem;font-size:.85rem;text-align:center;">${g.student_count}</td>
+      <td style="padding:.85rem 1.2rem;min-width:150px;">
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <div style="flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;">
+            <div style="width:${sessBar}%;height:100%;background:var(--blue);border-radius:3px;"></div>
+          </div>
+          <span style="font-size:.78rem;color:var(--muted);white-space:nowrap;">${sessDone}/${sessDue}</span>
+        </div>
+      </td>
+      <td style="padding:.85rem 1.2rem;font-size:.85rem;font-weight:700;color:${attColor};">${attTxt}</td>
+      <td style="padding:.85rem 1.2rem;font-size:.85rem;text-align:center;${g.at_risk_count > 0 ? 'color:var(--red);font-weight:700;' : 'color:var(--muted);'}">${g.at_risk_count}</td>
+      <td style="padding:.85rem 1.2rem;">${statusHtml}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function loadAttendanceGroup(groupId, groupLabel) {
+  const drilldown = document.getElementById('att-drilldown');
+  const titleEl   = document.getElementById('att-drilldown-title');
+  const sessDiv   = document.getElementById('att-drilldown-sessions');
+  const tbody     = document.getElementById('att-drilldown-tbody');
+  if (!drilldown) return;
+  if (titleEl) titleEl.textContent = groupLabel;
+  if (sessDiv) sessDiv.innerHTML = `<span style="font-size:.8rem;color:var(--muted);">${tr().schLoading}</span>`;
+  if (tbody)   tbody.innerHTML   = `<tr><td colspan="4" class="td-empty"><div class="spinner" style="margin:0 auto;"></div></td></tr>`;
+  drilldown.style.display = '';
+  drilldown.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  try {
+    const data    = await api(`api_attendance_admin.php?action=group_detail&group_id=${groupId}`);
+    const sessDone = data.sessions_conducted || 0;
+    const sessDue  = data.sessions_due || 0;
+    const sessBar  = sessDue > 0 ? Math.round((sessDone / sessDue) * 100) : 0;
+    if (sessDiv) sessDiv.innerHTML = `
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:.4rem;">${tr().attSessionProgress}: <strong style="color:var(--text);">${sessDone}/${sessDue}</strong></div>
+      <div style="height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;">
+        <div style="width:${sessBar}%;height:100%;background:var(--blue);border-radius:4px;transition:width .4s;"></div>
+      </div>`;
+    if (!data.students || !data.students.length) {
+      if (tbody) tbody.innerHTML = `<tr><td colspan="4" class="td-empty">${tr().attAdminEmpty}</td></tr>`;
+      return;
+    }
+    if (tbody) tbody.innerHTML = data.students.map(s => {
+      const absent   = Math.max(0, sessDone - s.present_count);
+      const pct      = sessDone > 0 ? Math.round((s.present_count / sessDone) * 100) : 0;
+      const pctColor = pct >= 80 ? 'var(--green)' : pct >= 60 ? 'var(--yellow)' : 'var(--red)';
+      return `<tr>
+        <td style="padding:.75rem 1.2rem;font-size:.85rem;">${escHtml(s.student_name)}</td>
+        <td style="padding:.75rem 1.2rem;font-size:.85rem;text-align:center;">${s.present_count}</td>
+        <td style="padding:.75rem 1.2rem;font-size:.85rem;text-align:center;">${absent}</td>
+        <td style="padding:.75rem 1.2rem;font-size:.85rem;font-weight:700;color:${pctColor};">${pct}%</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    if (tbody) tbody.innerHTML = `<tr><td colspan="4" class="td-empty" style="color:var(--red);">${escHtml(e.message)}</td></tr>`;
+  }
+}
+
+function closeAttDrilldown() {
+  document.getElementById('att-drilldown').style.display = 'none';
 }
 
 /* ══════════════════════════════════════════════════════
