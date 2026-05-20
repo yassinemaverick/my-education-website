@@ -400,6 +400,12 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
 @keyframes spin { to { transform:rotate(360deg); } }
 .spinner { display:inline-block; width:20px; height:20px; border:2px solid rgba(30,27,75,.12); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
 .loading-overlay { display:flex; align-items:center; justify-content:center; padding:3rem; color:var(--muted); gap:.75rem; font-size:.9rem; }
+/* MOBILE BOTTOM NAV */
+.mobile-bottom-nav { display:none; position:fixed; bottom:0; left:0; right:0; height:60px; background:var(--navy,#0f1d2e); border-top:1px solid var(--border); z-index:500; padding:0 0 env(safe-area-inset-bottom,0); }
+@media (max-width:768px) { .mobile-bottom-nav { display:flex; } .main { padding-bottom:68px; } }
+.mbn-item { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; background:none; border:none; color:var(--muted); cursor:pointer; font-size:.58rem; font-family:var(--font); letter-spacing:.04em; padding:5px 0; transition:color .15s; }
+.mbn-item.active { color:var(--purple,#a78bfa); }
+.mbn-item svg { flex-shrink:0; }
 </style>
 <style id="lang-hide">body{visibility:hidden}</style>
 </head>
@@ -844,6 +850,27 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
   </div>
 </div>
 
+<!-- BROADCAST MODAL -->
+<div class="modal-overlay" id="modal-broadcast">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-header">
+      <h3 id="broadcast-modal-title">Message all</h3>
+      <button class="btn-close" onclick="closeModal('broadcast')" aria-label="Close">✕</button>
+    </div>
+    <p style="color:var(--muted);font-size:.83rem;margin-bottom:.75rem;" id="broadcast-modal-to"></p>
+    <div class="form-group">
+      <label id="broadcast-msg-lbl">Message</label>
+      <textarea id="broadcast-text" rows="4" maxlength="500" placeholder="Écrivez votre message…"
+        style="width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:10px;color:var(--white);font-family:var(--font-body);font-size:.88rem;outline:none;resize:vertical;box-sizing:border-box;"></textarea>
+    </div>
+    <div style="color:var(--red);font-size:.8rem;min-height:1rem;" id="broadcast-error"></div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('broadcast')" id="broadcast-cancel">Annuler</button>
+      <button class="btn-primary" onclick="sendBroadcast()" id="broadcast-submit">Envoyer</button>
+    </div>
+  </div>
+</div>
+
   <!-- LESSON POSTS PAGE -->
   <div class="page" id="page-posts">
     <div style="margin-bottom:1.5rem;">
@@ -898,6 +925,7 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
       <div class="att-actions">
         <button class="btn-secondary btn-sm" onclick="attMarkAll(true)" id="btn-mark-all">✓ <span id="att-mark-all-lbl">Tous présents</span></button>
         <button class="btn-secondary btn-sm" onclick="attMarkAll(false)" id="btn-clear-all">✕ <span id="att-clear-all-lbl">Effacer tout</span></button>
+        <button class="btn-secondary btn-sm" onclick="exportAttendanceCSV()" id="btn-export-csv">📥 <span id="att-export-lbl">Export CSV</span></button>
         <button class="btn-primary btn-sm" onclick="attSave()" id="btn-save-att">💾 <span id="att-save-lbl">Enregistrer</span></button>
       </div>
     </div>
@@ -958,6 +986,30 @@ body { background:var(--navy); color:var(--white); font-family:var(--font-body);
       </div>
     </div>
   </div>
+
+<!-- MOBILE BOTTOM NAV (teacher) -->
+<nav class="mobile-bottom-nav" id="teacher-bottom-nav" aria-label="Bottom navigation">
+  <button class="mbn-item active" id="mbn-t-home" onclick="navigate('home');syncTeacherBottomNav('home')">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span id="mbn-t-home-lbl">Home</span>
+  </button>
+  <button class="mbn-item" id="mbn-t-courses" onclick="navigate('courses');syncTeacherBottomNav('courses')">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    <span id="mbn-t-courses-lbl">Classes</span>
+  </button>
+  <button class="mbn-item" id="mbn-t-assignments" onclick="navigate('assignments');syncTeacherBottomNav('assignments')">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    <span id="mbn-t-assignments-lbl">Assignments</span>
+  </button>
+  <button class="mbn-item" id="mbn-t-attendance" onclick="navigate('attendance');syncTeacherBottomNav('attendance')">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    <span id="mbn-t-attendance-lbl">Attendance</span>
+  </button>
+  <button class="mbn-item" id="mbn-t-settings" onclick="navigate('settings');syncTeacherBottomNav('settings')">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span id="mbn-t-settings-lbl">Settings</span>
+  </button>
+</nav>
 
 <!-- SIDEBAR BACKDROP (mobile) -->
 <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
@@ -1098,6 +1150,13 @@ const T = {
     phAssignDesc:'Instructions pour les étudiants…',
     phPostTitle:'ex: Séance 12 – Passé composé',
     phPostNotes:'Points clés, rappels, vocabulaire…',
+    exportCsv:'Exporter CSV',
+    broadcastAll:'Message groupe', broadcastModalTitle:'Message à tous', broadcastTo:'À : ', broadcastSuccess:'Messages envoyés !',
+    reviewPendingBtn:'Corriger →',
+    sessionOf:'Séance', sessionTotal:'de',
+    zoomInvalid:'URL invalide – commencez par https://',
+    mbnHome:'Accueil', mbnClasses:'Classes', mbnAssign:'Devoirs', mbnAttend:'Présences', mbnSettings:'Paramètres',
+    broadcastMsgLbl:'Message',
   },
   en: {
     topbarTitle: { home:'Teacher Dashboard', students:'Students', courses:'Classes', assignments:'Assignments', posts:'Lesson Notes', quizzes:'Quizzes', grades:'Grades & Results', settings:'Settings', attendance:'Attendance' },
@@ -1182,6 +1241,13 @@ const T = {
     phAssignDesc:'Instructions for students…',
     phPostTitle:'e.g. Session 12 – Present Perfect',
     phPostNotes:'Key points, reminders, vocabulary…',
+    exportCsv:'Export CSV',
+    broadcastAll:'Message group', broadcastModalTitle:'Message everyone', broadcastTo:'To: ', broadcastSuccess:'Messages sent!',
+    reviewPendingBtn:'Review →',
+    sessionOf:'Session', sessionTotal:'of',
+    zoomInvalid:'Invalid URL – must start with https://',
+    mbnHome:'Home', mbnClasses:'Classes', mbnAssign:'Assignments', mbnAttend:'Attendance', mbnSettings:'Settings',
+    broadcastMsgLbl:'Message',
   }
 };
 
@@ -1235,7 +1301,7 @@ function applyTranslations() {
   set('grades-page-title', tr.gradesPageTitle); set('grades-page-sub', tr.gradesPageSub);
   set('dist-title', tr.distTitle); set('top-title', tr.topTitle); set('quiz-scores-title', tr.quizScoresTitle);
   set('gth-student', tr.gthStudent); set('gth-assign', tr.gthAssign); set('gth-score', tr.gthScore); set('gth-date', tr.gthDate);
-  set('settings-title', tr.settingsTitle); set('profile-title', tr.profileTitle); set('settings-role', tr.settingsRole);
+  set('settings-title', tr.settingsTitle); set('profile-title', tr.profileTitle); set('settings-role', getSettingsRoleLine());
   set('change-photo-lbl', tr.changePhotoLbl);
   const avUploadBtn = document.getElementById('avatar-upload-btn');
   if (avUploadBtn) avUploadBtn.title = tr.changePhotoLbl;
@@ -1278,6 +1344,15 @@ function applyTranslations() {
     const txt = opt.getAttribute('data-' + currentLang) || opt.getAttribute('data-fr');
     if (txt) opt.textContent = txt;
   });
+  // Bottom nav labels
+  set('mbn-t-home-lbl', tr.mbnHome); set('mbn-t-courses-lbl', tr.mbnClasses);
+  set('mbn-t-assignments-lbl', tr.mbnAssign); set('mbn-t-attendance-lbl', tr.mbnAttend);
+  set('mbn-t-settings-lbl', tr.mbnSettings);
+  // Attendance toolbar
+  set('att-export-lbl', tr.exportCsv);
+  // Broadcast modal
+  set('broadcast-modal-title', tr.broadcastModalTitle); set('broadcast-msg-lbl', tr.broadcastMsgLbl);
+  set('broadcast-cancel', tr.modalCancel); set('broadcast-submit', currentLang==='en'?'Send':'Envoyer');
   const _lh = document.getElementById('lang-hide'); if (_lh) _lh.remove();
 }
 
@@ -1314,12 +1389,14 @@ function navigate(page, el) {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-backdrop').classList.remove('open');
   }
+  syncTeacherBottomNav(page);
 }
 
 function renderAttention() {
   const list = document.getElementById('attention-list');
   if(!list) return;
   const tr = T[currentLang];
+  updateStudentStatuses();
   const atRisk = STUDENTS.filter(s => s.status !== 'good');
   list.innerHTML = atRisk.map(s => `
     <div style="display:flex;align-items:center;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border2);">
@@ -1651,7 +1728,8 @@ async function gradeSubmission(subId) {
     const data = await res.json();
     if (data.ok) {
       showToast(T[currentLang].toastGraded);
-      loadAssignments();
+      await loadAssignments();
+      updateHomeStats();
       // Update badge inline
       const row = document.getElementById('sub-row-'+subId);
       if (row && score!=='') { let b=row.querySelector('span[style*="var(--purple)"]'); if(!b){b=document.createElement('span');b.style.cssText='background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);font-size:.75rem;font-weight:700;padding:.2rem .7rem;border-radius:100px;';row.querySelector('div[style*="font-weight:600"]').appendChild(b);} b.textContent='📊 '+score+'/100'; }
@@ -1872,7 +1950,9 @@ async function loadGrades() {
     }
     GRADES_LIVE = data.grades || [];
     _gradesLoaded = true;
+    updateStudentStatuses();
     renderGrades();
+    renderAttention();
   } catch(e) {
     tbody.innerHTML = `<tr><td colspan="4" style="color:var(--red);text-align:center;">${T[lang].toastNetError}</td></tr>`;
   }
@@ -1895,9 +1975,12 @@ function renderGrades() {
       const color = score >= 75 ? 'var(--green)' : score >= 50 ? 'var(--yellow)' : 'var(--red)';
       const date  = g.graded_at ? new Date(g.graded_at).toLocaleDateString(lang === 'fr' ? 'fr-FR' : 'en-GB', {day:'numeric', month:'short'}) : '—';
       const initials = name.split(' ').map(w => w[0] || '').join('').slice(0, 2).toUpperCase();
+      const assignMatch = ASSIGNMENTS_LIVE.find(a => (lang==='en'?(a.title_en||a.title_fr):a.title_fr) === title);
+      const hasPending = assignMatch && (parseInt(assignMatch.submitted_count||0) - parseInt(assignMatch.graded_count||0)) > 0;
+      const reviewBtn = assignMatch ? `<button onclick="navigate('assignments');setTimeout(()=>openSubmissions(${assignMatch.id}),150)" style="font-size:.7rem;background:rgba(167,139,250,.1);border:1px solid rgba(167,139,250,.3);color:var(--purple);border-radius:6px;padding:.15rem .5rem;cursor:pointer;font-family:var(--font);white-space:nowrap;margin-left:.5rem;">${hasPending?tr2.reviewPendingBtn:'View'}</button>` : '';
       return `<tr>
         <td><div style="display:flex;align-items:center;gap:.75rem;"><div class="student-avatar-sm">${escHtml(initials)}</div><span>${escHtml(name)}</span></div></td>
-        <td style="font-size:.82rem;">${escHtml(title)}${cn ? ` <span style="font-size:.7rem;color:var(--muted2);">(${escHtml(cn)})</span>` : ''}</td>
+        <td style="font-size:.82rem;">${escHtml(title)}${cn ? ` <span style="font-size:.7rem;color:var(--muted2);">(${escHtml(cn)})</span>` : ''}${reviewBtn}</td>
         <td style="font-family:var(--font);font-weight:700;color:${color};">${score}/100</td>
         <td style="font-size:.8rem;color:var(--muted);">${date}</td>
       </tr>`;
@@ -2340,6 +2423,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const savedPage = sessionStorage.getItem('upskill_page_t');
   if (savedPage && validPages.includes(savedPage) && savedPage !== 'home') {
     navigate(savedPage);
+  } else {
+    syncTeacherBottomNav('home');
   }
   // Keyboard accessibility for sidebar nav items
   document.querySelectorAll('.nav-item').forEach(el => {
@@ -2806,6 +2891,17 @@ async function openGroupDetail(groupId) {
   document.getElementById('cd-students-title').textContent = T[lang].groupStudentsTitle;
   document.getElementById('back-courses-lbl').textContent = T[lang].backCourses2;
 
+  // Message All button
+  let msgAllBtn = document.getElementById('cd-msg-all-btn');
+  if (!msgAllBtn) {
+    msgAllBtn = document.createElement('button');
+    msgAllBtn.id = 'cd-msg-all-btn';
+    msgAllBtn.style.cssText = 'margin-left:auto;background:rgba(91,156,246,.12);border:1px solid rgba(91,156,246,.25);color:var(--blue);border-radius:8px;padding:.35rem .75rem;cursor:pointer;font-size:.78rem;font-family:var(--font);white-space:nowrap;';
+    document.getElementById('cd-students-title')?.parentElement?.appendChild(msgAllBtn);
+  }
+  msgAllBtn.textContent = '📢 ' + (T[lang].broadcastAll || 'Message all');
+  msgAllBtn.onclick = () => openBroadcastModal(groupId, label);
+
   /* ── Schedule timing ── */
   const DAY_EN_T = {Lundi:'Monday',Mardi:'Tuesday',Mercredi:'Wednesday',Jeudi:'Thursday',Vendredi:'Friday',Samedi:'Saturday',Dimanche:'Sunday'};
   let schedHtml = '';
@@ -3005,7 +3101,7 @@ function renderPostsList(posts) {
           ${linkBtn}${notesHtml}
         </div>
         <div style="display:flex;gap:.4rem;flex-shrink:0;">
-          <button onclick="editPost(${p.id},'${escHtml(p.title).replace(/'/g,"\\'")}','${p.session_date}','${escHtml(p.link||'').replace(/'/g,"\\'")}','${escHtml(p.notes||'').replace(/\n/g,'\\n').replace(/'/g,"\\'")}',${p.course_id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="${T[currentLang]?.editPost||(lang==='en'?'Edit':'Modifier')}">
+          <button onclick="editPost(${p.id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--blue)';this.style.color='var(--blue)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="${T[currentLang]?.editPost||(lang==='en'?'Edit':'Modifier')}">
             <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </button>
           <button onclick="deletePost(${p.id})" style="background:none;border:1px solid var(--border);border-radius:8px;padding:.35rem .6rem;cursor:pointer;color:var(--muted);transition:all .2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'" title="${T[currentLang]?.postsDeleteConfirm||(lang==='en'?'Delete':'Supprimer')}">
@@ -3074,17 +3170,16 @@ function deletePost(id) {
 }
 
 let _editPostId = null;
-function editPost(id, title, date, link, notes, courseId) {
+function editPost(id) {
+  const p = (_cachedPosts || []).find(x => x.id === id);
+  if (!p) return;
   _editPostId = id;
-  // Reuse the create form fields
-  document.getElementById('post-title').value = title;
-  document.getElementById('post-date').value  = date;
-  document.getElementById('post-link').value  = link;
-  document.getElementById('post-notes').value = notes.replace(/\\n/g, '\n');
-  // Mark form as editing mode
+  document.getElementById('post-title').value = p.title || '';
+  document.getElementById('post-date').value  = p.session_date || '';
+  document.getElementById('post-link').value  = p.link || '';
+  document.getElementById('post-notes').value = p.notes || '';
   const btn = document.getElementById('post-submit-lbl');
   if (btn) btn.textContent = T[currentLang]?.editPost || (currentLang==='en'?'Update note':'Mettre à jour');
-  // Scroll form into view
   document.getElementById('posts-form-title')?.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -3205,6 +3300,8 @@ function renderTodayClasses() {
     } catch(e) {}
 
     const hasZoom   = c.zoom_url && c.zoom_url.trim() !== '';
+    const sessCtx   = calcSessionContext(c);
+    const sessChip  = sessCtx ? `<span style="margin-left:.75rem;font-size:.73rem;color:var(--purple);font-weight:600;">${T[lang].sessionOf} ${sessCtx.current}${sessCtx.total?' '+T[lang].sessionTotal+' '+sessCtx.total:''}</span>` : '';
     const inputId   = `zoom-input-${gid}`;
     const btnId     = `zoom-btn-${gid}`;
     const statusId  = `zoom-status-${gid}`;
@@ -3226,6 +3323,7 @@ function renderTodayClasses() {
             ${sessionInfo ? `<span>🕐 ${sessionInfo}</span>` : ''}
             <span style="${sessionInfo?'margin-left:.75rem':''}">👥 ${c.student_count || 0} ${tr.todayStudents}</span>
             ${hasZoom ? `<span style="margin-left:.75rem;color:var(--green);font-size:.73rem;">● Zoom ✓</span>` : `<span style="margin-left:.75rem;color:var(--yellow);font-size:.73rem;">${lang==='en'?'● Zoom link missing':'● Zoom manquant'}</span>`}
+            ${sessChip}
             ${dateStr2 ? `<span style="margin-left:.75rem;color:var(--white);">🗓 ${dateStr2}</span>` : ''}
           </div>
         </div>
@@ -3285,6 +3383,12 @@ async function saveTodayZoom(courseId) {
   if (!input) return;
   const zoomUrl = input.value.trim();
   const origBtn = btn ? btn.textContent : '';
+  if (zoomUrl && !/^https?:\/\/.+/.test(zoomUrl)) {
+    statusEl.textContent = T[currentLang].zoomInvalid || 'Invalid URL – must start with https://';
+    statusEl.style.color = 'var(--red)';
+    statusEl.style.display = '';
+    return;
+  }
   if (btn) { btn.textContent = tr.todaySaving; btn.disabled = true; }
   statusEl.style.display = 'none';
   try {
@@ -3532,6 +3636,151 @@ function profileMenuAction(action) {
     document.getElementById('avatar-input').click();
   } else if (action === 'logout') {
     logout();
+  }
+}
+
+/* ── MOBILE BOTTOM NAV SYNC ── */
+function syncTeacherBottomNav(page) {
+  const map = {
+    home:'mbn-t-home', courses:'mbn-t-courses', students:'mbn-t-courses',
+    assignments:'mbn-t-assignments', quizzes:'mbn-t-assignments', grades:'mbn-t-assignments',
+    posts:'mbn-t-courses', attendance:'mbn-t-attendance', settings:'mbn-t-settings'
+  };
+  document.querySelectorAll('#teacher-bottom-nav .mbn-item').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById(map[page] || 'mbn-t-home');
+  if (el) el.classList.add('active');
+}
+
+/* ── DYNAMIC SETTINGS ROLE ── */
+function getSettingsRoleLine() {
+  const lang = currentLang;
+  const roleWord = lang === 'en' ? 'Teacher' : 'Professeur';
+  if (!teacherGroups.length) return roleWord;
+  const types = [...new Set(teacherGroups.map(g => g.type_key).filter(Boolean))];
+  if (types.length === 1) {
+    const labels = TYPE_LABELS[types[0]] || {fr: types[0], en: types[0]};
+    return `${roleWord} · ${lang==='en'?(labels.en||labels.fr):labels.fr}`;
+  }
+  return `${roleWord} · ${teacherGroups.length} ${lang==='en'?'group(s)':'groupe(s)'}`;
+}
+
+/* ── CSV EXPORT ── */
+function exportAttendanceCSV() {
+  const lang = currentLang;
+  const hdr = lang==='en' ? 'Student' : 'Étudiant';
+  const sesWord = lang==='en' ? 'Session' : 'Séance';
+  const rateWord = lang==='en' ? 'Rate' : 'Taux';
+  const header = [hdr, ...Array.from({length:ATT_SESSIONS},(_,i)=>`${sesWord} ${i+1}`), rateWord].join(',');
+  const rows = STUDENTS.map(s => {
+    const { pct } = attPct(s.id);
+    const cells = [`"${(s.name||'').replace(/"/g,'""')}"`];
+    for (let i = 1; i <= ATT_SESSIONS; i++) cells.push(attData[s.id]?.[i] ? '1' : '0');
+    cells.push(pct + '%');
+    return cells.join(',');
+  });
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `attendance_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/* ── UPDATE STUDENT STATUSES FROM REAL DATA ── */
+function updateStudentStatuses() {
+  // Build per-student avg from GRADES_LIVE
+  const scoreMap = {};
+  (GRADES_LIVE || []).forEach(g => {
+    const key = g.student_id || (g.student_name || g.username);
+    if (!scoreMap[key]) scoreMap[key] = [];
+    scoreMap[key].push(parseInt(g.score || 0));
+  });
+  STUDENTS.forEach(s => {
+    const { pct: attRate } = attPct(s.id);
+    const gradeArr = scoreMap[s.id] || scoreMap[s.name] || [];
+    const avgScore = gradeArr.length ? Math.round(gradeArr.reduce((a,b)=>a+b,0)/gradeArr.length) : null;
+    s.progress = attRate;
+    s.avg = avgScore !== null ? avgScore : s.avg;
+    if (attRate < 60 || (avgScore !== null && avgScore < 50)) s.status = 'low';
+    else if (attRate < 70 || (avgScore !== null && avgScore < 70)) s.status = 'warn';
+    else s.status = 'good';
+  });
+}
+
+/* ── SESSION CONTEXT (Session N of M) ── */
+function calcSessionContext(group) {
+  if (!group.start_date || !group.schedule_json) return null;
+  let slots;
+  try { slots = JSON.parse(group.schedule_json); } catch(e) { return null; }
+  if (!slots.length) return null;
+  const DAY_JS = {Lundi:1,Mardi:2,Mercredi:3,Jeudi:4,Vendredi:5,Samedi:6,Dimanche:0};
+  const sessPerWeek = slots.length;
+  const start = new Date(group.start_date); start.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  if (today < start) return null;
+  const weeksElapsed = Math.floor((today - start) / (7*24*3600*1000));
+  const dayOfWeek = today.getDay();
+  const pastToday = slots.filter(s => { const d = DAY_JS[s.day_fr]; return d !== undefined && d <= dayOfWeek; }).length;
+  const current = weeksElapsed * sessPerWeek + pastToday;
+  let total = null;
+  if (group.end_date) {
+    const end = new Date(group.end_date); end.setHours(0,0,0,0);
+    const totalWeeks = Math.ceil((end - start) / (7*24*3600*1000));
+    total = totalWeeks * sessPerWeek;
+  }
+  if (current < 1) return null;
+  return { current, total };
+}
+
+/* ── BROADCAST MESSAGE ── */
+let _broadcastGroupId = null;
+let _broadcastStudents = [];
+
+function openBroadcastModal(groupId, groupName) {
+  _broadcastGroupId = groupId;
+  _broadcastStudents = [];
+  const lang = currentLang;
+  const toEl = document.getElementById('broadcast-modal-to');
+  if (toEl) toEl.textContent = (T[lang].broadcastTo || 'To: ') + groupName;
+  const textEl = document.getElementById('broadcast-text');
+  if (textEl) textEl.value = '';
+  const errEl = document.getElementById('broadcast-error');
+  if (errEl) errEl.textContent = '';
+  // Pre-load students
+  fetch(`api_classes.php?action=group_students&group_id=${groupId}`)
+    .then(r=>r.json())
+    .then(d=>{ _broadcastStudents = (d.students||[]).map(s=>s.id); })
+    .catch(()=>{});
+  openModal('broadcast');
+}
+
+async function sendBroadcast() {
+  const text  = document.getElementById('broadcast-text')?.value.trim();
+  const errEl = document.getElementById('broadcast-error');
+  const btn   = document.getElementById('broadcast-submit');
+  const lang  = currentLang;
+  if (!text) { if(errEl) errEl.textContent = lang==='en'?'Write a message first':'Écrivez un message'; return; }
+  if (!_broadcastStudents.length) {
+    if(errEl) errEl.textContent = lang==='en'?'No students to message':'Aucun étudiant dans ce groupe';
+    return;
+  }
+  if (btn) { btn.textContent = '…'; btn.disabled = true; }
+  let sent = 0;
+  try {
+    for (const uid of _broadcastStudents) {
+      const res = await fetch('api_notifications.php?action=send_message', {
+        method:'POST', headers:{'Content-Type':'application/json','X-CSRF-Token':_csrfToken},
+        body: JSON.stringify({action:'send_message', user_id:uid, message:text})
+      }).then(r=>r.json());
+      if (res.ok) sent++;
+    }
+    closeModal('broadcast');
+    showToast((T[lang].broadcastSuccess||'Messages sent!') + ` (${sent}/${_broadcastStudents.length})`);
+  } catch(e) {
+    if(errEl) errEl.textContent = T[lang].toastNetError||'Network error';
+  } finally {
+    if (btn) { btn.textContent = lang==='en'?'Send':'Envoyer'; btn.disabled = false; }
   }
 }
 
