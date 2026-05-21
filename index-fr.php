@@ -49,7 +49,7 @@ $t = [
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"></noscript>
-<link rel="stylesheet" href="/css/landing.css?v=3">
+<link rel="stylesheet" href="/css/landing.css?v=4">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -137,7 +137,6 @@ $t = [
 
 <main>
 <div class="hero" id="home">
-  <canvas id="hero-shader" aria-hidden="true"></canvas>
   <div class="hero-badge"><span></span> Inscriptions ouvertes — 2026</div>
   <h1>Maîtrisez l'anglais.<br><span>Ouvrez toutes les portes.</span></h1>
   <p>Des cours d'anglais animés par des experts, conçus pour des résultats concrets — que vous construisiez votre carrière, prépariez le Baccalauréat ou souhaitiez simplement progresser.</p>
@@ -669,6 +668,5 @@ document.addEventListener('click', e => {
   </svg>
 </a>
 
-<script type="module" src="/assets/js/hero-shader.js"></script>
 </body>
 </html>
