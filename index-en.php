@@ -290,7 +290,7 @@ $t = [
     <h2 class="section-title text-center" style="text-align:center;">How it works</h2>
     <p class="section-sub" style="margin: 0 auto; text-align:center;">From sign-up to fluency — here's your journey.</p>
     <div class="steps">
-      <div class="step"><div class="step-num">01</div><h3>Choose your course</h3><p>Browse our three programs and select the one that fits your goals and current level.</p></div>
+      <div class="step"><div class="step-num">01</div><h3>Choose your course</h3><p>Browse our four programs and select the one that fits your goals and current level.</p></div>
       <div class="step"><div class="step-num">02</div><h3>Submit your details</h3><p>Fill in your name, email and phone. Our team will reach out within 24 hours to confirm your enrollment.</p></div>
       <div class="step"><div class="step-num">03</div><h3>Get your login</h3><p>Receive your personal credentials for the student platform from our admin team — via WhatsApp or email within 24 hours.</p></div>
       <div class="step"><div class="step-num">04</div><h3>Start learning</h3><p>Log in to your dashboard, access materials, assignments, and track your progress live.</p></div>
@@ -467,7 +467,6 @@ $t = [
     <div class="footer-copy">&copy; 2026 Upskill Education &middot; upskill-edu.com &middot; All rights reserved.</div>
     <div class="footer-social">
       <a href="https://www.facebook.com/profile.php?id=61589477986844" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-      <a href="#" aria-label="Instagram" title="Instagram"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
 
       <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" title="WhatsApp">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.656 1.438 5.168L2 22l4.975-1.395A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm5.093 13.677c-.22.616-1.287 1.174-1.762 1.214-.476.04-.923.214-3.1-.648-2.606-1.038-4.267-3.7-4.396-3.872-.128-.172-1.053-1.402-1.053-2.676 0-1.273.665-1.9.9-2.16.236-.258.516-.322.687-.322.172 0 .344.002.494.008.159.006.37-.06.58.458.215.518.731 1.79.795 1.921.064.13.107.282.021.452-.086.172-.13.28-.258.43-.13.15-.272.337-.386.45-.13.13-.264.27-.113.527.15.258.666 1.098 1.43 1.778.982.874 1.815 1.143 2.072 1.273.257.13.408.108.558-.065.15-.172.63-.737.797-.99.168-.257.336-.215.565-.13.23.086 1.452.685 1.702.81.25.128.416.192.479.3.063.107.063.579-.157 1.2z"/></svg>
