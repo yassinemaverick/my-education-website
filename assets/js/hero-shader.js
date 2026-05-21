@@ -8,15 +8,15 @@ const scene = new THREE.Scene();
 const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1);
 
 const renderer = new THREE.WebGLRenderer({ canvas, alpha: false, antialias: false });
-renderer.setPixelRatio(1); // keep 1:1 so gl_FragCoord matches resolution uniform
-renderer.setClearColor(0x000000);
+renderer.setPixelRatio(1);
+renderer.setClearColor(0x0f1d2e); // match hero background so canvas is never "empty-looking"
 
 const uniforms = {
   resolution: { value: new THREE.Vector2() },
   time:       { value: 0 },
-  xScale:     { value: 1.0 },
-  yScale:     { value: 0.5 },
-  distortion: { value: 0.05 },
+  xScale:     { value: 1.5 },
+  yScale:     { value: 0.35 },
+  distortion: { value: 0.25 },
 };
 
 const geometry = new THREE.BufferGeometry();
@@ -43,10 +43,23 @@ scene.add(new THREE.Mesh(geometry, new THREE.RawShaderMaterial({
       float rx = p.x * (1.0 + d);
       float gx = p.x;
       float bx = p.x * (1.0 - d);
-      float r = 0.05 / abs(p.y + sin((rx + time) * xScale) * yScale);
-      float g = 0.05 / abs(p.y + sin((gx + time) * xScale) * yScale);
-      float b = 0.05 / abs(p.y + sin((bx + time) * xScale) * yScale);
-      gl_FragColor = vec4(r, g, b, 1.0);
+
+      // Primary wave — moves forward
+      float r  = 0.10 / abs(p.y + sin((rx + time) * xScale) * yScale);
+      float g  = 0.10 / abs(p.y + sin((gx + time) * xScale) * yScale);
+      float b  = 0.10 / abs(p.y + sin((bx + time) * xScale) * yScale);
+
+      // Secondary wave — slower, counter-direction, slightly lower amplitude
+      float r2 = 0.06 / abs(p.y - sin((rx * 0.8 - time * 0.55) * xScale) * yScale * 0.65);
+      float g2 = 0.06 / abs(p.y - sin((gx * 0.8 - time * 0.55) * xScale) * yScale * 0.65);
+      float b2 = 0.06 / abs(p.y - sin((bx * 0.8 - time * 0.55) * xScale) * yScale * 0.65);
+
+      gl_FragColor = vec4(
+        min(r + r2, 1.0),
+        min(g + g2, 1.0),
+        min(b + b2, 1.0),
+        1.0
+      );
     }
   `,
   uniforms,
@@ -63,7 +76,7 @@ resize();
 new ResizeObserver(resize).observe(hero);
 
 (function animate() {
-  uniforms.time.value += 0.01;
+  uniforms.time.value += 0.007;
   renderer.render(scene, camera);
   requestAnimationFrame(animate);
 })();
