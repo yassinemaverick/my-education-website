@@ -108,7 +108,7 @@ $t = [
         { "@type": "Question", "name": "Que se passe-t-il si je rate une séance ?", "acceptedAnswer": { "@type": "Answer", "text": "Votre professeur publie les notes et ressources de chaque séance sur votre tableau de bord étudiant, pour que vous puissiez rattraper à tout moment." } },
         { "@type": "Question", "name": "Comment savoir quel est mon niveau ?", "acceptedAnswer": { "@type": "Answer", "text": "Indiquez votre niveau approximatif lors de votre inscription — notre équipe confirmera le groupe adapté. Vous pouvez également passer notre test de placement gratuit après avoir soumis votre demande." } },
         { "@type": "Question", "name": "Quand puis-je commencer après mon inscription ?", "acceptedAnswer": { "@type": "Answer", "text": "Notre équipe vous contacte sous 24 heures pour confirmer votre place et vous envoyer vos identifiants. De nouveaux groupes démarrent régulièrement — nous vous informerons de la prochaine session disponible." } },
-        { "@type": "Question", "name": "Peut-on payer en plusieurs fois ?", "acceptedAnswer": { "@type": "Answer", "text": "Les modalités de paiement sont précisées lors de la prise de contact de notre équipe. N'hésitez pas à nous écrire sur WhatsApp si vous avez des questions avant de vous inscrire." } },
+        { "@type": "Question", "name": "Peut-on payer en plusieurs fois ?", "acceptedAnswer": { "@type": "Answer", "text": "Le règlement complet est dû après votre première séance, par virement bancaire ou Barid Al-Maghrib. Notre équipe vous communiquera les coordonnées bancaires lors de la confirmation de votre inscription." } },
         { "@type": "Question", "name": "Y a-t-il un engagement à long terme ?", "acceptedAnswer": { "@type": "Answer", "text": "Chaque session dure 2,5 mois (~30 heures). Il n'y a aucun contrat à long terme — vous décidez si vous souhaitez continuer à l'issue de chaque session." } }
       ]
     }
@@ -153,7 +153,7 @@ $t = [
 <main>
 <div class="hero" id="home">
   <div class="hero-badge"><span></span> Inscriptions ouvertes — 2026</div>
-  <h1>Maîtrisez l'anglais.<br><span>Ouvrez toutes les portes.</span></h1>
+  <h1>Maîtrisez l'anglais.<br><span>Ouvrez toutes les portes au Maroc.</span></h1>
   <p>Des cours d'anglais animés par des experts, conçus pour des résultats concrets — que vous construisiez votre carrière, prépariez le Baccalauréat ou souhaitiez simplement progresser.</p>
   <div class="hero-actions">
     <a href="#courses" class="btn-primary">Découvrir les cours</a>
@@ -162,7 +162,7 @@ $t = [
 </div>
 
 <div class="stats">
-  <div class="stat"><div class="stat-num">4<span>+</span></div><div class="stat-label">Programmes spécialisés</div></div>
+  <div class="stat"><div class="stat-num">4</div><div class="stat-label">Programmes spécialisés</div></div>
   <div class="stat"><div class="stat-num">599<span> Dh</span></div><div class="stat-label">Pour 2,5 mois</div></div>
   <div class="stat"><div class="stat-num">30<span>h</span></div><div class="stat-label">Heures d'enseignement</div></div>
   <div class="stat"><div class="stat-num">9–12</div><div class="stat-label">Étudiants par classe</div></div>
@@ -375,7 +375,7 @@ $t = [
 
       <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
         <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Peut-on payer en plusieurs fois ?</summary>
-        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Les modalités de paiement sont précisées lors de la prise de contact de notre équipe. N'hésitez pas à nous écrire sur WhatsApp si vous avez des questions avant de vous inscrire.</p>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Le règlement complet est dû après votre première séance, par virement bancaire ou Barid Al-Maghrib. Notre équipe vous communiquera les coordonnées bancaires lors de la confirmation de votre inscription.</p>
       </details>
 
       <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">

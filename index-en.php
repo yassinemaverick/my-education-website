@@ -108,7 +108,7 @@ $t = [
         { "@type": "Question", "name": "What happens if I miss a session?", "acceptedAnswer": { "@type": "Answer", "text": "Your teacher posts session notes and materials to your student dashboard after every class, so you can catch up at any time." } },
         { "@type": "Question", "name": "How do I know which level I am?", "acceptedAnswer": { "@type": "Answer", "text": "Select your approximate level when you enroll — our team will confirm the right group for you. You can also take our free placement test after submitting your enrollment request." } },
         { "@type": "Question", "name": "How soon can I start?", "acceptedAnswer": { "@type": "Answer", "text": "Our team contacts you within 24 hours to confirm your place and share your login credentials. New groups start regularly — we'll let you know when the next one begins." } },
-        { "@type": "Question", "name": "Can I pay in instalments?", "acceptedAnswer": { "@type": "Answer", "text": "Payment options are confirmed when our admin team reaches out. Message us on WhatsApp before enrolling if you have questions." } },
+        { "@type": "Question", "name": "Can I pay in instalments?", "acceptedAnswer": { "@type": "Answer", "text": "Full payment is required after your first session, by bank transfer or Barid Al-Maghrib. Our team will share the payment details when confirming your enrollment." } },
         { "@type": "Question", "name": "Is there a long-term commitment?", "acceptedAnswer": { "@type": "Answer", "text": "Each session is 2.5 months (~30 hours). There is no long-term contract — you decide whether to continue at the end of each session." } }
       ]
     }
@@ -153,7 +153,7 @@ $t = [
 <main>
 <div class="hero" id="home">
   <div class="hero-badge"><span></span> Enrolling Now — 2026</div>
-  <h1>Master English.<br><span>Unlock Every Door.</span></h1>
+  <h1>Master English.<br><span>Unlock Every Door in Morocco.</span></h1>
   <p>Expert-led English courses designed for real results — whether you're building a career, acing your Baccalaureate, or simply leveling up.</p>
   <div class="hero-actions">
     <a href="#courses" class="btn-primary">Explore Courses</a>
@@ -162,7 +162,7 @@ $t = [
 </div>
 
 <div class="stats">
-  <div class="stat"><div class="stat-num">4<span>+</span></div><div class="stat-label">Specialized programs</div></div>
+  <div class="stat"><div class="stat-num">4</div><div class="stat-label">Specialized programs</div></div>
   <div class="stat"><div class="stat-num">599<span> Dh</span></div><div class="stat-label">Per 2.5 months</div></div>
   <div class="stat"><div class="stat-num">30<span>h</span></div><div class="stat-label">Hours of instruction</div></div>
   <div class="stat"><div class="stat-num">9–12</div><div class="stat-label">Students per class</div></div>
@@ -375,7 +375,7 @@ $t = [
 
       <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
         <summary style="font-family:'Sora',sans-serif;font-size:.97rem;font-weight:600;color:#fff;padding:1.4rem 1.6rem;cursor:pointer;user-select:none;">Can I pay in instalments?</summary>
-        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Payment options are confirmed when our admin team reaches out after your enrollment. Message us on WhatsApp before enrolling if you have questions.</p>
+        <p style="color:rgba(255,255,255,0.55);font-size:.87rem;line-height:1.75;font-weight:300;margin:0;padding:.25rem 1.6rem 1.4rem;">Full payment is required after your first session, by bank transfer or Barid Al-Maghrib. Our team will share the payment details when confirming your enrollment.</p>
       </details>
 
       <details style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:14px;overflow:hidden;">
