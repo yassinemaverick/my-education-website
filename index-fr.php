@@ -30,12 +30,12 @@ $t = [
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Upskill Education – Cours d'anglais en ligne</title>
+<title>Upskill Education – Cours d'anglais en ligne au Maroc</title>
 <meta name="description" content="Apprenez l'anglais en ligne avec Upskill Education. Cours en direct sur Zoom, petits groupes, suivi personnalisé. 599 DH pour 2,5 mois. Inscrivez-vous dès maintenant.">
 <link rel="canonical" href="https://upskill-edu.com/fr">
 <meta property="og:type"        content="website">
 <meta property="og:url"         content="https://upskill-edu.com/fr">
-<meta property="og:title"       content="Upskill Education – Cours d'anglais en ligne">
+<meta property="og:title"       content="Upskill Education – Cours d'anglais en ligne au Maroc">
 <meta property="og:description" content="Cours d'anglais en direct sur Zoom, petits groupes, suivi personnalisé. 599 DH pour 2,5 mois.">
 <meta property="og:image"       content="https://upskill-edu.com/assets/img/1.png">
 <meta property="og:image:width"  content="1200">

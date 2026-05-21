@@ -30,12 +30,12 @@ $t = [
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Upskill Education – Online English Courses</title>
+<title>Upskill Education – Online English Courses in Morocco</title>
 <meta name="description" content="Learn English online with Upskill Education. Live Zoom classes, small groups, personalised progress tracking. 599 DH per 2.5 months. Enroll now.">
 <link rel="canonical" href="https://upskill-edu.com/en">
 <meta property="og:type"        content="website">
 <meta property="og:url"         content="https://upskill-edu.com/en">
-<meta property="og:title"       content="Upskill Education – Online English Courses">
+<meta property="og:title"       content="Upskill Education – Online English Courses in Morocco">
 <meta property="og:description" content="Live Zoom English classes, small groups, personalised tracking. 599 DH per 2.5 months.">
 <meta property="og:image"       content="https://upskill-edu.com/assets/img/1.png">
 <meta property="og:image:width"  content="1200">
