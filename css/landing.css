@@ -169,19 +169,15 @@ footer { border-top: 1px solid var(--border); background: var(--navy-mid); paddi
 .popular-badge { display: inline-block; background: rgba(62,207,120,0.1); border: 1px solid rgba(62,207,120,0.35); color: var(--green); font-family: var(--font); font-size: 0.68rem; font-weight: 700; padding: 0.22rem 0.65rem; border-radius: 100px; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 0.6rem; }
 /* ── Most Popular card glitter ── */
 .course-card.most-popular { overflow: visible; }
-.most-popular .spark { position: absolute; pointer-events: none; z-index: 10; line-height: 1; animation: spark-twinkle 2.2s ease-in-out infinite; }
-/* top edge */
-.most-popular .spark-1 { top: -0.7rem; left: 14%;  font-size: 1rem;   color: #ffd700; text-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255,215,0,0.6);       animation-delay: 0s;   }
-.most-popular .spark-2 { top: -0.55rem; left: 50%; font-size: 0.72rem; color: #fff;    text-shadow: 0 0 6px #fff,    0 0 14px rgba(255,255,255,0.5);      animation-delay: 0.4s; }
-.most-popular .spark-3 { top: -0.7rem; right: 12%; font-size: 0.9rem;  color: #ffd700; text-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255,215,0,0.6);       animation-delay: 0.8s; }
-/* right edge */
-.most-popular .spark-4 { top: 22%;    right: -0.7rem; font-size: 0.8rem;  color: #ffe066; text-shadow: 0 0 6px #ffe066, 0 0 14px rgba(255,224,102,0.5); animation-delay: 1.2s; }
-.most-popular .spark-5 { bottom: 28%; right: -0.7rem; font-size: 0.95rem; color: #ffd700; text-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255,215,0,0.6);    animation-delay: 0.2s; }
-/* bottom edge */
-.most-popular .spark-6 { bottom: -0.6rem; right: 18%; font-size: 0.75rem; color: #fff;    text-shadow: 0 0 6px #fff,    0 0 14px rgba(255,255,255,0.5);   animation-delay: 1.6s; }
-.most-popular .spark-7 { bottom: -0.7rem; left: 28%;  font-size: 0.9rem;  color: #ffd700; text-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255,215,0,0.6);    animation-delay: 0.6s; }
-/* left edge */
-.most-popular .spark-8 { top: 40%; left: -0.7rem; font-size: 0.8rem; color: #ffe066; text-shadow: 0 0 6px #ffe066, 0 0 14px rgba(255,224,102,0.5);       animation-delay: 1.0s; }
+.spark { position: absolute; pointer-events: none; z-index: 10; line-height: 1; animation: spark-twinkle 2.2s ease-in-out infinite; }
+.spark-1 { top: -0.7rem;    left: 14%;       font-size: 1rem;    color: #ffd700; text-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255,215,0,0.6);      animation-delay: 0s;   }
+.spark-2 { top: -0.55rem;   left: 50%;       font-size: 0.72rem; color: #fff;    text-shadow: 0 0 6px #fff,    0 0 14px rgba(255,255,255,0.5);     animation-delay: 0.4s; }
+.spark-3 { top: -0.7rem;    right: 12%;      font-size: 0.9rem;  color: #ffd700; text-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255,215,0,0.6);      animation-delay: 0.8s; }
+.spark-4 { top: 22%;        right: -0.7rem;  font-size: 0.8rem;  color: #ffe066; text-shadow: 0 0 6px #ffe066, 0 0 14px rgba(255,224,102,0.5);    animation-delay: 1.2s; }
+.spark-5 { bottom: 28%;     right: -0.7rem;  font-size: 0.95rem; color: #ffd700; text-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255,215,0,0.6);      animation-delay: 0.2s; }
+.spark-6 { bottom: -0.6rem; right: 18%;      font-size: 0.75rem; color: #fff;    text-shadow: 0 0 6px #fff,    0 0 14px rgba(255,255,255,0.5);     animation-delay: 1.6s; }
+.spark-7 { bottom: -0.7rem; left: 28%;       font-size: 0.9rem;  color: #ffd700; text-shadow: 0 0 8px #ffd700, 0 0 18px rgba(255,215,0,0.6);      animation-delay: 0.6s; }
+.spark-8 { top: 40%;        left: -0.7rem;   font-size: 0.8rem;  color: #ffe066; text-shadow: 0 0 6px #ffe066, 0 0 14px rgba(255,224,102,0.5);    animation-delay: 1.0s; }
 @keyframes spark-twinkle {
   0%,100% { opacity: 0; transform: scale(0.3) rotate(0deg); }
   15%      { opacity: 0; }
