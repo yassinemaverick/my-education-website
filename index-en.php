@@ -232,6 +232,15 @@ $t = [
       <div class="course-tags"><span class="tag">Corporate Communication</span><span class="tag">Presentations</span><span class="tag">Writing</span><span class="tag">Negotiation</span></div>
     </div>
 
+    <div class="most-popular-wrapper">
+      <span class="spark spark-1" aria-hidden="true">✦</span>
+      <span class="spark spark-2" aria-hidden="true">★</span>
+      <span class="spark spark-3" aria-hidden="true">✦</span>
+      <span class="spark spark-4" aria-hidden="true">✧</span>
+      <span class="spark spark-5" aria-hidden="true">★</span>
+      <span class="spark spark-6" aria-hidden="true">✦</span>
+      <span class="spark spark-7" aria-hidden="true">✧</span>
+      <span class="spark spark-8" aria-hidden="true">★</span>
     <div class="course-card" data-course="General English" onclick="selectCourse(this)" tabindex="0" role="button" onkeydown="if(event.key==='Enter'||event.key===' '){selectCourse(this);event.preventDefault();}">
       <div class="course-header">
         <div class="course-icon">🌍</div>
@@ -254,6 +263,7 @@ $t = [
       </ul>
       <div class="course-tags"><span class="tag">All Levels</span><span class="tag">Speaking</span><span class="tag">Grammar</span><span class="tag">Vocabulary</span></div>
     </div>
+    </div><!-- /.most-popular-wrapper -->
 
     <div class="course-card" data-course="English for Baccalaureate" onclick="selectCourse(this)" tabindex="0" role="button" onkeydown="if(event.key==='Enter'||event.key===' '){selectCourse(this);event.preventDefault();}">
       <div class="course-header">
