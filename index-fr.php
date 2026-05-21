@@ -137,6 +137,7 @@ $t = [
 
 <main>
 <div class="hero" id="home">
+  <canvas id="hero-shader" aria-hidden="true"></canvas>
   <div class="hero-badge"><span></span> Inscriptions ouvertes — 2026</div>
   <h1>Maîtrisez l'anglais.<br><span>Ouvrez toutes les portes.</span></h1>
   <p>Des cours d'anglais animés par des experts, conçus pour des résultats concrets — que vous construisiez votre carrière, prépariez le Baccalauréat ou souhaitiez simplement progresser.</p>
@@ -668,5 +669,6 @@ document.addEventListener('click', e => {
   </svg>
 </a>
 
+<script type="module" src="/assets/js/hero-shader.js"></script>
 </body>
 </html>
