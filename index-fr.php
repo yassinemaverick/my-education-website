@@ -45,11 +45,12 @@ $t = [
 <link rel="alternate" hreflang="fr" href="https://upskill-edu.com/fr">
 <link rel="alternate" hreflang="x-default" href="https://upskill-edu.com/en">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="preload" as="image" href="/assets/img/2.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"></noscript>
-<link rel="stylesheet" href="/css/landing.css?v=4">
+<link rel="stylesheet" href="/css/landing.css?v=5">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -59,6 +60,9 @@ $t = [
       "name": "Upskill Education",
       "url": "https://upskill-edu.com",
       "logo": "https://upskill-edu.com/assets/img/logo.png",
+      "telephone": "+212702099967",
+      "email": "admin@upskill-edu.com",
+      "address": { "@type": "PostalAddress", "addressLocality": "Casablanca", "addressCountry": "MA" },
       "contactPoint": { "@type": "ContactPoint", "contactType": "customer service", "availableLanguage": ["French","English"] }
     },
     {
@@ -96,6 +100,17 @@ $t = [
       "educationalLevel": "Primaire",
       "inLanguage": "en",
       "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Faut-il un ordinateur ou peut-on utiliser son téléphone ?", "acceptedAnswer": { "@type": "Answer", "text": "Il vous suffit d'avoir Zoom — n'importe quel appareil fonctionne : ordinateur, tablette ou smartphone. Une connexion internet stable est tout ce dont vous avez besoin." } },
+        { "@type": "Question", "name": "Que se passe-t-il si je rate une séance ?", "acceptedAnswer": { "@type": "Answer", "text": "Votre professeur publie les notes et ressources de chaque séance sur votre tableau de bord étudiant, pour que vous puissiez rattraper à tout moment." } },
+        { "@type": "Question", "name": "Comment savoir quel est mon niveau ?", "acceptedAnswer": { "@type": "Answer", "text": "Indiquez votre niveau approximatif lors de votre inscription — notre équipe confirmera le groupe adapté. Vous pouvez également passer notre test de placement gratuit après avoir soumis votre demande." } },
+        { "@type": "Question", "name": "Quand puis-je commencer après mon inscription ?", "acceptedAnswer": { "@type": "Answer", "text": "Notre équipe vous contacte sous 24 heures pour confirmer votre place et vous envoyer vos identifiants. De nouveaux groupes démarrent régulièrement — nous vous informerons de la prochaine session disponible." } },
+        { "@type": "Question", "name": "Peut-on payer en plusieurs fois ?", "acceptedAnswer": { "@type": "Answer", "text": "Les modalités de paiement sont précisées lors de la prise de contact de notre équipe. N'hésitez pas à nous écrire sur WhatsApp si vous avez des questions avant de vous inscrire." } },
+        { "@type": "Question", "name": "Y a-t-il un engagement à long terme ?", "acceptedAnswer": { "@type": "Answer", "text": "Chaque session dure 2,5 mois (~30 heures). Il n'y a aucun contrat à long terme — vous décidez si vous souhaitez continuer à l'issue de chaque session." } }
+      ]
     }
   ]
 }
@@ -191,6 +206,7 @@ $t = [
     <div class="section-label">Nos programmes</div>
     <h2 class="section-title">Trouvez le cours<br>qui vous correspond.</h2>
     <p class="section-sub">Quatre programmes ciblés, chacun conçu autour d'un objectif précis. Choisissez celui qui correspond à votre projet.</p>
+    <div class="price-callout"><strong>599 Dh</strong> pour 30 heures d'enseignement en direct — moins de <strong>20 Dh de l'heure</strong> avec un professeur expert.</div>
   </div>
   <div class="courses-grid">
 
@@ -221,6 +237,7 @@ $t = [
         <div class="course-icon">🌍</div>
         <div class="course-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 4" stroke="#0f1d2e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       </div>
+      <div class="popular-badge">★ Le plus populaire</div>
       <div class="course-title">Anglais général</div>
       <div class="course-desc">Construisez de solides bases à l'oral, à l'écoute, en lecture et en écriture. Idéal pour gagner en aisance et en confiance au quotidien.</div>
       <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2,5 mois</span></div>
@@ -292,7 +309,7 @@ $t = [
     <div class="steps">
       <div class="step"><div class="step-num">01</div><h3>Choisissez votre cours</h3><p>Parcourez nos quatre programmes et sélectionnez celui qui correspond à vos objectifs et à votre niveau actuel.</p></div>
       <div class="step"><div class="step-num">02</div><h3>Soumettez vos informations</h3><p>Renseignez votre nom, e-mail et téléphone. Notre équipe vous contactera sous 24 heures pour confirmer votre inscription.</p></div>
-      <div class="step"><div class="step-num">03</div><h3>Recevez vos identifiants</h3><p>Vous recevrez vos identifiants personnels pour accéder à la plateforme étudiant de notre équipe administrative — par WhatsApp ou e-mail dans les 24 heures.</p></div>
+      <div class="step"><div class="step-num">03</div><h3>Recevez vos identifiants</h3><p>Notre équipe vous envoie vos identifiants par WhatsApp ou e-mail — en général le jour même de la confirmation de votre inscription.</p></div>
       <div class="step"><div class="step-num">04</div><h3>Commencez à apprendre</h3><p>Connectez-vous à votre tableau de bord, accédez aux ressources, devoirs et suivez votre progression en temps réel.</p></div>
     </div>
   </div>
@@ -375,6 +392,7 @@ $t = [
     <div class="section-label text-center" style="text-align:center;">Inscription</div>
     <h2 class="section-title text-center" style="text-align:center;">Prêt à commencer ?</h2>
     <p class="section-sub" style="margin:0 auto;text-align:center;">Remplissez le formulaire et nous vous recontacterons sous 24 heures pour confirmer votre place.</p>
+    <div class="enroll-urgency">⚡ De nouveaux groupes se forment régulièrement — les places partent vite</div>
     <div class="form-card">
       <form id="form-area" onsubmit="submitForm(event)">
         <div id="selected-pill" style="display:none;" class="selected-course-pill">
@@ -425,7 +443,7 @@ $t = [
         <h3>Demande reçue !</h3>
         <p>Merci pour votre inscription. Notre équipe examinera votre demande et vous contactera sous 24 heures pour confirmer votre place et vous envoyer vos identifiants de connexion.</p>
         <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:1.2rem;display:inline-block;">Nous écrire sur WhatsApp →</a>
-        <a href="/placement-test.php" class="btn-primary" style="margin-top:.75rem;display:inline-block;background:#10b981;">Test de placement →</a>
+        <a href="/placement-test.php" class="success-secondary-link">Passer le test de placement gratuit →</a>
       </div>
     </div>
   </div>
@@ -551,7 +569,7 @@ $t = [
 <!-- ── CONTACT MODAL ── -->
 <div id="contact-overlay" onclick="if(event.target===this)closeContact()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;">
   <div role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" style="background:#162436;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:480px;margin:1rem;position:relative;">
-    <button onclick="closeContact()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.3rem;cursor:pointer;line-height:1;">✕</button>
+    <button onclick="closeContact()" aria-label="Fermer" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.3rem;cursor:pointer;line-height:1;">✕</button>
     <div id="contact-modal-title" style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.3rem;">Nous contacter</div>
     <div style="color:rgba(255,255,255,.55);font-size:.88rem;margin-bottom:1.5rem;font-family:'DM Sans',sans-serif;">Envoyez-nous un message, nous vous répondrons sous 24 heures.</div>
     <div style="margin-bottom:1rem;">
@@ -661,11 +679,26 @@ document.addEventListener('click', e => {
 <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer"
    style="position:fixed;bottom:2rem;right:2rem;z-index:998;background:#25d366;color:white;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s;"
    onmouseenter="this.style.transform='scale(1.12)'" onmouseleave="this.style.transform=''"
-   title="Contacter sur WhatsApp">
+   aria-label="Contacter sur WhatsApp" title="Contacter sur WhatsApp">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.656 1.438 5.168L2 22l4.975-1.395A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm5.093 13.677c-.22.616-1.287 1.174-1.762 1.214-.476.04-.923.214-3.1-.648-2.606-1.038-4.267-3.7-4.396-3.872-.128-.172-1.053-1.402-1.053-2.676 0-1.273.665-1.9.9-2.16.236-.258.516-.322.687-.322.172 0 .344.002.494.008.159.006.37-.06.58.458.215.518.731 1.79.795 1.921.064.13.107.282.021.452-.086.172-.13.28-.258.43-.13.15-.272.337-.386.45-.13.13-.264.27-.113.527.15.258.666 1.098 1.43 1.778.982.874 1.815 1.143 2.072 1.273.257.13.408.108.558-.065.15-.172.63-.737.797-.99.168-.257.336-.215.565-.13.23.086 1.452.685 1.702.81.25.128.416.192.479.3.063.107.063.579-.157 1.2z"/>
   </svg>
 </a>
 
+
+<div id="sticky-cta" class="sticky-cta">
+  <span>Prêt à commencer votre parcours en anglais ?</span>
+  <a href="#enroll" class="sticky-cta-btn">S'inscrire &rarr;</a>
+</div>
+<script>
+(function() {
+  var hero = document.getElementById('home');
+  var cta  = document.getElementById('sticky-cta');
+  if (!hero || !cta) return;
+  new IntersectionObserver(function(entries) {
+    cta.classList.toggle('visible', !entries[0].isIntersecting);
+  }, { threshold: 0 }).observe(hero);
+})();
+</script>
 </body>
 </html>

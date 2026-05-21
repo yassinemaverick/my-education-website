@@ -45,11 +45,12 @@ $t = [
 <link rel="alternate" hreflang="fr" href="https://upskill-edu.com/fr">
 <link rel="alternate" hreflang="x-default" href="https://upskill-edu.com/en">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="preload" as="image" href="/assets/img/2.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap"></noscript>
-<link rel="stylesheet" href="/css/landing.css?v=4">
+<link rel="stylesheet" href="/css/landing.css?v=5">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -59,6 +60,9 @@ $t = [
       "name": "Upskill Education",
       "url": "https://upskill-edu.com",
       "logo": "https://upskill-edu.com/assets/img/logo.png",
+      "telephone": "+212702099967",
+      "email": "admin@upskill-edu.com",
+      "address": { "@type": "PostalAddress", "addressLocality": "Casablanca", "addressCountry": "MA" },
       "contactPoint": { "@type": "ContactPoint", "contactType": "customer service", "availableLanguage": ["French","English"] }
     },
     {
@@ -96,6 +100,17 @@ $t = [
       "educationalLevel": "Primary",
       "inLanguage": "en",
       "offers": { "@type": "Offer", "priceCurrency": "MAD", "price": "599", "availability": "https://schema.org/LimitedAvailability" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Do I need a computer, or can I use my phone?", "acceptedAnswer": { "@type": "Answer", "text": "You just need Zoom — any device works: computer, tablet, or smartphone. A stable internet connection is all you need." } },
+        { "@type": "Question", "name": "What happens if I miss a session?", "acceptedAnswer": { "@type": "Answer", "text": "Your teacher posts session notes and materials to your student dashboard after every class, so you can catch up at any time." } },
+        { "@type": "Question", "name": "How do I know which level I am?", "acceptedAnswer": { "@type": "Answer", "text": "Select your approximate level when you enroll — our team will confirm the right group for you. You can also take our free placement test after submitting your enrollment request." } },
+        { "@type": "Question", "name": "How soon can I start?", "acceptedAnswer": { "@type": "Answer", "text": "Our team contacts you within 24 hours to confirm your place and share your login credentials. New groups start regularly — we'll let you know when the next one begins." } },
+        { "@type": "Question", "name": "Can I pay in instalments?", "acceptedAnswer": { "@type": "Answer", "text": "Payment options are confirmed when our admin team reaches out. Message us on WhatsApp before enrolling if you have questions." } },
+        { "@type": "Question", "name": "Is there a long-term commitment?", "acceptedAnswer": { "@type": "Answer", "text": "Each session is 2.5 months (~30 hours). There is no long-term contract — you decide whether to continue at the end of each session." } }
+      ]
     }
   ]
 }
@@ -191,6 +206,7 @@ $t = [
     <div class="section-label">Our Programs</div>
     <h2 class="section-title">Find the right<br>course for you.</h2>
     <p class="section-sub">Four focused programs, each built around a specific goal. Select the one that matches where you're headed.</p>
+    <div class="price-callout"><strong>599 Dh</strong> for 30 hours of live instruction — under <strong>20 Dh per hour</strong> with an expert teacher.</div>
   </div>
   <div class="courses-grid">
 
@@ -221,6 +237,7 @@ $t = [
         <div class="course-icon">🌍</div>
         <div class="course-check"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7L5.5 10.5L12 4" stroke="#0f1d2e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       </div>
+      <div class="popular-badge">★ Most Popular</div>
       <div class="course-title">General English</div>
       <div class="course-desc">Build a strong foundation in speaking, listening, reading, and writing. Ideal for everyday fluency and confidence at any level.</div>
       <div class="course-price"><span class="price-amount">599 Dh</span><span class="price-period">/ 2.5 months</span></div>
@@ -292,7 +309,7 @@ $t = [
     <div class="steps">
       <div class="step"><div class="step-num">01</div><h3>Choose your course</h3><p>Browse our four programs and select the one that fits your goals and current level.</p></div>
       <div class="step"><div class="step-num">02</div><h3>Submit your details</h3><p>Fill in your name, email and phone. Our team will reach out within 24 hours to confirm your enrollment.</p></div>
-      <div class="step"><div class="step-num">03</div><h3>Get your login</h3><p>Receive your personal credentials for the student platform from our admin team — via WhatsApp or email within 24 hours.</p></div>
+      <div class="step"><div class="step-num">03</div><h3>Get your login</h3><p>Our admin team sends your login credentials by WhatsApp or email — usually the same day your enrollment is confirmed.</p></div>
       <div class="step"><div class="step-num">04</div><h3>Start learning</h3><p>Log in to your dashboard, access materials, assignments, and track your progress live.</p></div>
     </div>
   </div>
@@ -375,6 +392,7 @@ $t = [
     <div class="section-label text-center" style="text-align:center;">Enrollment</div>
     <h2 class="section-title text-center" style="text-align:center;">Ready to start?</h2>
     <p class="section-sub" style="margin:0 auto;text-align:center;">Fill in your details and we'll be in touch within 24 hours to confirm your place.</p>
+    <div class="enroll-urgency">⚡ New groups form regularly — spots fill up quickly</div>
     <div class="form-card">
       <form id="form-area" onsubmit="submitForm(event)">
         <div id="selected-pill" style="display:none;" class="selected-course-pill">
@@ -425,7 +443,7 @@ $t = [
         <h3>Request received!</h3>
         <p>Thank you for enrolling. Our team will review your request and contact you within 24 hours to confirm your place and send your login credentials.</p>
         <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:1.2rem;display:inline-block;">Message us on WhatsApp →</a>
-        <a href="/placement-test.php" class="btn-primary" style="margin-top:.75rem;display:inline-block;background:#10b981;">Placement Test →</a>
+        <a href="/placement-test.php" class="success-secondary-link">Take our free placement test →</a>
       </div>
     </div>
   </div>
@@ -551,7 +569,7 @@ $t = [
 <!-- ── CONTACT MODAL ── -->
 <div id="contact-overlay" onclick="if(event.target===this)closeContact()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:9999;align-items:center;justify-content:center;">
   <div role="dialog" aria-modal="true" aria-labelledby="contact-modal-title" style="background:#162436;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;width:100%;max-width:480px;margin:1rem;position:relative;">
-    <button onclick="closeContact()" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.3rem;cursor:pointer;line-height:1;">✕</button>
+    <button onclick="closeContact()" aria-label="Close" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.3rem;cursor:pointer;line-height:1;">✕</button>
     <div id="contact-modal-title" style="font-family:'Sora',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.3rem;">Get in touch</div>
     <div style="color:rgba(255,255,255,.55);font-size:.88rem;margin-bottom:1.5rem;font-family:'DM Sans',sans-serif;">Send us a message and we'll get back to you within 24 hours.</div>
     <div style="margin-bottom:1rem;">
@@ -661,11 +679,26 @@ document.addEventListener('click', e => {
 <a href="https://wa.me/212702099967" target="_blank" rel="noopener noreferrer"
    style="position:fixed;bottom:2rem;right:2rem;z-index:998;background:#25d366;color:white;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s;"
    onmouseenter="this.style.transform='scale(1.12)'" onmouseleave="this.style.transform=''"
-   title="Chat on WhatsApp">
+   aria-label="Chat on WhatsApp" title="Chat on WhatsApp">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
     <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.656 1.438 5.168L2 22l4.975-1.395A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm5.093 13.677c-.22.616-1.287 1.174-1.762 1.214-.476.04-.923.214-3.1-.648-2.606-1.038-4.267-3.7-4.396-3.872-.128-.172-1.053-1.402-1.053-2.676 0-1.273.665-1.9.9-2.16.236-.258.516-.322.687-.322.172 0 .344.002.494.008.159.006.37-.06.58.458.215.518.731 1.79.795 1.921.064.13.107.282.021.452-.086.172-.13.28-.258.43-.13.15-.272.337-.386.45-.13.13-.264.27-.113.527.15.258.666 1.098 1.43 1.778.982.874 1.815 1.143 2.072 1.273.257.13.408.108.558-.065.15-.172.63-.737.797-.99.168-.257.336-.215.565-.13.23.086 1.452.685 1.702.81.25.128.416.192.479.3.063.107.063.579-.157 1.2z"/>
   </svg>
 </a>
 
+
+<div id="sticky-cta" class="sticky-cta">
+  <span>Ready to start your English journey?</span>
+  <a href="#enroll" class="sticky-cta-btn">Enroll now &rarr;</a>
+</div>
+<script>
+(function() {
+  var hero = document.getElementById('home');
+  var cta  = document.getElementById('sticky-cta');
+  if (!hero || !cta) return;
+  new IntersectionObserver(function(entries) {
+    cta.classList.toggle('visible', !entries[0].isIntersecting);
+  }, { threshold: 0 }).observe(hero);
+})();
+</script>
 </body>
 </html>
